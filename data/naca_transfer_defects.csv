@@ -1,0 +1,8 @@
+method,epsilon_norm,relative_epsilon,density_integral_defect
+NN1,1.474e-3,3.08e-6,-7.284e-4
+NN2,7.243e-4,1.51e-6,-7.937e-4
+NN3,7.157e-4,1.50e-6,-7.983e-4
+BAR2,7.040e-4,1.47e-6,-8.136e-4
+BAR3,7.117e-4,1.49e-6,-7.911e-4
+GP2,7.137e-4,1.49e-6,-8.121e-4
+GP3,7.126e-4,1.49e-6,-7.853e-4

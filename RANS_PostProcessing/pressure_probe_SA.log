@@ -1,0 +1,116 @@
+RANS_PressureProbe.py:294: RuntimeWarning: divide by zero encountered in scalar divide
+  label=f'd={res["d"]:.2f}, {int(t*100)}% of peak: '
+
+=== RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second ===
+launch annulus 0.05-0.10 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.045         45      0      0      0      0      0      1
+  0.010   1556   0.040         40      0      0      0      0      0      0
+  0.020    839   0.030         30      0      0      0      0      0      0
+  0.040    548   0.010         10      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00                                 
+      5%        0     nan     nan  0.00                                 
+     10%        0     nan     nan  0.00                                 
+     25%        0     nan     nan  0.00                                 
+     50%        0     nan     nan  0.00                                 
+     75%       19  0.3507  52.273  0.02                                 
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second ===
+launch annulus 0.10-0.15 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.095         95      0      0      0      1      1      1
+  0.010   1556   0.090         90      0      0      0      1      1      1
+  0.020    839   0.080         80      0      0      0      0      1      1
+  0.040    548   0.060         60      0      0      0      0      0      0
+  0.060    418   0.040         40      0      0      0      0      0      0
+  0.080    335   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%       13  0.5448  78.015  0.01         71  0.8929  14.000  0.07
+     50%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+     75%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second ===
+launch annulus 0.10-0.15 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.095         95      0      0      0      1      1      1
+  0.010   1556   0.090         90      0      0      0      1      1      1
+  0.020    839   0.080         80      0      0      0      0      1      1
+  0.040    548   0.060         60      0      0      0      0      0      0
+  0.060    418   0.040         40      0      0      0      0      0      0
+  0.080    335   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%       13  0.5448  78.015  0.01         71  0.8929  14.000  0.07
+     50%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+     75%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second ===
+launch annulus 0.20-0.25 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.195        195      0      0      0      1      2     26
+  0.010   1556   0.190        190      0      0      0      1      1     23
+  0.020    839   0.180        180      0      0      0      0      1      1
+  0.040    548   0.160        160      0      0      0      0      0      1
+  0.060    418   0.140        140      0      0      0      0      0      0
+  0.080    335   0.120        120      0      0      0      0      0      0
+  0.100    228   0.100        100      0      0      0      0      0      0
+  0.130    162   0.070         70      0      0      0      0      0      0
+  0.160    109   0.040         40      0      0      0      0      0      0
+  0.180    121   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%        4  0.3560 249.313  0.00          9  0.4953 106.000  0.01
+     50%        8  0.4820 129.206  0.01         18  0.6638  56.786  0.02
+     75%      101  0.3831   9.879  0.10        236  0.5293   4.240  0.24
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second ===
+launch annulus 0.20-0.25 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.195        195      0      0      0      1      1      2
+  0.010   1556   0.190        190      0      0      0      1      1      1
+  0.020    839   0.180        180      0      0      0      0      1      1
+  0.040    548   0.160        160      0      0      0      0      1      1
+  0.060    418   0.140        140      0      0      0      0      0      1
+  0.080    335   0.120        120      0      0      0      0      0      0
+  0.100    228   0.100        100      0      0      0      0      0      0
+  0.130    162   0.070         70      0      0      0      0      0      0
+  0.160    109   0.040         40      0      0      0      0      0      0
+  0.180    121   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%        4  0.3560 249.313  0.00          9  0.4953 106.000  0.01
+     50%        7  0.6723 148.128  0.01         13  0.8090  75.714  0.01
+     75%        9  0.7033 106.956  0.01         16  0.7440  61.154  0.02
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+wrote Figures/RANS/RANS_SA_PressureProbe_Pressure.png
+wrote RANS_PostProcessing/rans_pressure_probe.csv

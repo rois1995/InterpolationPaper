@@ -1,0 +1,5 @@
+metric,uncorrected,corrected
+Constant patch maximum error,1.002e1,3.9e-11
+Linear patch maximum error,6.58e2,1.1e-10
+Maximum target-cell coverage,2.227,1.0
+Nodes with error above 1e-6,380,0

@@ -1,0 +1,5 @@
+method,max_abs_delta_Cp,x_over_c
+NN1,0.45,0.001
+BAR2,0.40,0.999
+GP2,0.29,0.003
+GP3,0.30,0.999

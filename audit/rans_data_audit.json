@@ -1,0 +1,167 @@
+{
+  "source_hashes": {
+    "RANS_PostProcessing/rans_deformed_reference.csv": "c4a8ad6c7d9ea02d25c19ced8d8ca0da2253fdbda643dff45ea1d1ca8edf4dbf",
+    "RANS_PostProcessing/rans_deformed_surface.csv": "2f392722219d5851bb6565307b1016e7291bff2325d59bed14a74a86072239b2",
+    "RANS_PostProcessing/rans_drift_series.csv": "c942c4a970252268ed82b3098ecbbb87c2a1d4e69b6f2efde06c587a68a56ea9",
+    "RANS_PostProcessing/rans_drift_trends.csv": "12a6e5e0134fe610a2eba98fb21a321a970bf33311dc3572caa7c57fea24ec6a",
+    "RANS_PostProcessing/rans_oneshot_fit.csv": "235ef179ff4c6653ba64e96176b03ad006992166879e87dd9404eee4a620d89d",
+    "RANS_PostProcessing/rans_oneshot_lags.csv": "4fe59ceb3e480a40357ba8086ee44af6ce42137b0cd17e5c924a598671241d08",
+    "RANS_PostProcessing/rans_oneshot_series.csv": "19bc0b4060ebe6626152a15ea328be41434dc184697e02faa4cf9a896dd26b03",
+    "RANS_PostProcessing/rans_pressure_probe.csv": "fb9001648249fa53cb0a49eab961384d892b9037b932cd5bde46523147e7959f",
+    "RANS_PostProcessing/rans_surface_forces.csv": "845febb5a77cbac0c9fe48418637b59e8c9c06ef1dafdceb68b077760c49ffd9",
+    "RANS_PostProcessing/rans_surface_norms.csv": "63ddcde6c0fd7511d86cb90af78648f66ced72b05127cbd7ae48e16e47928a36",
+    "RANS_PostProcessing/rans_surface_profiles.csv": "41f2260c5985dd89d4360d985fb84e1a44944642836beef57bedf57a516c1f21",
+    "RANS_PostProcessing/rans_transfer_integrals.csv": "a6ce80e99aed7cb67adcc8b9ab3154e1732c2ab256e3ab880ad4442cd6eb744c",
+    "RANS_PostProcessing/rans_turb_state_norms_SA.csv": "990a1df3d0b438afc1f7fb7d9517712c591896ba523e3ceee0f9ef3ceb82a4a5",
+    "RANS_PostProcessing/rans_turb_state_norms_SST.csv": "b40013d55859b9c9abbdab5c6d4dc53352c5e1b90998c70c9c05d490f6105253"
+  },
+  "source_tables": {
+    "rans_deformed_reference.csv": {
+      "input_rows": 10,
+      "unique_rows": 10,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_deformed_surface.csv": {
+      "input_rows": 2,
+      "unique_rows": 2,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_drift_series.csv": {
+      "input_rows": 3184,
+      "unique_rows": 3184,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_drift_trends.csv": {
+      "input_rows": 40,
+      "unique_rows": 40,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_oneshot_fit.csv": {
+      "input_rows": 20,
+      "unique_rows": 20,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_oneshot_lags.csv": {
+      "input_rows": 50,
+      "unique_rows": 50,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_oneshot_series.csv": {
+      "input_rows": 2400,
+      "unique_rows": 2400,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_pressure_probe.csv": {
+      "input_rows": 72,
+      "unique_rows": 72,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_surface_forces.csv": {
+      "input_rows": 8644,
+      "unique_rows": 7964,
+      "exact_duplicates_removed_in_view": 680
+    },
+    "rans_surface_norms.csv": {
+      "input_rows": 8644,
+      "unique_rows": 7964,
+      "exact_duplicates_removed_in_view": 680
+    },
+    "rans_surface_profiles.csv": {
+      "input_rows": 40700,
+      "unique_rows": 27380,
+      "exact_duplicates_removed_in_view": 13320
+    },
+    "rans_transfer_integrals.csv": {
+      "input_rows": 3740,
+      "unique_rows": 3740,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_turb_state_norms_SA.csv": {
+      "input_rows": 791,
+      "unique_rows": 791,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_turb_state_norms_SST.csv": {
+      "input_rows": 791,
+      "unique_rows": 791,
+      "exact_duplicates_removed_in_view": 0
+    }
+  },
+  "event_accounting": [
+    {
+      "case": "RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
+      "case": "RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
+      "case": "RANS_SA_WD_0.01-20_NN_Drift_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
+      "case": "RANS_SA_WD_0.01-20_NN_Drift_Seed2_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
+      "case": "RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
+      "case": "RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
+      "case": "RANS_SST_WD_0.01-20_NN_Drift_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
+      "case": "RANS_SST_WD_0.01-20_NN_Drift_Seed2_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    }
+  ],
+  "duplicate_policy": "Remove exact duplicate rows in derived views; fail on conflicting physical keys.",
+  "integral_policy": "Use exported relative-defect field, not subtraction of rounded inventory columns; both histories, 39 events, two seeds.",
+  "statistics": "OLS on unique physical steps; standard errors are unadjusted and descriptive, not inferential.",
+  "probe_count": 72,
+  "probe_below_three_ulp": 44,
+  "pressure_ulp": 5.960464477539063e-08,
+  "short_run_convective_duration": 0.04,
+  "old_and_raw_csv_snapshot_count": 53,
+  "inputs_differing_from_delivered_snapshot": [],
+  "bibliography": "References.bib",
+  "raw_simulations_rerun": false
+}

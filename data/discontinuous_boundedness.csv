@@ -1,0 +1,16 @@
+method,order,limiter,enforce_cons,rho_min,rho_max,overshoot,undershoot,cons_defect
+NN,First,none,False,1.2000,3.6000,0.0000,0.0000,-8.483e-03
+NN,Second,none,False,0.8000,4.4000,0.8000,0.4000,6.956e-05
+NN,Second,BJ,False,1.2000,3.6000,0.0000,0.0000,-8.483e-03
+NN,Second,BJ,Global,1.2175,3.6000,0.0000,0.0000,3.992e-16
+NN,Third,none,False,0.9766,4.0255,0.4255,0.2234,3.792e-04
+NN,Third,BJ,False,1.2000,3.6000,0.0000,0.0000,-8.483e-03
+NN,Third,BJ,Global,1.2175,3.6000,0.0000,0.0000,3.992e-16
+Barycentric,Second,none,False,1.2000,3.6000,0.0000,0.0000,-1.516e-04
+Barycentric,Third,none,False,1.0603,3.7330,0.1330,0.1397,-1.332e-04
+Barycentric,Third,BJ,False,1.2000,3.6000,0.0000,0.0000,-1.516e-04
+Barycentric,Third,BJ,Global,1.2003,3.6000,0.0000,0.0000,7.984e-16
+ConsGalerkinProj,Second,soft,False,1.1952,3.6048,0.0048,0.0048,-3.593e-15
+ConsGalerkinProj,Second,hard,False,1.2000,3.6000,0.0000,0.0000,-1.730e-15
+ConsGalerkinProj,Third,soft,False,1.1952,3.6047,0.0047,0.0048,-3.016e-04
+ConsGalerkinProj,Third,hard,False,1.2000,3.6000,0.0000,0.0000,-3.016e-04

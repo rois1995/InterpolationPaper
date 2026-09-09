@@ -1,0 +1,5 @@
+method,seed,category,CL_trend,CL_se,CD_trend,CD_se,CMz_trend,CMz_se,CD_scatter,CD_relative_pct_per100
+GP2,1,GP2 seed 1,-2.4e-6,6.1e-6,6.8e-6,2.3e-6,1.3e-7,1.2e-6,5.3e-5,0.065
+GP2,2,GP2 seed 2,2.1e-6,5.7e-6,6.4e-6,2.2e-6,-1.0e-6,1.1e-6,5.1e-5,0.065
+NN2,1,NN2 seed 1,1.2e-5,7.0e-6,3.9e-5,3.3e-6,-1.46e-5,1.5e-6,8.8e-5,0.389
+NN2,2,NN2 seed 2,4.9e-5,8.4e-6,3.8e-5,3.5e-6,-1.49e-5,1.7e-6,9.2e-5,0.389

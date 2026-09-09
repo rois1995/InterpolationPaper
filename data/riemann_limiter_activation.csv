@@ -1,0 +1,3 @@
+safe_factor,mean_displacement,unlimited_overshoot,feature_fraction,limiter_state
+4,9.40e-4,7.6e-6,--,Dormant
+2,1.87e-3,3.6e-3,0.97,Active

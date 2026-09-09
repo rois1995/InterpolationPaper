@@ -1,0 +1,4 @@
+idx,condition,NN1_raw_pos,NN1_global_pos,BAR2_pos,GP2_pos,NN1_raw_width,NN1_global_width,BAR2_width,GP2_width
+1,80 cycles--SF4,1.28,nan,1.10,0.09,0.22,nan,0.48,0.00
+2,400 cycles--SF4,7.56,7.70,8.12,0.09,1.32,1.10,1.50,0.04
+3,400 cycles--SF2,25.78,25.53,26.43,0.09,3.53,3.25,2.03,0.31

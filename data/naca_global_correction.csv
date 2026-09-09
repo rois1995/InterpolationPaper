@@ -1,0 +1,5 @@
+method,global_correction,epsilon_norm,density_integral_defect,delta_full_norm,delta_CL_full
+NN1,off,1.47423e-3,-7.28431e-4,1.46104e-3,5.76465e-3
+NN1,on,1.47407e-3,-8.12114e-4,1.46091e-3,5.76976e-3
+BAR2,off,7.03957e-4,-8.13552e-4,7.03146e-4,-7.30790e-3
+BAR2,on,7.03956e-4,-8.12114e-4,7.03146e-4,-7.30770e-3

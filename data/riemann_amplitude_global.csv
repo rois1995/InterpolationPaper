@@ -1,0 +1,9 @@
+scheme,global_correction,safe_factor,cycles,position_error_cells,width_change_cells,cumulative_density_change
+NN1,off,4,400,7.56,1.32,7.0e-04
+NN1,off,2,400,25.78,3.53,3.2e-03
+NN1,on,4,400,7.70,1.10,1.1e-14
+NN1,on,2,400,25.53,3.25,2.4e-13
+GP2,intrinsic,4,400,0.09,0.04,-8.4e-06
+GP2,intrinsic,2,400,0.09,0.31,-3.1e-05
+BAR2,off,4,400,8.12,1.50,3.6e-04
+BAR2,off,2,400,26.43,2.03,6.7e-04

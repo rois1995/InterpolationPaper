@@ -1,0 +1,12 @@
+Plot-data generation completed.
+Maximum difference between recomputed and supplied pairwise L2 orders: 1.140e-02
+Generated files:
+  - asymmetric_convergence_L2.csv
+  - asymmetric_conservation_defect.csv
+  - asymmetric_orders.csv
+  - asymmetric_norm_orders.csv
+  - discontinuous_convergence_L2.csv
+  - discontinuous_conservation_defect.csv
+  - discontinuous_orders.csv
+  - discontinuous_norm_orders.csv
+  - discontinuous_boundedness_plot.csv

@@ -1,0 +1,21 @@
+{
+  "pdf_pages": 28,
+  "texcount_word_equivalents": "7468",
+  "original_source_lines": 2424,
+  "revised_source_lines": 1398,
+  "existing_csv_count": 39,
+  "changed_original_csvs": [],
+  "original_bibliography_preserved_as_prefix": true,
+  "bibliography_entries": 44,
+  "cited_keys": 22,
+  "undefined_citations_or_references": false,
+  "overfull_boxes": 0,
+  "outside_page_text_blocks": [],
+  "rendered_all_pages": true,
+  "raw_solver_or_raw_field_reruns_performed": false,
+  "static_generated_csvs_reproduced_identically": true,
+  "pdf_sha256": "d5ea283ea9cb33452a03eb52dee5ad299043e3633f41c3280b797f6bd9b4ab55",
+  "visual_inspection": "All final pages inspected as rendered contact sheets; selected equations and figure pages inspected at full resolution.",
+  "clean_build_from_delivered_archive": "make clean && make && make audit succeeded in a separate extracted directory",
+  "original_pdf_pages": 42
+}

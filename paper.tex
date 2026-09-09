@@ -1,0 +1,1577 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepgfplotslibrary{groupplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+\usepackage{placeins}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{microtype}
+\setlength{\emergencystretch}{3em}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{References.bib}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\newcommand{\dd}{\,\mathrm{d}}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\calI}{\mathcal{I}}
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\calG}{\mathcal{G}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\calK}{\mathcal{K}}
+
+\newcommand{\DataDir}{data}
+\newcommand{\GeneratedDir}{generated}
+\input{generated/rans_numbers.tex}
+
+\pgfplotsset{
+    transfer convergence axis/.style={
+        xmode=log,
+        ymode=log,
+        x dir=reverse,
+        grid=both,
+        minor grid style={gray!15},
+        major grid style={gray!30},
+        xlabel={Effective spacing $h$},
+        tick label style={font=\scriptsize},
+        label style={font=\small},
+        title style={font=\small},
+        legend style={font=\scriptsize,draw=none},
+        line width=0.8pt,
+        mark size=2.0pt,
+    },
+    transfer bar axis/.style={
+        grid=major,
+        tick label style={font=\scriptsize},
+        label style={font=\small},
+        legend style={font=\scriptsize,draw=none},
+    },
+    scheme NN1/.style={black,solid,mark=*},
+    scheme NN2/.style={NavyBlue,solid,mark=square*},
+    scheme NN3/.style={ForestGreen,solid,mark=triangle*},
+    scheme BAR2/.style={BrickRed,dashed,mark=o},
+    scheme BAR3/.style={Orange,dashed,mark=square},
+    scheme GP2/.style={Purple,densely dotted,mark=diamond*},
+    scheme GP3/.style={Magenta,densely dotted,mark=triangle},
+    reference slope/.style={gray!70,thin,dash pattern=on 3pt off 2pt,no marks},
+}
+
+\sisetup{
+    scientific-notation=true,
+    round-mode=places,
+    round-precision=3,
+}
+
+
+
+\title{Mesh-to-Mesh Transfer Errors in BDF2 Unsteady Flow Simulations}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Discrete remeshing in an unsteady CFD calculation creates two coupled disturbances: the spatial discretization changes, and the histories required by a multistep integrator must be transferred to the new mesh. This study compares nearest-neighbor Taylor transfer, barycentric interpolation, and continuous Galerkin projection in BDF2 Euler and RANS calculations on fixed physical domains. Manufactured fields verify the nominal first- to third-order behavior and separate interpolation accuracy, boundedness, and integral preservation. For BDF2, the target-referenced history forcing is $2\varepsilon^n-\varepsilon^{n-1}/2$. A controlled Euler NACA~0012 restart shows why both histories matter: perturbing only the older state changes the lift even though the latest state is exact, and the measured response ratios agree with the BDF2 coefficients to within 0.3\% in norm. Repeated Euler remeshing further shows that restoring a global integral can leave a spatial transport error essentially unchanged. The fixed-airfoil RANS extension adds SA and SST turbulence histories and separates pressure and friction loads. Galerkin projection preserves the monitored turbulence integrals much more closely than second-order nearest-neighbor transfer, but the two methods produce similar aggregate drag errors over the short two-seed comparison. Near-wall turbulence discrepancies also develop on vertices whose coordinates never move. Together, the results show that transfer accuracy, multistep-history consistency, and global conservation are distinct requirements; none alone provides a universal ranking of remeshing methods.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+Unsteady Reynolds-averaged Navier--Stokes (RANS) calculations use mesh adaptation to follow evolving flow structures without maintaining fine resolution throughout the domain. When adaptation regenerates connectivity, the flow and turbulence histories must be transferred to the new discretization before time integration can continue. The resulting calculation combines spatial approximation, solution transfer, and temporal integration; improving one component does not necessarily reduce their combined error. Time-accurate anisotropic adaptation and space--time adaptation for implicit RANS calculations illustrate this coupling~\cite{AlauzetLoseilleOlivier2018,SauvageAlauzetDervieux2024}.
+
+Two questions arise at each mesh change. Does the transfer represent the source field accurately on the target mesh, and does the transferred state permit a consistent continuation of the target discrete evolution? Polynomial reproduction and integral conservation address the first question only partially. A transfer can preserve a total integral while redistributing the field in a way that changes a residual balance or an aerodynamic load. Conversely, an accurate pointwise interpolant can introduce a small global imbalance. Repeated transfers may accumulate either effect, depending on the error's spatial structure and its interaction with the evolving flow.
+
+The distinction between interpolation accuracy and preservation of a discrete state is well established. Common-refinement Galerkin projection provides an integral-preserving, best-$L_2$ transfer between finite-element spaces~\cite{FarrellMaddison2011,JiaoHeath2004}, while constrained variants are needed when additional discrete properties must be preserved~\cite{MaddisonHiester2017}. Balance-preserving transfer in shallow-water models provides a related example: an accurate interpolant need not preserve a steady discrete balance~\cite{MaddisonCotterFarrell2011,MaddisonCotterFarrell2013}. Here these ideas are examined in the specific setting of a vertex-centered finite-volume BDF2 restart and its subsequent aerodynamic response.
+
+The comparison uses three established constructions: nearest-neighbor Taylor transfer, barycentric interpolation on a simplicial representation of the source mesh, and continuous Galerkin projection. Their nominal orders range from one to three. A bounded global correction is also applied to the pointwise methods, allowing the effect of enforcing a total integral to be assessed without replacing the underlying interpolation rule. The analysis distinguishes the consistent finite-element integral from the nodal integral actually used by the receiving solver, particularly when a quadratic projected field is reduced to vertex-only output.
+
+The numerical argument proceeds from static transfer verification to accumulated Euler transport and controlled aerodynamic restarts. A two-dimensional Riemann calculation tests transfer frequency and deformation amplitude. An Euler NACA~0012 case isolates the two-history response on independent meshes and examines repeated load disturbances. The final application retains the fixed airfoil but adds SA and SST turbulence transport and viscous loads. Its nominally steady baseline makes remeshing-induced transients observable without imposed body motion. The scope is discrete replacement of stationary meshes in time-accurate calculations, not continuous mesh motion, a physically periodic RANS response, or a comparison of turbulence-model accuracy.
+
+\section{Solution-transfer operators}
+\label{sec:numerical-framework}
+
+\subsection{Representation and reconstructed derivatives}
+\label{sec:derivative-reconstruction}
+
+The source and target meshes, $A$ and $B$, cover the same discretized domain $\Omega$. Their nodal values are $U_A$ and $U_B$, and $M_M=\operatorname{diag}(w_i^M)\otimes I$ contains the positive control-volume weights of the vertex-centered flow solver on mesh $M$. For one component $\phi$, the solver's integral is
+\begin{equation}
+ Q_M(\phi_M)=\sum_i w_i^M\phi_{M,i}.
+ \label{eq:fv-discrete-integral}
+\end{equation}
+All compared transfers return values at the solver vertices. Density, momentum, and total energy are transferred in conserved-variable form; nonlinear products are not reconstructed from separately interpolated primitive variables. Nodal sampling and control-volume averaging are different representation operators, even when the same weights are used to monitor an integral.
+
+Nearest-neighbor corrections and the quadratic source representation require derivatives recovered from surrounding nodal data. A weighted least-squares fit determines the coefficients in
+\begin{equation}
+ \phi_j-\phi_i\simeq g_i\cdot r_{ij}
+       +\tfrac12r_{ij}^{T}H_i r_{ij},\qquad r_{ij}=x_j-x_i.
+ \label{eq:wls-polynomial}
+\end{equation}
+The degree-one fit omits the Hessian; the degree-two fit retains it. With a full-rank, suitably scaled stencil and smooth data, polynomial reproduction gives an $O(h)$ gradient error for the linear fit and $O(h^2)$ gradient and $O(h)$ Hessian errors for the quadratic fit. These are conditional estimates: irregularity, anisotropy, rank deficiency, and weighting can degrade derivative recovery~\cite{BarthFrederickson1990,Barth1993,Mavriplis2003,DiskinThomas2008}. The third-order variants therefore use degree-two reconstruction. Their accuracy is checked numerically rather than inferred from the requested polynomial degree alone.
+
+\subsection{Nearest-neighbor and barycentric interpolation}
+\label{sec:point-transfer}
+
+Nearest-neighbor transfer selects the closest source vertex $n(j)$ to each target vertex and evaluates a Taylor expansion there. With $r_j=x_j^B-x_{n(j)}^A$, the three variants are
+\begin{align}
+ (\calI^{\mathrm{NN1}}_{AB}\phi_A)_j&=\phi_{A,n(j)},\label{eq:nn1}\\
+ (\calI^{\mathrm{NN2}}_{AB}\phi_A)_j&=\phi_{A,n(j)}+g_{n(j)}\cdot r_j,\label{eq:nn2}\\
+ (\calI^{\mathrm{NN3}}_{AB}\phi_A)_j&=\phi_{A,n(j)}+g_{n(j)}\cdot r_j
+                 +\tfrac12r_j^TH_{n(j)}r_j.\label{eq:nn3}
+\end{align}
+Thus NN1 copies a value, NN2 accounts for local slope, and NN3 also accounts for curvature. No containing-element search is required. For $|r_j|=O(h)$ and accurate derivatives, their smooth-field errors are respectively $O(h)$, $O(h^2)$, and $O(h^3)$. The selected donor changes discontinuously across source-node Voronoi boundaries, so a smooth displacement need not produce a smooth change in the interpolation error.
+
+Barycentric interpolation instead locates the source simplex containing the target point. A conforming triangulated or tetrahedralized view of the original mesh supplies this search geometry, using original vertices rather than an augmented control-volume point set. If the containing simplex has vertices $x_{i_r}^A$, its barycentric coordinates satisfy
+\begin{equation}
+ x_j^B=\sum_{r=1}^{d+1}\lambda_r x_{i_r}^A,
+ \qquad \sum_r\lambda_r=1,\qquad \lambda_r\geq0.
+ \label{eq:barycentric-coordinates}
+\end{equation}
+They express the target point as a geometric weighted average of the simplex vertices. Applying the same weights to the field gives
+\begin{align}
+ (\calI^{\mathrm{BAR2}}_{AB}\phi_A)_j
+ &=\sum_r\lambda_r\phi_{A,i_r},\label{eq:bar2}\\
+ (\calI^{\mathrm{BAR3}}_{AB}\phi_A)_j
+ &=\sum_r\lambda_r\left[\phi_{A,i_r}
+       +\tfrac12 g_{i_r}\cdot(x_j^B-x_{i_r}^A)\right].\label{eq:bar3}
+\end{align}
+\label{sec:barycentric-transfer}
+BAR2 is affine-exact and already second order. For a quadratic field with exact vertex gradients, the half-gradient term in BAR3 cancels the quadratic interpolation remainder, yielding third-order consistency. The factor $1/2$ follows from this cancellation rather than from calibration. Both expressions are continuous across a conforming simplex interface when shared vertices have unique values and gradients. Neither enforces Eq.~\eqref{eq:fv-discrete-integral} between meshes.
+
+Limiting is separate from nominal order. A factor $0\leq\Phi_i\leq1$ may scale both derivative terms in NN3, so $\Phi_i=0$ recovers NN1; in BAR3 it scales the gradient correction and recovers BAR2, not a piecewise-constant interpolant. The smooth verification uses unlimited reconstruction. The discontinuous tests compare unlimited and Barth--Jespersen-limited transfer~\cite{BarthJespersen1989}; differentiable and higher-order limiter constructions provide related alternatives~\cite{Venkatakrishnan1995,MichalakOllivierGooch2009,Nishikawa2022}. Damping a quadratic with a factor chosen from linear increments alone does not establish boundedness at every evaluation point. The measured extrema and the final thermodynamic admissibility of the state remain necessary diagnostics.
+
+\subsection{Galerkin projection and common-refinement integration}
+\label{sec:galerkin-projection}
+
+Galerkin projection determines a coupled target field rather than evaluating each target point independently. Let $V_B^p$ be the continuous degree-$p$ Lagrange space on the target simplicial mesh. The projection of a source representation $\phi_A^h$ satisfies
+\begin{equation}
+ (\phi_B^h-\phi_A^h,v_B)_{L_2(\Omega)}=0
+ \quad\forall v_B\in V_B^p,
+ \label{eq:galerkin-orthogonality}
+\end{equation}
+and minimizes the $L_2$ distance to that source representation~\cite{FarrellMaddison2011,JiaoHeath2004}. For $\phi_B^h=\sum_jv_jN_j^B$, this gives
+\begin{equation}
+ H_Bv=b,\qquad
+ (H_B)_{ij}=\int_\Omega N_i^BN_j^B\dd x,\qquad
+ b_i=\int_\Omega N_i^B\phi_A^h\dd x.
+ \label{eq:galerkin-system}
+\end{equation}
+The consistent mass matrix $H_B$ is sparse and positive definite. Its off-diagonal entries couple basis functions sharing target elements; solving the system determines all coefficients simultaneously. It is distinct from the diagonal finite-volume matrix $M_B$ used in time integration.
+
+The load vector is the cross-mesh operation. On one target element, $N_i^B$ has a fixed polynomial expression, but the source field may cross several source-element boundaries and change polynomial expression within that element. Consequently,
+\begin{equation}
+ b_i=\sum_{K_B}\sum_{K_A:\,|K_A\cap K_B|>0}
+       \int_{K_A\cap K_B}N_i^B\phi_A^h\dd x.
+ \label{eq:galerkin-load-intersections}
+\end{equation}
+Each intersection fixes both polynomial expressions and permits exact polynomial quadrature. These intersections form the source--target common refinement; they may be integrated locally without storing a complete additional mesh. Coverage must be complete and nonoverlapping. Products require degree-two quadrature for $P^1$/$P^1$ transfer and degree-four quadrature for $P^2$/$P^2$ transfer on affine simplices~\cite{Dunavant1985,Keast1986}. This geometric integration and the mass-matrix solve distinguish projection from the point searches in NN and BAR.
+
+GP2 uses $P^1$ source and target spaces. GP3 uses $P^2$ spaces, introducing edge coefficients internally. With $d_{ij}=x_i-x_j$ and $\overline H_{ij}=(H_i+H_j)/2$, the source midpoint value is reconstructed as
+\begin{equation}
+ \phi_{ij}=\tfrac12(\phi_i+\phi_j)
+                 -\tfrac18d_{ij}^T\overline H_{ij}d_{ij}.
+ \label{eq:gp3-edge-value}
+\end{equation}
+For a quadratic, the subtracted curvature term is exactly the difference between the endpoint average and the midpoint value. GP3 then solves for the complete quadratic target field, but only its original-vertex values are supplied to the flow solver. Nominal $L_2$ approximation orders are two and three under the usual smoothness and mesh-stability assumptions; nodal accuracy after this complete pipeline is assessed separately.
+
+\label{sec:simplicial-representation}
+On mixed-element grids, BAR and GP use conforming subdivisions based on a deterministic shared-face diagonal rule. The approximation is $P^p$ on the simplices, not $Q^p$ on the native quadrilaterals or hexahedra. A valid conforming split and the chosen control-volume weights must therefore be retained consistently in geometric and integral checks.
+
+\subsection{Which integral is conserved?}
+\label{sec:global-correction}
+\label{sec:galerkin-vertex-output}
+
+For an unconstrained target space containing constants, Eq.~\eqref{eq:galerkin-orthogonality} preserves the integral of the complete finite-element field. Coordinate functions also belong to continuous $P^1$, and quadratic coordinates belong to $P^2$. Exact projection therefore preserves the corresponding consistent moments before constraints, sampling, or limiting. This is not finite-volume conservation over arbitrary target cells: their indicator functions generally do not belong to the continuous test space. Nor is the inverse mass matrix a local transfer operator. Equality of source and target geometry on one subregion does not by itself make the projection the identity there.
+
+For GP2, the consistent and solver-lumped integrals coincide when $w_i^M=\int N_i^M\dd x$ on both meshes. For GP3, source lifting and target vertex restriction each introduce a representation-dependent difference. In particular, a third-order projected field does not imply an $O(h^3)$ lumped-integral defect. Appendix~\ref{app:quadrature-mismatch} gives a quadratic counterexample with an $O(h^2)$ discrepancy. The consistent projection, the stored restart field, and any repaired field are consequently distinguished throughout the comparison.
+
+A global correction can enforce a chosen solver integral independently of the transfer construction. For a raw nodal field $\phi_B^r$, it seeks a correction $c$ such that
+\begin{equation}
+ \sum_j w_j^B c_j=Q_A(\phi_A)-Q_B(\phi_B^r),
+ \qquad \ell_j\leq\phi_{B,j}^r+c_j\leq u_j.
+ \label{eq:global-correction-constraint}
+\end{equation}
+The implemented repair redistributes the defect over nodes with available capacity, freezing saturated nodes~\cite{ShashkovWendroff2004,KucharikShashkovWendroff2003}. Feasibility requires the requested integral to lie between the weighted lower and upper bounds, with fixed boundary values included. Source-range bounds on individual conserved components do not alone guarantee positive pressure. Accuracy is retained only if the correction is sufficiently small in the accuracy norm; a small total defect does not itself bound every nodal increment.
+
+\label{sec:galerkin-limiter}
+The optional NN/BAR correction is denoted by the suffix GC. GP additionally uses a projection-level limiter: source-vertex values in overlapping elements define $[\ell_j,u_j]$, widened by $\tau$ times the global source range. Clipping is followed by redistribution preserving a selected lumped total. Hard limiting sets $\tau=0$; soft limiting allows a controlled excursion. Once active, this nonlinear post-processing need not preserve Galerkin orthogonality, first moments, or the best-approximation property. For GP2, preserving its lumped total preserves its consistent mass only under the weight compatibility above. For vertex-only GP3, no such implication holds automatically. These qualifications matter when interpreting the method labels in the numerical results.
+
+\section{BDF2 response to a mesh change}
+\label{sec:restart-consistency}
+
+\subsection{Reference trajectories and history mismatch}
+\label{sec:unsteady-discretization}
+\label{sec:native-transfer-decomposition}
+
+Between remeshing events, the mesh is fixed and the semi-discrete equations are
+\begin{equation}
+ M_M\dot U_M+F_M(U_M,t)=0.
+ \label{eq:semidiscrete}
+\end{equation}
+The residual can contain Euler, viscous, or RANS terms; the state must include every transported variable required by the time integrator. The constant-step BDF2 equation on the target mesh is
+\begin{equation}
+ \Phi_B(Y;V,W)=\frac{M_B}{\Delta t}
+       \left(\tfrac32Y-2V+\tfrac12W\right)+F_B(Y,t^{n+1})=0.
+ \label{eq:bdf2}
+\end{equation}
+This form is not a general moving-volume ALE formula. Continuously moving meshes require consistent geometric history terms and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; those are outside the fixed-mesh-between-transfers derivation.
+
+Let $U_A^k$ and $U_B^k$ be native trajectories for the same physical problem, computed on the two meshes. The transferred histories and their target-referenced discrepancies are
+\begin{equation}
+ \widehat U_B^k=\calI_{AB}(U_A^k),\qquad
+ \eps^k=\widehat U_B^k-U_B^k,\qquad k=n,n-1.
+ \label{eq:history-defects}
+\end{equation}
+Here $\calI_{AB}$ includes all limiting, correction, and restart-field processing. Let $\Pi_Mu^k$ represent a common exact field in the solver's chosen data representation, and $e_M^k=U_M^k-\Pi_Mu^k$. An exact decomposition, valid also for nonlinear transfer, is
+\begin{align}
+ \eps^k={}&\underbrace{\calI_{AB}(\Pi_Au^k)-\Pi_Bu^k}_{\text{transfer consistency}}\notag\\
+ &+\underbrace{\calI_{AB}(U_A^k)-\calI_{AB}(\Pi_Au^k)-e_B^k}_{\text{propagated source error and target error}}.
+ \label{eq:defect-decomposition}
+\end{align}
+Only for a linear transfer may the second line be replaced by $\calI_{AB}e_A^k-e_B^k$.
+
+Thus a native-target reference does not make $\eps^k$ a pure interpolation error. It puts both states into the same target evolution problem while retaining their pre-existing discretization mismatch. For an output $G$, the decomposition
+\begin{align}
+ G_B(\widehat U_B^k)-G_A(U_A^k)
+ ={}&[G_B(U_B^k)-G_A(U_A^k)]\notag\\
+ &+[G_B(\widehat U_B^k)-G_B(U_B^k)]
+ \label{eq:observable-decomposition}
+\end{align}
+separates native mesh sensitivity from the target-referenced restart discrepancy, not from an independently known consistency error. Comparisons of different transfers from the same source histories to the same target provide the controlled method comparison.
+
+\subsection{Exact history forcing and local state response}
+
+At any common trial state $Y$, changing only the histories gives the exact identity
+\begin{equation}
+ \Phi_B(Y;U_B^n+\eps^n,U_B^{n-1}+\eps^{n-1})
+ -\Phi_B(Y;U_B^n,U_B^{n-1})
+ =-\frac{M_B}{\Delta t}\eta^n,
+ \quad \eta^n=2\eps^n-\tfrac12\eps^{n-1}.
+ \label{eq:history-residual-identity}
+\end{equation}
+This identity does not require a linear spatial residual or small transfer errors. It tests history assembly provided both residual evaluations use exactly the same trial state and residual convention.
+
+For the solved states, define $\delta^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$. Let $r$ and $\widehat r$ be the remaining BDF2 algebraic residuals. Subtraction and expansion about the native target state give
+\begin{equation}
+ A_B\delta^{n+1}=M_B\eta^n+\Delta t(\widehat r-r)
+                -\Delta t\,\mathcal N_B(\delta^{n+1}),\qquad
+ A_B=\tfrac32M_B+\Delta t J_B,
+ \label{eq:linearized-bdf2-response}
+\end{equation}
+where $J_B=\partial F_B/\partial U$ and $\mathcal N_B$ is the nonlinear Taylor remainder. With a locally Lipschitz Jacobian, $\mathcal N_B(\delta)=O(\|\delta\|^2)$. If $A_B$ is locally invertible, the perturbations are small, and algebraic errors are negligible,
+\begin{equation}
+ \delta^{n+1}=R_B\eta^n+O(\Delta t\|\eta^n\|^2),
+ \qquad R_B=A_B^{-1}M_B.
+ \label{eq:state-response}
+\end{equation}
+The constants are local to the mesh, state, time step, and norm; they are not assumed uniform over arbitrary anisotropic mesh families. Active limiter switches or insufficient inner convergence may invalidate this smooth-response approximation, but not Eq.~\eqref{eq:history-residual-identity}.
+
+The steady experiment uses one spatial discrepancy $\eps^\star=\calI_{AB}U_A^\star-U_B^\star$ and assigns it independently to the two histories:
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+History configuration & $\eps^n$ & $\eps^{n-1}$ & $\eta^n$\\
+\midrule
+Native & $0$ & $0$ & $0$\\
+Full & $\eps^\star$ & $\eps^\star$ & $3\eps^\star/2$\\
+Latest only & $\eps^\star$ & $0$ & $2\eps^\star$\\
+Older only & $0$ & $\eps^\star$ & $-\eps^\star/2$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\label{eq:naca-history-decomposition}
+These diagnostic restarts predict
+\begin{equation}
+ \delta_n\simeq\tfrac43\delta_{\mathrm{full}},\qquad
+ \delta_{n-1}\simeq-\tfrac13\delta_{\mathrm{full}},\qquad
+ \delta_{\mathrm{full}}\simeq\delta_n+\delta_{n-1}.
+ \label{eq:naca-history-ratios}
+\end{equation}
+The older-only case distinguishes the two-history forcing from a latest-state diagnostic. All three perturbations nevertheless use the same spatial direction: recovering their ratios is a test of directional response, not a complete validation of $R_B$ for arbitrary history fields.
+
+\subsection{Aerodynamic response and propagation}
+\label{sec:delayed-response}
+
+For a differentiable aerodynamic functional with gradient $g_B^{n+1}$, the first-step discrepancy is
+\begin{equation}
+ \Delta G^{n+1}=(g_B^{n+1})^T R_B\eta^n+O(\|\eta^n\|^2).
+ \label{eq:force-response}
+\end{equation}
+Equivalently, $A_B^Tz_B=g_B^{n+1}$ gives $\Delta G^{n+1}=z_B^TM_B\eta^n$ to first order~\cite{GilesPierce2000}. The error is weighted by the target dynamics and the output sensitivity, not by a constant conservation test. Conservation of the source integral constrains only
+\begin{equation}
+ \bm1^TM_B\eps^k=Q_A(U_A^k)-Q_B(U_B^k),
+ \label{eq:gc-native-mismatch}
+\end{equation}
+which need not vanish because the native integrals may differ.
+
+A slope discrepancy must include the output difference already present at the transfer time:
+\begin{equation}
+ \frac{\Delta G^{n+1}-\Delta G^n}{\Delta t}
+ \simeq\frac{(g_B^{n+1})^TR_B\eta^n-(g_B^n)^T\eps^n}{\Delta t}.
+ \label{eq:force-slope-diagnostic}
+\end{equation}
+Dividing the first-step output difference alone by $\Delta t$ is generally not this quantity. Cancellation between the two terms also prevents a universal force-kink scaling from being inferred from interpolation order alone.
+
+For later steps, linearization along the native target trajectory gives
+\begin{equation}
+ \begin{bmatrix}\delta^{k+1}\\\delta^k\end{bmatrix}
+ \simeq
+ \begin{bmatrix}2R_B^{k+1}&-R_B^{k+1}/2\\I&0\end{bmatrix}
+ \begin{bmatrix}\delta^k\\\delta^{k-1}\end{bmatrix}.
+ \label{eq:multistep-propagation}
+\end{equation}
+Repeated application connects the initial histories to a delayed output. This explains why a first-step force difference need not bound the later excursion. A dominant disturbance originating away from the airfoil may become measurable after acoustic or convective transport, but neither the inverse mass matrix of projection nor an implicit time step has compact support. Distance-dependent arrival is therefore measured by amplitude thresholds, not by a claim of strict first-nonzero causality.
+
+\section{Numerical experiments and assessment}
+\label{sec:methodology}
+
+\subsection{Static transfer and repeated Euler transport}
+\label{sec:static-verification}
+\label{sec:riemann-methodology}
+
+The static tests separate transfer error from flow-solver error. The asymmetric smooth density is
+\begin{equation}
+ \phi=\rho_\infty\left[2+0.3e^{0.8x/L_x+0.5y/L_y}
+              \sin(2\pi x/L_x)\sin(2\pi y/L_y)\right].
+ \label{eq:asymmetric-manufactured-field}
+\end{equation}
+The field is transferred to structured quadrilateral and independently generated mixed triangular/quadrilateral target meshes at nominal resolutions 64, 128, and 256; the source mesh has half the target nominal resolution. Errors are relative nodal density $L_2$ differences from the analytic value at the target points. The effective spacing is defined as $h_{\mathrm{eff}}=N_{\mathrm{nodes}}^{-1/2}$; on this fixed domain it is used only to define refinement ratios. The discontinuous test replaces the smooth field with a circular inclusion of radius $0.25\min(L_x,L_y)$ and density levels 1.2 and 3.6. Because the curved interface is not mesh-aligned, unlimited and limited transfers can be compared on a common unresolved discontinuity.
+
+Consecutive and fitted orders are obtained from
+\begin{equation}
+ p_{k,k+1}=\frac{\log(E_k/E_{k+1})}{\log(h_k/h_{k+1})},
+ \qquad \log E\simeq p_{\mathrm{fit}}\log h+b.
+ \label{eq:pairwise-observed-order}
+\end{equation}
+The three-level sequences are used to check consistency with the nominal orders, not to estimate mesh-independent asymptotic constants. A second smooth test on the structured Riemann mesh family keeps the mean displacement-to-spacing ratio near 0.057 and is reported in Appendix~\ref{app:static-details}.
+
+The unsteady Riemann calculation solves two-dimensional Euler flow on $[0,5]\times[0,1]$, with a uniform $501\times101$-node quadrilateral mesh, $h=0.01$, $\Delta t=10^{-3}$, and 400 physical steps. At each event, the original mesh receives a new bounded random displacement in $x$, with boundary vertices fixed. Distortion is not accumulated geometrically from one event to the next. The bound is the minimum incident corner-triangle altitude divided by SafeFactor, denoted SF. Two transfers per block give 80 transfers for a ten-step interval or 400 for a two-step interval. SF4 is the baseline; SF2 doubles the displacement bound. A no-remeshing calculation supplies a fixed-mesh reference. This experiment measures the combined effect of changing spatial discretization and transferring the solution, not a pure interpolation error relative to an exact flow.
+
+Interpolation-only integral changes are sampled immediately before and after each transfer and summed separately from physical evolution. Density and energy are used because their reference integrals are away from zero. Spatial transport is assessed with two distinct diagnostics: maximum-gradient location and jump/maximum-gradient thickness, or the 50\% crossing and 10--90\% width of a sampled $y$-averaged density profile. Their reference positions, 2.6984 and 2.3993, are not interchangeable. The latter tracker is used for the frequency/amplitude comparisons. The transition is broad; these are operational profile diagnostics rather than independently validated sharp-shock positions. Only one random sequence is available, and the NN1 crossing is sensitive to the sampling grid.
+
+\subsection{NACA~0012: independent meshes and controlled histories}
+\label{sec:naca-fixed-methodology}
+
+The aerodynamic case is Euler flow over NACA~0012 at $M_\infty=0.1$ and $\alpha=6^\circ$, with $p_\infty=\rho_\infty=T_\infty=1$, $a_\infty=\sqrt{1.4}=1.18322$, and $U_\infty=0.118322$. BDF2 dual-time integration uses $\Delta t=10^{-3}$. Forces are pressure-only, with unit reference chord and area and moment reference $x/c=0.25$. The nonzero steady computed drag is treated as a numerical load, not as skin friction or shock-induced wave drag; absolute coefficient changes are used.
+
+The independent source and target meshes contain 16,255/32,077 and 22,508/44,583 nodes/triangles, respectively. Both share the same 370 airfoil vertices and 63-node farfield polygon at 100 chords. The surface geometry is therefore unchanged although the interior meshes differ. Each native steady solution is advanced with equal BDF2 histories to create its own reference trajectory. Transfers from $A$ to $B$ then populate the history configurations of Eq.~\eqref{eq:naca-history-ratios}. All comparisons of their solved responses use the native target trajectory at the same physical step.
+
+State discrepancies use the nondimensional volume-weighted norm $\|v\|_M=(v^TMv)^{1/2}$, summed over the stored flow components. Because the farfield occupies most of the domain, this norm emphasizes the global state and is complemented by near-wall and force diagnostics. Vector superposition is assessed by
+\begin{equation}
+ e_{\mathrm{sup}}=
+ \frac{\|\delta_{\mathrm{full}}-\delta_n-\delta_{n-1}\|_{M_B}}
+      {\|\delta_{\mathrm{full}}\|_{M_B}},
+ \label{eq:history-superposition-error}
+\end{equation}
+with the analogous scalar expression for lift. Signed force ratios and positive state-norm ratios are kept distinct.
+
+The solver exports $-\Phi_B$, including the temporal residual. Initial residuals are compared before the first update and only for cases sharing a trial state: older-only versus native at $U_B^\star$, and latest-only versus full at $\widehat U_B^\star$. Their $\Delta\eta$ values are respectively $-\eps^\star/2$ and $+\eps^\star/2$. The sign is converted to the convention of Eq.~\eqref{eq:history-residual-identity}. Single-precision exports limit the interpretation of the smallest residual differences. First-step forces and subsequent 50-step summaries provide separate assessments of immediate and later response.
+
+\subsection{Repeated airfoil remeshing and localized disturbances}
+
+The repeated-remeshing experiment perturbs the source mesh between wall distances 0.01 and 20 chords while keeping the boundaries fixed. Thirty-nine mesh replacements occur, one every ten physical steps in the 400-step window. NN2 and GP2 are evaluated on the same two random deformation sequences, and force differences are formed relative to the no-remeshing trajectory. Least-squares slopes are quoted per 100 physical steps as descriptive summaries; the associated regression standard errors refer to each individual correlated time series and are not ensemble uncertainties.
+
+A separate one-event experiment perturbs narrow wall-distance bands centered at $d/c=0.05$, 0.10, and 0.20, then continues without further adaptation. Force onset is the first crossing of a selected fraction of that case's peak response. Fixed pressure shells provide a less spatially integrated diagnostic through their root-mean-square pressure difference. A shell a distance $d-r$ inside the launch band has the approximate acoustic lag $(d-r)/(a_\infty\Delta t)\simeq845(d-r)$. This is a low-Mach scale estimate; actual characteristics depend on local velocity, sound speed, and propagation direction.
+
+The no-remeshing trajectory is the reference for this localized-event experiment, whereas the mixed-history study uses an independently evolved target-mesh reference. Even though the meshes coincide outside the displaced band, the transfer is not guaranteed to remain strictly local. An immediate response is observed up to about $0.08c$ inward of the band; those shells are excluded from the propagation fit. Projection coupling, limiter redistribution, the changed spatial operator, and the implicit update can all contribute to this near-instantaneous component.
+
+\subsection{Fixed-body RANS extension}
+\label{sec:rans-methodology}
+
+The RANS extension uses the fixed NACA~0012 at $M_\infty=0.1$, $\alpha=6^\circ$, and $Re_c=6\times10^6$, with Spalart--Allmaras (SA) and shear-stress-transport (SST) closures~\cite{SpalartAllmaras1994,Menter1994}. The objective is to measure remeshing-induced transients about a nominally steady viscous solution, including turbulence histories and skin-friction loads. Both closures use the same hybrid mesh with 29,956 vertices, 14,070 quadrilaterals, 31,339 triangles, 370 airfoil vertices, and a farfield at $100c$. The first off-wall spacing is approximately $5\times10^{-6}c$, and the quadrilateral region extends to about $0.053c$. Surface values reach $y^+\simeq\RansMaxYplus$; the mesh is therefore treated as the resolution used for this comparison, not as an independently grid-converged wall treatment.
+
+Mean-flow fluxes use HLLC with MUSCL reconstruction and a Venkatakrishnan limiter. Turbulence convection uses scalar upwinding without MUSCL reconstruction. The second-order transfer label therefore does not describe the order of every term in the receiving RANS discretization. BDF2 uses $\Delta t=10^{-3}$, 50 inner iterations per physical step, CFL~6, and FGMRES with ILU preconditioning and a 60-iteration linear limit. Here the velocity reference is the freestream sound speed: $a_\infty=1$ and $U_\infty=0.1$, unlike the Euler normalization in Sec.~\ref{sec:naca-fixed-methodology}. The 400-step comparison spans only $tU_\infty/c=0.04$. Each closure has its own 800-step no-transfer reference, initialized with the same steady and startup histories as its perturbed calculations. References are subtracted at matching steps; their startup relaxation is not treated as statistical noise.
+
+The repeated-remeshing comparison uses NN2 and limited GP2 with two prescribed deformation sequences and one mesh replacement every ten physical steps. Surface vertices and the 12,233 vertices with $d_w<0.01c$ are fixed; nodes farther from the wall may move out to $20c$. SF4 sets the baseline displacement limit and a mesh-quality floor of 0.2 is enforced. For each seed, NN2 and GP2 see exactly the same mesh sequence. Thirty-nine replacements are followed by at least one physical step in the analyzed window; the terminal history export is excluded because no subsequent force sample is available. A separately converged solution on the first displaced mesh quantifies the change in the native discrete equilibrium. The one-event GP2 cases perturb the bands $[0.05,0.10]c$, $[0.10,0.15]c$, and $[0.20,0.25]c$, with selected SF2 and longer-window variants.
+
+Density, momentum, energy, and both BDF2 histories of the turbulence variables are transferred. Conservation is monitored for density-weighted $\widetilde\nu$ in SA and for density-weighted $k$ and $\omega$ in SST. After transfer, SST enforces the primitive-variable floors $k\geq10^{-10}$ and $\omega\geq10^{-4}$; SA has no analogous post-pass. Wall distance and eddy viscosity are recomputed on the receiving mesh. The comparison therefore concerns the complete NN2 and GP2 restart pipelines, including limiting and positivity processing. It does not isolate turbulence-history error from the simultaneous mean-flow transfer or test a separate RANS global-correction variant.
+
+Total loads are taken from the force histories. Pressure and friction contributions are additionally integrated from the exported surface fields using the same quadrature for case and reference. These differences resolve changes hidden by the six-decimal force-breakdown output, but the underlying surface fields remain single precision. Surface records duplicated at identical physical steps are counted once. The corresponding script, precision limitations, event accounting, and supporting diagnostics are documented in Appendix~\ref{app:rans-details}.
+
+\subsection{Evidence and reproducibility limits}
+\label{sec:evidence-limits}
+
+The convergence orders in the static tests can be recomputed directly from the stored error tables. The Riemann and Euler NACA datasets are mostly reduced summaries, while the RANS dataset also includes force histories, surface fields, and transfer-integral diagnostics. Raw restart states, complete residual vectors, case configurations, and full inner-iteration histories are not included. Numerical settings are therefore treated as run conditions, and conclusions that would require those missing quantities are kept outside the claims of the paper.
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Accuracy and boundedness of one-time transfer}
+\label{sec:results-asymmetric}
+\label{sec:results-discontinuous}
+
+Figure~\ref{fig:asym-l2-convergence} shows the smooth-field refinement results. NN1 is first order; NN2, BAR2, and GP2 are consistent with second order; NN3 is consistent with third order. BAR3 and GP3 have fitted slopes above three over the three-level interval, approaching approximately 3.2 on the finest pair. This is finite-range convergence behavior, not evidence of a higher designed order. On the finest mixed grid, the relative errors are approximately $2.6\times10^{-7}$ for BAR3, $3.4\times10^{-7}$ for GP3, and $2.6\times10^{-6}$ for NN3. These differences resolve smooth interpolation performance on the tested mesh family; they do not predict a corresponding ranking of restarted flow solutions.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{groupplot}[
+            group style={group size=2 by 1,horizontal sep=1.2cm},
+            transfer convergence axis,
+            width=0.45\textwidth,
+            height=0.34\textwidth,
+        ]
+        \nextgroupplot[
+            title={Structured quadrilateral grid},
+            ylabel={Relative $L_2$ error},
+            legend to name=legend:asym-l2,
+            legend columns=4,
+        ]
+        \addplot[scheme NN1] table[col sep=comma,x=h_Struct,y=Struct_NN1]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{NN1}
+        \addplot[scheme NN2] table[col sep=comma,x=h_Struct,y=Struct_NN2]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{NN2}
+        \addplot[scheme NN3] table[col sep=comma,x=h_Struct,y=Struct_NN3]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{NN3}
+        \addplot[scheme BAR2] table[col sep=comma,x=h_Struct,y=Struct_BAR2]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{BAR2}
+        \addplot[scheme BAR3] table[col sep=comma,x=h_Struct,y=Struct_BAR3]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{BAR3}
+        \addplot[scheme GP2] table[col sep=comma,x=h_Struct,y=Struct_GP2]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{GP2}
+        \addplot[scheme GP3] table[col sep=comma,x=h_Struct,y=Struct_GP3]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{GP3}
+        \addplot[reference slope] coordinates {(0.014,8.0e-3) (0.007,4.0e-3)} node[pos=0.55,above,sloped]{\scriptsize $h$};
+        \addplot[reference slope] coordinates {(0.014,1.2e-3) (0.007,3.0e-4)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
+        \addplot[reference slope] coordinates {(0.014,1.2e-4) (0.007,1.5e-5)} node[pos=0.55,above,sloped]{\scriptsize $h^3$};
+
+        \nextgroupplot[title={Unstructured mixed grid}]
+        \addplot[scheme NN1] table[col sep=comma,x=h_Mixed,y=Mixed_NN1]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme NN2] table[col sep=comma,x=h_Mixed,y=Mixed_NN2]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme NN3] table[col sep=comma,x=h_Mixed,y=Mixed_NN3]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme BAR2] table[col sep=comma,x=h_Mixed,y=Mixed_BAR2]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme BAR3] table[col sep=comma,x=h_Mixed,y=Mixed_BAR3]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme GP2] table[col sep=comma,x=h_Mixed,y=Mixed_GP2]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme GP3] table[col sep=comma,x=h_Mixed,y=Mixed_GP3]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[reference slope] coordinates {(0.012,8.0e-3) (0.006,4.0e-3)} node[pos=0.55,above,sloped]{\scriptsize $h$};
+        \addplot[reference slope] coordinates {(0.012,1.2e-3) (0.006,3.0e-4)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
+        \addplot[reference slope] coordinates {(0.012,1.2e-4) (0.006,1.5e-5)} node[pos=0.55,above,sloped]{\scriptsize $h^3$};
+        \end{groupplot}
+    \end{tikzpicture}
+    \vspace{0.5em}
+    \ref{legend:asym-l2}
+    \caption{Convergence of the density-transfer error for the smooth asymmetric field. Curves show the relative nodal $L_2$ error as the mesh is refined; gray guides correspond to $O(h)$, $O(h^2)$, and $O(h^3)$.}
+    \label{fig:asym-l2-convergence}
+\end{figure}
+
+The discontinuous test has a different regularity limit (Fig.~\ref{fig:disc-l2-convergence}). If an $O(1)$ error occupies an $O(h)$ neighborhood of the interface, its continuous $L_2$ norm scales as $h^{1/2}$. The fitted nodal-error slopes, approximately 0.51 on the structured grid and 0.43--0.45 on the mixed grid, are compatible with this mechanism. The individual intervals are less uniform; for example, the finest structured NN1 slope is approximately 0.33. The short sequence therefore supports reduced-order convergence, not a universal asymptotic rate for every variant. BAR3 and GP3 reduce the finest mixed-grid error from NN1's $6.58\times10^{-2}$ to approximately $4.92\times10^{-2}$ and $5.02\times10^{-2}$, respectively.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{groupplot}[
+            group style={group size=2 by 1,horizontal sep=1.2cm},
+            transfer convergence axis,
+            width=0.45\textwidth,
+            height=0.34\textwidth,
+        ]
+        \nextgroupplot[
+            title={Structured quadrilateral grid},
+            ylabel={Relative $L_2$ error},
+            legend to name=legend:disc-l2,
+            legend columns=4,
+        ]
+        \addplot[scheme NN1] table[col sep=comma,x=h_Struct,y=Struct_NN1]{\GeneratedDir/discontinuous_convergence_L2.csv}; \addlegendentry{NN1}
+        \addplot[scheme NN2] table[col sep=comma,x=h_Struct,y=Struct_NN2]{\GeneratedDir/discontinuous_convergence_L2.csv}; \addlegendentry{NN2}
+        \addplot[scheme NN3] table[col sep=comma,x=h_Struct,y=Struct_NN3]{\GeneratedDir/discontinuous_convergence_L2.csv}; \addlegendentry{NN3}
+        \addplot[scheme BAR2] table[col sep=comma,x=h_Struct,y=Struct_BAR2]{\GeneratedDir/discontinuous_convergence_L2.csv}; \addlegendentry{BAR2}
+        \addplot[scheme BAR3] table[col sep=comma,x=h_Struct,y=Struct_BAR3]{\GeneratedDir/discontinuous_convergence_L2.csv}; \addlegendentry{BAR3}
+        \addplot[scheme GP2] table[col sep=comma,x=h_Struct,y=Struct_GP2]{\GeneratedDir/discontinuous_convergence_L2.csv}; \addlegendentry{GP2}
+        \addplot[scheme GP3] table[col sep=comma,x=h_Struct,y=Struct_GP3]{\GeneratedDir/discontinuous_convergence_L2.csv}; \addlegendentry{GP3}
+        \addplot[reference slope] coordinates {(0.014,1.48e-1) (0.0105,1.28e-1)} node[pos=0.55,above,sloped]{\scriptsize $h^{1/2}$};
+        \addplot[reference slope] coordinates {(0.014,1.18e-1) (0.0105,8.85e-2)} node[pos=0.55,above,sloped]{\scriptsize $h$};
+        \addplot[reference slope] coordinates {(0.014,9.5e-2) (0.0105,5.34e-2)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
+        \addplot[reference slope] coordinates {(0.0080,8.0e-2) (0.0060,3.38e-2)} node[pos=0.55,below,sloped]{\scriptsize $h^3$};
+
+        \nextgroupplot[title={Unstructured mixed grid}]
+        \addplot[scheme NN1] table[col sep=comma,x=h_Mixed,y=Mixed_NN1]{\GeneratedDir/discontinuous_convergence_L2.csv};
+        \addplot[scheme NN2] table[col sep=comma,x=h_Mixed,y=Mixed_NN2]{\GeneratedDir/discontinuous_convergence_L2.csv};
+        \addplot[scheme NN3] table[col sep=comma,x=h_Mixed,y=Mixed_NN3]{\GeneratedDir/discontinuous_convergence_L2.csv};
+        \addplot[scheme BAR2] table[col sep=comma,x=h_Mixed,y=Mixed_BAR2]{\GeneratedDir/discontinuous_convergence_L2.csv};
+        \addplot[scheme BAR3] table[col sep=comma,x=h_Mixed,y=Mixed_BAR3]{\GeneratedDir/discontinuous_convergence_L2.csv};
+        \addplot[scheme GP2] table[col sep=comma,x=h_Mixed,y=Mixed_GP2]{\GeneratedDir/discontinuous_convergence_L2.csv};
+        \addplot[scheme GP3] table[col sep=comma,x=h_Mixed,y=Mixed_GP3]{\GeneratedDir/discontinuous_convergence_L2.csv};
+        \addplot[reference slope] coordinates {(0.012,1.28e-1) (0.0090,1.11e-1)} node[pos=0.55,above,sloped]{\scriptsize $h^{1/2}$};
+        \addplot[reference slope] coordinates {(0.012,1.05e-1) (0.0090,7.88e-2)} node[pos=0.55,above,sloped]{\scriptsize $h$};
+        \addplot[reference slope] coordinates {(0.012,8.8e-2) (0.0090,4.95e-2)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
+        \addplot[reference slope] coordinates {(0.0070,7.5e-2) (0.00525,3.16e-2)} node[pos=0.55,below,sloped]{\scriptsize $h^3$};
+        \end{groupplot}
+    \end{tikzpicture}
+    \vspace{0.5em}
+    \ref{legend:disc-l2}
+    \caption{Density-transfer error for the discontinuous circular inclusion. The $O(h^{1/2})$ guide shows the expected scaling for a mesh-unresolved jump; the $O(h)$, $O(h^2)$, and $O(h^3)$ guides show how the smooth-field orders are lost at the discontinuity.}
+    \label{fig:disc-l2-convergence}
+\end{figure}
+
+Accuracy and boundedness do not give the same ranking. Unlimited NN2, NN3, and BAR3 overshoot the upper plateau by 0.800, 0.426, and 0.133, respectively. Barth--Jespersen limiting removes the measured over- and undershoots, and adding GC reduces the source-to-target integral defect to floating-point level. Hard-limited GP2 is also bounded with a similarly small defect in this test, whereas vertex-only GP3 remains bounded but has a lumped integral defect of about $3\times10^{-4}$. Appendix~\ref{app:static-details} gives the complete boundedness and conservation results.
+
+A smooth single-transfer check on the Riemann mesh gives a complementary result: GC reduces the source-referenced density defect to approximately $10^{-15}$ for all seven base operators, while changing $L_1$ error by at most 0.64\% at that resolution. This is a small measured correction cost, not a guarantee that global repair preserves the convergence order on every mesh family. Appendix~\ref{app:static-details} provides the full values and the independently verified $L_1$ refinement sequence.
+
+\subsection{Accumulated transport under repeated remeshing}
+\label{sec:riemann-stress}
+\label{sec:riemann-multicycle}
+\label{sec:riemann-transition}
+
+After 80 transfers in the Riemann case, NN1 changes the density and energy integrals by $+0.0203\%$ and $+0.0211\%$ of their initial values. The remaining methods stay within $0.0023\%$ in net density change, and GP2 has the smallest median absolute per-transfer density defect, $1.07\times10^{-7}$ compared with $1.11\times10^{-5}$ for NN1. Signed accumulation can contain cancellation, so it should not be read as a statistical drift rate. Boundedness gives a different picture: NN1 and BAR2 introduce no new density extrema, whereas the unlimited derivative-based variants overshoot at every sampled transfer. The complete accumulation and profile results are in Appendix~\ref{app:riemann-stress-data}.
+
+Figure~\ref{fig:riemann-stress} compares the final transition position and width as the remeshing becomes more frequent and more severe. At SF4, increasing the number of transfers from 80 to 400 raises the position error from 1.28 to 7.56 cells for NN1 and from 1.10 to 8.12 cells for BAR2. With 400 transfers and the larger SF2 deformation, the corresponding errors are 25.78 and 26.43 cells, whereas GP2 remains at 0.09 cell in the tabulated extraction. The absolute NN1 crossing is sensitive to the profile-sampling procedure, so these values establish the qualitative amplification seen in this extraction rather than a universal rate.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{groupplot}[
+            group style={group size=2 by 1,horizontal sep=1.25cm},
+            transfer bar axis,
+            width=0.46\textwidth,
+            height=0.39\textwidth,
+            ybar,
+            xtick={1,2,3},
+            xticklabels={80/SF4,400/SF4,400/SF2},
+            x tick label style={font=\scriptsize},
+            xlabel={Transfer cycles / deformation setting},
+            enlarge x limits=0.17,
+            unbounded coords=jump,
+        ]
+        \nextgroupplot[
+            ylabel={Position error (cells)},
+            ymin=0,
+            ymax=29,
+            legend to name=legend:riemann-stress,
+            legend columns=4,
+        ]
+        \addplot[fill=black!65,draw=black] table[col sep=comma,x=idx,y=NN1_raw_pos]{\DataDir/riemann_stress_representative.csv}; \addlegendentry{NN1}
+        \addplot[fill=NavyBlue!65,draw=NavyBlue] table[col sep=comma,x=idx,y=NN1_global_pos]{\DataDir/riemann_stress_representative.csv}; \addlegendentry{NN1+GC}
+        \addplot[fill=BrickRed!65,draw=BrickRed] table[col sep=comma,x=idx,y=BAR2_pos]{\DataDir/riemann_stress_representative.csv}; \addlegendentry{BAR2}
+        \addplot[fill=Purple!65,draw=Purple] table[col sep=comma,x=idx,y=GP2_pos]{\DataDir/riemann_stress_representative.csv}; \addlegendentry{GP2}
+
+        \nextgroupplot[
+            ylabel={Width increase (cells)},
+            ymin=0,
+            ymax=4.0,
+        ]
+        \addplot[fill=black!65,draw=black] table[col sep=comma,x=idx,y=NN1_raw_width]{\DataDir/riemann_stress_representative.csv};
+        \addplot[fill=NavyBlue!65,draw=NavyBlue] table[col sep=comma,x=idx,y=NN1_global_width]{\DataDir/riemann_stress_representative.csv};
+        \addplot[fill=BrickRed!65,draw=BrickRed] table[col sep=comma,x=idx,y=BAR2_width]{\DataDir/riemann_stress_representative.csv};
+        \addplot[fill=Purple!65,draw=Purple] table[col sep=comma,x=idx,y=GP2_width]{\DataDir/riemann_stress_representative.csv};
+        \end{groupplot}
+    \end{tikzpicture}
+    \vspace{0.5em}
+    \ref{legend:riemann-stress}
+    \caption{Effect of remeshing frequency and deformation amplitude on the density transition. The left panel shows the final position error and the right panel the increase in 10--90\% width, both in baseline-cell units. SF4 is the baseline deformation and SF2 doubles the displacement bound; NN1+GC was not run for the 80-transfer case.}
+    \label{fig:riemann-stress}
+\end{figure}
+
+The raw/GC pair isolates the effect of enforcing the total density integral. At 400 transfers and SF2, the cumulative integral change is reduced from $3.2\times10^{-3}$ to $2.4\times10^{-13}$, yet the transition-position error changes only from 25.78 to 25.53 cells and the width increase from 3.53 to 3.25 cells. Global conservation therefore removes the scalar integral defect without removing the spatial transport error. This does not imply that finite-volume local conservation is necessary: higher-order pointwise methods also maintain small position errors in the frequency study, and the continuous Galerkin projection does not enforce arbitrary cellwise balances.
+
+\label{sec:riemann-moment-interpretation}
+The moment and limiter diagnostics in Appendix~\ref{app:riemann-moment-data} offer a possible interpretation, but not a causal identification. GP2 has smaller measured lumped centroid changes than BAR2 or NN1, consistent with the moment constraints of the unmodified projection. A whole-domain density centroid is not the 50\%-crossing position, however. Similarly, the unlimited GP2 excursion rises from $7.6\times10^{-6}$ to $3.6\times10^{-3}$ between the two displacement settings, suggesting stronger limiter activity. A global excursion alone does not determine activation of every local bound, and no resolved limiter-on/off width budget is available. The observed width increase cannot therefore be partitioned between projection, limiter repair, spatial discretization, and profile sampling.
+
+\FloatBarrier
+\subsection{Target-referenced NACA restart response}
+\label{sec:naca-bdf2-results}
+
+The native airfoil coefficients differ before any transfer (Table~\ref{tab:naca-native-states}). This baseline is essential: a restarted target state cannot be expected to reproduce the source-mesh force simply because the body geometry is shared. The native target trajectory also relaxes over its 51-step observation window, spanning $1.9\times10^{-4}$ in lift, $1.4\times10^{-4}$ in drag, and $5.7\times10^{-5}$ in moment. Responses are differenced from that trajectory step by step. The span is a deterministic reference variation, not an independently established noise floor or a bound on inner-solve error.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Steady Euler NACA~0012 solutions obtained independently on the source mesh $A$ and target mesh $B$. Their load difference is the native mesh-to-mesh discretization difference against which the restart response is interpreted.}
+    \label{tab:naca-native-states}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={mesh,nodes,triangles,CL,CD,CMz},
+        columns/mesh/.style={string type,column type=c,column name={Mesh}},
+        columns/nodes/.style={column type=c,column name={Nodes},fixed,precision=0},
+        columns/triangles/.style={column type=c,column name={Triangles},fixed,precision=0},
+        columns/CL/.style={column type=c,column name={$C_L$},fixed,precision=8},
+        columns/CD/.style={column type=c,column name={$C_D$},fixed,precision=8},
+        columns/CMz/.style={column type=c,column name={$C_m$},fixed,precision=8},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_native_convergence.csv}
+\end{table}
+
+For the transferred steady states, $\|U_B^\star\|_{M_B}=478.46$. The second- and third-order discrepancy norms range from $7.040\times10^{-4}$ to $7.243\times10^{-4}$, a spread below 3\%; NN1 gives $1.474\times10^{-3}$. This clustering is consistent with a shared native mesh mismatch, but does not separate that mismatch quantitatively from transfer error. The lowest tabulated norm belongs to BAR2, but the small spread does not establish a general ranking. Near-wall discrepancies can remain important despite relative whole-domain norms near $1.5\times10^{-6}$, because the normalization includes the large farfield.
+
+The common-trial residual pairs satisfy Eq.~\eqref{eq:history-residual-identity} with relative vector discrepancies of $2.4\times10^{-8}$--$4.2\times10^{-8}$ for NN/BAR, $4.4\times10^{-6}$ for GP2, and $1.3\times10^{-6}$ for GP3. This confirms the implemented BDF2 history signs and coefficients at the precision of the exported fields. The check concerns residual assembly; it does not test the accuracy of the subsequently converged nonlinear response.
+
+Figure~\ref{fig:naca-first-step-cl} provides the direct physical consequence of the older history. With $\eps^n=0$, the older-only lift difference is still $1.83\times10^{-3}$--$2.55\times10^{-3}$ for the five methods with complete first-step force summaries, and its sign is opposite to the corresponding full-history response. These magnitudes exceed the native target window's lift span, but that comparison is descriptive rather than a significance test. More importantly, a diagnostic based only on the latest history would assign zero perturbation to these cases, whereas the BDF2 forcing does not.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+    \begin{axis}[
+        transfer bar axis,
+        ybar,
+        width=0.9\textwidth,
+        height=0.48\textwidth,
+        bar width=7pt,
+        symbolic x coords={NN1,NN2,BAR2,GP2,GP3},
+        xtick=data,
+        ylabel={First-step $\Delta C_L$},
+        scaled y ticks=false,
+        yticklabel style={/pgf/number format/sci,/pgf/number format/precision=1},
+        legend style={font=\scriptsize,draw=none,at={(0.5,1.02)},anchor=south,legend columns=3},
+    ]
+        \addplot+[fill=NavyBlue!55,draw=NavyBlue] table[x=method,y=full,col sep=comma]{\DataDir/naca_first_step_CL_plot.csv};
+        \addlegendentry{Full histories}
+        \addplot+[fill=BrickRed!55,draw=BrickRed] table[x=method,y=latest,col sep=comma]{\DataDir/naca_first_step_CL_plot.csv};
+        \addlegendentry{Latest only}
+        \addplot+[fill=ForestGreen!55,draw=ForestGreen] table[x=method,y=older,col sep=comma]{\DataDir/naca_first_step_CL_plot.csv};
+        \addlegendentry{Older only}
+    \end{axis}
+    \end{tikzpicture}
+    \caption{First-step lift change produced by the four BDF2 history configurations, measured relative to the native target-mesh continuation. In the older-only restart the latest state is unchanged ($\eps^n=0$), so its nonzero response isolates the contribution of the $n-1$ history.}
+    \label{fig:naca-first-step-cl}
+\end{figure}
+
+Table~\ref{tab:naca-ratios-main} tests the directional response more closely. The latest/full state-norm ratios lie between 1.3330 and 1.3333, and the older/full magnitudes between 0.3335 and 0.3341. Their agreement with $4/3$ and $1/3$ is within 0.3\%. Signed lift ratios are within 1\% of the corresponding predictions except NN1's older/full ratio, which differs by approximately 4.7\%. Vector superposition is less exact than the norm ratios: its defect is 1.8--3.5\%, compared with 0.3--1.5\% for lift. This is evidence for approximate directional linearity of the tested histories, not verification of a quadratic remainder law or of the full Jacobian/adjoint prediction. Neither an amplitude-convergence study nor a direct solve with $A_B$ is available.
+\begin{table}[htbp]
+\centering\small
+\caption{Response ratios for the mixed-history restart. State ratios use positive norms, whereas the lift ratios retain their sign. The linearized BDF2 model predicts latest/full $=4/3$ and older/full $=1/3$ in norm, with a signed lift ratio of $-1/3$ for the older-only case.}
+\label{tab:naca-ratios-main}
+\pgfplotstabletypeset[col sep=comma,
+ columns={method,state_latest_full,state_older_full,CL_latest_full,CL_older_full},
+ columns/method/.style={string type,column type=l,column name={Method}},
+ columns/state_latest_full/.style={column type=c,column name={State: latest/full},fixed,precision=4},
+ columns/state_older_full/.style={column type=c,column name={State: older/full},fixed,precision=4},
+ columns/CL_latest_full/.style={column type=c,column name={Lift: latest/full},fixed,precision=4},
+ columns/CL_older_full/.style={column type=c,column name={Lift: older/full},fixed,precision=4},
+ every head row/.style={before row=\toprule,after row=\midrule},
+ every last row/.style={after row=\bottomrule}]{\DataDir/naca_superposition.csv}
+\end{table}
+
+\label{sec:naca-global-correction-results}
+Global correction provides a second controlled test. The corrected target-referenced density difference is $-8.12114\times10^{-4}$ for both NN1 and BAR2, as expected from Eq.~\eqref{eq:gc-native-mismatch}; it is not a residual source-conservation failure. For NN1, GC changes the state-discrepancy norm by $-0.0109\%$, the full-history first-step norm by $-0.00890\%$, and the lift response by $+0.0886\%$. For BAR2, the lift change is $-0.00274\%$. The response is therefore weakly affected by the correction in these pairs. The complete raw/corrected values are in Appendix~\ref{app:naca-bdf2-tables}.
+
+First-step agreement does not bound the later load excursion. The 50-step summaries show an NN1 peak lift difference of $2.697\times10^{-2}$, approximately 4.68 times its first-step value, followed by a final value of $-1.390\times10^{-4}$. The listed higher-order cases finish with 22--39\% of their first-step magnitudes. These endpoint and peak data support transient amplification for NN1 and subsequent reduction in the other cases; without the complete exported histories they do not independently establish monotonic decay at every intermediate step. Maximum full-history surface-$C_p$ differences of 0.29--0.45 further show that a small global norm need not imply a small local pressure response.
+
+\FloatBarrier
+\subsection{Load accumulation and delayed aerodynamic response}
+\label{sec:naca-force-drift}
+\label{sec:naca-delayed-results}
+
+The repeated-remeshing Euler airfoil case reveals behavior that a one-step norm cannot capture. Both deformation sequences produce a positive numerical-drag trend for GP2 and NN2 (Fig.~\ref{fig:naca-drag-drift}); averaging the two fitted slopes gives $6.6\times10^{-6}$ and $3.85\times10^{-5}$ per 100 physical steps, respectively, a ratio of 5.83. GP2 therefore reduces, but does not eliminate, the observed accumulation. With only two sequences, these slopes demonstrate repeatability for the tested realizations rather than a population drift rate.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+    \begin{axis}[
+        transfer bar axis,
+        ybar,
+        width=0.88\textwidth,
+        height=0.38\textwidth,
+        bar width=12pt,
+        symbolic x coords={GP2 seed 1,GP2 seed 2,NN2 seed 1,NN2 seed 2},
+        xtick=data,
+        x tick label style={rotate=20,anchor=east,font=\scriptsize},
+        ylabel={$C_D$ trend per 100 physical steps},
+        scaled y ticks=false,
+        yticklabel style={/pgf/number format/sci,/pgf/number format/precision=1},
+        error bars/y dir=both,
+        error bars/y explicit,
+    ]
+        \addplot+[fill=NavyBlue!45,draw=NavyBlue]
+        table[x=category,y=CD_trend,y error=CD_se,col sep=comma]{\DataDir/naca_force_drift.csv};
+    \end{axis}
+    \end{tikzpicture}
+    \caption{Mean numerical-drag trend over 39 repeated mesh replacements for GP2 and NN2, shown for two independent deformation sequences. Bars give the fitted change in $C_D$ per 100 physical steps; whiskers are ordinary regression standard errors for each individual time series.}
+    \label{fig:naca-drag-drift}
+\end{figure}
+
+The other loads constrain a symmetry-based interpretation. GP2's lift trend changes sign across seeds, whereas both NN2 lift slopes are positive and differ substantially in magnitude. NN2 also has closely matching negative moment trends, $-1.46\times10^{-5}$ and $-1.49\times10^{-5}$ per 100 steps. It is therefore not supported that lift and moment errors are generally zero-mean or that all non-drag effects average away. The drag comparison is compatible with accumulated numerical smoothing, but no entropy budget separates interpolation from the changed flow discretization. Conservation of a scalar integral alone would not imply absence of such a trend, consistent with the limitations of unconstrained projection discussed by Maddison and Hiester~\cite{MaddisonHiester2017}.
+
+For a single localized remeshing event, force-onset delays increase with launch distance (Fig.~\ref{fig:naca-acoustic-delay}). The 25\% and 50\% detectors bracket the approximate acoustic lag $845d$. Fits through the three radii have negative intercepts of roughly 8.5--18 steps in magnitude; these are not zero compared with the shortest delays. The high three-point $R^2$ values therefore do not establish a zero-intercept propagation law or uniquely exclude alternative onset mechanisms. Doubling displacement changes the measured arrival by at most two steps and the peak by a factor 1.63. This demonstrates limited sensitivity to that amplitude change, but a fraction-of-own-peak detector is already insensitive to pure amplitude scaling and cannot alone prove causality.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+    \begin{axis}[
+        width=0.78\textwidth,
+        height=0.48\textwidth,
+        grid=both,
+        xlabel={Launch radius $d/c$},
+        ylabel={Onset lag (physical steps)},
+        legend style={font=\scriptsize,draw=none,at={(0.02,0.98)},anchor=north west},
+        tick label style={font=\scriptsize},
+        label style={font=\small},
+    ]
+        \addplot+[NavyBlue,solid,mark=square*] table[x=distance,y=onset_25,col sep=comma]{\DataDir/naca_acoustic_delay.csv};
+        \addlegendentry{25\% of peak}
+        \addplot+[BrickRed,solid,mark=triangle*] table[x=distance,y=onset_50,col sep=comma]{\DataDir/naca_acoustic_delay.csv};
+        \addlegendentry{50\% of peak}
+        \addplot+[reference slope] table[x=distance,y=predicted,col sep=comma]{\DataDir/naca_acoustic_delay.csv};
+        \addlegendentry{$845d$ acoustic estimate}
+    \end{axis}
+    \end{tikzpicture}
+    \caption{Delay between a localized mesh-replacement event and the subsequent lift response. Onset is defined at 25\% and 50\% of each case's peak response and is plotted against the launch distance $d/c$; the gray line is the freestream acoustic travel-time estimate $845d$.}
+    \label{fig:naca-acoustic-delay}
+\end{figure}
+
+The pressure-shell results give more direct support for acoustic transport. Across six thresholds applied to the same event, lag slopes range from 782 to 917 steps per chord, corresponding to speeds of 1.09--1.28. Their mean speed is approximately 1.184, and the threshold-to-threshold standard deviation is 0.079; this spread is a detector-sensitivity measure, not a confidence interval from independent realizations. The range contains $a_\infty=1.18322$ and is well separated from the freestream convection speed 0.118322. A target-referenced check at the higher thresholds gives approximately 1.26--1.28, also on the acoustic scale. Together these observations support an acoustic interpretation of the dominant delayed disturbance while allowing an immediate, small nonlocal component. They do not verify the propagator or output adjoint quantitatively.
+
+\subsection{RANS load response on discretely changing meshes}
+\label{sec:rans-load-results}
+
+The RANS cases give a different method comparison from the Euler runs. Figure~\ref{fig:rans-loads} shows total- and friction-drag differences relative to the no-remeshing trajectory for each closure. Across the eight runs, the RMS total-drag difference is $(\RansCdRmsMin\text{--}\RansCdRmsMax)\times10^{-5}$. For each deformation sequence, NN2 and GP2 differ by less than 1\% in this aggregate measure, although their step-by-step difference still has an RMS of $(\RansPairRmsMin\text{--}\RansPairRmsMax)\times10^{-6}$. No consistent method ordering emerges. The clear GP2 advantage in the Euler drag trend therefore does not carry over to this short RANS comparison.
+
+\begin{figure}[tbp]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+ group style={group size=2 by 2,horizontal sep=1.0cm,vertical sep=1.25cm},
+ width=0.45\textwidth,height=4.3cm,
+ xmin=0,xmax=400,xtick={0,100,200,300,400},grid=major,
+ tick label style={font=\scriptsize},label style={font=\small},title style={font=\small},
+ legend style={font=\scriptsize,draw=none},scaled y ticks=false,
+]
+\nextgroupplot[title={SA},ylabel={$10^5\Delta C_D$},ymin=-13,ymax=13,ytick={-10,0,10},legend to name=ransloadlegend,legend columns=4]
+\addplot[NavyBlue,solid,thin] table[x=step,y expr=1e5*\thisrow{NN2_s1_dCD},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};\addlegendentry{NN2, seed 1}
+\addplot[NavyBlue,dashed,thin] table[x=step,y expr=1e5*\thisrow{NN2_s2_dCD},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};\addlegendentry{NN2, seed 2}
+\addplot[Purple,solid,thin] table[x=step,y expr=1e5*\thisrow{GP2_s1_dCD},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};\addlegendentry{GP2, seed 1}
+\addplot[Purple,dashed,thin] table[x=step,y expr=1e5*\thisrow{GP2_s2_dCD},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};\addlegendentry{GP2, seed 2}
+\nextgroupplot[title={SST},ymin=-13,ymax=13,ytick={-10,0,10}]
+\addplot[NavyBlue,solid,thin] table[x=step,y expr=1e5*\thisrow{NN2_s1_dCD},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
+\addplot[NavyBlue,dashed,thin] table[x=step,y expr=1e5*\thisrow{NN2_s2_dCD},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
+\addplot[Purple,solid,thin] table[x=step,y expr=1e5*\thisrow{GP2_s1_dCD},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
+\addplot[Purple,dashed,thin] table[x=step,y expr=1e5*\thisrow{GP2_s2_dCD},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
+\nextgroupplot[xlabel={Physical step},ylabel={$10^6\Delta C_D^{v}$},ymin=-1.6,ymax=0.1,ytick={-1.5,-1,-0.5,0}]
+\addplot[NavyBlue,solid,thin] table[x=step,y expr=1e6*\thisrow{NN2_s1_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};
+\addplot[NavyBlue,dashed,thin] table[x=step,y expr=1e6*\thisrow{NN2_s2_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};
+\addplot[Purple,solid,thin] table[x=step,y expr=1e6*\thisrow{GP2_s1_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};
+\addplot[Purple,dashed,thin] table[x=step,y expr=1e6*\thisrow{GP2_s2_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};
+\nextgroupplot[xlabel={Physical step},ymin=-1.6,ymax=0.1,ytick={-1.5,-1,-0.5,0}]
+\addplot[NavyBlue,solid,thin] table[x=step,y expr=1e6*\thisrow{NN2_s1_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
+\addplot[NavyBlue,dashed,thin] table[x=step,y expr=1e6*\thisrow{NN2_s2_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
+\addplot[Purple,solid,thin] table[x=step,y expr=1e6*\thisrow{GP2_s1_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
+\addplot[Purple,dashed,thin] table[x=step,y expr=1e6*\thisrow{GP2_s2_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
+\end{groupplot}
+\end{tikzpicture}
+\par\smallskip\ref{ransloadlegend}
+\caption{Drag response to repeated mesh replacement in the SA and SST calculations. The upper panels show the total-drag difference from the corresponding no-remeshing reference; the lower panels show the friction-drag contribution obtained from the surface fields. NN2 and GP2 use the same two deformation sequences within each closure. Note the different vertical scales in the two rows.}
+\label{fig:rans-loads}
+\end{figure}
+
+The friction contribution decreases in every run, with fitted slopes of $-(\RansViscTrendMin\text{--}\RansViscTrendMax)\times10^{-7}$ per 100 steps, while the larger total-drag excursions are dominated by pressure. The total-drag slopes are small compared with the oscillations, and the detrended histories have lag-one correlations of about 0.79--0.84. Appendix~\ref{app:rans-details} therefore reports the fits only as descriptive summaries. With two deformation sequences over this short window, the data support a paired finite-time comparison, not a long-time drift law or a statistical equivalence claim.
+
+Changing the mesh can itself alter the steady load. On the first displaced grid, the independently converged lift differs from the original-grid steady value by $-1.891\times10^{-3}$ for SA and $-9.649\times10^{-4}$ for SST. The corresponding mean lift deviations during the first ten-step GP2 continuation are instead $+1.318\times10^{-5}$ and $+1.150\times10^{-5}$. These are different questions: the first comparison measures native discrete equilibria, whereas the second measures a short continuation from transferred histories. The equilibrium difference cannot be subtracted as an instantaneous interpolation correction, nor do similar NN2 and GP2 loads show that changing the discretization is harmless. This is the distinction in Eq.~\eqref{eq:observable-decomposition} applied to the viscous case.
+
+\subsection{Turbulence transfer, integral preservation, and response localization}
+\label{sec:rans-state-results}
+
+Table~\ref{tab:rans-transfer-integrals} compares the integral change introduced at the transfer itself. For the SA working variable, GP2 lowers the maximum relative defect from $2.48\times10^{-6}$ to $4.08\times10^{-9}$. For SST, the corresponding reductions are $2.98\times10^{-6}$ to $2.59\times10^{-8}$ for $k$ and $8.15\times10^{-8}$ to $1.08\times10^{-9}$ for $\omega$; density and energy show the same ordering. These are source-to-target transfer defects, not differences from a native target solution. They also do not bound local errors, particularly for density and energy integrated over a $100c$ domain. Once time integration resumes, turbulence production, destruction, and transport legitimately change these integrals.
+
+\begin{table}[tbp]
+\centering\small
+\caption{Largest instantaneous change in each monitored integral when a RANS history state is transferred from the old mesh to the new one. Values are normalized by the source integral and pool both BDF2 histories, both deformation sequences, and the 39 mesh replacements followed by physical evolution (156 transfers per entry).}
+\label{tab:rans-transfer-integrals}
+\pgfplotstabletypeset[
+ col sep=comma,columns={model,quantity,NN2_max,GP2_max},
+ columns/model/.style={string type,column name={Closure},column type=l},
+ columns/quantity/.style={string type,column name={Inventory density},column type=c},
+ columns/NN2_max/.style={sci,precision=2,column name={NN2},column type=r},
+ columns/GP2_max/.style={sci,precision=2,column name={GP2},column type=r},
+ every head row/.style={before row=\toprule,after row=\midrule},
+ every last row/.style={after row=\bottomrule}
+]{\GeneratedDir/rans_integral_summary.csv}
+\end{table}
+
+This large difference in integral preservation is not mirrored by the aerodynamic loads in Fig.~\ref{fig:rans-loads}. It also does not keep the protected near-wall solution unchanged. At step 395, the eddy-viscosity difference on the fixed $d_w<0.01c$ vertices has an RMS equal to \RansEddyMin--\RansEddyMax\% of the maximum reference value on that band, with similar values for NN2 and GP2. Because the coordinates of these vertices are identical, the comparison is direct; however, it does not separate the initial transfer perturbation from the response to the changed spatial operator and subsequent transport.
+
+SST positivity enforcement is active during the repeated-remeshing runs. The largest per-transfer count is 415--423 vertices for GP2 and 13--19 for NN2. These counts do not measure the size of the correction, but they show that the field advanced by the solver is not the unconstrained projection alone. Appendix~\ref{app:rans-details} gives the clipping and fixed-band diagnostics. Because the mean-flow and turbulence histories were transferred together, the present data do not isolate the contribution of the turbulence variables to the viscous-load response.
+
+The localized RANS events do not resolve the propagation law observed in the Euler case. The 50\%-of-peak lift onsets are 3, 8, and 5 steps for launch bands at increasing distance, while the two nearer cases reach their peak near the end of the observation window. Moreover, \RansUnderResolvedShells\ of \RansProbeShells\ pressure-shell peaks are smaller than three single-precision pressure increments, and many of the remaining signals cross their thresholds within zero or one saved step. These records are therefore insufficient to determine a propagation speed. They show only that an immediate component is present at the available precision; they neither identify its mechanism nor rule out a later acoustic response.
+
+\section{Discussion and conclusions}
+\label{sec:conclusions}
+
+The evidence distinguishes three requirements of a remeshed time-accurate calculation: adequate spatial transfer, appropriate multistep histories, and sufficiently accurate evolution on the receiving mesh. Global integral preservation addresses only part of the first requirement. Its insufficiency is demonstrated by paired Riemann raw/GC comparisons; the importance of the older history is isolated by the Euler NACA restart. The exact common-trial residual identity and approximate BDF2 coefficient ratios support the history analysis without constituting a full validation of the nonlinear resolvent or aerodynamic adjoint.
+
+The fixed-body RANS cases add the two ingredients absent from the Euler tests: transported turbulence histories and viscous loads. GP2 preserves the monitored turbulence integrals much more closely than NN2, yet their total-drag RMS errors differ by less than 1\% for each paired deformation sequence and show no consistent ordering. Both methods also produce a small reduction in friction drag and comparable eddy-viscosity changes inside the protected near-wall vertex set. Integral preservation is therefore a useful transfer diagnostic, but it does not by itself rank the aerodynamic response. The behavior of the complete post-processed restart state is what matters to the receiving RANS calculation.
+
+Reference choice remains part of that evaluation. Independently converged grids have different discrete equilibria, and comparison with a no-remeshing trajectory includes changes in the spatial operator as well as transfer. Identical mesh sequences provide a controlled method comparison, not a pure interpolation-error measurement. Likewise, a spatially restricted mesh change need not produce a strictly localized field perturbation. The Euler pressure records support a dominant acoustic delay, whereas the RANS pressure precision, early nonlocal response, and window-dependent peaks do not establish a propagation law.
+
+The conclusions are limited to fixed physical domains and short remeshing-induced transients about nominally steady airfoil flows. The RANS extension is sufficient to assess turbulence-history transfer and viscous loads within that scope; body motion is a separate problem. The present 50-inner-iteration budget, short time horizon, protected near-wall region, and two deformation sequences are not sufficient for a long-time accuracy ranking or a production recommendation. Those stronger claims would require targeted physical-step and time-step checks, complete run configurations, and transfer-cost measurements. Continuous moving meshes, separated periodic flows, and a higher-order RANS method ranking are left outside the scope of this paper.
+
+\appendix
+\section{Additional static-transfer verification}
+\label{app:static-details}
+\label{sec:riemann-verification}
+\label{sec:results-asymmetric-conservation}
+\label{sec:riemann-global-correction}
+
+The fitted orders supplement the trends in Section~\ref{sec:results-asymmetric}; the underlying generated files also retain consecutive-level estimates. Smooth orders above the nominal value are interpreted over the available finite refinement range. For the discontinuity, the $h^{1/2}$ guide is conditional on an $O(h)$ interface-error band, not a theorem about every exported nodal norm.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Observed density $L_2$ convergence orders for the smooth asymmetric field. The table reports the least-squares slope through all three mesh levels; the finest-grid pairwise slope is retained in the data files for reference.}
+    \label{tab:asym-orders}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={scheme,nominal,Struct_fit,Mixed_fit},
+        columns/scheme/.style={string type,column name={Scheme}},
+        columns/nominal/.style={column name={Nominal},fixed,precision=0},
+        columns/Struct_fit/.style={column name={Structured},fixed,precision=2},
+        columns/Mixed_fit/.style={column name={Mixed},fixed,precision=2},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+        columns/scheme/.style={string type,column type=l,column name={Scheme}},
+        columns/nominal/.style={column type=c,column name={Nominal},fixed,precision=0},
+        columns/Struct_fit/.style={column type=c,column name={Structured},fixed,precision=2},
+        columns/Mixed_fit/.style={column type=c,column name={Mixed},fixed,precision=2},
+    ]{\GeneratedDir/asymmetric_orders.csv}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Observed density $L_2$ convergence rates for the discontinuous circular inclusion. The $1/2$ reference rate corresponds to the error contributed by a mesh-unresolved interface.}
+    \label{tab:disc-orders}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={scheme,nominal,Struct_fit,Mixed_fit},
+        columns/scheme/.style={string type,column type=l,column name={Scheme}},
+        columns/nominal/.style={column type=c,column name={Band scaling},fixed,precision=2},
+        columns/Struct_fit/.style={column type=c,column name={Structured},fixed,precision=2},
+        columns/Mixed_fit/.style={column type=c,column name={Mixed},fixed,precision=2},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\GeneratedDir/discontinuous_orders.csv}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{groupplot}[
+            group style={group size=2 by 1,horizontal sep=1.2cm},
+            transfer convergence axis,
+            width=0.45\textwidth,
+            height=0.34\textwidth,
+        ]
+        \nextgroupplot[
+            title={Structured quadrilateral grid},
+            ylabel={Reported $|$lumped defect$|$},
+            legend to name=legend:asym-cons,
+            legend columns=4,
+        ]
+        \addplot[scheme NN1] table[col sep=comma,x=h_Struct,y=Struct_NN1]{\GeneratedDir/asymmetric_conservation_defect.csv}; \addlegendentry{NN1}
+        \addplot[scheme NN2] table[col sep=comma,x=h_Struct,y=Struct_NN2]{\GeneratedDir/asymmetric_conservation_defect.csv}; \addlegendentry{NN2}
+        \addplot[scheme NN3] table[col sep=comma,x=h_Struct,y=Struct_NN3]{\GeneratedDir/asymmetric_conservation_defect.csv}; \addlegendentry{NN3}
+        \addplot[scheme BAR2] table[col sep=comma,x=h_Struct,y=Struct_BAR2]{\GeneratedDir/asymmetric_conservation_defect.csv}; \addlegendentry{BAR2}
+        \addplot[scheme BAR3] table[col sep=comma,x=h_Struct,y=Struct_BAR3]{\GeneratedDir/asymmetric_conservation_defect.csv}; \addlegendentry{BAR3}
+        \addplot[scheme GP2] table[col sep=comma,x=h_Struct,y=Struct_GP2]{\GeneratedDir/asymmetric_conservation_defect.csv}; \addlegendentry{GP2}
+        \addplot[scheme GP3] table[col sep=comma,x=h_Struct,y=Struct_GP3]{\GeneratedDir/asymmetric_conservation_defect.csv}; \addlegendentry{GP3}
+        \addplot[reference slope] coordinates {(0.014,8.0e-5) (0.007,4.0e-5)} node[pos=0.55,above,sloped]{\scriptsize $h$};
+        \addplot[reference slope] coordinates {(0.014,2.0e-5) (0.007,5.0e-6)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
+        \addplot[reference slope] coordinates {(0.014,4.0e-6) (0.007,5.0e-7)} node[pos=0.55,above,sloped]{\scriptsize $h^3$};
+
+        \nextgroupplot[title={Unstructured mixed grid}]
+        \addplot[scheme NN1] table[col sep=comma,x=h_Mixed,y=Mixed_NN1]{\GeneratedDir/asymmetric_conservation_defect.csv};
+        \addplot[scheme NN2] table[col sep=comma,x=h_Mixed,y=Mixed_NN2]{\GeneratedDir/asymmetric_conservation_defect.csv};
+        \addplot[scheme NN3] table[col sep=comma,x=h_Mixed,y=Mixed_NN3]{\GeneratedDir/asymmetric_conservation_defect.csv};
+        \addplot[scheme BAR2] table[col sep=comma,x=h_Mixed,y=Mixed_BAR2]{\GeneratedDir/asymmetric_conservation_defect.csv};
+        \addplot[scheme BAR3] table[col sep=comma,x=h_Mixed,y=Mixed_BAR3]{\GeneratedDir/asymmetric_conservation_defect.csv};
+        \addplot[scheme GP2] table[col sep=comma,x=h_Mixed,y=Mixed_GP2]{\GeneratedDir/asymmetric_conservation_defect.csv};
+        \addplot[scheme GP3] table[col sep=comma,x=h_Mixed,y=Mixed_GP3]{\GeneratedDir/asymmetric_conservation_defect.csv};
+        \addplot[reference slope] coordinates {(0.012,2.0e-5) (0.006,1.0e-5)} node[pos=0.55,above,sloped]{\scriptsize $h$};
+        \addplot[reference slope] coordinates {(0.012,1.0e-5) (0.006,2.5e-6)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
+        \addplot[reference slope] coordinates {(0.012,4.0e-6) (0.006,5.0e-7)} node[pos=0.55,above,sloped]{\scriptsize $h^3$};
+        \end{groupplot}
+    \end{tikzpicture}
+    \vspace{0.5em}
+    \ref{legend:asym-cons}
+    \caption{Convergence of the density-integral defect for the smooth asymmetric field before global correction. The ordinate is the absolute difference between source and target solver-lumped integrals; gray guides show $O(h)$, $O(h^2)$, and $O(h^3)$ slopes.}
+    \label{fig:asym-conservation}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            transfer bar axis,
+            width=0.96\textwidth,
+            height=0.28\textwidth,
+            ybar,
+            bar width=5pt,
+            ymin=0,
+            ylabel={Bound violation},
+            xtick=data,
+            xticklabels=\empty,
+            legend columns=2,
+            legend style={at={(0.5,1.03)},anchor=south},
+        ]
+        \addplot[fill=NavyBlue!65,draw=NavyBlue] table[col sep=comma,x=idx,y=overshoot]{\GeneratedDir/discontinuous_boundedness_plot.csv};
+        \addlegendentry{Overshoot}
+        \addplot[fill=BrickRed!65,draw=BrickRed] table[col sep=comma,x=idx,y=undershoot]{\GeneratedDir/discontinuous_boundedness_plot.csv};
+        \addlegendentry{Undershoot}
+        \end{axis}
+    \end{tikzpicture}
+
+    \vspace{0.8em}
+    \begin{tikzpicture}
+        \begin{axis}[
+            transfer bar axis,
+            width=0.96\textwidth,
+            height=0.30\textwidth,
+            only marks,
+            mark=*,
+            ymode=log,
+            ymin=1e-17,
+            ymax=2e-2,
+            bar width=7pt,
+            ylabel={Reported $|$conservation defect$|$},
+            xlabel={Configuration},
+            xtick=data,
+            xticklabels from table={\GeneratedDir/discontinuous_boundedness_plot.csv}{plot_label},
+            table/col sep=comma,
+            x tick label style={rotate=55,anchor=east,font=\scriptsize},
+        ]
+        \addplot[only marks,mark=*,ForestGreen] table[col sep=comma,x=idx,y=abs_cons_defect]{\GeneratedDir/discontinuous_boundedness_plot.csv};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Boundedness and solver-lumped conservation for the discontinuous circular inclusion. U denotes unlimited reconstruction, BJ the Barth--Jespersen limiter, GC the bounded global correction, and S/H the soft and hard Galerkin limiters.}
+    \label{fig:disc-boundedness}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{groupplot}[
+            group style={group size=2 by 1,horizontal sep=1.2cm},
+            transfer convergence axis,
+            width=0.45\textwidth,
+            height=0.34\textwidth,
+        ]
+        \nextgroupplot[
+            title={Structured quadrilateral grid},
+            ylabel={Reported $|$lumped defect$|$},
+            legend to name=legend:disc-cons,
+            legend columns=4,
+        ]
+        \addplot[scheme NN1] table[col sep=comma,x=h_Struct,y=Struct_NN1]{\GeneratedDir/discontinuous_conservation_defect.csv}; \addlegendentry{NN1}
+        \addplot[scheme NN2] table[col sep=comma,x=h_Struct,y=Struct_NN2]{\GeneratedDir/discontinuous_conservation_defect.csv}; \addlegendentry{NN2}
+        \addplot[scheme NN3] table[col sep=comma,x=h_Struct,y=Struct_NN3]{\GeneratedDir/discontinuous_conservation_defect.csv}; \addlegendentry{NN3}
+        \addplot[scheme BAR2] table[col sep=comma,x=h_Struct,y=Struct_BAR2]{\GeneratedDir/discontinuous_conservation_defect.csv}; \addlegendentry{BAR2}
+        \addplot[scheme BAR3] table[col sep=comma,x=h_Struct,y=Struct_BAR3]{\GeneratedDir/discontinuous_conservation_defect.csv}; \addlegendentry{BAR3}
+        \addplot[scheme GP2] table[col sep=comma,x=h_Struct,y=Struct_GP2]{\GeneratedDir/discontinuous_conservation_defect.csv}; \addlegendentry{GP2}
+        \addplot[scheme GP3] table[col sep=comma,x=h_Struct,y=Struct_GP3]{\GeneratedDir/discontinuous_conservation_defect.csv}; \addlegendentry{GP3}
+        \addplot[reference slope] coordinates {(0.014,7.0e-3) (0.007,3.5e-3)} node[pos=0.55,above,sloped]{\scriptsize $h$};
+        \addplot[reference slope] coordinates {(0.014,4.0e-4) (0.007,1.0e-4)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
+        \addplot[reference slope] coordinates {(0.014,2.0e-5) (0.007,2.5e-6)} node[pos=0.55,above,sloped]{\scriptsize $h^3$};
+
+        \nextgroupplot[title={Unstructured mixed grid}]
+        \addplot[scheme NN1] table[col sep=comma,x=h_Mixed,y=Mixed_NN1]{\GeneratedDir/discontinuous_conservation_defect.csv};
+        \addplot[scheme NN2] table[col sep=comma,x=h_Mixed,y=Mixed_NN2]{\GeneratedDir/discontinuous_conservation_defect.csv};
+        \addplot[scheme NN3] table[col sep=comma,x=h_Mixed,y=Mixed_NN3]{\GeneratedDir/discontinuous_conservation_defect.csv};
+        \addplot[scheme BAR2] table[col sep=comma,x=h_Mixed,y=Mixed_BAR2]{\GeneratedDir/discontinuous_conservation_defect.csv};
+        \addplot[scheme BAR3] table[col sep=comma,x=h_Mixed,y=Mixed_BAR3]{\GeneratedDir/discontinuous_conservation_defect.csv};
+        \addplot[scheme GP2] table[col sep=comma,x=h_Mixed,y=Mixed_GP2]{\GeneratedDir/discontinuous_conservation_defect.csv};
+        \addplot[scheme GP3] table[col sep=comma,x=h_Mixed,y=Mixed_GP3]{\GeneratedDir/discontinuous_conservation_defect.csv};
+        \addplot[reference slope] coordinates {(0.012,1.0e-3) (0.006,5.0e-4)} node[pos=0.55,above,sloped]{\scriptsize $h$};
+        \addplot[reference slope] coordinates {(0.012,5.0e-4) (0.006,1.25e-4)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
+        \addplot[reference slope] coordinates {(0.012,2.0e-4) (0.006,2.5e-5)} node[pos=0.55,above,sloped]{\scriptsize $h^3$};
+        \end{groupplot}
+    \end{tikzpicture}
+    \vspace{0.5em}
+    \ref{legend:disc-cons}
+    \caption{Solver-lumped density-integral defect for the discontinuous transfer before global correction. The gray $O(h)$, $O(h^2)$, and $O(h^3)$ segments are visual guides; no single asymptotic rate is assumed for this discontinuous problem.}
+    \label{fig:disc-conservation}
+\end{figure}
+
+The conservation plots use the exported solver-lumped defects. These curves show the magnitude of the exported defect statistic. An independent consistent-integral check is required before a nonzero lumped discrepancy is assigned solely to projection or to vertex restriction. On the finest structured smooth mesh, GP2 has a defect near $4.3\times10^{-12}$, compared with $2.5\times10^{-7}$ on the mixed grid. This is consistent with different weight compatibility, but the archive does not include the basis-integral audit needed to establish that explanation uniquely.
+
+The Riemann-family smooth check uses $\rho=1+0.5\sin(2\pi x)\cos(2\pi y)$, four measured spacings $0.07752$, $0.03984$, $0.01996$, and $0.01$, and mean displacement/spacing approximately 0.057. Figure~\ref{fig:riemann-order-verification} and Table~\ref{tab:riemann-orders} use the supplied area-weighted $L_1$ errors over moved nodes. NN2 approaches its second-order slope from above. GP3 approaches three from below, while BAR3 approaches three from above. The correction comparison uses the finest mesh and is not a separate convergence study.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            xmode=log,
+            ymode=log,
+            x dir=reverse,
+            grid=both,
+            minor grid style={gray!15},
+            major grid style={gray!30},
+            xlabel={Effective spacing $h$},
+            tick label style={font=\scriptsize},
+            label style={font=\small},
+            line width=0.8pt,
+            mark size=2.0pt,
+            width=0.78\textwidth,
+            height=0.46\textwidth,
+            ylabel={Area-weighted density $L_1$ error},
+            legend columns=4,
+            legend style={at={(0.5,1.02)},anchor=south},
+        ]
+        \addplot[scheme NN1] table[col sep=comma,x=h,y=NN1]{\DataDir/riemann_refinement_errors.csv}; \addlegendentry{NN1}
+        \addplot[scheme NN2] table[col sep=comma,x=h,y=NN2]{\DataDir/riemann_refinement_errors.csv}; \addlegendentry{NN2}
+        \addplot[scheme NN3] table[col sep=comma,x=h,y=NN3]{\DataDir/riemann_refinement_errors.csv}; \addlegendentry{NN3}
+        \addplot[scheme BAR2] table[col sep=comma,x=h,y=BAR2]{\DataDir/riemann_refinement_errors.csv}; \addlegendentry{BAR2}
+        \addplot[scheme BAR3] table[col sep=comma,x=h,y=BAR3]{\DataDir/riemann_refinement_errors.csv}; \addlegendentry{BAR3}
+        \addplot[scheme GP2] table[col sep=comma,x=h,y=GP2]{\DataDir/riemann_refinement_errors.csv}; \addlegendentry{GP2}
+        \addplot[scheme GP3] table[col sep=comma,x=h,y=GP3]{\DataDir/riemann_refinement_errors.csv}; \addlegendentry{GP3}
+        \addplot[reference slope] coordinates {(0.065,5.2e-3) (0.01625,1.3e-3)} node[pos=0.55,above,sloped]{\scriptsize $h$};
+        \addplot[reference slope] coordinates {(0.065,6.0e-4) (0.01625,3.75e-5)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
+        \addplot[reference slope] coordinates {(0.065,1.2e-4) (0.01625,1.88e-6)} node[pos=0.55,above,sloped]{\scriptsize $h^3$};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Density $L_1$ transfer error on the structured Riemann mesh family, weighted by nodal control-volume area. Gray guides show $O(h)$, $O(h^2)$, and $O(h^3)$ behavior.}
+    \label{fig:riemann-order-verification}
+\end{figure}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Observed density $L_1$ convergence orders on the structured Riemann mesh family. The fitted order uses all four meshes; the remaining columns give the order between consecutive mesh levels.}
+    \label{tab:riemann-orders}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={scheme,nominal,fit,slope_coarse_1,slope_mid,slope_fine},
+        columns/scheme/.style={string type,column type=l,column name={Scheme}},
+        columns/nominal/.style={column type=c,column name={$p_{\mathrm{nom}}$},fixed,precision=0},
+        columns/fit/.style={column type=c,column name={$p_{\mathrm{fit}}$},fixed,precision=2},
+        columns/slope_coarse_1/.style={column type=c,column name={$p_{1\to2}$},fixed,precision=2},
+        columns/slope_mid/.style={column type=c,column name={$p_{2\to3}$},fixed,precision=2},
+        columns/slope_fine/.style={column type=c,column name={$p_{3\to4}$},fixed,precision=2},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/riemann_refinement_orders.csv}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Effect of the bounded global correction on a single smooth transfer at $h=0.01$. The table compares the density error and the signed source-to-target density-integral change before and after correction.}
+    \label{tab:riemann-global-correction}
+    \resizebox{\textwidth}{!}{%
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={scheme,l1_off,l1_global,l1_change_percent,cons_off,cons_global},
+        columns/scheme/.style={string type,column type=l,column name={Scheme}},
+        columns/l1_off/.style={column type=c,column name={$L_1$, raw},sci,sci zerofill,precision=3},
+        columns/l1_global/.style={column type=c,column name={$L_1$, corrected},sci,sci zerofill,precision=3},
+        columns/l1_change_percent/.style={column type=c,column name={$\Delta L_1/L_1$ (\%)},fixed,precision=3},
+        columns/cons_off/.style={column type=c,column name={Defect, raw},sci,sci zerofill,precision=3},
+        columns/cons_global/.style={column type=c,column name={Defect, corrected},sci,sci zerofill,precision=3},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/riemann_global_correction.csv}%
+    }
+\end{table}
+
+\FloatBarrier
+\section{Riemann transport, frequency, and amplitude diagnostics}
+\label{app:riemann-stress-data}
+
+These values are retained at the precision of the consolidated report. The maximum-gradient tracker in Table~\ref{tab:riemann-transition} and the crossing tracker in the frequency/amplitude tables locate different features of the broad profile. Their absolute positions and thickness definitions must not be mixed. The original report also documents substantially different NN1 crossing estimates under changed sampling for the same case. Frequency and amplitude factors inferred from absolute crossings consequently remain provisional until a single versioned extraction procedure and a sampling-convergence study are archived.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            transfer bar axis,
+            width=0.93\textwidth,
+            height=0.38\textwidth,
+            ybar,
+            bar width=7pt,
+            ylabel={Net integral change (\% of initial)},
+            ymin=-0.003,
+            ymax=0.023,
+            scaled y ticks=false,
+            yticklabel style={/pgf/number format/fixed,/pgf/number format/precision=3},
+            xlabel={Transfer scheme},
+            xtick=data,
+            xticklabels from table={\DataDir/riemann_multicycle.csv}{scheme},
+            table/col sep=comma,
+            x tick label style={font=\small},
+            legend style={at={(0.5,1.02)},anchor=south,legend columns=2},
+            enlarge x limits=0.10,
+            axis y line*=left,
+        ]
+        \addplot[fill=NavyBlue!65,draw=NavyBlue] table[col sep=comma,x=idx,y=density_net_percent]{\DataDir/riemann_multicycle.csv};
+        \addlegendentry{Density}
+        \addplot[fill=BrickRed!65,draw=BrickRed] table[col sep=comma,x=idx,y=energy_net_percent]{\DataDir/riemann_multicycle.csv};
+        \addlegendentry{Total energy}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Accumulated change in the density and total-energy integrals after 80 mesh-to-mesh transfers in the two-dimensional Riemann calculation. No global conservation correction is applied.}
+    \label{fig:riemann-drift}
+\end{figure}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Per-transfer density conservation and boundedness over the 80-transfer Riemann run. The overshoot is the largest excursion beyond the source range, normalized by that range.}
+    \label{tab:riemann-boundedness}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={scheme,median_abs_density_cycle,overshoot_cycles,worst_density_overshoot},
+        columns/scheme/.style={string type,column type=l,column name={Scheme}},
+        columns/median_abs_density_cycle/.style={column type=c,column name={Median $|\Delta I_\rho|/I_\rho$},sci,sci zerofill,precision=3},
+        columns/overshoot_cycles/.style={column type=c,column name={Cycles with overshoot},fixed,precision=0},
+        columns/worst_density_overshoot/.style={column type=c,column name={Maximum excursion},fixed,precision=4},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/riemann_multicycle.csv}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Position and thickness of the density transition at the end of the 80-transfer Riemann run, using the maximum-gradient definition. Position errors are expressed in baseline cells ($h=0.01$); a positive thickness change denotes additional smearing relative to the no-remeshing reference.}
+    \label{tab:riemann-transition}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={scheme,x_feature,position_error_cells,thickness_change_cells},
+        columns/scheme/.style={string type,column type=l,column name={Scheme}},
+        columns/x_feature/.style={column type=c,column name={$x_{\mathrm{tr}}$},fixed,precision=4},
+        columns/position_error_cells/.style={column type=c,column name={Position error (cells)},fixed,precision=3},
+        columns/thickness_change_cells/.style={column type=c,column name={Thickness change (cells)},fixed,precision=3},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/riemann_transition_step399.csv}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \scriptsize
+    \caption{Effect of increasing the remeshing frequency from 80 to 400 transfers at SafeFactor 4. Position and width use the 50\%-crossing diagnostic; the density column is the signed sum of the integral changes introduced at the transfers themselves.}
+    \label{tab:riemann-frequency-appendix}
+    \resizebox{\textwidth}{!}{%
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={scheme,cycles,position_error_cells,width_change_cells,cumulative_density_change},
+        columns/scheme/.style={string type,column type=l,column name={Scheme}},
+        columns/cycles/.style={column type=c,column name={Cycles},fixed,precision=0},
+        columns/position_error_cells/.style={column type=c,column name={Position error (cells)},fixed,precision=2},
+        columns/width_change_cells/.style={column type=c,column name={Width change (cells)},fixed,precision=2},
+        columns/cumulative_density_change/.style={column type=c,column name={Cumulative $\Delta I_\rho$},sci,sci zerofill,precision=2},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/riemann_frequency_full.csv}%
+    }
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \scriptsize
+    \caption{Effect of deformation amplitude at 400 transfers, together with the NN1 global-correction comparison. SafeFactor 2 doubles the displacement bound relative to SafeFactor 4; transition position and width use the same 50\%-crossing diagnostic.}
+    \label{tab:riemann-amplitude-appendix}
+    \resizebox{\textwidth}{!}{%
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={scheme,global_correction,safe_factor,cycles,position_error_cells,width_change_cells,cumulative_density_change},
+        columns/scheme/.style={string type,column type=l,column name={Scheme}},
+        columns/global_correction/.style={string type,column type=c,column name={Global correction}},
+        columns/safe_factor/.style={column type=c,column name={SafeFactor},fixed,precision=0},
+        columns/cycles/.style={column type=c,column name={Cycles},fixed,precision=0},
+        columns/position_error_cells/.style={column type=c,column name={Position error (cells)},fixed,precision=2},
+        columns/width_change_cells/.style={column type=c,column name={Width change (cells)},fixed,precision=2},
+        columns/cumulative_density_change/.style={column type=c,column name={Cumulative $\Delta I_\rho$},sci,sci zerofill,precision=2},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/riemann_amplitude_global.csv}%
+    }
+\end{table}
+
+\FloatBarrier
+\section{Riemann moment and limiter diagnostics}
+\label{app:riemann-moment-data}
+
+The reported lumped moments are $M_0=\sum_iw_i\rho_i$, $M_1=\sum_iw_ix_i\rho_i$, and $x_c=M_1/M_0$. They differ from exactly integrated moments of a continuous finite-element field. Their relative errors of $10^{-7}$--$10^{-5}$ are not machine precision. Preservation of $M_0$ and $M_1$ does not uniquely determine a transition crossing or its width. GP3 would also preserve consistent quadratic moments before post-processing when their test functions are admissible; the absence of a quadratic moment constraint applies to GP2, not to all Galerkin projections.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Change in the solver-lumped zeroth and first density moments during one SafeFactor-2 transfer. The centroid shift is $x_{c,t}-x_{c,s}$, where $x_c=M_1/M_0$.}
+    \label{tab:riemann-moment-preservation}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={scheme,delta_M0_rel,delta_M1_rel,centroid_shift},
+        columns/scheme/.style={string type,column type=l,column name={Scheme}},
+        columns/delta_M0_rel/.style={column type=c,column name={$\Delta M_0/M_0$},sci,sci zerofill,precision=2},
+        columns/delta_M1_rel/.style={column type=c,column name={$\Delta M_1/M_1$},sci,sci zerofill,precision=2},
+        columns/centroid_shift/.style={column type=c,column name={$\Delta x_c$},sci,sci zerofill,precision=2},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/riemann_moment_preservation.csv}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{GP2 limiter-activation diagnostic for a single transfer. The table reports the range violation of the unlimited projection before clipping and conservative redistribution, allowing the two deformation amplitudes to be compared.}
+    \label{tab:riemann-limiter-activation}
+    \scriptsize
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={safe_factor,mean_displacement,unlimited_overshoot,feature_fraction},
+        columns/safe_factor/.style={column type=c,column name={SafeFactor},fixed,precision=0},
+        columns/mean_displacement/.style={column type=c,column name={Mean displacement},sci,sci zerofill,precision=2},
+        columns/unlimited_overshoot/.style={column type=c,column name={Unlimited excursion},sci,sci zerofill,precision=2},
+        columns/feature_fraction/.style={string type,column type=c,column name={Fraction near transition}},
+        columns/limiter_state/.style={string type,column type=c,column name={Limiter state}},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/riemann_limiter_activation.csv}
+\end{table}
+
+The activation table omits the source report's categorical ``dormant/active'' designation: exceeding a global source range is not the same test as exceeding every local projection bound. The 97\% concentration reported at SF2 supports localization of the measured excursion. It does not quantify the portion of accumulated width attributable to repair, and the two available amplitudes do not define a scaling law.
+
+\FloatBarrier
+\section{Additional NACA history and force diagnostics}
+\label{app:naca-bdf2-tables}
+\label{app:naca-detailed-results}
+
+The following tables preserve the archived values. A density ``integral difference'' is target-referenced in the transfer and GC tables; it is not a source-referenced conservation error. The full first-step matrix contains five methods, whereas the ratio table contains all seven raw variants. The relaxation file contains first, peak, and final summaries only, despite its history-like filename. It is not used to generate a synthetic time history.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Target-referenced discrepancy after transferring the converged Euler NACA~0012 solution from mesh $A$ to mesh $B$. The norm includes all stored flow variables and is measured against the independently converged state on mesh $B$.}
+    \label{tab:naca-transfer-defects}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={method,epsilon_norm,relative_epsilon,density_integral_defect},
+        columns/method/.style={string type,column type=l,column name={Method}},
+        columns/epsilon_norm/.style={column type=c,column name={$\norm{\eps^\star}_{M_B}$},sci,sci zerofill,precision=3},
+        columns/relative_epsilon/.style={column type=c,column name={Relative norm},sci,sci zerofill,precision=2},
+        columns/density_integral_defect/.style={column type=c,column name={Density integral difference},sci,sci zerofill,precision=3},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_transfer_defects.csv}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \scriptsize
+    \caption{First physical-step response of the mixed-history Euler NACA restarts. State and force differences are measured against the native continuation on the target mesh.}
+    \label{tab:naca-first-step-full}
+    \resizebox{\textwidth}{!}{%
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={method,case,delta_norm,delta_CL,delta_CD,delta_CMz},
+        columns/method/.style={string type,column type=l,column name={Method}},
+        columns/case/.style={string type,column type=l,column name={Histories}},
+        columns/delta_norm/.style={column type=c,column name={$\norm{\delta^{n+1}}_{M_B}$},sci,sci zerofill,precision=3},
+        columns/delta_CL/.style={column type=c,column name={$\Delta C_L$},sci,sci zerofill,precision=3},
+        columns/delta_CD/.style={column type=c,column name={$\Delta C_D$},sci,sci zerofill,precision=3},
+        columns/delta_CMz/.style={column type=c,column name={$\Delta C_m$},sci,sci zerofill,precision=3},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_first_step_response.csv}%
+    }
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \scriptsize
+    \caption{Linearity check for the mixed-history response. The table compares the full restart with the sum of the latest-only and older-only responses and reports the BDF2 response ratios; state norms are positive, whereas the lift ratios retain their sign.}
+    \label{tab:naca-superposition-full}
+    \resizebox{\textwidth}{!}{%
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={method,state_superposition_defect,state_latest_full,state_older_full,CL_superposition_defect,CL_latest_full,CL_older_full},
+        columns/method/.style={string type,column type=l,column name={Method}},
+        columns/state_superposition_defect/.style={column type=c,column name={State superposition},fixed,precision=4},
+        columns/state_latest_full/.style={column type=c,column name={State latest/full},fixed,precision=4},
+        columns/state_older_full/.style={column type=c,column name={State older/full},fixed,precision=4},
+        columns/CL_superposition_defect/.style={column type=c,column name={$C_L$ superposition},fixed,precision=4},
+        columns/CL_latest_full/.style={column type=c,column name={$C_L$ latest/full},fixed,precision=4},
+        columns/CL_older_full/.style={column type=c,column name={$C_L$ older/full},fixed,precision=4},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_superposition.csv}%
+    }
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Effect of the bounded global conservation correction on the steady Euler NACA restart. The correction preserves the source density integral, so the remaining target-referenced integral difference is the native difference between meshes $A$ and $B$.}
+    \label{tab:naca-global-correction}
+    \scriptsize
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={method,global_correction,epsilon_norm,density_integral_defect,delta_full_norm,delta_CL_full},
+        columns/method/.style={string type,column type=l,column name={Method}},
+        columns/global_correction/.style={string type,column type=c,column name={Global}},
+        columns/epsilon_norm/.style={column type=c,column name={$\norm{\eps^\star}_{M_B}$},sci,sci zerofill,precision=3},
+        columns/density_integral_defect/.style={column type=c,column name={Density integral difference},sci,sci zerofill,precision=3},
+        columns/delta_full_norm/.style={column type=c,column name={$\norm{\delta_{\mathrm{full}}}_{M_B}$},sci,sci zerofill,precision=3},
+        columns/delta_CL_full/.style={column type=c,column name={$\Delta C_L$},sci,sci zerofill,precision=3},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_global_correction.csv}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Evolution of the lift discrepancy during the first 50 physical steps after the full-history Euler NACA restart. The table lists the first-step value, the largest excursion in the window, and the final value.}
+    \label{tab:naca-force-relaxation}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={method,delta_CL_first,max_abs_delta_CL,max_step,delta_CL_last},
+        columns/method/.style={string type,column type=l,column name={Method}},
+        columns/delta_CL_first/.style={column type=c,column name={First-step $\Delta C_L$},sci,sci zerofill,precision=3},
+        columns/max_abs_delta_CL/.style={column type=c,column name={Maximum $\abs{\Delta C_L}$},sci,sci zerofill,precision=3},
+        columns/max_step/.style={column type=c,column name={Reported step},fixed,precision=0},
+        columns/delta_CL_last/.style={column type=c,column name={Final $\Delta C_L$},sci,sci zerofill,precision=3},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_force_history.csv}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Largest surface-pressure difference produced by the full-history Euler NACA restart on the airfoil nodes shared by the source and target meshes, with the chordwise location of the maximum.}
+    \label{tab:naca-surface-dcp}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={method,max_abs_delta_Cp,x_over_c},
+        columns/method/.style={string type,column type=l,column name={Method}},
+        columns/max_abs_delta_Cp/.style={column type=c,column name={Maximum $\abs{\Delta C_p}$},fixed,precision=2},
+        columns/x_over_c/.style={column type=c,column name={$x/c$},fixed,precision=3},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_surface_delta_cp.csv}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Check of the exact BDF2 history-residual identity, $\Delta r_{\mathrm{hist}}=-M_B\Delta\eta/\Delta t$. Each comparison uses two history configurations evaluated at the same trial state.}
+    \label{tab:naca-residual-identity}
+    \scriptsize
+    \resizebox{\textwidth}{!}{%
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={family,relative_error_min,relative_error_max},
+        columns/family/.style={string type,column type=l,column name={Family}},
+        columns/relative_error_min/.style={column type=c,column name={Minimum relative error},sci,sci zerofill,precision=2},
+        columns/relative_error_max/.style={column type=c,column name={Maximum relative error},sci,sci zerofill,precision=2},
+        columns/cosine_min/.style={column type=c,column name={Minimum cosine},fixed,precision=7},
+        columns/cosine_max/.style={column type=c,column name={Maximum cosine},fixed,precision=7},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_initial_residual_identity.csv}%
+    }
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \scriptsize
+    \caption{Linear trends in lift, drag, and pitching moment over 39 repeated mesh replacements, expressed per 100 physical steps. SE denotes the ordinary regression standard error for each individual time series; it does not account for serial correlation or variability across deformation sequences.}
+    \label{tab:naca-force-drift-full}
+    \resizebox{\textwidth}{!}{%
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={method,seed,CL_trend,CL_se,CD_trend,CD_se,CMz_trend,CMz_se,CD_scatter},
+        columns/method/.style={string type,column type=l,column name={Method}},
+        columns/seed/.style={column type=c,column name={Seed},fixed,precision=0},
+        columns/CL_trend/.style={column type=c,column name={$C_L$ trend},sci,sci zerofill,precision=2},
+        columns/CL_se/.style={column type=c,column name={$\mathrm{SE}(C_L)$},sci,sci zerofill,precision=2},
+        columns/CD_trend/.style={column type=c,column name={$C_D$ trend},sci,sci zerofill,precision=2},
+        columns/CD_se/.style={column type=c,column name={$\mathrm{SE}(C_D)$},sci,sci zerofill,precision=2},
+        columns/CMz_trend/.style={column type=c,column name={$C_m$ trend},sci,sci zerofill,precision=2},
+        columns/CMz_se/.style={column type=c,column name={$\mathrm{SE}(C_m)$},sci,sci zerofill,precision=2},
+        columns/CD_scatter/.style={column type=c,column name={$C_D$ scatter},sci,sci zerofill,precision=2},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_force_drift.csv}%
+    }
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Lift-response onset after a single localized mesh replacement. Lags are measured from the transfer event for several fractions of each case's peak response and are listed together with the freestream acoustic travel-time estimate.}
+    \label{tab:naca-acoustic-onsets}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={distance,onset_1,onset_5,onset_25,onset_50,peak_lag,predicted},
+        columns/distance/.style={column type=c,column name={$d/c$},fixed,precision=2},
+        columns/onset_1/.style={column type=c,column name={1\%},fixed,precision=0},
+        columns/onset_5/.style={column type=c,column name={5\%},fixed,precision=0},
+        columns/onset_25/.style={column type=c,column name={25\%},fixed,precision=0},
+        columns/onset_50/.style={column type=c,column name={50\%},fixed,precision=0},
+        columns/peak_lag/.style={column type=c,column name={Peak},fixed,precision=0},
+        columns/predicted/.style={column type=c,column name={$845d$},fixed,precision=1},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_acoustic_delay.csv}
+\end{table}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Distance-lag fits for the localized Euler NACA disturbance. Force-based slopes use the three launch radii; pressure-probe speeds use different onset thresholds applied to the same event, so the rows measure detector sensitivity rather than independent realizations.}
+    \label{tab:naca-propagation-fits}
+    \begin{minipage}{0.48\textwidth}
+    \centering
+    \scriptsize
+    \resizebox{\linewidth}{!}{%
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={threshold,slope,intercept,R2,slope_ratio},
+        columns/threshold/.style={column type=c,column name={Force threshold (\%)},fixed,precision=0},
+        columns/slope/.style={column type=c,column name={Slope},fixed,precision=0},
+        columns/intercept/.style={column type=c,column name={Intercept},fixed,precision=1},
+        columns/R2/.style={column type=c,column name={$R^2$},fixed,precision=3},
+        columns/slope_ratio/.style={column type=c,column name={Slope/845},fixed,precision=2},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_acoustic_delay_fits.csv}%
+    }
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+    \centering
+    \scriptsize
+    \resizebox{\linewidth}{!}{%
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={threshold,slope,R2,speed},
+        columns/threshold/.style={column type=c,column name={Pressure threshold (\%)},fixed,precision=0},
+        columns/slope/.style={column type=c,column name={Slope},fixed,precision=0},
+        columns/R2/.style={column type=c,column name={$R^2$},fixed,precision=3},
+        columns/speed/.style={column type=c,column name={Speed},fixed,precision=3},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_pressure_propagation.csv}%
+    }
+    \end{minipage}
+\end{table}
+
+\FloatBarrier
+\section{Projection verification and vertex-lumping accuracy}
+\label{app:naca-gp3-verification}
+
+The NACA GP3 assembly used for the reported results passes constant and affine patch tests to $3.9\times10^{-11}$ and $1.1\times10^{-10}$, respectively. A mesh-specific over-coverage defect identified during verification is documented in the accompanying diagnostic table; it is not evidence of a defect in Galerkin projection itself. In two dimensions, a signed polygon traversal requires signed fan-triangle contributions. Replacing them by absolute areas can overcount self-cancelling portions of the traversal and over-assemble the load vector while leaving the target mass matrix unchanged. This convention is not transferred to disjoint three-dimensional clipped tetrahedra, whose positive measures add. Global bounded repair cannot replace coverage and polynomial-reproduction tests, because it can redistribute a local assembly error into a bounded global bias.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Verification of the two-dimensional GP3 common-refinement assembly. Constant and linear patch tests and target-cell coverage are shown before and after the signed-area correction used in the final results.}
+    \label{tab:naca-gp3-verification}
+    \pgfplotstabletypeset[
+        col sep=comma,
+        columns={metric,uncorrected,corrected},
+        columns/metric/.style={string type,column type=l,column name={Diagnostic}},
+        columns/uncorrected/.style={column type=c,column name={Original assembly},sci,sci zerofill,precision=3},
+        columns/corrected/.style={column type=c,column name={Verified assembly},sci,sci zerofill,precision=3},
+        every head row/.style={before row=\toprule,after row=\midrule},
+        every last row/.style={after row=\bottomrule},
+    ]{\DataDir/naca_gp3_verification.csv}
+\end{table}
+
+\subsection{A quadratic counterexample to an automatic third-order lumped defect}
+\label{app:quadrature-mismatch}
+
+Consider $f(x)=x^2$ on $[0,1]$. Its exact $P^2$ projection onto any conforming one-dimensional mesh is itself, so there is no projection error. On a uniform mesh with spacing $h$, retain only the vertices and use the $P^1$ nodal integration weights. The resulting composite trapezoidal integral is
+\begin{equation}
+ Q_h(f)=h\left[\frac{f(0)+f(1)}{2}+\sum_{i=1}^{1/h-1}f(ih)\right]
+       =\frac13+\frac{h^2}{6}.
+ \label{eq:quadratic-counterexample}
+\end{equation}
+The difference from the consistent quadratic integral is second order despite exact nodal values and exact projection. The same result holds for $f(x,y)=x^2$ on a uniformly triangulated unit square obtained by splitting Cartesian cells; integrating the vertex-linear field in $y$ leaves the same composite rule in $x$. Two meshes can consequently have a source--target lumped difference $(h_B^2-h_A^2)/6$ even when the transferred quadratic is exact. The example is a mathematical check, not an additional CFD measurement. It rules out a general claim that vertex restriction of GP3 necessarily leaves an $O(h^3)$ lumped defect or that repairing that defect automatically retains third-order pointwise accuracy.
+
+\section{RANS supporting diagnostics and export audit}
+\label{app:rans-details}
+
+The RANS views use the archived files in \texttt{RANS\_PostProcessing/}. Each surface-force and surface-norm file contains 680 exact duplicate rows, and the surface-profile file contains 13,320. Removing duplicates only in derived views leaves 398 unique physical steps per drift case, rather than the 478 rows used in the source surface-fit summary. No conflicting values occur at the same case/step key. Table~\ref{tab:rans-slopes} is recalculated with equal weight per physical step. The original exports remain unchanged.
+
+\begin{table}[htbp]
+\centering\small
+\caption{Linear RANS load trends over the repeated-remeshing window, expressed per 100 physical steps and scaled by $10^6$. Total drag comes from the solver force history; pressure and friction contributions come from deduplicated surface snapshots. SE is the ordinary regression standard error for one time series and does not include serial correlation or between-seed variability.}
+\label{tab:rans-slopes}
+\setlength{\tabcolsep}{5pt}
+\pgfplotstabletypeset[
+ col sep=comma,columns={model,method,seed,CD_trend_micro,CD_se_micro,CDp_trend_micro,CDv_trend_micro},
+ columns/model/.style={string type,column name={Closure}},
+ columns/method/.style={string type,column name={Method}},
+ columns/seed/.style={fixed,precision=0,column name={Seed}},
+ columns/CD_trend_micro/.style={fixed,fixed zerofill,precision=3,column name={$b_D$}},
+ columns/CD_se_micro/.style={fixed,fixed zerofill,precision=3,column name={SE$(b_D)$}},
+ columns/CDp_trend_micro/.style={fixed,fixed zerofill,precision=3,column name={$b_D^p$}},
+ columns/CDv_trend_micro/.style={fixed,fixed zerofill,precision=3,column name={$b_D^v$}},
+ every head row/.style={before row=\toprule,after row=\midrule},
+ every last row/.style={after row=\bottomrule}
+]{\GeneratedDir/rans_drift_summary.csv}
+\end{table}
+
+The integral archive contains 40 latest/older history pairs for each drift run. The pairs written at indices $(399,398)$ have no subsequent physical-step output in the $2$--$399$ history window. Table~\ref{tab:rans-transfer-integrals} therefore uses the 39 earlier pairs. Similarly, each nominal one-event case has an initial and terminal export pair, but only the first is followed by the analyzed response. Counting restart files as physical remeshing events would overstate the exposure. The separate relative-integral column is retained at its exported precision: subtracting rounded inventories of order $10^4$ cannot reconstruct defects near $10^{-13}$ reliably.
+
+The report-derived SST floor statistics in Table~\ref{tab:rans-clipping} include both histories and the terminal export, hence 80 transfer calls rather than 39 physical events. No $\omega$ floor activation is reported. SA uses no analogous primitive-variable floor; its reported most negative transferred density-weighted $\widetilde\nu$ is of order $10^{-16}$. The records locate neither the SST clipped vertices nor their volume-weighted contribution to the final aerodynamic response. They establish that the returned transfer is nonlinear, not which individual operation causes the load change.
+
+\begin{table}[htbp]
+\centering\small
+\caption{SST kinetic-energy floor activation during repeated remeshing. The table gives, for each method and deformation sequence, the largest number of vertices raised to $k=10^{-10}$ in one exported history transfer and the smallest pre-floor value encountered across the 80 transferred histories.}
+\label{tab:rans-clipping}
+\pgfplotstabletypeset[
+ col sep=comma,columns={method,seed,max_nodes,min_before},
+ columns/method/.style={string type,column name={Method}},
+ columns/seed/.style={fixed,precision=0,column name={Seed}},
+ columns/max_nodes/.style={fixed,precision=0,column name={Maximum raised vertices}},
+ columns/min_before/.style={sci,precision=2,column name={Minimum $k$ before clipping}},
+ every head row/.style={before row=\toprule,after row=\midrule},
+ every last row/.style={after row=\bottomrule}
+]{\GeneratedDir/rans_clipping_report.csv}
+\end{table}
+
+For the fixed-band turbulence diagnostic, the RMS is formed over vertices without volume weighting and divided by the maximum reference field magnitude over the same set. Figure~\ref{fig:rans-eddy} displays this metric for eddy viscosity, avoiding comparison of unlike normalizations for $k$, $\omega$, and $\widetilde\nu$. In particular, the large wall value of $\omega$ can make a band-maximum-normalized discrepancy small without bounding its relative value everywhere. The archived surface distributions and endpoint tables provide $C_p$, streamwise $C_f$, and $y^+$ differences; the minimum streamwise $C_f$ near the nose is not used alone to diagnose separation.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1,horizontal sep=1.0cm},width=0.45\textwidth,height=4.5cm,
+ xmin=0,xmax=400,xlabel={Physical step},grid=major,scaled y ticks=false,
+ tick label style={font=\scriptsize},label style={font=\small},title style={font=\small}]
+\nextgroupplot[title={SA},ylabel={Normalized RMS $\mu_t$ discrepancy (\%)}]
+\addplot[NavyBlue,solid,thin] table[x=step,y=NN2_s1_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SA.csv};
+\addplot[NavyBlue,dashed,thin] table[x=step,y=NN2_s2_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SA.csv};
+\addplot[Purple,solid,thin] table[x=step,y=GP2_s1_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SA.csv};
+\addplot[Purple,dashed,thin] table[x=step,y=GP2_s2_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SA.csv};
+\nextgroupplot[title={SST}]
+\addplot[NavyBlue,solid,thin] table[x=step,y=NN2_s1_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SST.csv};
+\addplot[NavyBlue,dashed,thin] table[x=step,y=NN2_s2_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SST.csv};
+\addplot[Purple,solid,thin] table[x=step,y=GP2_s1_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SST.csv};
+\addplot[Purple,dashed,thin] table[x=step,y=GP2_s2_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SST.csv};
+\end{groupplot}
+\end{tikzpicture}
+\par\smallskip\ref{ransloadlegend}
+\caption{Eddy-viscosity response inside the fixed near-wall vertex set during repeated RANS remeshing. The ordinate is the nodal RMS difference from the no-remeshing reference divided by the maximum reference value on the same 12,233 vertices; markers are available every five physical steps and are connected only to aid readability.}
+\label{fig:rans-eddy}
+\end{figure}
+
+The one-event results are summarized in Table~\ref{tab:rans-onsets}. A peak marked C occurs within the last 10\% of the available window, so its value and fraction-of-peak onset are window-dependent. The longer $d/c=0.20$ run begins its event at step 400 rather than 200 and is not simply an extension of the same disturbance: its source state and event-dependent mesh realization also differ. The pressure probes contain \RansUnderResolvedShells/\RansProbeShells\ peaks below the report's three-increment resolution screen ($3\times2^{-24}$ at the exported pressure magnitude). Fitting the remaining zero- or one-step onsets does not yield a resolved acoustic travel-time slope. Accordingly, neither the force-based fits nor the spurious large speeds from three nearly simultaneous shells are used as physical propagation estimates.
+
+\begin{table}[htbp]
+\centering\scriptsize
+\caption{Lift response after a single localized GP2 remeshing event in the RANS calculations. SF2 doubles the displacement bound. The ``long'' case uses a later event and a longer observation window; C marks a peak within the last 10\% of that window, for which the peak-based onset is sensitive to truncation.}
+\label{tab:rans-onsets}
+\pgfplotstabletypeset[
+ col sep=comma,columns={model,case_label,peak,peak_lag,lag50,predicted,censor_label},
+ columns/model/.style={string type,column name={Closure}},
+ columns/case_label/.style={string type,column name={Case}},
+ columns/peak/.style={sci,precision=2,column name={Peak $|\Delta C_L|$}},
+ columns/peak_lag/.style={fixed,precision=0,column name={Peak lag}},
+ columns/lag50/.style={fixed,precision=0,column name={50\% lag}},
+ columns/predicted/.style={fixed,precision=0,column name={$1000d/c$}},
+ columns/censor_label/.style={string type,column name={}},
+ every head row/.style={before row=\toprule,after row=\midrule},
+ every last row/.style={after row=\bottomrule}
+]{\GeneratedDir/rans_oneshot_summary.csv}
+\end{table}
+
+The RANS archive provides complete reduced force histories and selected surface distributions, but not the case-level meshes, restart vectors, solver sources, or inner-residual histories. Fifty inner iterations is an iteration budget, not evidence that the physical-step error lies below each measured difference. A selected tightened-inner-iteration and time-step check at fixed physical remeshing times is needed before small method differences are interpreted as resolved accuracy differences. Exact closure variants, freestream turbulence values, thermal wall conditions, the coordinate-based displacement mask, and software version should accompany the configuration archive. These are bounded verification and reporting requirements for this fixed-body study, not a requirement to add moving-body simulations.
+
+\section{Data provenance and automated checks}
+\label{app:automated-postprocessing}
+
+The 39 pre-existing input/generated CSVs and 14 RANS source CSVs retain their names, relative locations, and contents. Figures and tables use \texttt{pgfplots} and \texttt{pgfplotstable}; the build tracks their dependencies. The static builder recomputes convergence orders. The RANS builder creates derived views, rejects conflicting duplicate physical keys, removes only exact repeated snapshots, aligns event windows, and recomputes descriptive statistics. Its hash manifest distinguishes original data from derived products and detects later intentional source updates. Neither builder runs CFD.
+
+The original reports are retained. Earlier Riemann/Euler NACA CSVs contain report-transcribed summaries; the new RANS files contain reduced post-processing exports, including actual sampled force histories. Continuous curves are drawn only where time samples exist. Report-only floor statistics are labeled separately. The earlier residual-summary CSV's cosines above one remain preserved but excluded from validation. The accompanying scientific assessment records the remaining source/precision and solver-control limitations and the bibliographic additions. Reproduction from these reduced data is not a substitute for archiving the configurations, meshes, restart states, and extraction scripts required to reproduce the simulations themselves.
+
+\begingroup
+\small
+\printbibliography
+\endgroup
+\end{document}

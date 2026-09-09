@@ -1,0 +1,4 @@
+family,relative_error_min,relative_error_max,cosine_min,cosine_max
+NN/BAR variants,2.4e-8,4.2e-8,1.0000012,1.0000017
+GP2,4.4e-6,4.4e-6,1.0000016,1.0000016
+GP3,1.3e-6,1.3e-6,1.0000008,1.0000008

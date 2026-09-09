@@ -1,0 +1,6 @@
+method,case,delta_CL_first,max_abs_delta_CL,max_step,delta_CL_last
+NN1,full,5.765e-3,2.697e-2,5,-1.390e-4
+NN2,full,-6.907e-3,6.907e-3,2,-2.702e-3
+BAR2,full,-7.308e-3,7.308e-3,2,-1.627e-3
+GP2,full,-7.598e-3,7.598e-3,2,-1.946e-3
+GP3,full,-7.130e-3,7.130e-3,2,-2.399e-3

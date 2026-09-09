@@ -1,0 +1,8 @@
+idx,scheme,density_net_percent,energy_net_percent,median_abs_density_cycle,overshoot_cycles,worst_density_overshoot
+0,NN1,0.0203,0.0211,1.11e-05,0,0.0
+1,NN2,-0.0008,-0.0015,1.84e-07,80,0.00317
+2,NN3,0.0023,0.0037,4.92e-07,80,0.00395
+3,BAR2,0.002,0.0018,7.97e-07,0,0.0
+4,BAR3,-0.0018,-0.0019,4.64e-07,80,0.00358
+5,GP2,0.0003,0.0007,1.07e-07,80,0.002
+6,GP3,-0.002,-0.0022,4.6e-07,80,0.00187

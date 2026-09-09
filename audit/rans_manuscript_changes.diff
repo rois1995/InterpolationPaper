@@ -1,0 +1,259 @@
+--- reviewed_Euler_baseline/paper.tex
++++ Euler_RANS_revision/paper.tex
+@@ -41,6 +41,7 @@
+ 
+ \newcommand{\DataDir}{data}
+ \newcommand{\GeneratedDir}{generated}
++\input{generated/rans_numbers.tex}
+ 
+ \pgfplotsset{
+     transfer convergence axis/.style={
+@@ -89,7 +90,7 @@
+ \maketitle
+ 
+ \begin{abstract}
+-Remeshing changes both the spatial discretization and the history supplied to a multistep time integrator. These effects complicate the assessment of interpolation accuracy in unsteady flow calculations. This study compares nearest-neighbor Taylor transfer, barycentric interpolation, and continuous Galerkin projection, with nominal smooth-field orders from one to three and optional correction of the solver's global conserved integrals. A target-referenced analysis identifies the BDF2 history forcing as $2\eps^n-\eps^{n-1}/2$ and distinguishes its aerodynamic response from the native discrepancy between meshes. Manufactured fields verify the implemented approximation orders and expose the separate roles of boundedness and integral conservation. Repeated remeshing in a two-dimensional Euler Riemann calculation shows that correcting the total density integral need not reduce transition displacement. In an Euler NACA~0012 calculation, perturbing only the older history produces a nonzero lift response despite an exact latest history. State-response norm ratios agree with the predicted $4/3$ and $1/3$ magnitudes to within 0.3\%, although vector superposition retains a 1.8--3.5\% defect. Across two random-deformation sequences, the numerical-drag trend is approximately 5.8 times smaller with second-order Galerkin projection than with second-order nearest-neighbor transfer. Pressure-probe delays are compatible with acoustic propagation, with threshold-dependent speeds of 1.09--1.28 compared with a freestream sound speed of 1.183. The completed Euler tests isolate mechanisms relevant to remeshed unsteady RANS calculations; they do not yet establish performance for turbulence transport or viscous aerodynamic loads.
++Discrete remeshing changes both the spatial discretization and the histories supplied to a multistep time integrator. This study assesses nearest-neighbor Taylor transfer, barycentric interpolation, and continuous Galerkin projection in BDF2 Euler and RANS calculations on fixed physical domains. Manufactured fields verify nominal smooth-field orders from one to three and separate accuracy, boundedness, and integral preservation. A target-referenced analysis identifies the history forcing as $2\varepsilon^n-\varepsilon^{n-1}/2$, while retaining the native discrepancy between meshes. In a controlled Euler NACA~0012 restart, perturbing only the older history changes the lift despite an exact latest history; the measured state-response ratios recover the predicted BDF2 magnitudes within 0.3\%, although vector superposition retains a 1.8--3.5\% defect. Repeated Euler transport shows that global integral repair need not reduce a transition-position error. A fixed-airfoil RANS extension with SA and SST includes turbulence histories and pressure/friction loads. Galerkin transfer reduces the monitored turbulence-inventory defects substantially, but its aggregate drag-error advantage over second-order nearest-neighbor transfer is not resolved in the two-seed, short-time RANS comparison. Protected near-wall vertices still develop eddy-viscosity discrepancies. Euler pressure delays are compatible with acoustic transport; the smaller RANS one-event signals do not resolve the same law. The results distinguish history consistency and spatial transfer quality from global conservation, without implying a universal method ranking or an assessment of moving-body flow.
+ \end{abstract}
+ 
+ \section{Introduction}
+@@ -103,7 +104,7 @@
+ 
+ The comparison uses three established constructions: nearest-neighbor Taylor transfer, barycentric interpolation on a simplicial representation of the source mesh, and continuous Galerkin projection. Their nominal orders range from one to three. A bounded global correction is also applied to the pointwise methods, allowing the effect of enforcing a total integral to be assessed without replacing the underlying interpolation rule. The analysis distinguishes the consistent finite-element integral from the nodal integral actually used by the receiving solver, particularly when a quadratic projected field is reduced to vertex-only output.
+ 
+-The numerical argument proceeds from static transfer verification to accumulated flow error and then to a controlled BDF2 restart. Manufactured fields test accuracy and boundedness independently of a flow solver. A two-dimensional Euler Riemann calculation tests repeated transfer under changes in frequency and deformation amplitude. A steady Euler NACA~0012 case uses independently converged source and target solutions to test the contribution of each BDF2 history; separate random-deformation and localized-transfer experiments assess load drift and delayed response. Euler flow is used to isolate these mechanisms from turbulence closure. The intended application is remeshed unsteady RANS, but the completed evidence supports conclusions about the common transfer and time-integration mechanisms, not yet about viscous stresses, turbulence variables, or separated RANS dynamics.
++The numerical argument proceeds from static transfer verification to accumulated Euler transport and controlled aerodynamic restarts. A two-dimensional Riemann calculation tests transfer frequency and deformation amplitude. An Euler NACA~0012 case isolates the two-history response on independent meshes and examines repeated load disturbances. The final application retains the fixed airfoil but adds SA and SST turbulence transport and viscous loads. Its nominally steady baseline makes remeshing-induced transients observable without imposed body motion. The scope is discrete replacement of stationary meshes in time-accurate calculations, not continuous mesh motion, a physically periodic RANS response, or a comparison of turbulence-model accuracy.
+ 
+ \section{Solution-transfer operators}
+ \label{sec:numerical-framework}
+@@ -392,10 +393,23 @@
+ 
+ The source/no-remeshing reference tests the response caused by the complete remeshing event. It is distinct from the independent-target reference used for the history experiment. Identical geometry outside the displaced band does not prove exact locality of the transfer. The supplied study identifies an immediate footprint extending 0.08 chord inward from the band and excludes those shells from its propagation fit. The finite-element solve, limiter redistribution, spatial-operator change, and implicit evolution may all contribute a small nonlocal component.
+ 
++\subsection{Fixed-body RANS extension}
++\label{sec:rans-methodology}
++
++The fixed NACA~0012 experiment is repeated at $M_\infty=0.1$, $\alpha=6^\circ$, and $Re_c=6\times10^6$ with Spalart--Allmaras (SA) and shear-stress-transport (SST) closures~\cite{SpalartAllmaras1994,Menter1994}. The purpose is to assess remeshing-induced transients about a nominally steady viscous state, not a moving-body response or turbulence-model validation. Both closures use the same hybrid mesh: 29,956 vertices, 14,070 quadrilaterals, and 31,339 triangles, with 370 surface vertices and a farfield at $100c$. The first off-wall spacing is approximately $5\times10^{-6}c$; the quadrilateral region extends to about $0.053c$. The reported surface values reach $y^+\simeq\RansMaxYplus$, so near-wall resolution is not assumed converged from the first spacing alone.
++
++Mean-flow fluxes use HLLC with MUSCL reconstruction and a Venkatakrishnan limiter. Turbulence convection uses scalar upwinding without MUSCL reconstruction. The second-order transfer label therefore does not describe the order of every term in the receiving RANS discretization. BDF2 uses $\Delta t=10^{-3}$, 50 inner iterations per physical step, CFL~6, and FGMRES with ILU preconditioning and a 60-iteration linear limit. Here the velocity reference is the freestream sound speed: $a_\infty=1$ and $U_\infty=0.1$, unlike the Euler normalization in Sec.~\ref{sec:naca-fixed-methodology}. The 400-step comparison spans only $tU_\infty/c=0.04$. Each closure has its own 800-step no-transfer reference, initialized with the same steady and startup histories as its perturbed calculations. References are subtracted at matching steps; their startup relaxation is not treated as statistical noise.
++
++The repeated-transfer comparison uses NN2 and limited GP2, each with two prescribed random sequences and a ten-step event interval. Surface vertices and the 12,233 vertices within wall distance $d_w<0.01c$ remain fixed. The displacement band extends to $20c$, with SF4 and a specified quality floor of 0.2. These settings establish a protected inner region, not that the entire quadrilateral layer is unchanged. Both methods receive the same sequence for each seed. In the recorded window, 39 mesh replacements are followed by physical evolution; an additional terminal history-pair export has no following force sample and is excluded from the corresponding transfer summary. An independently converged solution on the first displaced mesh provides a separate native-mesh comparison. One-event GP2 calculations use bands $[0.05,0.10]c$, $[0.10,0.15]c$, and $[0.20,0.25]c$, with selected SF2 and longer-window cases.
++
++Density, momentum, energy, and both histories of the turbulence state are transferred. The recorded turbulence inventories are density-weighted $\widetilde\nu$ for SA and $k,\omega$ for SST. SST output is clipped to the implemented primitive-variable floors $k\geq10^{-10}$ and $\omega\geq10^{-4}$; this post-pass is absent in the SA runs. Wall distance and derived eddy viscosity are recomputed by the solver. No separate NN2--GC comparison or RANS mixed-history experiment is supplied. The results therefore concern the returned NN2 and GP2 pipelines, including their post-processing, rather than every nominal transfer order or the isolated contribution of turbulence-history error.
++
++Total loads are taken from the force histories. Pressure and friction contributions are additionally integrated from the exported surface fields using the same quadrature for case and reference. These differences resolve changes hidden by the six-decimal force-breakdown output, but the underlying surface fields remain single precision. Surface records duplicated at identical physical steps are counted once. The corresponding script, precision limitations, event accounting, and supporting diagnostics are documented in Appendix~\ref{app:rans-details}.
++
+ \subsection{Evidence and reproducibility limits}
+ \label{sec:evidence-limits}
+ 
+-The figures and tables below use the archived CSV files without altering their values. Static error files support recomputation of the reported convergence orders. The Riemann and NACA tables are report-level summaries; the underlying restarts, residual vectors, complete pressure/force histories, and extraction scripts named in the reports were not supplied with the manuscript package. Ratios and fits can therefore be checked from tabulated values, but raw-field identities and onset extraction cannot be independently reproduced from this archive alone. The Riemann initial states and boundary-condition types, spatial-flux settings, and physical-step inner-convergence criteria must also be archived for full computational reproduction. These omissions limit the strength of solver-error and mechanism claims, rather than being filled by assumed settings.
++The static inputs support recomputation of convergence orders. Earlier Riemann and Euler NACA tables are report-level summaries; their underlying restart and residual vectors and complete extraction histories were not supplied. The RANS archive additionally contains reduced force time series, surface distributions, and transfer-integral records, permitting the new comparisons and fits to be reproduced from those exports. It does not contain the raw solver states, case-level configuration files, or all inner-residual histories. Reported numerical settings are therefore distinguished from independently checked solver behavior. Precision, duplicate-record handling, and event-window accounting are stated where they affect the results. Missing convergence controls limit interpretation rather than being replaced by assumed tolerances.
+ 
+ \section{Results}
+ \label{sec:results}
+@@ -706,16 +720,88 @@
+ 
+ The pressure-shell results give more direct support for acoustic transport. Across six thresholds applied to the same event, lag slopes range from 782 to 917 steps per chord, corresponding to speeds of 1.09--1.28. Their mean speed is approximately 1.184, and the threshold-to-threshold standard deviation is 0.079; this spread is a detector-sensitivity measure, not a confidence interval from independent realizations. The range contains $a_\infty=1.18322$ and is well separated from the freestream convection speed 0.118322. A target-referenced check at the higher thresholds gives approximately 1.26--1.28, also on the acoustic scale. Together these observations support an acoustic interpretation of the dominant delayed disturbance while allowing an immediate, small nonlocal component. They do not verify the propagator or output adjoint quantitatively.
+ 
++\subsection{RANS load response on discretely changing meshes}
++\label{sec:rans-load-results}
++
++The viscous extension changes the method comparison. Figure~\ref{fig:rans-loads} shows the total- and friction-drag deviations from each closure's no-transfer trajectory. The total-drag RMS deviations lie between $(\RansCdRmsMin\text{--}\RansCdRmsMax)\times10^{-5}$ across the eight runs, and NN2 and GP2 differ by less than 1\% in this statistic for every paired seed. Their trajectories are not identical: the RMS of the paired NN2--GP2 difference is $(\RansPairRmsMin\text{--}\RansPairRmsMax)\times10^{-6}$. The small differences in aggregate error have no consistent ordering. Thus, the lower GP2 numerical-drag trend observed in the Euler experiment does not extend to a resolved method advantage in this RANS configuration and time window.
++
++\begin{figure}[tbp]
++\centering
++\begin{tikzpicture}
++\begin{groupplot}[
++ group style={group size=2 by 2,horizontal sep=1.0cm,vertical sep=1.25cm},
++ width=0.45\textwidth,height=4.3cm,
++ xmin=0,xmax=400,xtick={0,100,200,300,400},grid=major,
++ tick label style={font=\scriptsize},label style={font=\small},title style={font=\small},
++ legend style={font=\scriptsize,draw=none},scaled y ticks=false,
++]
++\nextgroupplot[title={SA},ylabel={$10^5\Delta C_D$},ymin=-13,ymax=13,ytick={-10,0,10},legend to name=ransloadlegend,legend columns=4]
++\addplot[NavyBlue,solid,thin] table[x=step,y expr=1e5*\thisrow{NN2_s1_dCD},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};\addlegendentry{NN2, seed 1}
++\addplot[NavyBlue,dashed,thin] table[x=step,y expr=1e5*\thisrow{NN2_s2_dCD},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};\addlegendentry{NN2, seed 2}
++\addplot[Purple,solid,thin] table[x=step,y expr=1e5*\thisrow{GP2_s1_dCD},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};\addlegendentry{GP2, seed 1}
++\addplot[Purple,dashed,thin] table[x=step,y expr=1e5*\thisrow{GP2_s2_dCD},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};\addlegendentry{GP2, seed 2}
++\nextgroupplot[title={SST},ymin=-13,ymax=13,ytick={-10,0,10}]
++\addplot[NavyBlue,solid,thin] table[x=step,y expr=1e5*\thisrow{NN2_s1_dCD},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
++\addplot[NavyBlue,dashed,thin] table[x=step,y expr=1e5*\thisrow{NN2_s2_dCD},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
++\addplot[Purple,solid,thin] table[x=step,y expr=1e5*\thisrow{GP2_s1_dCD},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
++\addplot[Purple,dashed,thin] table[x=step,y expr=1e5*\thisrow{GP2_s2_dCD},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
++\nextgroupplot[xlabel={Physical step},ylabel={$10^6\Delta C_D^{v}$},ymin=-1.6,ymax=0.1,ytick={-1.5,-1,-0.5,0}]
++\addplot[NavyBlue,solid,thin] table[x=step,y expr=1e6*\thisrow{NN2_s1_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};
++\addplot[NavyBlue,dashed,thin] table[x=step,y expr=1e6*\thisrow{NN2_s2_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};
++\addplot[Purple,solid,thin] table[x=step,y expr=1e6*\thisrow{GP2_s1_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};
++\addplot[Purple,dashed,thin] table[x=step,y expr=1e6*\thisrow{GP2_s2_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SA.csv};
++\nextgroupplot[xlabel={Physical step},ymin=-1.6,ymax=0.1,ytick={-1.5,-1,-0.5,0}]
++\addplot[NavyBlue,solid,thin] table[x=step,y expr=1e6*\thisrow{NN2_s1_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
++\addplot[NavyBlue,dashed,thin] table[x=step,y expr=1e6*\thisrow{NN2_s2_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
++\addplot[Purple,solid,thin] table[x=step,y expr=1e6*\thisrow{GP2_s1_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
++\addplot[Purple,dashed,thin] table[x=step,y expr=1e6*\thisrow{GP2_s2_dCDv},col sep=comma]{\GeneratedDir/rans_drift_SST.csv};
++\end{groupplot}
++\end{tikzpicture}
++\par\smallskip\ref{ransloadlegend}
++\caption{RANS load deviations during repeated mesh replacement. Total drag uses the recorded force histories; friction drag uses paired surface integrations. Each curve contains one sample per physical step, without smoothing. The scales differ between rows. The full window is $0.04$ chord-convective times.}
++\label{fig:rans-loads}
++\end{figure}
++
++The drag split also differs from the Euler result. The friction contribution decreases in every run, with descriptive slopes of $-(\RansViscTrendMin\text{--}\RansViscTrendMax)\times10^{-7}$ per 100 steps. The larger total-drag oscillations are predominantly pressure-related. Total-drag slopes are small relative to the oscillations and their ordinary fit errors; detrended lag-one correlations are approximately 0.79--0.84. Accordingly, Appendix~\ref{app:rans-details} reports the slopes without treating a two-standard-error criterion as statistical significance. Two sequences and this short interval support a finite-window comparison, not a long-time drift law or an ensemble equivalence claim.
++
++Changing the mesh can itself alter the steady load. On the first displaced grid, the independently converged lift differs from the original-grid steady value by $-1.891\times10^{-3}$ for SA and $-9.649\times10^{-4}$ for SST. The corresponding mean lift deviations during the first ten-step GP2 continuation are instead $+1.318\times10^{-5}$ and $+1.150\times10^{-5}$. These are different questions: the first comparison measures native discrete equilibria, whereas the second measures a short continuation from transferred histories. The equilibrium difference cannot be subtracted as an instantaneous interpolation correction, nor do similar NN2 and GP2 loads show that changing the discretization is harmless. This is the distinction in Eq.~\eqref{eq:observable-decomposition} applied to the viscous case.
++
++\subsection{Turbulence transfer, integral preservation, and response localization}
++\label{sec:rans-state-results}
++
++Table~\ref{tab:rans-transfer-integrals} separates instantaneous transfer defects from the later load response. GP2 reduces the maximum recorded density-weighted SA-variable defect from $2.48\times10^{-6}$ to $4.08\times10^{-9}$, and the SST $k$ and $\omega$ defects from $2.98\times10^{-6}$ and $8.15\times10^{-8}$ to $2.59\times10^{-8}$ and $1.08\times10^{-9}$. Its density and energy defects are also smaller. These quantities use each source integral as the reference; they are not differences from a native target solution. Their small magnitudes, especially for density over a $100c$ domain, do not bound a local perturbation. Turbulence production, destruction, and transport subsequently change the inventories, so inter-event changes are not assigned to the interpolation operator.
++
++\begin{table}[tbp]
++\centering\small
++\caption{Maximum absolute source-relative integral change across the 39 RANS events followed by evolution, pooling both BDF2 history transfers and both seeds (156 samples per entry). These are properties of the complete returned transfer, not a conservation law for subsequent turbulence evolution.}
++\label{tab:rans-transfer-integrals}
++\pgfplotstabletypeset[
++ col sep=comma,columns={model,quantity,NN2_max,GP2_max},
++ columns/model/.style={string type,column name={Closure},column type=l},
++ columns/quantity/.style={string type,column name={Inventory density},column type=c},
++ columns/NN2_max/.style={sci,precision=2,column name={NN2},column type=r},
++ columns/GP2_max/.style={sci,precision=2,column name={GP2},column type=r},
++ every head row/.style={before row=\toprule,after row=\midrule},
++ every last row/.style={after row=\bottomrule}
++]{\GeneratedDir/rans_integral_summary.csv}
++\end{table}
++
++The integral advantage does not produce a correspondingly large load advantage in Fig.~\ref{fig:rans-loads}. Nor does it imply an unchanged turbulence field near the wall. At step 395, the eddy-viscosity discrepancy over the fixed $d_w<0.01c$ vertices has RMS equal to \RansEddyMin--\RansEddyMax\% of the reference maximum on that band. This is a band-normalized nodal metric, not a relative error at each vertex. The two transfer methods again give similar values. Fixed coordinates make this comparison unambiguous, but do not isolate whether the discrepancy was introduced directly, generated through the changed spatial operator, or transported into the band.
++
++The returned SST field includes positivity processing. The supplied diagnostics record kinetic-energy floor enforcement in every exported drift history: at most 415--423 vertices per GP2 transfer and 13--19 per NN2 transfer. The number of corrected vertices is not an error norm, and their locations and volume weights are needed to interpret their influence. These observations prevent assigning the final GP2 results solely to the unconstrained projection properties in Sec.~\ref{sec:galerkin-vertex-output}. The clipping and fixed-band diagnostics are retained in Appendix~\ref{app:rans-details}; no turbulence-only history perturbation was performed, so a causal decomposition of the viscous response is not claimed.
++
++Finally, the RANS one-event records do not reproduce the resolved acoustic-delay evidence of the Euler case. For the three standard launch bands, the 50\%-of-peak lift onsets are 3, 8, and 5 steps for both closures, against acoustic scale estimates of 50, 100, and 200 steps. The two nearer-band peaks occur near the recording-window end. In the pressure probes, \RansUnderResolvedShells\ of \RansProbeShells\ shell peaks lie below three single-precision pressure increments, while many larger peaks cross their thresholds at zero or one step. A propagation speed cannot be inferred from those onsets. The data are compatible with an immediate nonlocal/numerical component and insufficiently resolved later disturbances; they do not establish its unique cause or the absence of acoustic propagation. This limits the RANS propagation inference without invalidating the measured force response.
++
+ \section{Discussion and conclusions}
+ \label{sec:conclusions}
+ 
+-The results identify two distinct failure modes of a transfer-based restart: loss of spatial information despite satisfactory integral conservation, and a time-integration response that cannot be inferred from the latest transferred state alone. The first appears in paired Riemann raw/GC comparisons and in repeated airfoil load trends. The second is isolated by placing a discrepancy only in the older BDF2 history. The exact common-trial residual identity and the approximate $4/3$ and $-1/3$ response coefficients connect the experiments to the analysis without implying that the full nonlinear response operator has been validated.
+-
+-No transfer family is uniformly superior in the completed comparisons. Higher-order pointwise methods have small smooth transfer errors and perform well in several repeated-transfer diagnostics. GP2 has favorable recorded Riemann behavior and lower numerical-drag trends than NN2 in the two-seed airfoil experiment, but it is neither free of accumulated error nor automatically locally conservative in the finite-volume sense. Quadratic projection introduces a separate distinction between the internal finite-element representation and the vertex-only restart. Limiting and global correction can change that representation's approximation and moment properties; their effect must be measured on the final state consumed by the solver.
+-
+-The native-target discrepancy includes discretization mismatch as well as interpolation, and the repeated-remeshing comparisons include changes in the spatial evolution operator. These are deliberate aspects of an operational restart assessment, but they limit attribution to interpolation alone. The reported Riemann crossing sensitivity, residual-export diagnostics, deterministic native airfoil relaxation, and small number of deformation realizations also constrain quantitative generalization. The dominant delayed pressure response is compatible with acoustic transport; exact locality, a universal delay coefficient, and an entropy-based explanation of drag drift are not established.
+-
+-For the intended unsteady-RANS application, the present Euler cases provide controlled verification of common transfer and history mechanisms. A completed RANS assessment must additionally retain the turbulence histories, establish physical-step convergence, and measure viscous and pressure loads on a genuinely unsteady trajectory. Non-collinear history errors and anisotropic near-wall remeshing are particularly relevant because neither is represented by the steady, one-direction NACA history perturbations. Computational cost and a spatial--temporal refinement check are also required before recommending an engineering method. The current conclusions therefore concern the demonstrated Euler mechanisms and the diagnostics they motivate for RANS, rather than an unmeasured RANS accuracy ranking.
++The evidence distinguishes three requirements of a remeshed time-accurate calculation: adequate spatial transfer, appropriate multistep histories, and sufficiently accurate evolution on the receiving mesh. Global integral preservation addresses only part of the first requirement. Its insufficiency is demonstrated by paired Riemann raw/GC comparisons; the importance of the older history is isolated by the Euler NACA restart. The exact common-trial residual identity and approximate BDF2 coefficient ratios support the history analysis without constituting a full validation of the nonlinear resolvent or aerodynamic adjoint.
++
++The fixed-body RANS cases extend the assessment to turbulence histories and viscous loads, but do not reproduce every Euler ranking. GP2 has markedly smaller monitored turbulence-inventory defects than NN2, while their total-drag RMS deviations differ by less than 1\% for each paired seed and have no consistent ordering. Both methods produce a small decreasing friction contribution and turbulence discrepancies on the protected inner vertices. The study therefore provides no universal relation between a smaller integral defect and a smaller aerodynamic error. The returned field, including positivity processing and projection limiting, must be evaluated rather than assigned the guarantees of an unconstrained mathematical operator.
++
++Reference choice remains part of that evaluation. Independently converged grids have different discrete equilibria, and comparison with a no-remeshing trajectory includes changes in the spatial operator as well as transfer. Identical mesh sequences provide a controlled method comparison, not a pure interpolation-error measurement. Likewise, a spatially restricted mesh change need not produce a strictly localized field perturbation. The Euler pressure records support a dominant acoustic delay, whereas the RANS pressure precision, early nonlocal response, and window-dependent peaks do not establish a propagation law.
++
++These conclusions apply to the tested fixed domains and short remeshing-induced transients about nominally steady airfoil flows. The RANS application supplies the previously missing turbulence and viscous-load evidence; it does not require body motion to address that question. Its 50-inner-iteration budget, limited time horizon, protected near-wall band, and two random sequences nevertheless preclude a converged long-time accuracy ranking. Selected physical-step and time-step checks, complete configuration archives, and transfer cost measurements are needed before an engineering recommendation. Continuous moving-mesh histories, separated periodic loads, and higher-order RANS transfer rankings remain outside this paper's completed scope.
+ 
+ \appendix
+ \section{Additional static-transfer verification}
+@@ -1387,12 +1473,105 @@
+ \end{equation}
+ The difference from the consistent quadratic integral is second order despite exact nodal values and exact projection. The same result holds for $f(x,y)=x^2$ on a uniformly triangulated unit square obtained by splitting Cartesian cells; integrating the vertex-linear field in $y$ leaves the same composite rule in $x$. Two meshes can consequently have a source--target lumped difference $(h_B^2-h_A^2)/6$ even when the transferred quadratic is exact. The example is a mathematical check, not an additional CFD measurement. It rules out a general claim that vertex restriction of GP3 necessarily leaves an $O(h^3)$ lumped defect or that repairing that defect automatically retains third-order pointwise accuracy.
+ 
++\section{RANS supporting diagnostics and export audit}
++\label{app:rans-details}
++
++The RANS views use the archived files in \texttt{RANS\_PostProcessing/}. Each surface-force and surface-norm file contains 680 exact duplicate rows, and the surface-profile file contains 13,320. Removing duplicates only in derived views leaves 398 unique physical steps per drift case, rather than the 478 rows used in the source surface-fit summary. No conflicting values occur at the same case/step key. Table~\ref{tab:rans-slopes} is recalculated with equal weight per physical step. The original exports remain unchanged.
++
++\begin{table}[htbp]
++\centering\small
++\caption{Descriptive RANS slopes per 100 physical steps, multiplied by $10^6$. Total drag uses the history output; its SE is the ordinary, serial-correlation-unadjusted regression standard error. Pressure and friction slopes use unique paired surface snapshots. These SEs are not confidence intervals across mesh realizations.}
++\label{tab:rans-slopes}
++\setlength{\tabcolsep}{5pt}
++\pgfplotstabletypeset[
++ col sep=comma,columns={model,method,seed,CD_trend_micro,CD_se_micro,CDp_trend_micro,CDv_trend_micro},
++ columns/model/.style={string type,column name={Closure}},
++ columns/method/.style={string type,column name={Method}},
++ columns/seed/.style={fixed,precision=0,column name={Seed}},
++ columns/CD_trend_micro/.style={fixed,fixed zerofill,precision=3,column name={$b_D$}},
++ columns/CD_se_micro/.style={fixed,fixed zerofill,precision=3,column name={SE$(b_D)$}},
++ columns/CDp_trend_micro/.style={fixed,fixed zerofill,precision=3,column name={$b_D^p$}},
++ columns/CDv_trend_micro/.style={fixed,fixed zerofill,precision=3,column name={$b_D^v$}},
++ every head row/.style={before row=\toprule,after row=\midrule},
++ every last row/.style={after row=\bottomrule}
++]{\GeneratedDir/rans_drift_summary.csv}
++\end{table}
++
++The integral archive contains 40 latest/older history pairs for each drift run. The pairs written at indices $(399,398)$ have no subsequent physical-step output in the $2$--$399$ history window. Table~\ref{tab:rans-transfer-integrals} therefore uses the 39 earlier pairs. Similarly, each nominal one-event case has an initial and terminal export pair, but only the first is followed by the analyzed response. Counting restart files as physical remeshing events would overstate the exposure. The separate relative-integral column is retained at its exported precision: subtracting rounded inventories of order $10^4$ cannot reconstruct defects near $10^{-13}$ reliably.
++
++The report-derived SST floor statistics in Table~\ref{tab:rans-clipping} include both histories and the terminal export, hence 80 transfer calls rather than 39 physical events. No $\omega$ floor activation is reported. SA uses no analogous primitive-variable floor; its reported most negative transferred density-weighted $\widetilde\nu$ is of order $10^{-16}$. The records locate neither the SST clipped vertices nor their volume-weighted contribution to the final aerodynamic response. They establish that the returned transfer is nonlinear, not which individual operation causes the load change.
++
++\begin{table}[htbp]
++\centering\small
++\caption{Reported kinetic-energy floor enforcement in the SST drift runs. Every case has 80 exported history transfers with at least one raised value. The floor is $k=10^{-10}$. Counts and minima are transcribed reproducibly from the source report, not reconstructed from unavailable nodal clipping logs.}
++\label{tab:rans-clipping}
++\pgfplotstabletypeset[
++ col sep=comma,columns={method,seed,max_nodes,min_before},
++ columns/method/.style={string type,column name={Method}},
++ columns/seed/.style={fixed,precision=0,column name={Seed}},
++ columns/max_nodes/.style={fixed,precision=0,column name={Maximum raised vertices}},
++ columns/min_before/.style={sci,precision=2,column name={Minimum $k$ before clipping}},
++ every head row/.style={before row=\toprule,after row=\midrule},
++ every last row/.style={after row=\bottomrule}
++]{\GeneratedDir/rans_clipping_report.csv}
++\end{table}
++
++For the fixed-band turbulence diagnostic, the RMS is formed over vertices without volume weighting and divided by the maximum reference field magnitude over the same set. Figure~\ref{fig:rans-eddy} displays this metric for eddy viscosity, avoiding comparison of unlike normalizations for $k$, $\omega$, and $\widetilde\nu$. In particular, the large wall value of $\omega$ can make a band-maximum-normalized discrepancy small without bounding its relative value everywhere. The archived surface distributions and endpoint tables provide $C_p$, streamwise $C_f$, and $y^+$ differences; the minimum streamwise $C_f$ near the nose is not used alone to diagnose separation.
++
++\begin{figure}[htbp]
++\centering
++\begin{tikzpicture}
++\begin{groupplot}[group style={group size=2 by 1,horizontal sep=1.0cm},width=0.45\textwidth,height=4.5cm,
++ xmin=0,xmax=400,xlabel={Physical step},grid=major,scaled y ticks=false,
++ tick label style={font=\scriptsize},label style={font=\small},title style={font=\small}]
++\nextgroupplot[title={SA},ylabel={Normalized RMS $\mu_t$ discrepancy (\%)}]
++\addplot[NavyBlue,solid,thin] table[x=step,y=NN2_s1_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SA.csv};
++\addplot[NavyBlue,dashed,thin] table[x=step,y=NN2_s2_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SA.csv};
++\addplot[Purple,solid,thin] table[x=step,y=GP2_s1_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SA.csv};
++\addplot[Purple,dashed,thin] table[x=step,y=GP2_s2_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SA.csv};
++\nextgroupplot[title={SST}]
++\addplot[NavyBlue,solid,thin] table[x=step,y=NN2_s1_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SST.csv};
++\addplot[NavyBlue,dashed,thin] table[x=step,y=NN2_s2_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SST.csv};
++\addplot[Purple,solid,thin] table[x=step,y=GP2_s1_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SST.csv};
++\addplot[Purple,dashed,thin] table[x=step,y=GP2_s2_eddy_rms_pct,col sep=comma]{\GeneratedDir/rans_turbulence_SST.csv};
++\end{groupplot}
++\end{tikzpicture}
++\par\smallskip\ref{ransloadlegend}
++\caption{Eddy-viscosity discrepancy on the 12,233 fixed inner-band vertices, normalized by the reference maximum on that band. Straight segments connect the exported five-step samples; no values are reconstructed between them.}
++\label{fig:rans-eddy}
++\end{figure}
++
++The one-event results are summarized in Table~\ref{tab:rans-onsets}. A peak marked C occurs within the last 10\% of the available window, so its value and fraction-of-peak onset are window-dependent. The longer $d/c=0.20$ run begins its event at step 400 rather than 200 and is not simply an extension of the same disturbance: its source state and event-dependent mesh realization also differ. The pressure probes contain \RansUnderResolvedShells/\RansProbeShells\ peaks below the report's three-increment resolution screen ($3\times2^{-24}$ at the exported pressure magnitude). Fitting the remaining zero- or one-step onsets does not yield a resolved acoustic travel-time slope. Accordingly, neither the force-based fits nor the spurious large speeds from three nearly simultaneous shells are used as physical propagation estimates.
++
++\begin{table}[htbp]
++\centering\scriptsize
++\caption{One-event GP2 lift diagnostics. SF2 doubles the displacement bound; ``long'' changes both the event time and the available window. C denotes a peak in the last 10\% of that window. Lags are physical steps, not a fitted propagation speed.}
++\label{tab:rans-onsets}
++\pgfplotstabletypeset[
++ col sep=comma,columns={model,case_label,peak,peak_lag,lag50,predicted,censor_label},
++ columns/model/.style={string type,column name={Closure}},
++ columns/case_label/.style={string type,column name={Case}},
++ columns/peak/.style={sci,precision=2,column name={Peak $|\Delta C_L|$}},
++ columns/peak_lag/.style={fixed,precision=0,column name={Peak lag}},
++ columns/lag50/.style={fixed,precision=0,column name={50\% lag}},
++ columns/predicted/.style={fixed,precision=0,column name={$1000d/c$}},
++ columns/censor_label/.style={string type,column name={}},
++ every head row/.style={before row=\toprule,after row=\midrule},
++ every last row/.style={after row=\bottomrule}
++]{\GeneratedDir/rans_oneshot_summary.csv}
++\end{table}
++
++The RANS archive provides complete reduced force histories and selected surface distributions, but not the case-level meshes, restart vectors, solver sources, or inner-residual histories. Fifty inner iterations is an iteration budget, not evidence that the physical-step error lies below each measured difference. A selected tightened-inner-iteration and time-step check at fixed physical remeshing times is needed before small method differences are interpreted as resolved accuracy differences. Exact closure variants, freestream turbulence values, thermal wall conditions, the coordinate-based displacement mask, and software version should accompany the configuration archive. These are bounded verification and reporting requirements for this fixed-body study, not a requirement to add moving-body simulations.
++
+ \section{Data provenance and automated checks}
+ \label{app:automated-postprocessing}
+ 
+-All pre-existing input and generated CSV files retain their names, locations, and numerical contents. Figures and tables read these files through \texttt{pgfplots} and \texttt{pgfplotstable}. The static-data builder recomputes fitted and consecutive orders from the supplied errors; the manuscript build tracks CSV dependencies. The additional audit script checks tabulated ratios, fits, citation keys, and preservation of the original CSV hashes. It does not rerun the flow solver.
+-
+-The static error/conservation CSVs are the available numerical inputs. The Riemann and NACA CSVs in this package are summaries transcribed from the supplied study reports, not replacements for the original full-precision run outputs named there. The reports are retained unchanged for provenance. The residual-summary CSV includes normalized cosine values slightly above one; these invalid angular diagnostics are preserved in the input but omitted from the numerical assessment pending recomputation. No continuous force history, pressure-shell history, state vector, or residual vector is reconstructed from isolated summary values. The editorial audit records unresolved settings, tracker inconsistencies, and diagnostics requiring original data; these must be resolved before a fully reproducible journal submission.
+-
++The 39 pre-existing input/generated CSVs and 14 RANS source CSVs retain their names, relative locations, and contents. Figures and tables use \texttt{pgfplots} and \texttt{pgfplotstable}; the build tracks their dependencies. The static builder recomputes convergence orders. The RANS builder creates derived views, rejects conflicting duplicate physical keys, removes only exact repeated snapshots, aligns event windows, and recomputes descriptive statistics. Its hash manifest distinguishes original data from derived products and detects later intentional source updates. Neither builder runs CFD.
++
++The original reports are retained. Earlier Riemann/Euler NACA CSVs contain report-transcribed summaries; the new RANS files contain reduced post-processing exports, including actual sampled force histories. Continuous curves are drawn only where time samples exist. Report-only floor statistics are labeled separately. The earlier residual-summary CSV's cosines above one remain preserved but excluded from validation. The accompanying scientific assessment records the remaining source/precision and solver-control limitations and the bibliographic additions. Reproduction from these reduced data is not a substitute for archiving the configurations, meshes, restart states, and extraction scripts required to reproduce the simulations themselves.
++
++\begingroup
++\small
+ \printbibliography
++\endgroup
+ \end{document}

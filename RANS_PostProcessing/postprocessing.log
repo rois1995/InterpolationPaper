@@ -1,0 +1,540 @@
+=== Tue Sep  8 12:18:24 CEST 2026 RANS_ForceAnalysis.py
+reference SA: steps 2..799 (798)
+   CL   0.655218 -> 0.654927  std 6.40e-05
+   CD   0.008424 -> 0.008423  std 5.64e-06
+   CDp  0.001782 -> 0.001781  std 5.57e-06
+   CDv  0.006642 -> 0.006642  std 8.67e-19
+   CMz  -0.003902 -> -0.003966  std 1.08e-05
+reference SST: steps 2..799 (798)
+   CL   0.653232 -> 0.652943  std 6.91e-05
+   CD   0.008122 -> 0.008123  std 4.95e-06
+   CDp  0.001753 -> 0.001753  std 4.90e-06
+   CDv  0.006369 -> 0.006370  std 4.54e-07
+   CMz  -0.004486 -> -0.004552  std 1.28e-05
+
+=== RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second ===
+         ref mean      offset     scatter    max|dev|   trend/100it       +/- resolved   %/100it
+CL        0.65502  -4.926e-05   1.393e-04   4.482e-04    -4.750e-05  5.61e-06      YES   -0.0073
+CD        0.00843   1.042e-05   3.098e-05   1.011e-04    -1.750e-06  1.35e-06       no   -0.0208
+CDp       0.00179   1.081e-05   3.094e-05   1.020e-04    -1.350e-06  1.35e-06       no   -0.0756
+CDv       0.00664  -2.739e-07   4.459e-07   1.000e-06    -2.996e-07  1.24e-08      YES   -0.0045 (at breakdown rounding)
+CMz      -0.00395  -2.431e-05   6.297e-05   1.916e-04    -1.613e-05  2.63e-06      YES    0.4078
+
+=== RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second ===
+         ref mean      offset     scatter    max|dev|   trend/100it       +/- resolved   %/100it
+CL        0.65502  -5.589e-05   1.467e-04   4.038e-04    -5.840e-05  5.71e-06      YES   -0.0089
+CD        0.00843   6.115e-06   2.943e-05   1.123e-04    -1.704e-06  1.28e-06       no   -0.0202
+CDp       0.00179   6.606e-06   2.942e-05   1.120e-04    -1.248e-06  1.29e-06       no   -0.0699
+CDv       0.00664  -2.714e-07   4.447e-07   1.000e-06    -2.978e-07  1.24e-08      YES   -0.0045 (at breakdown rounding)
+CMz      -0.00395  -2.385e-05   6.588e-05   2.218e-04    -1.672e-05  2.76e-06      YES    0.4228
+
+=== RANS_SA_WD_0.01-20_NN_Drift_Second ===
+         ref mean      offset     scatter    max|dev|   trend/100it       +/- resolved   %/100it
+CL        0.65502  -5.452e-05   1.358e-04   4.609e-04    -5.019e-05  5.38e-06      YES   -0.0077
+CD        0.00843   1.057e-05   3.067e-05   1.170e-04    -1.655e-06  1.34e-06       no   -0.0196
+CDp       0.00179   1.099e-05   3.063e-05   1.180e-04    -1.242e-06  1.34e-06       no   -0.0696
+CDv       0.00664  -2.714e-07   4.447e-07   1.000e-06    -2.979e-07  1.24e-08      YES   -0.0045 (at breakdown rounding)
+CMz      -0.00395  -2.483e-05   6.310e-05   1.918e-04    -1.688e-05  2.63e-06      YES    0.4268
+
+=== RANS_SA_WD_0.01-20_NN_Drift_Seed2_Second ===
+         ref mean      offset     scatter    max|dev|   trend/100it       +/- resolved   %/100it
+CL        0.65502  -6.475e-05   1.494e-04   4.175e-04    -6.598e-05  5.63e-06      YES   -0.0101
+CD        0.00843   6.319e-06   2.968e-05   1.219e-04    -2.197e-06  1.29e-06       no   -0.0261
+CDp       0.00179   6.819e-06   2.967e-05   1.220e-04    -1.762e-06  1.29e-06       no   -0.0987
+CDv       0.00664  -2.814e-07   4.497e-07   1.000e-06    -3.047e-07  1.23e-08      YES   -0.0046 (at breakdown rounding)
+CMz      -0.00395  -2.476e-05   6.672e-05   2.213e-04    -1.848e-05  2.77e-06      YES    0.4674
+wrote Figures/RANS/RANS_SA_ForceDeviation.png
+
+=== SA: one transfer, onset lags (steps after the event) ===
+acoustic prediction lag = 1000 * d
+
+  CL:
+                                                  case     d     floor      leak      peak pk lag  win    1%    5%   10%   25%   50%
+  RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second  0.05   0.0e+00   2.8e-06  2.70e-05    199  199     0     0     0     2     3 CENSORED
+  RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second  0.10   0.0e+00   2.5e-07  6.85e-05    191  199     1     1     2     6     9 CENSORED
+  RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second  0.10   0.0e+00   1.3e-07  2.54e-05    191  199     1     1     2     6     8 CENSORED
+  RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second  0.20   0.0e+00   1.3e-08  1.42e-05     10  199     1     1     1     2     5
+  RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second  0.20   0.0e+00   3.2e-08  8.87e-06      5  399     1     1     1     2     3
+
+  CDp:
+                                                  case     d     floor      leak      peak pk lag  win    1%    5%   10%   25%   50%
+  RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second  0.05   0.0e+00   0.0e+00  5.00e-06     30  199     1     1     1     1     2 rounding
+  RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second  0.10   0.0e+00   0.0e+00  7.00e-06      2  199     1     1     1     1     1 rounding
+  RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second  0.10   0.0e+00   0.0e+00  3.00e-06      2  199     1     1     1     1     1 rounding
+  RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second  0.20   0.0e+00   0.0e+00  1.00e-06     13  199     2     2     2     2     2 rounding
+  RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second  0.20   0.0e+00   0.0e+00  1.00e-06      5  399     2     2     2     2     2 rounding
+
+  CDv:
+                                                  case     d     floor      leak      peak pk lag  win    1%    5%   10%   25%   50%
+  RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second  0.05   0.0e+00   0.0e+00  0.00e+00      0  199     -     -     -     -     - rounding
+  RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second  0.10   0.0e+00   0.0e+00  0.00e+00      0  199     -     -     -     -     - rounding
+  RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second  0.10   0.0e+00   0.0e+00  0.00e+00      0  199     -     -     -     -     - rounding
+  RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second  0.20   0.0e+00   0.0e+00  0.00e+00      0  199     -     -     -     -     - rounding
+  RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second  0.20   0.0e+00   0.0e+00  0.00e+00      0  399     -     -     -     -     - rounding
+
+  CD:
+                                                  case     d     floor      leak      peak pk lag  win    1%    5%   10%   25%   50%
+  RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second  0.05   1.0e-12   2.7e-07  4.66e-06      5  199     0     0     1     1     2
+  RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second  0.10   1.0e-12   1.4e-07  7.42e-06      2  199     0     1     1     1     1
+  RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second  0.10   1.0e-12   4.9e-08  3.26e-06      2  199     0     1     1     1     1
+  RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second  0.20   1.0e-12   1.5e-09  1.49e-06      2  199     1     1     1     2     2
+  RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second  0.20   1.0e-12   5.5e-09  9.78e-07     31  399     1     1     1     1     2
+
+  CMz:
+                                                  case     d     floor      leak      peak pk lag  win    1%    5%   10%   25%   50%
+  RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second  0.05   1.0e-12   5.5e-07  7.79e-06     42  199     0     0     1     1     2
+  RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second  0.10   1.0e-12   3.8e-08  2.31e-05      3  199     1     1     2     2     2
+  RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second  0.10   1.0e-12   2.2e-08  8.49e-06      3  199     1     2     2     2     2
+  RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second  0.20   1.0e-12   1.2e-09  4.89e-06     42  199     1     2     3     3     4
+  RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second  0.20   1.0e-12   3.8e-09  2.65e-06      4  399     1     1     3     3     3
+
+  scaling fit lag = C*d + b over 3 event@200 cases (prediction C=1000):
+   CL     1%  C=      6  b=   0.0  R2=0.5714  C/pred=0.01
+   CL     5%  C=      6  b=   0.0  R2=0.5714  C/pred=0.01
+   CL    10%  C=      4  b=   0.5  R2=0.1071  C/pred=0.00
+   CL    25%  C=     -6  b=   4.0  R2=0.0357  C/pred=-0.01
+   CL    50%  C=      7  b=   4.5  R2=0.0470  C/pred=0.01
+   CDp    1%  C=      7  b=   0.5  R2=0.8929  C/pred=0.01
+   CDp    5%  C=      7  b=   0.5  R2=0.8929  C/pred=0.01
+   CDp   10%  C=      7  b=   0.5  R2=0.8929  C/pred=0.01
+   CDp   25%  C=      7  b=   0.5  R2=0.8929  C/pred=0.01
+   CDp   50%  C=      1  b=   1.5  R2=0.0357  C/pred=0.00
+wrote Figures/RANS/RANS_SA_AcousticDelay_CL.png
+wrote Figures/RANS/RANS_SA_OneShot_DragSplit.png
+
+=== RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second ===
+         ref mean      offset     scatter    max|dev|   trend/100it       +/- resolved   %/100it
+CL        0.65308  -3.829e-06   1.544e-04   4.713e-04    -8.140e-06  6.74e-06       no   -0.0012
+CD        0.00812   1.308e-05   3.168e-05   1.074e-04     1.031e-07  1.39e-06       no    0.0013
+CDp       0.00175   1.344e-05   3.164e-05   1.070e-04     3.909e-07  1.38e-06       no    0.0224
+CDv       0.00637  -4.322e-07   5.201e-07   2.000e-06    -3.840e-07  1.20e-08      YES   -0.0060 (at breakdown rounding)
+CMz      -0.00453  -1.068e-05   8.061e-05   2.239e-04    -5.936e-06  3.51e-06       no    0.1311
+
+=== RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second ===
+         ref mean      offset     scatter    max|dev|   trend/100it       +/- resolved   %/100it
+CL        0.65308  -1.004e-05   1.580e-04   4.774e-04    -1.697e-05  6.86e-06      YES   -0.0026
+CD        0.00812   9.043e-06   3.129e-05   1.137e-04     6.186e-07  1.37e-06       no    0.0076
+CDp       0.00175   9.420e-06   3.129e-05   1.140e-04     9.548e-07  1.37e-06       no    0.0546
+CDv       0.00637  -5.025e-07   6.448e-07   2.000e-06    -4.804e-07  1.46e-08      YES   -0.0075 (at breakdown rounding)
+CMz      -0.00453  -1.060e-05   8.074e-05   2.350e-04    -5.931e-06  3.52e-06       no    0.1310
+
+=== RANS_SST_WD_0.01-20_NN_Drift_Second ===
+         ref mean      offset     scatter    max|dev|   trend/100it       +/- resolved   %/100it
+CL        0.65308  -9.734e-06   1.505e-04   4.154e-04    -1.164e-05  6.55e-06       no   -0.0018
+CD        0.00812   1.323e-05   3.157e-05   1.124e-04     1.652e-07  1.38e-06       no    0.0020
+CDp       0.00175   1.359e-05   3.153e-05   1.130e-04     4.720e-07  1.38e-06       no    0.0270
+CDv       0.00637  -4.422e-07   5.403e-07   2.000e-06    -3.985e-07  1.25e-08      YES   -0.0063 (at breakdown rounding)
+CMz      -0.00453  -1.134e-05   8.081e-05   2.230e-04    -6.940e-06  3.52e-06       no    0.1533
+
+=== RANS_SST_WD_0.01-20_NN_Drift_Seed2_Second ===
+         ref mean      offset     scatter    max|dev|   trend/100it       +/- resolved   %/100it
+CL        0.65308  -2.057e-05   1.548e-04   4.576e-04    -2.568e-05  6.65e-06      YES   -0.0039
+CD        0.00812   9.219e-06   3.112e-05   1.207e-04     1.805e-07  1.36e-06       no    0.0022
+CDp       0.00175   9.623e-06   3.113e-05   1.210e-04     5.448e-07  1.36e-06       no    0.0312
+CDv       0.00637  -5.050e-07   6.487e-07   2.000e-06    -4.835e-07  1.47e-08      YES   -0.0076 (at breakdown rounding)
+CMz      -0.00453  -1.191e-05   7.876e-05   2.321e-04    -7.965e-06  3.42e-06      YES    0.1760
+wrote Figures/RANS/RANS_SST_ForceDeviation.png
+
+=== SST: one transfer, onset lags (steps after the event) ===
+acoustic prediction lag = 1000 * d
+
+  CL:
+                                                  case     d     floor      leak      peak pk lag  win    1%    5%   10%   25%   50%
+  RANS_SST_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second  0.05   0.0e+00   2.8e-06  2.63e-05    199  199     0     0     0     2     3 CENSORED
+  RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second  0.10   0.0e+00   2.5e-07  6.75e-05    191  199     1     1     2     6     9 CENSORED
+  RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second  0.10   0.0e+00   1.3e-07  2.53e-05    191  199     1     1     2     6     8 CENSORED
+  RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second  0.20   0.0e+00   1.3e-08  1.38e-05     10  199     1     1     1     2     5
+  RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second  0.20   0.0e+00   3.2e-08  8.31e-06      5  399     1     1     1     2     3
+
+  CDp:
+                                                  case     d     floor      leak      peak pk lag  win    1%    5%   10%   25%   50%
+  RANS_SST_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second  0.05   0.0e+00   0.0e+00  5.00e-06      2  199     1     1     1     1     2 rounding
+  RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second  0.10   0.0e+00   0.0e+00  7.00e-06      2  199     1     1     1     1     1 rounding
+  RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second  0.10   0.0e+00   0.0e+00  3.00e-06      2  199     1     1     1     1     2 rounding
+  RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second  0.20   0.0e+00   0.0e+00  1.00e-06     11  199     2     2     2     2     2 rounding
+  RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second  0.20   0.0e+00   0.0e+00  1.00e-06      5  399     2     2     2     2     2 rounding
+
+  CDv:
+                                                  case     d     floor      leak      peak pk lag  win    1%    5%   10%   25%   50%
+  RANS_SST_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second  0.05   0.0e+00   0.0e+00  1.00e-06     19  199    19    19    19    19    19 rounding
+  RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second  0.10   0.0e+00   0.0e+00  1.00e-06     50  199    50    50    50    50    50 rounding
+  RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second  0.10   0.0e+00   0.0e+00  1.00e-06     50  199    50    50    50    50    50 rounding
+  RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second  0.20   0.0e+00   0.0e+00  0.00e+00      0  199     -     -     -     -     - rounding
+  RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second  0.20   0.0e+00   0.0e+00  0.00e+00      0  399     -     -     -     -     - rounding
+
+  CD:
+                                                  case     d     floor      leak      peak pk lag  win    1%    5%   10%   25%   50%
+  RANS_SST_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second  0.05   1.0e-12   2.7e-07  4.54e-06      5  199     0     0     1     1     2
+  RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second  0.10   1.0e-12   1.4e-07  7.24e-06      2  199     0     1     1     1     1
+  RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second  0.10   1.0e-12   4.9e-08  3.20e-06      2  199     0     1     1     1     1
+  RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second  0.20   1.0e-12   1.5e-09  1.50e-06      2  199     1     1     1     2     2
+  RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second  0.20   1.0e-12   5.5e-09  9.74e-07     31  399     1     1     1     1     2
+
+  CMz:
+                                                  case     d     floor      leak      peak pk lag  win    1%    5%   10%   25%   50%
+  RANS_SST_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second  0.05   1.0e-12   5.5e-07  7.42e-06     42  199     0     0     1     1     2
+  RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second  0.10   1.0e-12   3.7e-08  2.27e-05      3  199     1     1     2     2     2
+  RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second  0.10   1.0e-12   2.2e-08  8.40e-06      3  199     1     2     2     2     2
+  RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second  0.20   1.0e-12   1.3e-09  4.76e-06     42  199     1     2     3     3     4
+  RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second  0.20   1.0e-12   3.9e-09  2.38e-06      4  399     1     1     3     3     3
+
+  scaling fit lag = C*d + b over 3 event@200 cases (prediction C=1000):
+   CL     1%  C=      6  b=   0.0  R2=0.5714  C/pred=0.01
+   CL     5%  C=      6  b=   0.0  R2=0.5714  C/pred=0.01
+   CL    10%  C=      4  b=   0.5  R2=0.1071  C/pred=0.00
+   CL    25%  C=     -6  b=   4.0  R2=0.0357  C/pred=-0.01
+   CL    50%  C=      7  b=   4.5  R2=0.0470  C/pred=0.01
+   CDp    1%  C=      7  b=   0.5  R2=0.8929  C/pred=0.01
+   CDp    5%  C=      7  b=   0.5  R2=0.8929  C/pred=0.01
+   CDp   10%  C=      7  b=   0.5  R2=0.8929  C/pred=0.01
+   CDp   25%  C=      7  b=   0.5  R2=0.8929  C/pred=0.01
+   CDp   50%  C=     -0  b=   2.0  R2=nan  C/pred=-0.00
+wrote Figures/RANS/RANS_SST_AcousticDelay_CL.png
+wrote Figures/RANS/RANS_SST_OneShot_DragSplit.png
+wrote RANS_PostProcessing/rans_drift_trends.csv
+wrote RANS_PostProcessing/rans_drift_series.csv
+wrote RANS_PostProcessing/rans_oneshot_lags.csv
+wrote RANS_PostProcessing/rans_oneshot_fit.csv
+wrote RANS_PostProcessing/rans_oneshot_series.csv
+=== Tue Sep  8 12:18:36 CEST 2026 RANS_SurfaceAnalysis.py
+RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second ...
+   478 steps; last: RMS dCf 3.480e-06 max 1.978e-05 at x=0.4507; RMS dCp 2.742e-03 max 1.832e-02; min Cf ref -2.9965e-03 @x=0.0018, case -2.9993e-03 @x=0.0018
+wrote Figures/RANS/RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second_Cf_Cp.png
+RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second ...
+   478 steps; last: RMS dCf 3.132e-06 max 1.500e-05 at x=0.4580; RMS dCp 3.889e-03 max 3.452e-02; min Cf ref -2.9965e-03 @x=0.0018, case -2.9980e-03 @x=0.0018
+wrote Figures/RANS/RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second_Cf_Cp.png
+RANS_SA_WD_0.01-20_NN_Drift_Second ...
+   478 steps; last: RMS dCf 3.494e-06 max 1.960e-05 at x=0.4507; RMS dCp 2.777e-03 max 1.815e-02; min Cf ref -2.9965e-03 @x=0.0018, case -2.9993e-03 @x=0.0018
+wrote Figures/RANS/RANS_SA_WD_0.01-20_NN_Drift_Second_Cf_Cp.png
+RANS_SA_WD_0.01-20_NN_Drift_Seed2_Second ...
+   478 steps; last: RMS dCf 3.166e-06 max 1.515e-05 at x=0.4580; RMS dCp 3.897e-03 max 3.458e-02; min Cf ref -2.9965e-03 @x=0.0018, case -2.9980e-03 @x=0.0018
+wrote Figures/RANS/RANS_SA_WD_0.01-20_NN_Drift_Seed2_Second_Cf_Cp.png
+RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second ...
+   402 steps; last: RMS dCf 1.447e-07 max 1.891e-06 at x=0.0085; RMS dCp 4.690e-05 max 2.022e-04; min Cf ref -2.9965e-03 @x=0.0018, case -2.9961e-03 @x=0.0018
+wrote Figures/RANS/RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second_Cf_Cp.png
+RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second ...
+   402 steps; last: RMS dCf 3.134e-07 max 5.164e-06 at x=0.0085; RMS dCp 9.488e-05 max 4.738e-04; min Cf ref -2.9965e-03 @x=0.0018, case -2.9962e-03 @x=0.0018
+wrote Figures/RANS/RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second_Cf_Cp.png
+RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second ...
+   402 steps; last: RMS dCf 1.132e-07 max 1.934e-06 at x=0.0085; RMS dCp 3.037e-05 max 1.471e-04; min Cf ref -2.9965e-03 @x=0.0018, case -2.9964e-03 @x=0.0018
+wrote Figures/RANS/RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second_Cf_Cp.png
+RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second ...
+   802 steps; last: RMS dCf 4.949e-08 max 7.919e-07 at x=0.0085; RMS dCp 1.214e-05 max 6.056e-05; min Cf ref -2.9961e-03 @x=0.0018, case -2.9962e-03 @x=0.0018
+wrote Figures/RANS/RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second_Cf_Cp.png
+RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second ...
+   402 steps; last: RMS dCf 1.009e-08 max 5.320e-08 at x=0.0085; RMS dCp 9.190e-06 max 3.123e-05; min Cf ref -2.9965e-03 @x=0.0018, case -2.9964e-03 @x=0.0018
+wrote Figures/RANS/RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second_Cf_Cp.png
+RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second ...
+   478 steps; last: RMS dCf 2.806e-06 max 1.770e-05 at x=0.4507; RMS dCp 2.768e-03 max 1.806e-02; min Cf ref -2.9240e-03 @x=0.0018, case -2.9267e-03 @x=0.0018
+wrote Figures/RANS/RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second_Cf_Cp.png
+RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second ...
+   478 steps; last: RMS dCf 2.774e-06 max 1.246e-05 at x=0.4580; RMS dCp 3.360e-03 max 2.453e-02; min Cf ref -2.9240e-03 @x=0.0018, case -2.9256e-03 @x=0.0018
+wrote Figures/RANS/RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second_Cf_Cp.png
+RANS_SST_WD_0.01-20_NN_Drift_Second ...
+   478 steps; last: RMS dCf 2.823e-06 max 1.776e-05 at x=0.4507; RMS dCp 2.789e-03 max 1.784e-02; min Cf ref -2.9240e-03 @x=0.0018, case -2.9267e-03 @x=0.0018
+wrote Figures/RANS/RANS_SST_WD_0.01-20_NN_Drift_Second_Cf_Cp.png
+RANS_SST_WD_0.01-20_NN_Drift_Seed2_Second ...
+   478 steps; last: RMS dCf 2.815e-06 max 1.268e-05 at x=0.4580; RMS dCp 3.379e-03 max 2.459e-02; min Cf ref -2.9240e-03 @x=0.0018, case -2.9256e-03 @x=0.0018
+wrote Figures/RANS/RANS_SST_WD_0.01-20_NN_Drift_Seed2_Second_Cf_Cp.png
+RANS_SST_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second ...
+   402 steps; last: RMS dCf 1.618e-07 max 1.940e-06 at x=0.0085; RMS dCp 4.696e-05 max 2.046e-04; min Cf ref -2.9240e-03 @x=0.0018, case -2.9236e-03 @x=0.0018
+wrote Figures/RANS/RANS_SST_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second_Cf_Cp.png
+RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second ...
+   402 steps; last: RMS dCf 3.242e-07 max 5.269e-06 at x=0.0085; RMS dCp 9.427e-05 max 4.727e-04; min Cf ref -2.9240e-03 @x=0.0018, case -2.9237e-03 @x=0.0018
+wrote Figures/RANS/RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second_Cf_Cp.png
+RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second ...
+   402 steps; last: RMS dCf 1.151e-07 max 1.975e-06 at x=0.0085; RMS dCp 3.028e-05 max 1.470e-04; min Cf ref -2.9240e-03 @x=0.0018, case -2.9239e-03 @x=0.0018
+wrote Figures/RANS/RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second_Cf_Cp.png
+RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second ...
+   802 steps; last: RMS dCf 4.864e-08 max 8.029e-07 at x=0.0085; RMS dCp 1.198e-05 max 5.829e-05; min Cf ref -2.9236e-03 @x=0.0018, case -2.9237e-03 @x=0.0018
+wrote Figures/RANS/RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second_Cf_Cp.png
+RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second ...
+   402 steps; last: RMS dCf 1.079e-08 max 6.147e-08 at x=0.0194; RMS dCp 8.965e-06 max 3.076e-05; min Cf ref -2.9240e-03 @x=0.0018, case -2.9239e-03 @x=0.0018
+wrote Figures/RANS/RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second_Cf_Cp.png
+wrote RANS_PostProcessing/rans_surface_norms.csv
+wrote RANS_PostProcessing/rans_surface_profiles.csv
+wrote RANS_PostProcessing/rans_surface_forces.csv
+wrote Figures/RANS/RANS_SA_SurfaceNorms.png
+wrote Figures/RANS/RANS_SA_Drift_DragSplit_Surface.png
+wrote Figures/RANS/RANS_SA_OneShot_DragSplit_Surface.png
+wrote Figures/RANS/RANS_SST_SurfaceNorms.png
+wrote Figures/RANS/RANS_SST_Drift_DragSplit_Surface.png
+wrote Figures/RANS/RANS_SST_OneShot_DragSplit_Surface.png
+=== Tue Sep  8 12:19:30 CEST 2026 RANS_TurbulenceState.py
+RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second ...
+   79 steps; fixed nodes 14275 (band 12233, outer 2042), moved 15681; last Eddy_Viscosity rms rel band 3.838e-03 outer 2.735e-04
+RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second ...
+   79 steps; fixed nodes 14275 (band 12233, outer 2042), moved 15681; last Eddy_Viscosity rms rel band 3.995e-03 outer 2.431e-04
+RANS_SA_WD_0.01-20_NN_Drift_Second ...
+   79 steps; fixed nodes 14275 (band 12233, outer 2042), moved 15681; last Eddy_Viscosity rms rel band 3.838e-03 outer 3.265e-04
+RANS_SA_WD_0.01-20_NN_Drift_Seed2_Second ...
+   79 steps; fixed nodes 14275 (band 12233, outer 2042), moved 15681; last Eddy_Viscosity rms rel band 3.980e-03 outer 1.580e-04
+RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second ...
+   79 steps; fixed nodes 27780 (band 12233, outer 15547), moved 2176; last Eddy_Viscosity rms rel band 2.644e-05 outer 1.498e-04
+RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second ...
+   79 steps; fixed nodes 28819 (band 12233, outer 16586), moved 1137; last Eddy_Viscosity rms rel band 2.702e-05 outer 3.215e-04
+RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second ...
+   79 steps; fixed nodes 28819 (band 12233, outer 16586), moved 1137; last Eddy_Viscosity rms rel band 8.968e-06 outer 1.567e-04
+RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second ...
+   159 steps; fixed nodes 29432 (band 12233, outer 17199), moved 524; last Eddy_Viscosity rms rel band 3.032e-06 outer 7.396e-05
+RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second ...
+   79 steps; fixed nodes 29432 (band 12233, outer 17199), moved 524; last Eddy_Viscosity rms rel band 2.266e-06 outer 5.184e-05
+RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second ...
+   79 steps; fixed nodes 14275 (band 12233, outer 2042), moved 15681; last Eddy_Viscosity rms rel band 4.328e-03 outer 2.452e-04
+RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second ...
+   79 steps; fixed nodes 14275 (band 12233, outer 2042), moved 15681; last Eddy_Viscosity rms rel band 4.382e-03 outer 2.431e-04
+RANS_SST_WD_0.01-20_NN_Drift_Second ...
+   79 steps; fixed nodes 14275 (band 12233, outer 2042), moved 15681; last Eddy_Viscosity rms rel band 4.295e-03 outer 2.746e-04
+RANS_SST_WD_0.01-20_NN_Drift_Seed2_Second ...
+   79 steps; fixed nodes 14275 (band 12233, outer 2042), moved 15681; last Eddy_Viscosity rms rel band 4.314e-03 outer 1.820e-04
+RANS_SST_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second ...
+   79 steps; fixed nodes 27780 (band 12233, outer 15547), moved 2176; last Eddy_Viscosity rms rel band 9.636e-06 outer 2.500e-04
+RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second ...
+   79 steps; fixed nodes 28819 (band 12233, outer 16586), moved 1137; last Eddy_Viscosity rms rel band 1.243e-05 outer 6.628e-04
+RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second ...
+   79 steps; fixed nodes 28819 (band 12233, outer 16586), moved 1137; last Eddy_Viscosity rms rel band 4.516e-06 outer 3.861e-04
+RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second ...
+   159 steps; fixed nodes 29432 (band 12233, outer 17199), moved 524; last Eddy_Viscosity rms rel band 2.385e-06 outer 1.977e-04
+RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second ...
+   79 steps; fixed nodes 29432 (band 12233, outer 17199), moved 524; last Eddy_Viscosity rms rel band 1.126e-06 outer 1.474e-04
+wrote RANS_PostProcessing/rans_transfer_integrals.csv
+wrote RANS_PostProcessing/rans_turb_state_norms_SA.csv
+wrote Figures/RANS/RANS_SA_TurbState.png
+wrote Figures/RANS/RANS_SA_TransferIntegrals.png
+wrote RANS_PostProcessing/rans_turb_state_norms_SST.csv
+wrote Figures/RANS/RANS_SST_TurbState.png
+wrote Figures/RANS/RANS_SST_TransferIntegrals.png
+=== Tue Sep  8 12:22:20 CEST 2026 RANS_PressureProbe.py
+
+=== RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second ===
+launch annulus 0.05-0.10 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.045         45      0      0      0      0      0      1
+  0.010   1556   0.040         40      0      0      0      0      0      0
+  0.020    839   0.030         30      0      0      0      0      0      0
+  0.040    548   0.010         10      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00                                 
+      5%        0     nan     nan  0.00                                 
+     10%        0     nan     nan  0.00                                 
+     25%        0     nan     nan  0.00                                 
+     50%        0     nan     nan  0.00                                 
+     75%       19  0.3507  52.273  0.02                                 
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second ===
+launch annulus 0.10-0.15 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.095         95      0      0      0      1      1      1
+  0.010   1556   0.090         90      0      0      0      1      1      1
+  0.020    839   0.080         80      0      0      0      0      1      1
+  0.040    548   0.060         60      0      0      0      0      0      0
+  0.060    418   0.040         40      0      0      0      0      0      0
+  0.080    335   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%       13  0.5448  78.015  0.01         71  0.8929  14.000  0.07
+     50%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+     75%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SA_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second ===
+launch annulus 0.10-0.15 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.095         95      0      0      0      1      1      1
+  0.010   1556   0.090         90      0      0      0      1      1      1
+  0.020    839   0.080         80      0      0      0      0      1      1
+  0.040    548   0.060         60      0      0      0      0      0      0
+  0.060    418   0.040         40      0      0      0      0      0      0
+  0.080    335   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%       13  0.5448  78.015  0.01         71  0.8929  14.000  0.07
+     50%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+     75%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second ===
+launch annulus 0.20-0.25 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.195        195      0      0      0      1      2     26
+  0.010   1556   0.190        190      0      0      0      1      1     23
+  0.020    839   0.180        180      0      0      0      0      1      1
+  0.040    548   0.160        160      0      0      0      0      0      1
+  0.060    418   0.140        140      0      0      0      0      0      0
+  0.080    335   0.120        120      0      0      0      0      0      0
+  0.100    228   0.100        100      0      0      0      0      0      0
+  0.130    162   0.070         70      0      0      0      0      0      0
+  0.160    109   0.040         40      0      0      0      0      0      0
+  0.180    121   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%        4  0.3560 249.313  0.00          9  0.4953 106.000  0.01
+     50%        8  0.4820 129.206  0.01         18  0.6638  56.786  0.02
+     75%      101  0.3831   9.879  0.10        236  0.5293   4.240  0.24
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SA_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second ===
+launch annulus 0.20-0.25 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.195        195      0      0      0      1      1      2
+  0.010   1556   0.190        190      0      0      0      1      1      1
+  0.020    839   0.180        180      0      0      0      0      1      1
+  0.040    548   0.160        160      0      0      0      0      1      1
+  0.060    418   0.140        140      0      0      0      0      0      1
+  0.080    335   0.120        120      0      0      0      0      0      0
+  0.100    228   0.100        100      0      0      0      0      0      0
+  0.130    162   0.070         70      0      0      0      0      0      0
+  0.160    109   0.040         40      0      0      0      0      0      0
+  0.180    121   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%        4  0.3560 249.313  0.00          9  0.4953 106.000  0.01
+     50%        7  0.6723 148.128  0.01         13  0.8090  75.714  0.01
+     75%        9  0.7033 106.956  0.01         16  0.7440  61.154  0.02
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+wrote Figures/RANS/RANS_SA_PressureProbe_Pressure.png
+
+=== RANS_SST_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second ===
+launch annulus 0.05-0.10 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.045         45      0      0      0      0      0      1
+  0.010   1556   0.040         40      0      0      0      0      0      0
+  0.020    839   0.030         30      0      0      0      0      0      0
+  0.040    548   0.010         10      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+RANS_PressureProbe.py:294: RuntimeWarning: divide by zero encountered in scalar divide
+  label=f'd={res["d"]:.2f}, {int(t*100)}% of peak: '
+      2%        0     nan     nan  0.00                                 
+      5%        0     nan     nan  0.00                                 
+     10%        0     nan     nan  0.00                                 
+     25%        0     nan     nan  0.00                                 
+     50%        0     nan     nan  0.00                                 
+     75%       19  0.3507  52.273  0.02                                 
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second ===
+launch annulus 0.10-0.15 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.095         95      0      0      0      1      1      1
+  0.010   1556   0.090         90      0      0      0      1      1      1
+  0.020    839   0.080         80      0      0      0      0      1      1
+  0.040    548   0.060         60      0      0      0      0      0      0
+  0.060    418   0.040         40      0      0      0      0      0      0
+  0.080    335   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%       13  0.5448  78.015  0.01         71  0.8929  14.000  0.07
+     50%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+     75%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SST_WD_0.10-0.15_ConsGalerkinProj_OneShot_Second ===
+launch annulus 0.10-0.15 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.095         95      0      0      0      1      1      1
+  0.010   1556   0.090         90      0      0      0      1      1      1
+  0.020    839   0.080         80      0      0      0      0      1      1
+  0.040    548   0.060         60      0      0      0      0      0      0
+  0.060    418   0.040         40      0      0      0      0      0      0
+  0.080    335   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%       13  0.5448  78.015  0.01         71  0.8929  14.000  0.07
+     50%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+     75%       16  0.7926  60.977  0.02         -0     nan -93383973548674512.000 -0.00
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second ===
+launch annulus 0.20-0.25 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.195        195      0      0      0      1      2     26
+  0.010   1556   0.190        190      0      0      0      1      1     23
+  0.020    839   0.180        180      0      0      0      0      1      1
+  0.040    548   0.160        160      0      0      0      0      0      1
+  0.060    418   0.140        140      0      0      0      0      0      0
+  0.080    335   0.120        120      0      0      0      0      0      0
+  0.100    228   0.100        100      0      0      0      0      0      0
+  0.130    162   0.070         70      0      0      0      0      0      0
+  0.160    109   0.040         40      0      0      0      0      0      0
+  0.180    121   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%        4  0.3560 249.313  0.00          9  0.4953 106.000  0.01
+     50%        8  0.4820 129.206  0.01         18  0.6638  56.786  0.02
+     75%      101  0.3831   9.879  0.10        236  0.5293   4.240  0.24
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+=== RANS_SST_WD_0.20-0.25_ConsGalerkinProj_OneShot_Second ===
+launch annulus 0.20-0.25 chords; probing Pressure inside it
+      r  nodes  travel  predicted     2%     5%    10%    25%    50%    75%
+  0.005   4444   0.195        195      0      0      0      1      1      2
+  0.010   1556   0.190        190      0      0      0      1      1      1
+  0.020    839   0.180        180      0      0      0      0      1      1
+  0.040    548   0.160        160      0      0      0      0      1      1
+  0.060    418   0.140        140      0      0      0      0      0      1
+  0.080    335   0.120        120      0      0      0      0      0      0
+  0.100    228   0.100        100      0      0      0      0      0      0
+  0.130    162   0.070         70      0      0      0      0      0      0
+  0.160    109   0.040         40      0      0      0      0      0      0
+  0.180    121   0.020         20      0      0      0      0      0      0
+
+fit  lag = S * (d - r) + b     S = 1/(a*dt) predicted 1000
+                 ---- all shells ----       ---- travel >= 0.08 ----
+  thresh        S     R^2   speed S/pred          S     R^2   speed S/pred
+      2%        0     nan     nan  0.00          0     nan     nan  0.00
+      5%        0     nan     nan  0.00          0     nan     nan  0.00
+     10%        0     nan     nan  0.00          0     nan     nan  0.00
+     25%        4  0.3560 249.313  0.00          9  0.4953 106.000  0.01
+     50%        7  0.6723 148.128  0.01         13  0.8090  75.714  0.01
+     75%        9  0.7033 106.956  0.01         16  0.7440  61.154  0.02
+   (reference sound speed a = 1.0; "speed" is in chords per time-unit)
+
+wrote Figures/RANS/RANS_SST_PressureProbe_Pressure.png
+wrote RANS_PostProcessing/rans_pressure_probe.csv
+=== Tue Sep  8 12:25:05 CEST 2026 RANS_WriteReportData.py
+wrote RANS_PostProcessing/NACA0012_RANS_DATA_SECTION.md
+updated NACA0012_STUDY_REPORT.md
+=== Tue Sep  8 12:25:14 CEST 2026 done

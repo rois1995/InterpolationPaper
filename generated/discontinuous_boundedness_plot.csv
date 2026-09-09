@@ -1,0 +1,16 @@
+idx,plot_label,method,order,limiter,enforce_cons,overshoot,undershoot,abs_cons_defect,rho_min,rho_max
+0,NN1-U,NN,First,none,False,0,0,0.008482999999999999,1.2,3.6
+1,NN2-U,NN,Second,none,False,0.8,0.4,6.956e-05,0.8,4.4
+2,NN2-BJ,NN,Second,BJ,False,0,0,0.008482999999999999,1.2,3.6
+3,NN2-BJ-GC,NN,Second,BJ,Global,0,0,3.992e-16,1.2175,3.6
+4,NN3-U,NN,Third,none,False,0.4255,0.2234,0.0003792,0.9766,4.0255
+5,NN3-BJ,NN,Third,BJ,False,0,0,0.008482999999999999,1.2,3.6
+6,NN3-BJ-GC,NN,Third,BJ,Global,0,0,3.992e-16,1.2175,3.6
+7,BAR2-U,Barycentric,Second,none,False,0,0,0.0001516,1.2,3.6
+8,BAR3-U,Barycentric,Third,none,False,0.133,0.1397,0.0001332,1.0603,3.733
+9,BAR3-BJ,Barycentric,Third,BJ,False,0,0,0.0001516,1.2,3.6
+10,BAR3-BJ-GC,Barycentric,Third,BJ,Global,0,0,7.984e-16,1.2003,3.6
+11,GP2-S,ConsGalerkinProj,Second,soft,False,0.0048,0.0048,3.593e-15,1.1952,3.6048
+12,GP2-H,ConsGalerkinProj,Second,hard,False,0,0,1.73e-15,1.2,3.6
+13,GP3-S,ConsGalerkinProj,Third,soft,False,0.0047,0.0048,0.0003016,1.1952,3.6047
+14,GP3-H,ConsGalerkinProj,Third,hard,False,0,0,0.0003016,1.2,3.6

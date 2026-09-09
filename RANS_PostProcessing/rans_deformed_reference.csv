@@ -1,0 +1,11 @@
+model,what,difference,n,CL_original,CL_moved,dCL,CD_original,CD_moved,dCD,CDp_original,CDp_moved,dCDp,CDv_original,CDv_moved,dCDv,CMz_original,CMz_moved,dCMz
+SA,steady,moved - original,14999,0.655228,0.653337,-1.891e-03,0.008428,0.008416,-1.189e-05,0.001786,0.001776,-1.000e-05,0.006642,0.006639,-3.000e-06,-0.003895,-0.004223,-3.284e-04
+SA,unsteady 100..399,moved - original,300,0.654991,0.653050,-1.941e-03 (trend -1.7e-05 ± 4.8e-06),0.008429,0.008414,-1.425e-05 (trend -2.2e-07 ± 5.8e-07),,,,,,,-0.003960,-0.004334,-3.736e-04 (trend -9.9e-06 ± 2.2e-06)
+SA,drift case first window 10..19: RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second,case - original,10,,,"1.318e-05 (min -2.3e-05, max 3.9e-05)",,,"7.538e-06 (min -4.7e-06, max 2.4e-05)",,,,,,,,,"-1.541e-05 (min -2.5e-05, max 8.2e-06)"
+SA,drift case first window 10..19: RANS_SA_WD_0.01-20_NN_Drift_Second,case - original,10,,,"1.550e-05 (min -2.6e-05, max 4.6e-05)",,,"6.469e-06 (min -4.4e-06, max 2.0e-05)",,,,,,,,,"-1.510e-05 (min -2.5e-05, max 8.4e-06)"
+SA,"steady, surface integration",moved - original,0,6.55229379e-01,6.53338178e-01,-1.891e-03,8.42897074e-03,8.41708710e-03,-1.188e-05,1.78563210e-03,1.77620514e-03,-9.427e-06,6.64333864e-03,6.64088195e-03,-2.457e-06,,,
+SST,steady,moved - original,14999,0.653238,0.652274,-9.649e-04,0.008120,0.008119,-9.910e-07,0.001751,0.001750,-1.000e-06,0.006369,0.006370,1.000e-06,-0.004481,-0.004623,-1.422e-04
+SST,unsteady 100..399,moved - original,300,0.653049,0.652028,-1.022e-03 (trend -1.2e-05 ± 5.6e-06),0.008117,0.008103,-1.420e-05 (trend -9.5e-08 ± 5.1e-07),,,,,,,-0.004532,-0.004738,-2.057e-04 (trend -1.0e-05 ± 2.5e-06)
+SST,drift case first window 10..19: RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second,case - original,10,,,"1.150e-05 (min -2.6e-05, max 4.1e-05)",,,"7.748e-06 (min -4.7e-06, max 2.5e-05)",,,,,,,,,"-1.723e-05 (min -3.6e-05, max 9.7e-06)"
+SST,drift case first window 10..19: RANS_SST_WD_0.01-20_NN_Drift_Second,case - original,10,,,"1.406e-05 (min -2.9e-05, max 4.8e-05)",,,"6.682e-06 (min -4.4e-06, max 2.0e-05)",,,,,,,,,"-1.675e-05 (min -3.4e-05, max 1.0e-05)"
+SST,"steady, surface integration",moved - original,0,6.53239533e-01,6.52274652e-01,-9.649e-04,8.12161255e-03,8.12060877e-03,-1.004e-06,1.75111312e-03,1.74971716e-03,-1.396e-06,6.37049943e-03,6.37089161e-03,3.922e-07,,,

@@ -1,0 +1,846 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{AlauzetLoseilleOlivier2018}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=ec1626618a6c5d585acee8af2e3cd8c2}{%
+           family={Alauzet},
+           familyi={A\bibinitperiod},
+           given={Frédéric},
+           giveni={F\bibinitperiod}}}%
+        {{hash=e33ae7561a80c5571508f23e3218f242}{%
+           family={Loseille},
+           familyi={L\bibinitperiod},
+           given={Adrien},
+           giveni={A\bibinitperiod}}}%
+        {{hash=d225cbc9a45f6f1c7f885757c9fe1e44}{%
+           family={Olivier},
+           familyi={O\bibinitperiod},
+           given={Géraldine},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{5856f23d07f7b982fe4160efd6671821}
+      \strng{fullhash}{5856f23d07f7b982fe4160efd6671821}
+      \strng{fullhashraw}{5856f23d07f7b982fe4160efd6671821}
+      \strng{bibnamehash}{5856f23d07f7b982fe4160efd6671821}
+      \strng{authorbibnamehash}{5856f23d07f7b982fe4160efd6671821}
+      \strng{authornamehash}{5856f23d07f7b982fe4160efd6671821}
+      \strng{authorfullhash}{5856f23d07f7b982fe4160efd6671821}
+      \strng{authorfullhashraw}{5856f23d07f7b982fe4160efd6671821}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Computational Physics}
+      \field{title}{Time-Accurate Multi-Scale Anisotropic Mesh Adaptation for Unsteady Flows in {CFD}}
+      \field{volume}{373}
+      \field{year}{2018}
+      \field{pages}{28\bibrangedash 63}
+      \range{pages}{36}
+      \verb{doi}
+      \verb 10.1016/j.jcp.2018.06.043
+      \endverb
+    \endentry
+    \entry{SauvageAlauzetDervieux2024}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=2d8dad0c3ea5e70b0f08b31ef307d7c5}{%
+           family={Sauvage},
+           familyi={S\bibinitperiod},
+           given={Bastien},
+           giveni={B\bibinitperiod}}}%
+        {{hash=ec1626618a6c5d585acee8af2e3cd8c2}{%
+           family={Alauzet},
+           familyi={A\bibinitperiod},
+           given={Frédéric},
+           giveni={F\bibinitperiod}}}%
+        {{hash=af05e479edb6f72c9b47eb3e6435f8b6}{%
+           family={Dervieux},
+           familyi={D\bibinitperiod},
+           given={Alain},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{847b718c8d3db6b3bc37c8264467b17d}
+      \strng{fullhash}{847b718c8d3db6b3bc37c8264467b17d}
+      \strng{fullhashraw}{847b718c8d3db6b3bc37c8264467b17d}
+      \strng{bibnamehash}{847b718c8d3db6b3bc37c8264467b17d}
+      \strng{authorbibnamehash}{847b718c8d3db6b3bc37c8264467b17d}
+      \strng{authornamehash}{847b718c8d3db6b3bc37c8264467b17d}
+      \strng{authorfullhash}{847b718c8d3db6b3bc37c8264467b17d}
+      \strng{authorfullhashraw}{847b718c8d3db6b3bc37c8264467b17d}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Computational Physics}
+      \field{title}{A space and time fixed point mesh adaptation method}
+      \field{volume}{519}
+      \field{year}{2024}
+      \field{pages}{113389}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.jcp.2024.113389
+      \endverb
+    \endentry
+    \entry{FarrellMaddison2011}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=9fd68b51f9e040836192b1133556ebb2}{%
+           family={Farrell},
+           familyi={F\bibinitperiod},
+           given={Patrick\bibnamedelima E.},
+           giveni={P\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=ad107a13a65bbbfb4b339dfeedc9359c}{%
+           family={Maddison},
+           familyi={M\bibinitperiod},
+           given={James\bibnamedelima R.},
+           giveni={J\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \strng{namehash}{a2114418600031ed444c1a526fd8b1e3}
+      \strng{fullhash}{a2114418600031ed444c1a526fd8b1e3}
+      \strng{fullhashraw}{a2114418600031ed444c1a526fd8b1e3}
+      \strng{bibnamehash}{a2114418600031ed444c1a526fd8b1e3}
+      \strng{authorbibnamehash}{a2114418600031ed444c1a526fd8b1e3}
+      \strng{authornamehash}{a2114418600031ed444c1a526fd8b1e3}
+      \strng{authorfullhash}{a2114418600031ed444c1a526fd8b1e3}
+      \strng{authorfullhashraw}{a2114418600031ed444c1a526fd8b1e3}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Computer Methods in Applied Mechanics and Engineering}
+      \field{number}{1--4}
+      \field{title}{Conservative Interpolation between Volume Meshes by Local {Galerkin} Projection}
+      \field{volume}{200}
+      \field{year}{2011}
+      \field{pages}{89\bibrangedash 100}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1016/j.cma.2010.07.015
+      \endverb
+    \endentry
+    \entry{JiaoHeath2004}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=92848d6dd08d2749a186777ea7a62140}{%
+           family={Jiao},
+           familyi={J\bibinitperiod},
+           given={Xiangmin},
+           giveni={X\bibinitperiod}}}%
+        {{hash=99d060871d5d8d68d5c789f272815ebf}{%
+           family={Heath},
+           familyi={H\bibinitperiod},
+           given={Michael\bibnamedelima T.},
+           giveni={M\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+      }
+      \strng{namehash}{5e275aeda6322ece57110f085092f49e}
+      \strng{fullhash}{5e275aeda6322ece57110f085092f49e}
+      \strng{fullhashraw}{5e275aeda6322ece57110f085092f49e}
+      \strng{bibnamehash}{5e275aeda6322ece57110f085092f49e}
+      \strng{authorbibnamehash}{5e275aeda6322ece57110f085092f49e}
+      \strng{authornamehash}{5e275aeda6322ece57110f085092f49e}
+      \strng{authorfullhash}{5e275aeda6322ece57110f085092f49e}
+      \strng{authorfullhashraw}{5e275aeda6322ece57110f085092f49e}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal for Numerical Methods in Engineering}
+      \field{title}{Common-Refinement-Based Data Transfer between Non-Matching Meshes in Multiphysics Simulations}
+      \field{volume}{61}
+      \field{year}{2004}
+      \field{pages}{2402\bibrangedash 2427}
+      \range{pages}{26}
+    \endentry
+    \entry{MaddisonHiester2017}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=0319ae85c89200b99c383c227a2e988b}{%
+           family={Maddison},
+           familyi={M\bibinitperiod},
+           given={J.\bibnamedelimi R.},
+           giveni={J\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=92e90cdd4355a9742c4ad72a60a52d2a}{%
+           family={Hiester},
+           familyi={H\bibinitperiod},
+           given={H.\bibnamedelimi R.},
+           giveni={H\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \strng{namehash}{464a4a90009c7d2507bbf309ffad2f7c}
+      \strng{fullhash}{464a4a90009c7d2507bbf309ffad2f7c}
+      \strng{fullhashraw}{464a4a90009c7d2507bbf309ffad2f7c}
+      \strng{bibnamehash}{464a4a90009c7d2507bbf309ffad2f7c}
+      \strng{authorbibnamehash}{464a4a90009c7d2507bbf309ffad2f7c}
+      \strng{authornamehash}{464a4a90009c7d2507bbf309ffad2f7c}
+      \strng{authorfullhash}{464a4a90009c7d2507bbf309ffad2f7c}
+      \strng{authorfullhashraw}{464a4a90009c7d2507bbf309ffad2f7c}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{SIAM Journal on Scientific Computing}
+      \field{number}{5}
+      \field{title}{Optimal Constrained Interpolation in Mesh-Adaptive Finite Element Modeling}
+      \field{volume}{39}
+      \field{year}{2017}
+      \field{pages}{A2257\bibrangedash A2286}
+      \range{pages}{-1}
+      \verb{doi}
+      \verb 10.1137/15M102054X
+      \endverb
+    \endentry
+    \entry{MaddisonCotterFarrell2011}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=0319ae85c89200b99c383c227a2e988b}{%
+           family={Maddison},
+           familyi={M\bibinitperiod},
+           given={J.\bibnamedelimi R.},
+           giveni={J\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=e2841ade1a91894b400adf94fd3a9133}{%
+           family={Cotter},
+           familyi={C\bibinitperiod},
+           given={C.\bibnamedelimi J.},
+           giveni={C\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=e1f85eb9a0cf8af4cd68b15c6a2a06b7}{%
+           family={Farrell},
+           familyi={F\bibinitperiod},
+           given={P.\bibnamedelimi E.},
+           giveni={P\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+      }
+      \strng{namehash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{fullhash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{fullhashraw}{4ab2c524a65f61734996d72f124a6092}
+      \strng{bibnamehash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{authorbibnamehash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{authornamehash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{authorfullhash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{authorfullhashraw}{4ab2c524a65f61734996d72f124a6092}
+      \field{extraname}{1}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Ocean Modelling}
+      \field{number}{1--2}
+      \field{title}{Geostrophic balance preserving interpolation in mesh adaptive linearised shallow-water ocean modelling}
+      \field{volume}{37}
+      \field{year}{2011}
+      \field{pages}{35\bibrangedash 48}
+      \range{pages}{14}
+      \verb{doi}
+      \verb 10.1016/j.ocemod.2010.12.007
+      \endverb
+    \endentry
+    \entry{MaddisonCotterFarrell2013}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=0319ae85c89200b99c383c227a2e988b}{%
+           family={Maddison},
+           familyi={M\bibinitperiod},
+           given={J.\bibnamedelimi R.},
+           giveni={J\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=e2841ade1a91894b400adf94fd3a9133}{%
+           family={Cotter},
+           familyi={C\bibinitperiod},
+           given={C.\bibnamedelimi J.},
+           giveni={C\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=e1f85eb9a0cf8af4cd68b15c6a2a06b7}{%
+           family={Farrell},
+           familyi={F\bibinitperiod},
+           given={P.\bibnamedelimi E.},
+           giveni={P\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+      }
+      \strng{namehash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{fullhash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{fullhashraw}{4ab2c524a65f61734996d72f124a6092}
+      \strng{bibnamehash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{authorbibnamehash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{authornamehash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{authorfullhash}{4ab2c524a65f61734996d72f124a6092}
+      \strng{authorfullhashraw}{4ab2c524a65f61734996d72f124a6092}
+      \field{extraname}{2}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Ocean Modelling}
+      \field{title}{Corrigendum to ``Geostrophic balance preserving interpolation in mesh adaptive linearised shallow-water ocean modelling'' [{Ocean Model.} 37 (2011) 35--48]}
+      \field{volume}{68}
+      \field{year}{2013}
+      \field{pages}{106}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.ocemod.2013.04.007
+      \endverb
+    \endentry
+    \entry{BarthFrederickson1990}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=3338c20721f7a920af5d4c7aa3f42f25}{%
+           family={Barth},
+           familyi={B\bibinitperiod},
+           given={Timothy\bibnamedelima J.},
+           giveni={T\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=2e68b3106577b32bbc3fe7500c4c651a}{%
+           family={Frederickson},
+           familyi={F\bibinitperiod},
+           given={Paul\bibnamedelima O.},
+           giveni={P\bibinitperiod\bibinitdelim O\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Reno, Nevada}%
+      }
+      \strng{namehash}{3ebaf503e0297293bb5c76d7929fdc91}
+      \strng{fullhash}{3ebaf503e0297293bb5c76d7929fdc91}
+      \strng{fullhashraw}{3ebaf503e0297293bb5c76d7929fdc91}
+      \strng{bibnamehash}{3ebaf503e0297293bb5c76d7929fdc91}
+      \strng{authorbibnamehash}{3ebaf503e0297293bb5c76d7929fdc91}
+      \strng{authornamehash}{3ebaf503e0297293bb5c76d7929fdc91}
+      \strng{authorfullhash}{3ebaf503e0297293bb5c76d7929fdc91}
+      \strng{authorfullhashraw}{3ebaf503e0297293bb5c76d7929fdc91}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{28th Aerospace Sciences Meeting}
+      \field{series}{AIAA Paper 90-0013}
+      \field{title}{Higher Order Solution of the {Euler} Equations on Unstructured Grids Using Quadratic Reconstruction}
+      \field{year}{1990}
+    \endentry
+    \entry{Barth1993}{inproceedings}{}{}
+      \name{author}{1}{}{%
+        {{hash=3338c20721f7a920af5d4c7aa3f42f25}{%
+           family={Barth},
+           familyi={B\bibinitperiod},
+           given={Timothy\bibnamedelima J.},
+           giveni={T\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Reno, Nevada}%
+      }
+      \strng{namehash}{3338c20721f7a920af5d4c7aa3f42f25}
+      \strng{fullhash}{3338c20721f7a920af5d4c7aa3f42f25}
+      \strng{fullhashraw}{3338c20721f7a920af5d4c7aa3f42f25}
+      \strng{bibnamehash}{3338c20721f7a920af5d4c7aa3f42f25}
+      \strng{authorbibnamehash}{3338c20721f7a920af5d4c7aa3f42f25}
+      \strng{authornamehash}{3338c20721f7a920af5d4c7aa3f42f25}
+      \strng{authorfullhash}{3338c20721f7a920af5d4c7aa3f42f25}
+      \strng{authorfullhashraw}{3338c20721f7a920af5d4c7aa3f42f25}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{31st Aerospace Sciences Meeting}
+      \field{series}{AIAA Paper 93-0668}
+      \field{title}{Recent Developments in High Order $k$-Exact Reconstruction on Unstructured Meshes}
+      \field{year}{1993}
+    \endentry
+    \entry{Mavriplis2003}{inproceedings}{}{}
+      \name{author}{1}{}{%
+        {{hash=fb2f8c6abfb7489eccddc0caa7651f65}{%
+           family={Mavriplis},
+           familyi={M\bibinitperiod},
+           given={Dimitri\bibnamedelima J.},
+           giveni={D\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Orlando, Florida}%
+      }
+      \strng{namehash}{fb2f8c6abfb7489eccddc0caa7651f65}
+      \strng{fullhash}{fb2f8c6abfb7489eccddc0caa7651f65}
+      \strng{fullhashraw}{fb2f8c6abfb7489eccddc0caa7651f65}
+      \strng{bibnamehash}{fb2f8c6abfb7489eccddc0caa7651f65}
+      \strng{authorbibnamehash}{fb2f8c6abfb7489eccddc0caa7651f65}
+      \strng{authornamehash}{fb2f8c6abfb7489eccddc0caa7651f65}
+      \strng{authorfullhash}{fb2f8c6abfb7489eccddc0caa7651f65}
+      \strng{authorfullhashraw}{fb2f8c6abfb7489eccddc0caa7651f65}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{16th AIAA Computational Fluid Dynamics Conference}
+      \field{note}{AIAA Paper 2003-3986}
+      \field{title}{Revisiting the Least-Squares Procedure for Gradient Reconstruction on Unstructured Meshes}
+      \field{year}{2003}
+      \verb{doi}
+      \verb 10.2514/6.2003-3986
+      \endverb
+    \endentry
+    \entry{DiskinThomas2008}{report}{}{}
+      \name{author}{2}{}{%
+        {{hash=8e673fcd6c293b28ca7519e5dbc63639}{%
+           family={Diskin},
+           familyi={D\bibinitperiod},
+           given={Boris},
+           giveni={B\bibinitperiod}}}%
+        {{hash=d2cd5db8f2d638404ffa521c6ab12858}{%
+           family={Thomas},
+           familyi={T\bibinitperiod},
+           given={James\bibnamedelima L.},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Institute of Aerospace}%
+      }
+      \list{location}{1}{%
+        {Hampton, Virginia}%
+      }
+      \strng{namehash}{339dcfb89353fdf38b32e82a10ad551c}
+      \strng{fullhash}{339dcfb89353fdf38b32e82a10ad551c}
+      \strng{fullhashraw}{339dcfb89353fdf38b32e82a10ad551c}
+      \strng{bibnamehash}{339dcfb89353fdf38b32e82a10ad551c}
+      \strng{authorbibnamehash}{339dcfb89353fdf38b32e82a10ad551c}
+      \strng{authornamehash}{339dcfb89353fdf38b32e82a10ad551c}
+      \strng{authorfullhash}{339dcfb89353fdf38b32e82a10ad551c}
+      \strng{authorfullhashraw}{339dcfb89353fdf38b32e82a10ad551c}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{number}{NIA Report 2008-12}
+      \field{title}{Accuracy of Gradient Reconstruction on Grids with High Aspect Ratio}
+      \field{type}{techreport}
+      \field{year}{2008}
+    \endentry
+    \entry{BarthJespersen1989}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=3338c20721f7a920af5d4c7aa3f42f25}{%
+           family={Barth},
+           familyi={B\bibinitperiod},
+           given={Timothy\bibnamedelima J.},
+           giveni={T\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+        {{hash=2704825d0a5460cabe54702a126a979a}{%
+           family={Jespersen},
+           familyi={J\bibinitperiod},
+           given={Dennis\bibnamedelima C.},
+           giveni={D\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Reno, Nevada}%
+      }
+      \strng{namehash}{ebf370438002aeed2d1748e36b211b4e}
+      \strng{fullhash}{ebf370438002aeed2d1748e36b211b4e}
+      \strng{fullhashraw}{ebf370438002aeed2d1748e36b211b4e}
+      \strng{bibnamehash}{ebf370438002aeed2d1748e36b211b4e}
+      \strng{authorbibnamehash}{ebf370438002aeed2d1748e36b211b4e}
+      \strng{authornamehash}{ebf370438002aeed2d1748e36b211b4e}
+      \strng{authorfullhash}{ebf370438002aeed2d1748e36b211b4e}
+      \strng{authorfullhashraw}{ebf370438002aeed2d1748e36b211b4e}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{27th Aerospace Sciences Meeting}
+      \field{series}{AIAA Paper 89-0366}
+      \field{title}{The Design and Application of Upwind Schemes on Unstructured Meshes}
+      \field{year}{1989}
+      \verb{doi}
+      \verb 10.2514/6.1989-366
+      \endverb
+    \endentry
+    \entry{Venkatakrishnan1995}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=436486b2c20192132b33ec14848fb203}{%
+           family={Venkatakrishnan},
+           familyi={V\bibinitperiod},
+           given={V.},
+           giveni={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{436486b2c20192132b33ec14848fb203}
+      \strng{fullhash}{436486b2c20192132b33ec14848fb203}
+      \strng{fullhashraw}{436486b2c20192132b33ec14848fb203}
+      \strng{bibnamehash}{436486b2c20192132b33ec14848fb203}
+      \strng{authorbibnamehash}{436486b2c20192132b33ec14848fb203}
+      \strng{authornamehash}{436486b2c20192132b33ec14848fb203}
+      \strng{authorfullhash}{436486b2c20192132b33ec14848fb203}
+      \strng{authorfullhashraw}{436486b2c20192132b33ec14848fb203}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Computational Physics}
+      \field{number}{1}
+      \field{title}{Convergence to Steady State Solutions of the {Euler} Equations on Unstructured Grids with Limiters}
+      \field{volume}{118}
+      \field{year}{1995}
+      \field{pages}{120\bibrangedash 130}
+      \range{pages}{11}
+    \endentry
+    \entry{MichalakOllivierGooch2009}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=f76001a13d0db0b2959cb60433f4f8ec}{%
+           family={Michalak},
+           familyi={M\bibinitperiod},
+           given={Kristopher},
+           giveni={K\bibinitperiod}}}%
+        {{hash=148e0bc6a0fbf4c808667544bb3d11bc}{%
+           family={Ollivier-Gooch},
+           familyi={O\bibinithyphendelim G\bibinitperiod},
+           given={Carl},
+           giveni={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{447c0a50f1ff23125e97b3baae08e0fa}
+      \strng{fullhash}{447c0a50f1ff23125e97b3baae08e0fa}
+      \strng{fullhashraw}{447c0a50f1ff23125e97b3baae08e0fa}
+      \strng{bibnamehash}{447c0a50f1ff23125e97b3baae08e0fa}
+      \strng{authorbibnamehash}{447c0a50f1ff23125e97b3baae08e0fa}
+      \strng{authornamehash}{447c0a50f1ff23125e97b3baae08e0fa}
+      \strng{authorfullhash}{447c0a50f1ff23125e97b3baae08e0fa}
+      \strng{authorfullhashraw}{447c0a50f1ff23125e97b3baae08e0fa}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Computational Physics}
+      \field{number}{23}
+      \field{title}{Accuracy Preserving Limiter for the High-Order Accurate Solution of the {Euler} Equations}
+      \field{volume}{228}
+      \field{year}{2009}
+      \field{pages}{8693\bibrangedash 8711}
+      \range{pages}{19}
+    \endentry
+    \entry{Nishikawa2022}{inproceedings}{}{}
+      \name{author}{1}{}{%
+        {{hash=f910ec7b2014fcca843b97dce88b4844}{%
+           family={Nishikawa},
+           familyi={N\bibinitperiod},
+           given={Hiroaki},
+           giveni={H\bibinitperiod}}}%
+      }
+      \strng{namehash}{f910ec7b2014fcca843b97dce88b4844}
+      \strng{fullhash}{f910ec7b2014fcca843b97dce88b4844}
+      \strng{fullhashraw}{f910ec7b2014fcca843b97dce88b4844}
+      \strng{bibnamehash}{f910ec7b2014fcca843b97dce88b4844}
+      \strng{authorbibnamehash}{f910ec7b2014fcca843b97dce88b4844}
+      \strng{authornamehash}{f910ec7b2014fcca843b97dce88b4844}
+      \strng{authorfullhash}{f910ec7b2014fcca843b97dce88b4844}
+      \strng{authorfullhashraw}{f910ec7b2014fcca843b97dce88b4844}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{AIAA SciTech Forum}
+      \field{series}{AIAA Paper 2022-1374}
+      \field{title}{New Unstructured-Grid Limiter Functions}
+      \field{year}{2022}
+      \verb{doi}
+      \verb 10.2514/6.2022-1374
+      \endverb
+    \endentry
+    \entry{Dunavant1985}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=4beb09b0cc2bb7972f643c31e1e6c4a7}{%
+           family={Dunavant},
+           familyi={D\bibinitperiod},
+           given={David\bibnamedelima A.},
+           giveni={D\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
+      \strng{fullhash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
+      \strng{fullhashraw}{4beb09b0cc2bb7972f643c31e1e6c4a7}
+      \strng{bibnamehash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
+      \strng{authorbibnamehash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
+      \strng{authornamehash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
+      \strng{authorfullhash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
+      \strng{authorfullhashraw}{4beb09b0cc2bb7972f643c31e1e6c4a7}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{International Journal for Numerical Methods in Engineering}
+      \field{number}{6}
+      \field{title}{High Degree Efficient Symmetrical Gaussian Quadrature Rules for the Triangle}
+      \field{volume}{21}
+      \field{year}{1985}
+      \field{pages}{1129\bibrangedash 1148}
+      \range{pages}{20}
+    \endentry
+    \entry{Keast1986}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=57f18c874d292223bea41d89cab54edb}{%
+           family={Keast},
+           familyi={K\bibinitperiod},
+           given={Patrick},
+           giveni={P\bibinitperiod}}}%
+      }
+      \strng{namehash}{57f18c874d292223bea41d89cab54edb}
+      \strng{fullhash}{57f18c874d292223bea41d89cab54edb}
+      \strng{fullhashraw}{57f18c874d292223bea41d89cab54edb}
+      \strng{bibnamehash}{57f18c874d292223bea41d89cab54edb}
+      \strng{authorbibnamehash}{57f18c874d292223bea41d89cab54edb}
+      \strng{authornamehash}{57f18c874d292223bea41d89cab54edb}
+      \strng{authorfullhash}{57f18c874d292223bea41d89cab54edb}
+      \strng{authorfullhashraw}{57f18c874d292223bea41d89cab54edb}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Computer Methods in Applied Mechanics and Engineering}
+      \field{title}{Moderate-Degree Tetrahedral Quadrature Formulas}
+      \field{volume}{55}
+      \field{year}{1986}
+      \field{pages}{339\bibrangedash 348}
+      \range{pages}{10}
+    \endentry
+    \entry{ShashkovWendroff2004}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=08def5e899f2c265305e57f12f70eea2}{%
+           family={Shashkov},
+           familyi={S\bibinitperiod},
+           given={Mikhail},
+           giveni={M\bibinitperiod}}}%
+        {{hash=a22e560279c0d4a2400d8017c01ca38b}{%
+           family={Wendroff},
+           familyi={W\bibinitperiod},
+           given={Burton},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{62c59e5077d711e7c4b64248cdd02098}
+      \strng{fullhash}{62c59e5077d711e7c4b64248cdd02098}
+      \strng{fullhashraw}{62c59e5077d711e7c4b64248cdd02098}
+      \strng{bibnamehash}{62c59e5077d711e7c4b64248cdd02098}
+      \strng{authorbibnamehash}{62c59e5077d711e7c4b64248cdd02098}
+      \strng{authornamehash}{62c59e5077d711e7c4b64248cdd02098}
+      \strng{authorfullhash}{62c59e5077d711e7c4b64248cdd02098}
+      \strng{authorfullhashraw}{62c59e5077d711e7c4b64248cdd02098}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Computational Physics}
+      \field{number}{1}
+      \field{title}{The Repair Paradigm and Application to Conservation Laws}
+      \field{volume}{198}
+      \field{year}{2004}
+      \field{pages}{265\bibrangedash 277}
+      \range{pages}{13}
+    \endentry
+    \entry{KucharikShashkovWendroff2003}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=34bb9a07d713abdd85e3d4ec63fdb0b1}{%
+           family={Kucharik},
+           familyi={K\bibinitperiod},
+           given={Milan},
+           giveni={M\bibinitperiod}}}%
+        {{hash=08def5e899f2c265305e57f12f70eea2}{%
+           family={Shashkov},
+           familyi={S\bibinitperiod},
+           given={Mikhail},
+           giveni={M\bibinitperiod}}}%
+        {{hash=a22e560279c0d4a2400d8017c01ca38b}{%
+           family={Wendroff},
+           familyi={W\bibinitperiod},
+           given={Burton},
+           giveni={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{cab705df3dc607903c1931a32864028e}
+      \strng{fullhash}{cab705df3dc607903c1931a32864028e}
+      \strng{fullhashraw}{cab705df3dc607903c1931a32864028e}
+      \strng{bibnamehash}{cab705df3dc607903c1931a32864028e}
+      \strng{authorbibnamehash}{cab705df3dc607903c1931a32864028e}
+      \strng{authornamehash}{cab705df3dc607903c1931a32864028e}
+      \strng{authorfullhash}{cab705df3dc607903c1931a32864028e}
+      \strng{authorfullhashraw}{cab705df3dc607903c1931a32864028e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Computational Physics}
+      \field{number}{2}
+      \field{title}{An Efficient Linearity-and-Bound-Preserving Remapping Method}
+      \field{volume}{188}
+      \field{year}{2003}
+      \field{pages}{462\bibrangedash 471}
+      \range{pages}{10}
+    \endentry
+    \entry{KoobusFarhat1999}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=5a8f460fa6ae62648d694b6fb7c09090}{%
+           family={Koobus},
+           familyi={K\bibinitperiod},
+           given={Bruno},
+           giveni={B\bibinitperiod}}}%
+        {{hash=34f121d017b8778966005fb772a5cc66}{%
+           family={Farhat},
+           familyi={F\bibinitperiod},
+           given={Charbel},
+           giveni={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{27e686e1fa2a7f9047be40cc8e446f4f}
+      \strng{fullhash}{27e686e1fa2a7f9047be40cc8e446f4f}
+      \strng{fullhashraw}{27e686e1fa2a7f9047be40cc8e446f4f}
+      \strng{bibnamehash}{27e686e1fa2a7f9047be40cc8e446f4f}
+      \strng{authorbibnamehash}{27e686e1fa2a7f9047be40cc8e446f4f}
+      \strng{authornamehash}{27e686e1fa2a7f9047be40cc8e446f4f}
+      \strng{authorfullhash}{27e686e1fa2a7f9047be40cc8e446f4f}
+      \strng{authorfullhashraw}{27e686e1fa2a7f9047be40cc8e446f4f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Computer Methods in Applied Mechanics and Engineering}
+      \field{number}{1--2}
+      \field{title}{Second-Order Time-Accurate and Geometrically Conservative Implicit Schemes for Flow Computations on Unstructured Dynamic Meshes}
+      \field{volume}{170}
+      \field{year}{1999}
+      \field{pages}{103\bibrangedash 129}
+      \range{pages}{27}
+      \verb{doi}
+      \verb 10.1016/S0045-7825(98)00207-2
+      \endverb
+    \endentry
+    \entry{GeuzaineGrandmontFarhat2003}{article}{}{}
+      \name{author}{3}{}{%
+        {{hash=69bdf6548b76b3b522de4ecd07ac9720}{%
+           family={Geuzaine},
+           familyi={G\bibinitperiod},
+           given={Philippe},
+           giveni={P\bibinitperiod}}}%
+        {{hash=3c497c07ed230763eaa8b530908269f3}{%
+           family={Grandmont},
+           familyi={G\bibinitperiod},
+           given={Céline},
+           giveni={C\bibinitperiod}}}%
+        {{hash=34f121d017b8778966005fb772a5cc66}{%
+           family={Farhat},
+           familyi={F\bibinitperiod},
+           given={Charbel},
+           giveni={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{eb767eeeb8eee41eaa9bed39533eaffb}
+      \strng{fullhash}{eb767eeeb8eee41eaa9bed39533eaffb}
+      \strng{fullhashraw}{eb767eeeb8eee41eaa9bed39533eaffb}
+      \strng{bibnamehash}{eb767eeeb8eee41eaa9bed39533eaffb}
+      \strng{authorbibnamehash}{eb767eeeb8eee41eaa9bed39533eaffb}
+      \strng{authornamehash}{eb767eeeb8eee41eaa9bed39533eaffb}
+      \strng{authorfullhash}{eb767eeeb8eee41eaa9bed39533eaffb}
+      \strng{authorfullhashraw}{eb767eeeb8eee41eaa9bed39533eaffb}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of Computational Physics}
+      \field{number}{1}
+      \field{title}{Design and Analysis of {ALE} Schemes with Provable Second-Order Time-Accuracy for Inviscid and Viscous Flow Simulations}
+      \field{volume}{191}
+      \field{year}{2003}
+      \field{pages}{206\bibrangedash 227}
+      \range{pages}{22}
+      \verb{doi}
+      \verb 10.1016/S0021-9991(03)00311-5
+      \endverb
+    \endentry
+    \entry{GilesPierce2000}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=1033980ff770f645812573a97040888c}{%
+           family={Giles},
+           familyi={G\bibinitperiod},
+           given={Michael\bibnamedelima B.},
+           giveni={M\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+        {{hash=fdfa14439c23d83ad161ff495fe423d0}{%
+           family={Pierce},
+           familyi={P\bibinitperiod},
+           given={Niles\bibnamedelima A.},
+           giveni={N\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{31f4de17f1c1cc19cef4bd2debde1174}
+      \strng{fullhash}{31f4de17f1c1cc19cef4bd2debde1174}
+      \strng{fullhashraw}{31f4de17f1c1cc19cef4bd2debde1174}
+      \strng{bibnamehash}{31f4de17f1c1cc19cef4bd2debde1174}
+      \strng{authorbibnamehash}{31f4de17f1c1cc19cef4bd2debde1174}
+      \strng{authornamehash}{31f4de17f1c1cc19cef4bd2debde1174}
+      \strng{authorfullhash}{31f4de17f1c1cc19cef4bd2debde1174}
+      \strng{authorfullhashraw}{31f4de17f1c1cc19cef4bd2debde1174}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Flow, Turbulence and Combustion}
+      \field{title}{An Introduction to the Adjoint Approach to Design}
+      \field{volume}{65}
+      \field{year}{2000}
+      \field{pages}{393\bibrangedash 415}
+      \range{pages}{23}
+      \verb{doi}
+      \verb 10.1023/A:1011430410075
+      \endverb
+    \endentry
+    \entry{SpalartAllmaras1994}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=671b8894e896e5135a29e51e8b1232ca}{%
+           family={Spalart},
+           familyi={S\bibinitperiod},
+           given={Philippe\bibnamedelima R.},
+           giveni={P\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+        {{hash=c6213f2bc368aa4246198d6bfedfc548}{%
+           family={Allmaras},
+           familyi={A\bibinitperiod},
+           given={Steven\bibnamedelima R.},
+           giveni={S\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \strng{namehash}{7e2ac27a50988b4f592133918cd8f97d}
+      \strng{fullhash}{7e2ac27a50988b4f592133918cd8f97d}
+      \strng{fullhashraw}{7e2ac27a50988b4f592133918cd8f97d}
+      \strng{bibnamehash}{7e2ac27a50988b4f592133918cd8f97d}
+      \strng{authorbibnamehash}{7e2ac27a50988b4f592133918cd8f97d}
+      \strng{authornamehash}{7e2ac27a50988b4f592133918cd8f97d}
+      \strng{authorfullhash}{7e2ac27a50988b4f592133918cd8f97d}
+      \strng{authorfullhashraw}{7e2ac27a50988b4f592133918cd8f97d}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{La Recherche Aérospatiale}
+      \field{number}{1}
+      \field{title}{A One-Equation Turbulence Model for Aerodynamic Flows}
+      \field{year}{1994}
+      \field{pages}{5\bibrangedash 21}
+      \range{pages}{17}
+    \endentry
+    \entry{Menter1994}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=2143101ca93c44d83ed2e5ca610e99ad}{%
+           family={Menter},
+           familyi={M\bibinitperiod},
+           given={Florian\bibnamedelima R.},
+           giveni={F\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \strng{namehash}{2143101ca93c44d83ed2e5ca610e99ad}
+      \strng{fullhash}{2143101ca93c44d83ed2e5ca610e99ad}
+      \strng{fullhashraw}{2143101ca93c44d83ed2e5ca610e99ad}
+      \strng{bibnamehash}{2143101ca93c44d83ed2e5ca610e99ad}
+      \strng{authorbibnamehash}{2143101ca93c44d83ed2e5ca610e99ad}
+      \strng{authornamehash}{2143101ca93c44d83ed2e5ca610e99ad}
+      \strng{authorfullhash}{2143101ca93c44d83ed2e5ca610e99ad}
+      \strng{authorfullhashraw}{2143101ca93c44d83ed2e5ca610e99ad}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{AIAA Journal}
+      \field{number}{8}
+      \field{title}{Two-Equation Eddy-Viscosity Turbulence Models for Engineering Applications}
+      \field{volume}{32}
+      \field{year}{1994}
+      \field{pages}{1598\bibrangedash 1605}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.2514/3.12149
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
