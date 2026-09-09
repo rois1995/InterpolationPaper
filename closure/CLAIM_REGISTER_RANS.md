@@ -46,3 +46,12 @@ Status codes follow the closure plan: CLOSED–VERIFIED, CLOSED–SCOPED, OPEN, 
 - **Euler/RANS comparison of drift** (l. 725, 804): the RANS window is ~300× longer in convective units than the Euler window; state this wherever the two are contrasted.
 - **Statistics wording** (R11, R12): "resolved" only with the AR(1)-corrected error; events within a sequence are correlated; two seeds are not a seed population.
 - **Build reproducibility (T16)**: `make` on this machine failed with the distribution pgfplots (TeX Live 2019, `compat=1.18` unknown); see `closure/build_baseline.log`. The static builder regenerates four `generated/*_orders.csv` with last-digit differences (≤ 1.3e-15): numerically identical, not byte-identical. The RANS builder accepts the corrected exports and the current report (scratch test, exit 0; only `rans_oneshot_summary.csv` and `rans_pressure_probe_audit.csv` change).
+
+## Euler-side entries (added 2026-09-09)
+
+| # | claim | evidence | status | note |
+|---|---|---|---|---|
+| E1 | Galerkin projection reproduces constants and linears on the executed code revision (App. projection verification) | `SteadyNACA/closure/T09_patch_tests.txt`: P2 f=1 3.9e-11, f=x 1.1e-10, P1 f=1 5.9e-12; archived `FunScripts` md5 5fdff35b… identical in all `T_*` and `Base_Interp` | CLOSED–VERIFIED | linkage to the executed revision established |
+| E2 | Initial-residual identity, cosines and e_id (Sec. NACA restart response, App. NACA) | archived probes `BDF2/R_*` are float32 VTU; `RunResidualProbesDouble.py` + `bdf2_identity_double.py` prepared | OPEN (needs ~40 one-rank solver seconds after the campaign) | archived cosines > 1 are the float32 artefact; do not clamp |
+| E3 | Riemann stress comparison, frequency ×6 and SF2 amplification factors, raw vs Global (Sec. accumulated transport; App. Riemann) | 50 %-crossing numbers came from scratch files no longer present; `2D_Riemann/RiemannTransitionExtract.py` (versioned, two trackers, two windows, 4×3 sampling ladder) running on the archived step-399 fields | OPEN (extraction running) | decision rule of plan §11.3 applies once the ladder is in |
+| E4 | History-cancellation check (plan §9, low-cost) | `RunResidualProbesDouble.py --cancel <tag>` prepared | OPEN (after the campaign) | |
