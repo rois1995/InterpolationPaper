@@ -1,4 +1,6 @@
-distance,onset_1,onset_5,onset_25,onset_50,peak_lag,predicted
-0.05,16,19,26,31,74,42.25
-0.10,37,44,75,82,97,84.5
-0.20,105,115,144,171,203,169.0
+distance,onset_1,onset_5,onset_25,onset_50,peak_lag,predicted,case,event,window,censored,peak,coeff
+0.05,16,19,26,31,74,42.26,WD_0.05-0.10_ConsGalerkinProj_OneShot_Second,200,199,0,4.857e-05,CL
+0.10,38,43,74,80,96,84.52,WD_0.10-0.15_ConsGalerkinProj_OneShot_SF2_Second,200,199,0,9.237e-05,CL
+0.10,37,44,75,82,97,84.52,WD_0.10-0.15_ConsGalerkinProj_OneShot_Second,200,199,0,5.657e-05,CL
+0.20,105,115,144,171,203,169.03,WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second,400,399,0,3.129e-05,CL
+0.20,79,92,118,130,199,169.03,WD_0.20-0.25_ConsGalerkinProj_OneShot_Second,200,199,1,2.541e-05,CL

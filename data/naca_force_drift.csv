@@ -1,5 +1,5 @@
-method,seed,category,CL_trend,CL_se,CD_trend,CD_se,CMz_trend,CMz_se,CD_scatter,CD_relative_pct_per100
-GP2,1,GP2 seed 1,-2.4e-6,6.1e-6,6.8e-6,2.3e-6,1.3e-7,1.2e-6,5.3e-5,0.065
-GP2,2,GP2 seed 2,2.1e-6,5.7e-6,6.4e-6,2.2e-6,-1.0e-6,1.1e-6,5.1e-5,0.065
-NN2,1,NN2 seed 1,1.2e-5,7.0e-6,3.9e-5,3.3e-6,-1.46e-5,1.5e-6,8.8e-5,0.389
-NN2,2,NN2 seed 2,4.9e-5,8.4e-6,3.8e-5,3.5e-6,-1.49e-5,1.7e-6,9.2e-5,0.389
+method,seed,category,CL_trend,CL_se,CD_trend,CD_se,CMz_trend,CMz_se,CD_scatter,CD_relative_pct_per100,case
+GP2,1,GP2 seed 1,-2.415e-06,6.093e-06,6.840e-06,2.288e-06,1.347e-07,1.241e-06,5.290e-05,0.0682,WD_0.01-20_ConsGalerkinProj_Drift_Second
+GP2,2,GP2 seed 2,2.141e-06,5.664e-06,6.383e-06,2.210e-06,-1.040e-06,1.149e-06,5.105e-05,0.0637,WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second
+NN2,1,NN2 seed 1,1.157e-05,7.022e-06,3.949e-05,3.323e-06,-1.456e-05,1.533e-06,8.849e-05,0.3939,WD_0.01-20_NN_Drift_Second
+NN2,2,NN2 seed 2,4.865e-05,8.391e-06,3.839e-05,3.530e-06,-1.486e-05,1.669e-06,9.197e-05,0.3830,WD_0.01-20_NN_Drift_Seed2_Second
