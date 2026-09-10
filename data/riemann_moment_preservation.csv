@@ -1,4 +1,4 @@
 scheme,delta_M0_rel,delta_M1_rel,centroid_shift
-GP2,8.4e-8,5.9e-7,7.2e-7
-BAR2,6.2e-7,3.3e-6,3.8e-6
-NN1,-2.8e-5,-4.6e-5,-2.6e-5
+GP2,2.3e-07,4.9e-07,3.7e-07
+NN1,-2.5e-05,-3.9e-05,-2.0e-05
+BAR2,7.5e-07,3.1e-06,3.4e-06
