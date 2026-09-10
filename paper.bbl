@@ -1,5 +1,5 @@
 % $ biblatex auxiliary file $
-% $ biblatex bbl format version 3.3 $
+% $ biblatex bbl format version 3.1 $
 % Do not modify the above lines!
 %
 % This is an auxiliary file used by the 'biblatex' package.
@@ -18,13 +18,13 @@
 
 
 \refsection{0}
-  \datalist[entry]{none/global//global/global/global}
-    \entry{AlauzetLoseilleOlivier2018}{article}{}{}
+  \datalist[entry]{none/global//global/global}
+    \entry{AlauzetLoseilleOlivier2018}{article}{}
       \name{author}{3}{}{%
         {{hash=ec1626618a6c5d585acee8af2e3cd8c2}{%
            family={Alauzet},
            familyi={A\bibinitperiod},
-           given={Frédéric},
+           given={Fr{é}d{é}ric},
            giveni={F\bibinitperiod}}}%
         {{hash=e33ae7561a80c5571508f23e3218f242}{%
            family={Loseille},
@@ -34,19 +34,17 @@
         {{hash=d225cbc9a45f6f1c7f885757c9fe1e44}{%
            family={Olivier},
            familyi={O\bibinitperiod},
-           given={Géraldine},
+           given={G{é}raldine},
            giveni={G\bibinitperiod}}}%
       }
       \strng{namehash}{5856f23d07f7b982fe4160efd6671821}
       \strng{fullhash}{5856f23d07f7b982fe4160efd6671821}
-      \strng{fullhashraw}{5856f23d07f7b982fe4160efd6671821}
       \strng{bibnamehash}{5856f23d07f7b982fe4160efd6671821}
       \strng{authorbibnamehash}{5856f23d07f7b982fe4160efd6671821}
       \strng{authornamehash}{5856f23d07f7b982fe4160efd6671821}
       \strng{authorfullhash}{5856f23d07f7b982fe4160efd6671821}
-      \strng{authorfullhashraw}{5856f23d07f7b982fe4160efd6671821}
       \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Computational Physics}
@@ -59,7 +57,7 @@
       \verb 10.1016/j.jcp.2018.06.043
       \endverb
     \endentry
-    \entry{SauvageAlauzetDervieux2024}{article}{}{}
+    \entry{SauvageAlauzetDervieux2024}{article}{}
       \name{author}{3}{}{%
         {{hash=2d8dad0c3ea5e70b0f08b31ef307d7c5}{%
            family={Sauvage},
@@ -69,7 +67,7 @@
         {{hash=ec1626618a6c5d585acee8af2e3cd8c2}{%
            family={Alauzet},
            familyi={A\bibinitperiod},
-           given={Frédéric},
+           given={Fr{é}d{é}ric},
            giveni={F\bibinitperiod}}}%
         {{hash=af05e479edb6f72c9b47eb3e6435f8b6}{%
            family={Dervieux},
@@ -79,14 +77,12 @@
       }
       \strng{namehash}{847b718c8d3db6b3bc37c8264467b17d}
       \strng{fullhash}{847b718c8d3db6b3bc37c8264467b17d}
-      \strng{fullhashraw}{847b718c8d3db6b3bc37c8264467b17d}
       \strng{bibnamehash}{847b718c8d3db6b3bc37c8264467b17d}
       \strng{authorbibnamehash}{847b718c8d3db6b3bc37c8264467b17d}
       \strng{authornamehash}{847b718c8d3db6b3bc37c8264467b17d}
       \strng{authorfullhash}{847b718c8d3db6b3bc37c8264467b17d}
-      \strng{authorfullhashraw}{847b718c8d3db6b3bc37c8264467b17d}
       \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Computational Physics}
@@ -99,7 +95,7 @@
       \verb 10.1016/j.jcp.2024.113389
       \endverb
     \endentry
-    \entry{FarrellMaddison2011}{article}{}{}
+    \entry{FarrellMaddison2011}{article}{}
       \name{author}{2}{}{%
         {{hash=9fd68b51f9e040836192b1133556ebb2}{%
            family={Farrell},
@@ -114,14 +110,12 @@
       }
       \strng{namehash}{a2114418600031ed444c1a526fd8b1e3}
       \strng{fullhash}{a2114418600031ed444c1a526fd8b1e3}
-      \strng{fullhashraw}{a2114418600031ed444c1a526fd8b1e3}
       \strng{bibnamehash}{a2114418600031ed444c1a526fd8b1e3}
       \strng{authorbibnamehash}{a2114418600031ed444c1a526fd8b1e3}
       \strng{authornamehash}{a2114418600031ed444c1a526fd8b1e3}
       \strng{authorfullhash}{a2114418600031ed444c1a526fd8b1e3}
-      \strng{authorfullhashraw}{a2114418600031ed444c1a526fd8b1e3}
       \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Computer Methods in Applied Mechanics and Engineering}
@@ -135,7 +129,7 @@
       \verb 10.1016/j.cma.2010.07.015
       \endverb
     \endentry
-    \entry{JiaoHeath2004}{article}{}{}
+    \entry{JiaoHeath2004}{article}{}
       \name{author}{2}{}{%
         {{hash=92848d6dd08d2749a186777ea7a62140}{%
            family={Jiao},
@@ -150,14 +144,12 @@
       }
       \strng{namehash}{5e275aeda6322ece57110f085092f49e}
       \strng{fullhash}{5e275aeda6322ece57110f085092f49e}
-      \strng{fullhashraw}{5e275aeda6322ece57110f085092f49e}
       \strng{bibnamehash}{5e275aeda6322ece57110f085092f49e}
       \strng{authorbibnamehash}{5e275aeda6322ece57110f085092f49e}
       \strng{authornamehash}{5e275aeda6322ece57110f085092f49e}
       \strng{authorfullhash}{5e275aeda6322ece57110f085092f49e}
-      \strng{authorfullhashraw}{5e275aeda6322ece57110f085092f49e}
       \field{sortinit}{2}
-      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{sortinithash}{ed39bb39cf854d5250e95b1c1f94f4ed}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{International Journal for Numerical Methods in Engineering}
@@ -167,7 +159,7 @@
       \field{pages}{2402\bibrangedash 2427}
       \range{pages}{26}
     \endentry
-    \entry{MaddisonHiester2017}{article}{}{}
+    \entry{MaddisonHiester2017}{article}{}
       \name{author}{2}{}{%
         {{hash=0319ae85c89200b99c383c227a2e988b}{%
            family={Maddison},
@@ -182,14 +174,12 @@
       }
       \strng{namehash}{464a4a90009c7d2507bbf309ffad2f7c}
       \strng{fullhash}{464a4a90009c7d2507bbf309ffad2f7c}
-      \strng{fullhashraw}{464a4a90009c7d2507bbf309ffad2f7c}
       \strng{bibnamehash}{464a4a90009c7d2507bbf309ffad2f7c}
       \strng{authorbibnamehash}{464a4a90009c7d2507bbf309ffad2f7c}
       \strng{authornamehash}{464a4a90009c7d2507bbf309ffad2f7c}
       \strng{authorfullhash}{464a4a90009c7d2507bbf309ffad2f7c}
-      \strng{authorfullhashraw}{464a4a90009c7d2507bbf309ffad2f7c}
       \field{sortinit}{3}
-      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{sortinithash}{a37a8ef248a93c322189792c34fc68c9}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{SIAM Journal on Scientific Computing}
@@ -203,7 +193,7 @@
       \verb 10.1137/15M102054X
       \endverb
     \endentry
-    \entry{MaddisonCotterFarrell2011}{article}{}{}
+    \entry{MaddisonCotterFarrell2011}{article}{}
       \name{author}{3}{}{%
         {{hash=0319ae85c89200b99c383c227a2e988b}{%
            family={Maddison},
@@ -223,15 +213,13 @@
       }
       \strng{namehash}{4ab2c524a65f61734996d72f124a6092}
       \strng{fullhash}{4ab2c524a65f61734996d72f124a6092}
-      \strng{fullhashraw}{4ab2c524a65f61734996d72f124a6092}
       \strng{bibnamehash}{4ab2c524a65f61734996d72f124a6092}
       \strng{authorbibnamehash}{4ab2c524a65f61734996d72f124a6092}
       \strng{authornamehash}{4ab2c524a65f61734996d72f124a6092}
       \strng{authorfullhash}{4ab2c524a65f61734996d72f124a6092}
-      \strng{authorfullhashraw}{4ab2c524a65f61734996d72f124a6092}
       \field{extraname}{1}
       \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinithash}{e071e0bcb44634fab398d68ad04e69f4}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Ocean Modelling}
@@ -245,7 +233,7 @@
       \verb 10.1016/j.ocemod.2010.12.007
       \endverb
     \endentry
-    \entry{MaddisonCotterFarrell2013}{article}{}{}
+    \entry{MaddisonCotterFarrell2013}{article}{}
       \name{author}{3}{}{%
         {{hash=0319ae85c89200b99c383c227a2e988b}{%
            family={Maddison},
@@ -265,15 +253,13 @@
       }
       \strng{namehash}{4ab2c524a65f61734996d72f124a6092}
       \strng{fullhash}{4ab2c524a65f61734996d72f124a6092}
-      \strng{fullhashraw}{4ab2c524a65f61734996d72f124a6092}
       \strng{bibnamehash}{4ab2c524a65f61734996d72f124a6092}
       \strng{authorbibnamehash}{4ab2c524a65f61734996d72f124a6092}
       \strng{authornamehash}{4ab2c524a65f61734996d72f124a6092}
       \strng{authorfullhash}{4ab2c524a65f61734996d72f124a6092}
-      \strng{authorfullhashraw}{4ab2c524a65f61734996d72f124a6092}
       \field{extraname}{2}
       \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinithash}{e071e0bcb44634fab398d68ad04e69f4}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Ocean Modelling}
@@ -286,7 +272,7 @@
       \verb 10.1016/j.ocemod.2013.04.007
       \endverb
     \endentry
-    \entry{BarthFrederickson1990}{inproceedings}{}{}
+    \entry{BarthFrederickson1990}{inproceedings}{}
       \name{author}{2}{}{%
         {{hash=3338c20721f7a920af5d4c7aa3f42f25}{%
            family={Barth},
@@ -304,14 +290,12 @@
       }
       \strng{namehash}{3ebaf503e0297293bb5c76d7929fdc91}
       \strng{fullhash}{3ebaf503e0297293bb5c76d7929fdc91}
-      \strng{fullhashraw}{3ebaf503e0297293bb5c76d7929fdc91}
       \strng{bibnamehash}{3ebaf503e0297293bb5c76d7929fdc91}
       \strng{authorbibnamehash}{3ebaf503e0297293bb5c76d7929fdc91}
       \strng{authornamehash}{3ebaf503e0297293bb5c76d7929fdc91}
       \strng{authorfullhash}{3ebaf503e0297293bb5c76d7929fdc91}
-      \strng{authorfullhashraw}{3ebaf503e0297293bb5c76d7929fdc91}
       \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinithash}{5dd416adbafacc8226114bc0202d5fdd}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{28th Aerospace Sciences Meeting}
@@ -319,7 +303,7 @@
       \field{title}{Higher Order Solution of the {Euler} Equations on Unstructured Grids Using Quadratic Reconstruction}
       \field{year}{1990}
     \endentry
-    \entry{Barth1993}{inproceedings}{}{}
+    \entry{Barth1993}{inproceedings}{}
       \name{author}{1}{}{%
         {{hash=3338c20721f7a920af5d4c7aa3f42f25}{%
            family={Barth},
@@ -332,14 +316,12 @@
       }
       \strng{namehash}{3338c20721f7a920af5d4c7aa3f42f25}
       \strng{fullhash}{3338c20721f7a920af5d4c7aa3f42f25}
-      \strng{fullhashraw}{3338c20721f7a920af5d4c7aa3f42f25}
       \strng{bibnamehash}{3338c20721f7a920af5d4c7aa3f42f25}
       \strng{authorbibnamehash}{3338c20721f7a920af5d4c7aa3f42f25}
       \strng{authornamehash}{3338c20721f7a920af5d4c7aa3f42f25}
       \strng{authorfullhash}{3338c20721f7a920af5d4c7aa3f42f25}
-      \strng{authorfullhashraw}{3338c20721f7a920af5d4c7aa3f42f25}
       \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinithash}{5dd416adbafacc8226114bc0202d5fdd}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{31st Aerospace Sciences Meeting}
@@ -347,7 +329,7 @@
       \field{title}{Recent Developments in High Order $k$-Exact Reconstruction on Unstructured Meshes}
       \field{year}{1993}
     \endentry
-    \entry{Mavriplis2003}{inproceedings}{}{}
+    \entry{Mavriplis2003}{inproceedings}{}
       \name{author}{1}{}{%
         {{hash=fb2f8c6abfb7489eccddc0caa7651f65}{%
            family={Mavriplis},
@@ -360,14 +342,12 @@
       }
       \strng{namehash}{fb2f8c6abfb7489eccddc0caa7651f65}
       \strng{fullhash}{fb2f8c6abfb7489eccddc0caa7651f65}
-      \strng{fullhashraw}{fb2f8c6abfb7489eccddc0caa7651f65}
       \strng{bibnamehash}{fb2f8c6abfb7489eccddc0caa7651f65}
       \strng{authorbibnamehash}{fb2f8c6abfb7489eccddc0caa7651f65}
       \strng{authornamehash}{fb2f8c6abfb7489eccddc0caa7651f65}
       \strng{authorfullhash}{fb2f8c6abfb7489eccddc0caa7651f65}
-      \strng{authorfullhashraw}{fb2f8c6abfb7489eccddc0caa7651f65}
       \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinithash}{5dd416adbafacc8226114bc0202d5fdd}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{16th AIAA Computational Fluid Dynamics Conference}
@@ -378,7 +358,7 @@
       \verb 10.2514/6.2003-3986
       \endverb
     \endentry
-    \entry{DiskinThomas2008}{report}{}{}
+    \entry{DiskinThomas2008}{report}{}
       \name{author}{2}{}{%
         {{hash=8e673fcd6c293b28ca7519e5dbc63639}{%
            family={Diskin},
@@ -399,14 +379,12 @@
       }
       \strng{namehash}{339dcfb89353fdf38b32e82a10ad551c}
       \strng{fullhash}{339dcfb89353fdf38b32e82a10ad551c}
-      \strng{fullhashraw}{339dcfb89353fdf38b32e82a10ad551c}
       \strng{bibnamehash}{339dcfb89353fdf38b32e82a10ad551c}
       \strng{authorbibnamehash}{339dcfb89353fdf38b32e82a10ad551c}
       \strng{authornamehash}{339dcfb89353fdf38b32e82a10ad551c}
       \strng{authorfullhash}{339dcfb89353fdf38b32e82a10ad551c}
-      \strng{authorfullhashraw}{339dcfb89353fdf38b32e82a10ad551c}
       \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinithash}{5dd416adbafacc8226114bc0202d5fdd}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{number}{NIA Report 2008-12}
@@ -414,7 +392,7 @@
       \field{type}{techreport}
       \field{year}{2008}
     \endentry
-    \entry{BarthJespersen1989}{inproceedings}{}{}
+    \entry{BarthJespersen1989}{inproceedings}{}
       \name{author}{2}{}{%
         {{hash=3338c20721f7a920af5d4c7aa3f42f25}{%
            family={Barth},
@@ -432,14 +410,12 @@
       }
       \strng{namehash}{ebf370438002aeed2d1748e36b211b4e}
       \strng{fullhash}{ebf370438002aeed2d1748e36b211b4e}
-      \strng{fullhashraw}{ebf370438002aeed2d1748e36b211b4e}
       \strng{bibnamehash}{ebf370438002aeed2d1748e36b211b4e}
       \strng{authorbibnamehash}{ebf370438002aeed2d1748e36b211b4e}
       \strng{authornamehash}{ebf370438002aeed2d1748e36b211b4e}
       \strng{authorfullhash}{ebf370438002aeed2d1748e36b211b4e}
-      \strng{authorfullhashraw}{ebf370438002aeed2d1748e36b211b4e}
       \field{sortinit}{6}
-      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{sortinithash}{7851c86048328b027313775d8fbd2131}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{27th Aerospace Sciences Meeting}
@@ -450,7 +426,7 @@
       \verb 10.2514/6.1989-366
       \endverb
     \endentry
-    \entry{Venkatakrishnan1995}{article}{}{}
+    \entry{Venkatakrishnan1995}{article}{}
       \name{author}{1}{}{%
         {{hash=436486b2c20192132b33ec14848fb203}{%
            family={Venkatakrishnan},
@@ -460,14 +436,12 @@
       }
       \strng{namehash}{436486b2c20192132b33ec14848fb203}
       \strng{fullhash}{436486b2c20192132b33ec14848fb203}
-      \strng{fullhashraw}{436486b2c20192132b33ec14848fb203}
       \strng{bibnamehash}{436486b2c20192132b33ec14848fb203}
       \strng{authorbibnamehash}{436486b2c20192132b33ec14848fb203}
       \strng{authornamehash}{436486b2c20192132b33ec14848fb203}
       \strng{authorfullhash}{436486b2c20192132b33ec14848fb203}
-      \strng{authorfullhashraw}{436486b2c20192132b33ec14848fb203}
       \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinithash}{f615fb9c6fba11c6f962fb3fd599810e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Computational Physics}
@@ -478,7 +452,7 @@
       \field{pages}{120\bibrangedash 130}
       \range{pages}{11}
     \endentry
-    \entry{MichalakOllivierGooch2009}{article}{}{}
+    \entry{MichalakOllivierGooch2009}{article}{}
       \name{author}{2}{}{%
         {{hash=f76001a13d0db0b2959cb60433f4f8ec}{%
            family={Michalak},
@@ -493,14 +467,12 @@
       }
       \strng{namehash}{447c0a50f1ff23125e97b3baae08e0fa}
       \strng{fullhash}{447c0a50f1ff23125e97b3baae08e0fa}
-      \strng{fullhashraw}{447c0a50f1ff23125e97b3baae08e0fa}
       \strng{bibnamehash}{447c0a50f1ff23125e97b3baae08e0fa}
       \strng{authorbibnamehash}{447c0a50f1ff23125e97b3baae08e0fa}
       \strng{authornamehash}{447c0a50f1ff23125e97b3baae08e0fa}
       \strng{authorfullhash}{447c0a50f1ff23125e97b3baae08e0fa}
-      \strng{authorfullhashraw}{447c0a50f1ff23125e97b3baae08e0fa}
       \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinithash}{f615fb9c6fba11c6f962fb3fd599810e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Computational Physics}
@@ -511,7 +483,7 @@
       \field{pages}{8693\bibrangedash 8711}
       \range{pages}{19}
     \endentry
-    \entry{Nishikawa2022}{inproceedings}{}{}
+    \entry{Nishikawa2022}{inproceedings}{}
       \name{author}{1}{}{%
         {{hash=f910ec7b2014fcca843b97dce88b4844}{%
            family={Nishikawa},
@@ -521,14 +493,12 @@
       }
       \strng{namehash}{f910ec7b2014fcca843b97dce88b4844}
       \strng{fullhash}{f910ec7b2014fcca843b97dce88b4844}
-      \strng{fullhashraw}{f910ec7b2014fcca843b97dce88b4844}
       \strng{bibnamehash}{f910ec7b2014fcca843b97dce88b4844}
       \strng{authorbibnamehash}{f910ec7b2014fcca843b97dce88b4844}
       \strng{authornamehash}{f910ec7b2014fcca843b97dce88b4844}
       \strng{authorfullhash}{f910ec7b2014fcca843b97dce88b4844}
-      \strng{authorfullhashraw}{f910ec7b2014fcca843b97dce88b4844}
       \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinithash}{f615fb9c6fba11c6f962fb3fd599810e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{AIAA SciTech Forum}
@@ -539,7 +509,7 @@
       \verb 10.2514/6.2022-1374
       \endverb
     \endentry
-    \entry{Dunavant1985}{article}{}{}
+    \entry{Dunavant1985}{article}{}
       \name{author}{1}{}{%
         {{hash=4beb09b0cc2bb7972f643c31e1e6c4a7}{%
            family={Dunavant},
@@ -549,14 +519,12 @@
       }
       \strng{namehash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
       \strng{fullhash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
-      \strng{fullhashraw}{4beb09b0cc2bb7972f643c31e1e6c4a7}
       \strng{bibnamehash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
       \strng{authorbibnamehash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
       \strng{authornamehash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
       \strng{authorfullhash}{4beb09b0cc2bb7972f643c31e1e6c4a7}
-      \strng{authorfullhashraw}{4beb09b0cc2bb7972f643c31e1e6c4a7}
       \field{sortinit}{9}
-      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{sortinithash}{54047ffb55bdefa0694bbd554c1b11a0}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{International Journal for Numerical Methods in Engineering}
@@ -567,7 +535,7 @@
       \field{pages}{1129\bibrangedash 1148}
       \range{pages}{20}
     \endentry
-    \entry{Keast1986}{article}{}{}
+    \entry{Keast1986}{article}{}
       \name{author}{1}{}{%
         {{hash=57f18c874d292223bea41d89cab54edb}{%
            family={Keast},
@@ -577,14 +545,12 @@
       }
       \strng{namehash}{57f18c874d292223bea41d89cab54edb}
       \strng{fullhash}{57f18c874d292223bea41d89cab54edb}
-      \strng{fullhashraw}{57f18c874d292223bea41d89cab54edb}
       \strng{bibnamehash}{57f18c874d292223bea41d89cab54edb}
       \strng{authorbibnamehash}{57f18c874d292223bea41d89cab54edb}
       \strng{authornamehash}{57f18c874d292223bea41d89cab54edb}
       \strng{authorfullhash}{57f18c874d292223bea41d89cab54edb}
-      \strng{authorfullhashraw}{57f18c874d292223bea41d89cab54edb}
       \field{sortinit}{9}
-      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{sortinithash}{54047ffb55bdefa0694bbd554c1b11a0}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Computer Methods in Applied Mechanics and Engineering}
@@ -594,7 +560,7 @@
       \field{pages}{339\bibrangedash 348}
       \range{pages}{10}
     \endentry
-    \entry{ShashkovWendroff2004}{article}{}{}
+    \entry{ShashkovWendroff2004}{article}{}
       \name{author}{2}{}{%
         {{hash=08def5e899f2c265305e57f12f70eea2}{%
            family={Shashkov},
@@ -609,14 +575,12 @@
       }
       \strng{namehash}{62c59e5077d711e7c4b64248cdd02098}
       \strng{fullhash}{62c59e5077d711e7c4b64248cdd02098}
-      \strng{fullhashraw}{62c59e5077d711e7c4b64248cdd02098}
       \strng{bibnamehash}{62c59e5077d711e7c4b64248cdd02098}
       \strng{authorbibnamehash}{62c59e5077d711e7c4b64248cdd02098}
       \strng{authornamehash}{62c59e5077d711e7c4b64248cdd02098}
       \strng{authorfullhash}{62c59e5077d711e7c4b64248cdd02098}
-      \strng{authorfullhashraw}{62c59e5077d711e7c4b64248cdd02098}
       \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Computational Physics}
@@ -627,7 +591,7 @@
       \field{pages}{265\bibrangedash 277}
       \range{pages}{13}
     \endentry
-    \entry{KucharikShashkovWendroff2003}{article}{}{}
+    \entry{KucharikShashkovWendroff2003}{article}{}
       \name{author}{3}{}{%
         {{hash=34bb9a07d713abdd85e3d4ec63fdb0b1}{%
            family={Kucharik},
@@ -647,14 +611,12 @@
       }
       \strng{namehash}{cab705df3dc607903c1931a32864028e}
       \strng{fullhash}{cab705df3dc607903c1931a32864028e}
-      \strng{fullhashraw}{cab705df3dc607903c1931a32864028e}
       \strng{bibnamehash}{cab705df3dc607903c1931a32864028e}
       \strng{authorbibnamehash}{cab705df3dc607903c1931a32864028e}
       \strng{authornamehash}{cab705df3dc607903c1931a32864028e}
       \strng{authorfullhash}{cab705df3dc607903c1931a32864028e}
-      \strng{authorfullhashraw}{cab705df3dc607903c1931a32864028e}
       \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Computational Physics}
@@ -665,7 +627,7 @@
       \field{pages}{462\bibrangedash 471}
       \range{pages}{10}
     \endentry
-    \entry{KoobusFarhat1999}{article}{}{}
+    \entry{KoobusFarhat1999}{article}{}
       \name{author}{2}{}{%
         {{hash=5a8f460fa6ae62648d694b6fb7c09090}{%
            family={Koobus},
@@ -680,14 +642,12 @@
       }
       \strng{namehash}{27e686e1fa2a7f9047be40cc8e446f4f}
       \strng{fullhash}{27e686e1fa2a7f9047be40cc8e446f4f}
-      \strng{fullhashraw}{27e686e1fa2a7f9047be40cc8e446f4f}
       \strng{bibnamehash}{27e686e1fa2a7f9047be40cc8e446f4f}
       \strng{authorbibnamehash}{27e686e1fa2a7f9047be40cc8e446f4f}
       \strng{authornamehash}{27e686e1fa2a7f9047be40cc8e446f4f}
       \strng{authorfullhash}{27e686e1fa2a7f9047be40cc8e446f4f}
-      \strng{authorfullhashraw}{27e686e1fa2a7f9047be40cc8e446f4f}
       \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Computer Methods in Applied Mechanics and Engineering}
@@ -701,7 +661,7 @@
       \verb 10.1016/S0045-7825(98)00207-2
       \endverb
     \endentry
-    \entry{GeuzaineGrandmontFarhat2003}{article}{}{}
+    \entry{GeuzaineGrandmontFarhat2003}{article}{}
       \name{author}{3}{}{%
         {{hash=69bdf6548b76b3b522de4ecd07ac9720}{%
            family={Geuzaine},
@@ -711,7 +671,7 @@
         {{hash=3c497c07ed230763eaa8b530908269f3}{%
            family={Grandmont},
            familyi={G\bibinitperiod},
-           given={Céline},
+           given={C{é}line},
            giveni={C\bibinitperiod}}}%
         {{hash=34f121d017b8778966005fb772a5cc66}{%
            family={Farhat},
@@ -721,14 +681,12 @@
       }
       \strng{namehash}{eb767eeeb8eee41eaa9bed39533eaffb}
       \strng{fullhash}{eb767eeeb8eee41eaa9bed39533eaffb}
-      \strng{fullhashraw}{eb767eeeb8eee41eaa9bed39533eaffb}
       \strng{bibnamehash}{eb767eeeb8eee41eaa9bed39533eaffb}
       \strng{authorbibnamehash}{eb767eeeb8eee41eaa9bed39533eaffb}
       \strng{authornamehash}{eb767eeeb8eee41eaa9bed39533eaffb}
       \strng{authorfullhash}{eb767eeeb8eee41eaa9bed39533eaffb}
-      \strng{authorfullhashraw}{eb767eeeb8eee41eaa9bed39533eaffb}
       \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of Computational Physics}
@@ -742,7 +700,7 @@
       \verb 10.1016/S0021-9991(03)00311-5
       \endverb
     \endentry
-    \entry{GilesPierce2000}{article}{}{}
+    \entry{GilesPierce2000}{article}{}
       \name{author}{2}{}{%
         {{hash=1033980ff770f645812573a97040888c}{%
            family={Giles},
@@ -757,14 +715,12 @@
       }
       \strng{namehash}{31f4de17f1c1cc19cef4bd2debde1174}
       \strng{fullhash}{31f4de17f1c1cc19cef4bd2debde1174}
-      \strng{fullhashraw}{31f4de17f1c1cc19cef4bd2debde1174}
       \strng{bibnamehash}{31f4de17f1c1cc19cef4bd2debde1174}
       \strng{authorbibnamehash}{31f4de17f1c1cc19cef4bd2debde1174}
       \strng{authornamehash}{31f4de17f1c1cc19cef4bd2debde1174}
       \strng{authorfullhash}{31f4de17f1c1cc19cef4bd2debde1174}
-      \strng{authorfullhashraw}{31f4de17f1c1cc19cef4bd2debde1174}
       \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Flow, Turbulence and Combustion}
@@ -777,7 +733,7 @@
       \verb 10.1023/A:1011430410075
       \endverb
     \endentry
-    \entry{SpalartAllmaras1994}{article}{}{}
+    \entry{SpalartAllmaras1994}{article}{}
       \name{author}{2}{}{%
         {{hash=671b8894e896e5135a29e51e8b1232ca}{%
            family={Spalart},
@@ -792,14 +748,12 @@
       }
       \strng{namehash}{7e2ac27a50988b4f592133918cd8f97d}
       \strng{fullhash}{7e2ac27a50988b4f592133918cd8f97d}
-      \strng{fullhashraw}{7e2ac27a50988b4f592133918cd8f97d}
       \strng{bibnamehash}{7e2ac27a50988b4f592133918cd8f97d}
       \strng{authorbibnamehash}{7e2ac27a50988b4f592133918cd8f97d}
       \strng{authornamehash}{7e2ac27a50988b4f592133918cd8f97d}
       \strng{authorfullhash}{7e2ac27a50988b4f592133918cd8f97d}
-      \strng{authorfullhashraw}{7e2ac27a50988b4f592133918cd8f97d}
       \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{La Recherche Aérospatiale}
@@ -809,7 +763,7 @@
       \field{pages}{5\bibrangedash 21}
       \range{pages}{17}
     \endentry
-    \entry{Menter1994}{article}{}{}
+    \entry{Menter1994}{article}{}
       \name{author}{1}{}{%
         {{hash=2143101ca93c44d83ed2e5ca610e99ad}{%
            family={Menter},
@@ -819,14 +773,12 @@
       }
       \strng{namehash}{2143101ca93c44d83ed2e5ca610e99ad}
       \strng{fullhash}{2143101ca93c44d83ed2e5ca610e99ad}
-      \strng{fullhashraw}{2143101ca93c44d83ed2e5ca610e99ad}
       \strng{bibnamehash}{2143101ca93c44d83ed2e5ca610e99ad}
       \strng{authorbibnamehash}{2143101ca93c44d83ed2e5ca610e99ad}
       \strng{authornamehash}{2143101ca93c44d83ed2e5ca610e99ad}
       \strng{authorfullhash}{2143101ca93c44d83ed2e5ca610e99ad}
-      \strng{authorfullhashraw}{2143101ca93c44d83ed2e5ca610e99ad}
       \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinithash}{50c6687d7fc80f50136d75228e3c59ba}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{AIAA Journal}
