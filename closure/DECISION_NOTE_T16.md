@@ -27,3 +27,7 @@ Euclidean, 5.8e-3 M^-1): the manuscript's identity statement must quote the norm
 method family, not a single number. The single-precision (float32 VTU) export gave 2e-8 for
 every family, i.e. it hid the Galerkin discrepancy; only the double-precision probes are
 evidence.
+
+Pending (set up 2026-09-10, not run): `SteadyNACA/BDF2/bdf2_identity_localize.py` locates the
+mismatch by region (wall / smallest volumes / rest), lists the worst nodes, and tests candidate 1
+by rescaling the predicted forcing with the node-wise r/p ratio of NN1. No ranks needed.
