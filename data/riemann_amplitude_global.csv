@@ -1,9 +1,9 @@
 scheme,global_correction,safe_factor,cycles,position_error_cells,width_change_cells,cumulative_density_change
-NN1,off,4,400,0.06,18.04,5.0e-04
-NN1,off,2,400,-0.10,26.19,1.3e-03
-NN1,on,4,400,-0.19,6.49,5.8e-14
-NN1,on,2,400,-0.53,25.26,4.3e-14
-GP2,intrinsic,4,400,0.00,0.01,-3.0e-06
+NN1,off,4,400,0.10,21.41,5.0e-04
+NN1,off,2,400,-0.38,26.36,1.3e-03
+NN1,on,4,400,-0.15,18.36,5.8e-14
+NN1,on,2,400,-0.91,25.65,4.3e-14
+GP2,intrinsic,4,400,0.01,0.00,-3.0e-06
 GP2,intrinsic,2,400,0.17,0.06,-1.1e-05
-BAR2,off,4,400,-0.03,3.03,1.4e-04
-BAR2,off,2,400,-0.05,22.81,2.7e-04
+BAR2,off,4,400,-0.03,3.24,1.4e-04
+BAR2,off,2,400,-0.06,22.91,2.7e-04
