@@ -171,7 +171,7 @@ def verify_comparison_orders(errors: pd.DataFrame, supplied: pd.DataFrame) -> fl
         for row in group.itertuples(index=False):
             key = tuple(getattr(row, name) for name in keys)
             expected = float("nan")
-            if previous is not None:
+            if previous is not None and row.rel_L2 > 0 and previous.rel_L2 > 0:   # exactness tests (Constant) reach 0
                 expected = np.log(previous.rel_L2 / row.rel_L2) / np.log(previous.h / row.h)
             provided = supplied_map.get(key, np.nan)
             if np.isfinite(expected) and np.isfinite(provided):
