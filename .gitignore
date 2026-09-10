@@ -1,0 +1,10 @@
+paper.aux
+paper.bcf
+paper.blg
+paper.fdb_latexmk
+paper.fls
+paper.log
+paper.out
+paper.run.xml
+build.log
+__pycache__/
