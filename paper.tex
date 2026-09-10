@@ -1449,14 +1449,13 @@ The NACA GP3 assembly used for the reported results passes constant and affine p
 
 \begin{table}[htbp]
     \centering
-    \caption{Verification of the two-dimensional GP3 common-refinement assembly. Constant and linear patch tests and target-cell coverage are shown before and after the signed-area correction used in the final results.}
+    \caption{Verification of the two-dimensional GP3 common-refinement assembly on the mesh A to mesh B transfer: constant and linear patch tests and the target-cell coverage (the transferred value of the unit field).}
     \label{tab:naca-gp3-verification}
     \pgfplotstabletypeset[
         col sep=comma,
-        columns={metric,uncorrected,corrected},
+        columns={metric,value},
         columns/metric/.style={string type,column type=l,column name={Diagnostic}},
-        columns/uncorrected/.style={column type=c,column name={Original assembly},sci,sci zerofill,precision=3},
-        columns/corrected/.style={column type=c,column name={Verified assembly},sci,sci zerofill,precision=3},
+        columns/value/.style={string type,column type=c,column name={Value}},
         every head row/.style={before row=\toprule,after row=\midrule},
         every last row/.style={after row=\bottomrule},
     ]{\DataDir/naca_gp3_verification.csv}
