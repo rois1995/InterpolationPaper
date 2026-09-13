@@ -2,8 +2,8 @@ item,path,value,date
 SU2_CFD binary,/media/rausa/4TB/SU2_Versions/SU2_v8_Develop_ForAdaptation/bin/SU2_CFD,11736224,2025-12-10
 SU2 source commit,/media/rausa/4TB/SU2_Versions/SU2_v8_Develop_ForAdaptation,dcee051d8ee7fba29ebe4d5f373c63a5fa198906,Fri Jun 27 08:21:49 2025 +0200
 SU2 working tree dirty files,/media/rausa/4TB/SU2_Versions/SU2_v8_Develop_ForAdaptation,0,
-MeshAdaptation commit (transfer / motion code),/media/rausa/4TB/MeshAdaptation,f4586fd9e6b00c0138bc1124a979f2f3a1913636,Sun Sep 13 21:13:05 2026 +0200
-MeshAdaptation dirty files,/media/rausa/4TB/MeshAdaptation,13,
+"MeshAdaptation commit (transfer / motion code, as built into the case bases)",/media/rausa/4TB/MeshAdaptation,35d865ebdea88fc265a62d32bbba2527a187491c,Wed Sep 9 17:57:44 2026 +0200
+MeshAdaptation dirty files at build time,/media/rausa/4TB/MeshAdaptation,10,
 InterpSolution.py used by the SA cases (sha256),Base_Interp_RANS_SA/InterpSolution.py,d0ca621366e755117d61412bc81965ad3a110e0ef25fcd238a087d3c207604af,
 InterpSolution.py used by the SST cases (sha256),Base_Interp_RANS_SST/InterpSolution.py,d0ca621366e755117d61412bc81965ad3a110e0ef25fcd238a087d3c207604af,
 FunScripts/InterpSolution_Fun.py used by the SA cases (sha256),Base_Interp_RANS_SA/FunScripts/InterpSolution_Fun.py,5530368696ee491ef6818612cdf669aeb59949697733fe38ea26f759684c3d81,
