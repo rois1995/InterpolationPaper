@@ -1,0 +1,9 @@
+case,model,method,transfer_first_event_s_incl_jit,transfer_per_event_median_s,transfer_per_event_min_s,transfer_per_event_max_s,meshmove_per_event_median_s,cfd_per_10step_window_median_s,mpi_ranks
+RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second,SA,ConsGalerkinProj,3.38,7.33,6.58,13.56,2.01,19.41,4
+RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second,SA,ConsGalerkinProj,2.52,5.07,4.90,5.79,1.47,10.46,4
+RANS_SA_WD_0.01-20_NN_Drift_Second,SA,NN,2.80,3.54,3.48,4.74,1.45,10.11,4
+RANS_SA_WD_0.01-20_NN_Drift_Seed2_Second,SA,NN,1.80,4.87,3.56,5.71,1.94,19.16,4
+RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second,SST,ConsGalerkinProj,2.73,5.34,5.00,6.56,1.51,11.68,4
+RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second,SST,ConsGalerkinProj,3.23,6.11,5.49,8.10,1.67,13.19,4
+RANS_SST_WD_0.01-20_NN_Drift_Second,SST,NN,2.21,5.52,4.14,7.54,2.16,21.27,4
+RANS_SST_WD_0.01-20_NN_Drift_Seed2_Second,SST,NN,2.02,4.43,4.03,6.21,1.78,14.49,4

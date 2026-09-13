@@ -1,0 +1,14 @@
+item,value
+nodes total,23271
+moved (first event),12602
+fixed,10669
+quad-layer nodes,9981
+quad-layer nodes moved,1782
+quad-layer moved: solver wall distance min,0.0101
+quad-layer moved: wall distance max,0.1097
+fixed nodes with solver wall distance < 0.01,8590
+moved nodes with solver wall distance < 0.01,0
+moved nodes: solver wall distance min,0.0100
+mask criterion in the motion code,distance to the nearest airfoil NODE > MinWallDistance = 0.01 (not the solver wall distance)
+boundary nodes frozen,yes (airfoil 370 + farfield 63)
+max displacement (first event),2.389e-01
