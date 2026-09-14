@@ -1,0 +1,6 @@
+GP2: wall nodes 370; |d| momentum at wall: normal 2.125e-06  tangential 1.527e-11  | predicted p: normal 2.125e-06 tangential 1.241e-04 | eps at wall: normal 1.281e-03 tangential 7.755e-02
+      ratio |d_normal|/|p_normal| = 1.0000   |d_tangential|/|p_tangential| = 1.23e-07
+GP3: wall nodes 370; |d| momentum at wall: normal 6.066e-07  tangential 1.568e-11  | predicted p: normal 6.066e-07 tangential 1.254e-04 | eps at wall: normal 6.612e-04 tangential 7.939e-02
+      ratio |d_normal|/|p_normal| = 1.0000   |d_tangential|/|p_tangential| = 1.25e-07
+NN1: wall nodes 370; |d| momentum at wall: normal 4.502e-12  tangential 1.673e-11  | predicted p: normal 1.019e-16 tangential 1.250e-04 | eps at wall: normal 1.098e-14 tangential 7.880e-02
+      ratio |d_normal|/|p_normal| = 44186.1534   |d_tangential|/|p_tangential| = 1.34e-07

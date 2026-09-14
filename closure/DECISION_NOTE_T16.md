@@ -31,3 +31,16 @@ evidence.
 Pending (set up 2026-09-10, not run): `SteadyNACA/BDF2/bdf2_identity_localize.py` locates the
 mismatch by region (wall / smallest volumes / rest), lists the worst nodes, and tests candidate 1
 by rescaling the predicted forcing with the node-wise r/p ratio of NN1. No ranks needed.
+
+## T06 closed (2026-09-14): the Galerkin identity residual is the wall-normal momentum at slip-wall nodes
+
+`bdf2_identity_localize.py` (closure/identity_localize.txt): the GP2/GP3 mismatch sits 99.1-99.9 % at the
+370 airfoil nodes, only in the momentum components; density and energy are at round-off everywhere; NN1 and
+BAR2 have 0 % at the wall. Split into wall-normal and tangential parts (closure/identity_wall_normal.txt,
+data/naca_identity_wall_split.csv): the mismatch equals the wall-normal predicted forcing exactly
+(ratio 1.0000 for GP2 and GP3) and the tangential part matches to 1.2e-7. The Galerkin projection gives the
+wall nodes a wall-normal momentum change (GP2: 1.3e-3 against 7.8e-2 tangential); the solver's slip-wall
+treatment removes the normal momentum residual, so that part of the history forcing never appears. NN and
+barycentric transfers leave the wall-normal momentum at 1e-14, hence no mismatch. Statement for the text:
+the history-forcing identity holds to 1e-7 for all methods on the interior and tangential components; the
+Galerkin methods additionally carry a wall-normal momentum defect that the wall boundary condition discards.

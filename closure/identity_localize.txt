@@ -1,0 +1,39 @@
+
+=== NN1  pair latest-full  (trial Uhat_B*, dt 0.001)
+field          e_id_I  e_id_Minv   share of |d|^2:                      wall nodes  5 % smallest volumes (not wall)                            rest
+Density      1.63e-07   5.47e-07                                             0.00 %                           0.00 %                         100.00 %
+Momentum_x   1.72e-07   1.40e-07                                             0.00 %                           0.00 %                         100.00 %
+Momentum_y   1.63e-07   1.38e-07                                             0.00 %                           0.00 %                         100.00 %
+Energy       9.95e-08   6.61e-07                                             0.00 %                           0.00 %                         100.00 %
+all          1.67e-07   1.71e-07                                             0.00 %                           0.00 %                         100.00 %
+r/p (= V_SU2/V estimate) median: wall nan   smallest nan   rest 1.000000   spread (5-95 %) rest 1.000000..1.000000
+
+=== BAR2  pair latest-full  (trial Uhat_B*, dt 0.001)
+field          e_id_I  e_id_Minv   share of |d|^2:                      wall nodes  5 % smallest volumes (not wall)                            rest
+Density      1.40e-07   2.10e-07                                             0.00 %                           0.00 %                         100.00 %
+Momentum_x   1.34e-07   1.32e-07                                             0.00 %                           0.00 %                         100.00 %
+Momentum_y   1.42e-07   1.37e-07                                             0.00 %                           0.00 %                         100.00 %
+Energy       1.61e-07   1.78e-07                                             0.00 %                           0.00 %                         100.00 %
+all          1.39e-07   1.34e-07                                             0.00 %                           0.00 %                         100.00 %
+r/p (= V_SU2/V estimate) median: wall nan   smallest nan   rest 1.000000   spread (5-95 %) rest 1.000000..1.000000
+with p rescaled by the NN1 node ratio: e_id_I 1.57e-07  e_id_Minv 1.43e-07  (candidate 1 if these drop to the NN1 level)
+
+=== GP2  pair latest-full  (trial Uhat_B*, dt 0.001)
+field          e_id_I  e_id_Minv   share of |d|^2:                      wall nodes  5 % smallest volumes (not wall)                            rest
+Density      1.27e-07   1.85e-07                                             0.00 %                           0.00 %                         100.00 %
+Momentum_x   1.71e-06   9.58e-04                                            99.39 %                           0.00 %                           0.61 %
+Momentum_y   8.75e-06   5.83e-03                                            99.97 %                           0.00 %                           0.03 %
+Energy       1.44e-07   1.80e-07                                             0.00 %                           0.00 %                         100.00 %
+all          4.45e-06   1.79e-03                                            99.91 %                           0.00 %                           0.09 %
+r/p (= V_SU2/V estimate) median: wall nan   smallest nan   rest 1.000000   spread (5-95 %) rest 1.000000..1.000000
+with p rescaled by the NN1 node ratio: e_id_I 4.45e-06  e_id_Minv 1.79e-03  (candidate 1 if these drop to the NN1 level)
+
+=== GP3  pair latest-full  (trial Uhat_B*, dt 0.001)
+field          e_id_I  e_id_Minv   share of |d|^2:                      wall nodes  5 % smallest volumes (not wall)                            rest
+Density      1.30e-07   2.05e-07                                             0.00 %                           0.00 %                         100.00 %
+Momentum_x   5.18e-07   3.15e-04                                            94.28 %                           0.00 %                           5.72 %
+Momentum_y   2.76e-06   2.05e-03                                            99.77 %                           0.00 %                           0.23 %
+Energy       1.47e-07   1.95e-07                                             0.00 %                           0.00 %                         100.00 %
+all          1.34e-06   6.10e-04                                            99.08 %                           0.00 %                           0.92 %
+r/p (= V_SU2/V estimate) median: wall nan   smallest nan   rest 1.000000   spread (5-95 %) rest 1.000000..1.000000
+with p rescaled by the NN1 node ratio: e_id_I 1.34e-06  e_id_Minv 6.10e-04  (candidate 1 if these drop to the NN1 level)
