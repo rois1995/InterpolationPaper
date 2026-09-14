@@ -1,21 +1,46 @@
 {
   "source_hashes": {
-    "RANS_PostProcessing/rans_deformed_reference.csv": "c4a8ad6c7d9ea02d25c19ced8d8ca0da2253fdbda643dff45ea1d1ca8edf4dbf",
-    "RANS_PostProcessing/rans_deformed_surface.csv": "2f392722219d5851bb6565307b1016e7291bff2325d59bed14a74a86072239b2",
-    "RANS_PostProcessing/rans_drift_series.csv": "c942c4a970252268ed82b3098ecbbb87c2a1d4e69b6f2efde06c587a68a56ea9",
-    "RANS_PostProcessing/rans_drift_trends.csv": "12a6e5e0134fe610a2eba98fb21a321a970bf33311dc3572caa7c57fea24ec6a",
-    "RANS_PostProcessing/rans_oneshot_fit.csv": "235ef179ff4c6653ba64e96176b03ad006992166879e87dd9404eee4a620d89d",
-    "RANS_PostProcessing/rans_oneshot_lags.csv": "4fe59ceb3e480a40357ba8086ee44af6ce42137b0cd17e5c924a598671241d08",
-    "RANS_PostProcessing/rans_oneshot_series.csv": "19bc0b4060ebe6626152a15ea328be41434dc184697e02faa4cf9a896dd26b03",
-    "RANS_PostProcessing/rans_pressure_probe.csv": "fb9001648249fa53cb0a49eab961384d892b9037b932cd5bde46523147e7959f",
-    "RANS_PostProcessing/rans_surface_forces.csv": "845febb5a77cbac0c9fe48418637b59e8c9c06ef1dafdceb68b077760c49ffd9",
-    "RANS_PostProcessing/rans_surface_norms.csv": "63ddcde6c0fd7511d86cb90af78648f66ced72b05127cbd7ae48e16e47928a36",
-    "RANS_PostProcessing/rans_surface_profiles.csv": "41f2260c5985dd89d4360d985fb84e1a44944642836beef57bedf57a516c1f21",
-    "RANS_PostProcessing/rans_transfer_integrals.csv": "a6ce80e99aed7cb67adcc8b9ab3154e1732c2ab256e3ab880ad4442cd6eb744c",
-    "RANS_PostProcessing/rans_turb_state_norms_SA.csv": "990a1df3d0b438afc1f7fb7d9517712c591896ba523e3ceee0f9ef3ceb82a4a5",
-    "RANS_PostProcessing/rans_turb_state_norms_SST.csv": "b40013d55859b9c9abbdab5c6d4dc53352c5e1b90998c70c9c05d490f6105253"
+    "RANS_PostProcessing/rans_T04_sensitivity.csv": "71912b46173c38f6cc104bdba82f3291a4aa148aeeaca6d49bc4d1c39c4dcd04",
+    "RANS_PostProcessing/rans_T04_series.csv": "b1964abcc4ecf79a651d7ca7d8c1178dfcc400fcc77c02e1f65030ac0e10a4fe",
+    "RANS_PostProcessing/rans_code_provenance.csv": "0f6de4b6eb34a259e948833d53809c4b3557167e1ef6fc806687daa42da5094a",
+    "RANS_PostProcessing/rans_deformed_reference.csv": "77bac485e606ee402cfe341bb90710289634f70accb1fbd625201b48c7a138e2",
+    "RANS_PostProcessing/rans_deformed_surface.csv": "634e97d339475caba23b655d422afd3b4e46d4fcfa8a52d8d10e2a5d0a2ec864",
+    "RANS_PostProcessing/rans_drift_series.csv": "066bb4f8dae315f67e2e371fd5349cec0797a8dfd6bfa4cfc8f26647e47e97f6",
+    "RANS_PostProcessing/rans_drift_trends.csv": "6188b7885171920789801896b2ef0dbc3e948bccf93a07c60b0852a3d989ddce",
+    "RANS_PostProcessing/rans_inner_convergence.csv": "e18c57a2a712eb0014209e94b55041f38089a269fe17290da6f365d24f904b4b",
+    "RANS_PostProcessing/rans_mesh_quality.csv": "c0dce953c2fe2727bcb32668a0c3ebb6b08ff205688c7bb5814b5e6c540e1ebb",
+    "RANS_PostProcessing/rans_mesh_replay.csv": "922830a83113e21ff765ab1137aaedebd6aa81eac09d0c17fef13274f8c3386d",
+    "RANS_PostProcessing/rans_oneshot_fit.csv": "f89cb601cd4ed875fd7941ba599314cd2060eada7072349d3ea94cd8b8a4fd6e",
+    "RANS_PostProcessing/rans_oneshot_lags.csv": "063d97e66de86e5e016e8e892c635d4a48488fa51e4dbca210fd7c265bdc9112",
+    "RANS_PostProcessing/rans_oneshot_series.csv": "676ac3d08d2356c259363ea59562a4ab50e8a7645ed9361172c83c2137772529",
+    "RANS_PostProcessing/rans_pressure_probe.csv": "eb73701ef38b44a906fabfed49394d68ba0410e7b5b5cced64854ef2b12bbf32",
+    "RANS_PostProcessing/rans_protected_region.csv": "b2335a4bdc0390e4b2338ab43bd130a327443d762d48bb286e77cc26df63702a",
+    "RANS_PostProcessing/rans_protected_summary.csv": "169758aff6b0280657e620c3f1a657f779febc15cd556eaf9fcf606e9754861a",
+    "RANS_PostProcessing/rans_runtime_units.csv": "dd71b72697b70e57d43e6131cd0f61bdb1f60bfb4367f864282f8909cc688032",
+    "RANS_PostProcessing/rans_surface_forces.csv": "db37796686dd933aae05d1579d7cad58df5aac7bcbf9aacbdef8684bf0231e76",
+    "RANS_PostProcessing/rans_surface_norms.csv": "3178b8799d31b9360be28d5f1a6f97310f4f6e00e0b43e3dd24bf0f3df8e08c3",
+    "RANS_PostProcessing/rans_surface_profiles.csv": "9371b7a7203f19af1e40a7b77f19e98938e91cf55a87ab3a9b29401bd018b03b",
+    "RANS_PostProcessing/rans_timing.csv": "89c2a4addab68615a2d54cec89071991ec27534ef45c5bd2e739205c70cad1c7",
+    "RANS_PostProcessing/rans_transfer_integrals.csv": "222194a44b4a6d82373bb6db170d75cb49368b42dd270b176ad84cc81971f681",
+    "RANS_PostProcessing/rans_turb_state_norms_SA.csv": "0c5cfe31343b8d4be5d27a3789c46ed5be9ed969dcbf8612c08aa02f8953e127",
+    "RANS_PostProcessing/rans_turb_state_norms_SST.csv": "8c44a1a9073a064a102c29745913d0e0c053daf742cff3f85812f14aa28b117d"
   },
   "source_tables": {
+    "rans_T04_sensitivity.csv": {
+      "input_rows": 60,
+      "unique_rows": 60,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_T04_series.csv": {
+      "input_rows": 1380,
+      "unique_rows": 1380,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_code_provenance.csv": {
+      "input_rows": 69,
+      "unique_rows": 69,
+      "exact_duplicates_removed_in_view": 0
+    },
     "rans_deformed_reference.csv": {
       "input_rows": 10,
       "unique_rows": 10,
@@ -32,6 +57,21 @@
       "exact_duplicates_removed_in_view": 0
     },
     "rans_drift_trends.csv": {
+      "input_rows": 40,
+      "unique_rows": 40,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_inner_convergence.csv": {
+      "input_rows": 20,
+      "unique_rows": 20,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_mesh_quality.csv": {
+      "input_rows": 340,
+      "unique_rows": 340,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_mesh_replay.csv": {
       "input_rows": 40,
       "unique_rows": 40,
       "exact_duplicates_removed_in_view": 0
@@ -56,6 +96,21 @@
       "unique_rows": 72,
       "exact_duplicates_removed_in_view": 0
     },
+    "rans_protected_region.csv": {
+      "input_rows": 23271,
+      "unique_rows": 23271,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_protected_summary.csv": {
+      "input_rows": 13,
+      "unique_rows": 13,
+      "exact_duplicates_removed_in_view": 0
+    },
+    "rans_runtime_units.csv": {
+      "input_rows": 17,
+      "unique_rows": 17,
+      "exact_duplicates_removed_in_view": 0
+    },
     "rans_surface_forces.csv": {
       "input_rows": 8644,
       "unique_rows": 7964,
@@ -67,9 +122,14 @@
       "exact_duplicates_removed_in_view": 680
     },
     "rans_surface_profiles.csv": {
-      "input_rows": 40700,
-      "unique_rows": 27380,
-      "exact_duplicates_removed_in_view": 13320
+      "input_rows": 28160,
+      "unique_rows": 18944,
+      "exact_duplicates_removed_in_view": 9216
+    },
+    "rans_timing.csv": {
+      "input_rows": 8,
+      "unique_rows": 8,
+      "exact_duplicates_removed_in_view": 0
     },
     "rans_transfer_integrals.csv": {
       "input_rows": 3740,
@@ -157,10 +217,10 @@
   "integral_policy": "Use exported relative-defect field, not subtraction of rounded inventory columns; both histories, 39 events, two seeds.",
   "statistics": "OLS on unique physical steps; standard errors are unadjusted and descriptive, not inferential.",
   "probe_count": 72,
-  "probe_below_three_ulp": 44,
+  "probe_below_three_ulp": 13,
   "pressure_ulp": 5.960464477539063e-08,
   "short_run_convective_duration": 0.04,
-  "old_and_raw_csv_snapshot_count": 53,
+  "old_and_raw_csv_snapshot_count": 63,
   "inputs_differing_from_delivered_snapshot": [],
   "bibliography": "References.bib",
   "raw_simulations_rerun": false

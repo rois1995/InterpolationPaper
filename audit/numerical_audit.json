@@ -1,163 +1,176 @@
 {
   "scope": "Recomputation from archived tables; no raw-field/solver validation.",
   "csv_sha256": {
-    "data/Comparison_Conservation.csv": "5d70870d822e5e7275cc43406f5e266eb9c11a01b02f8c830fa064d9e46dbe41",
-    "data/Comparison_Errors.csv": "4e693d5510d343bf15d31250f1d4e071a1438a326a938e98c23b8044c7ddf1cd",
-    "data/Comparison_Orders.csv": "36e059fd683d2ef103416a0d90049ab39aa7cae6558fe1dfb5346a6a2f103a25",
-    "data/discontinuous_boundedness.csv": "168f00a16663f0b16ca9c8ac4e1409a90800a74ae7567b67f26be75dd87b0f02",
-    "data/discontinuous_conservation_defect.csv": "953dba85b00f7d007b2ad7a257e13229ea9494b8c34f6f2158fe22ad4cede3d1",
-    "data/discontinuous_convergence_L2.csv": "5e3ad6ba0d727bcf838b7c1f28cab5906b3460dfd60f27a2573a7e0c26875fa7",
-    "data/naca_acoustic_delay.csv": "64a07d1fd6cf01c18b84902dc513f0b1c0be76b7f445b05b8aa51e3de0cf102e",
-    "data/naca_acoustic_delay_fits.csv": "7b5321264a353b9a7ec198e7cc9027156e295bd3107f293f5982fd34b2460480",
-    "data/naca_first_step_CL_plot.csv": "3149eee71004eb632cefb2800566d54f766f41e1d840c601fc361e3e8870ce11",
-    "data/naca_first_step_response.csv": "1d8477ea210c5b6117f62627c5e2c5a3766357017f258242648d342312f4f2b7",
-    "data/naca_force_drift.csv": "db1ccae769c5626da8982c717c714aa2c9e7baafbbf924517361dc65ee2fccc4",
-    "data/naca_force_history.csv": "284febb7fab0f29f3904c97dd0834780eea3cb63bd0b19b01a50fd2e28465c34",
-    "data/naca_global_correction.csv": "ec763a99b17de023f3de46f8a3b90c3380566d83f2f12ff9cd44b54ff83187b7",
-    "data/naca_gp3_verification.csv": "f3350eaa29b7d7dcd1ba24f842bfd866ccb955da156b18a9c8ae229d64d70f8d",
-    "data/naca_initial_residual_identity.csv": "9cdff76db8fe2769dc2c1b90bd2d28155a889914ffe66900bed4a3f2f5a042e2",
-    "data/naca_native_convergence.csv": "aa0a059a9be13acc07a4fcac6e01099103dc32b1396188f4627015989c196e2e",
-    "data/naca_pressure_propagation.csv": "58c22a93ffb2c02d450d8466f1a5821aa6f788a170171997bda32616ef45ade0",
-    "data/naca_superposition.csv": "65a83faedb6f4c52d1596ce15657a95983e5cf6e7ddf3e9edd9a23b81b235814",
-    "data/naca_surface_delta_cp.csv": "265bf239e4130254d9dee31984601eea46b85f4587855b52963cec32905c374e",
-    "data/naca_transfer_defects.csv": "04e7a477755d3d449dc41a50f5b0fc8e1b180f168f526c5dbcedb714a97396a0",
-    "data/riemann_amplitude_global.csv": "62b6d127fd9a5daa4b86db51e30f2f861b01e4a3b5fa68e90e1206bdfa8ed1f2",
-    "data/riemann_frequency_full.csv": "1faed28dd4249b09abf7efffdffb4856d4245660e2d01ffd69916d9b329ac909",
-    "data/riemann_global_correction.csv": "b0eca19fce0af88428c21ca2847207304f22b42e34189e1048fc7f8a8927e1f6",
-    "data/riemann_limiter_activation.csv": "90fc0e164e01fcf5933dab3e74c4664e85adab05e31136d72059f921fdea1c5a",
-    "data/riemann_moment_preservation.csv": "7939ae32316f764c0879588340ebfc4d5246bbcad778acd7c11ddfdf547907ab",
-    "data/riemann_multicycle.csv": "685bf0e2bc02e8dd0f09bb8fee5668055384f7ee5a973323e21e694101c99ebe",
-    "data/riemann_refinement_errors.csv": "fd2ca66e0b96b97de4b8c4222bcd7db753af6dacc52974320c34f91411afc23f",
-    "data/riemann_refinement_orders.csv": "ef4fc60a0b570f2d251a92027dbad7ea3d6081a8cdee894b7d80eb72acd8ad4b",
-    "data/riemann_stress_representative.csv": "2be43e25ed23d229eac8be502d415237e6d9e3c2e51885e73a32b340ba327075",
-    "data/riemann_transition_step399.csv": "463bf340c61af8ba1157c1f6f49215bd76962c62f9fc25d398f69e5c9f9de281",
-    "generated/asymmetric_conservation_defect.csv": "7f09d226e16c58cd1187be4dd0131712c5734263e3491338edd306d3bd816e0e",
-    "generated/asymmetric_convergence_L2.csv": "461570c82399327209dff5b3094e794c8080167a86bd1122049df301ef85b119",
-    "generated/asymmetric_norm_orders.csv": "6e4e6d3719510c82ffe080059764fdfba81605e0ec57d3ac741ed48fa19aa2e8",
-    "generated/asymmetric_orders.csv": "a97fc854b2326565844bb134a5e1876032e7f616fc1f3dd34051d6489633a6fb",
-    "generated/discontinuous_boundedness_plot.csv": "83226067887e19eebc5cbbbe1dcf1879b79c9e6436c405f349bd7c603812da7c",
-    "generated/discontinuous_conservation_defect.csv": "5d0026adb6deb534c9ce99d138cd7b8a81d11f6a0209b31ef9f50668a12ce2cd",
-    "generated/discontinuous_convergence_L2.csv": "8b3c185badbd23a9e83784fef434724f22940ee03d4207857712a87ece501b89",
-    "generated/discontinuous_norm_orders.csv": "15cf0eb3dcb521be2327082af200f4bd86c296c7de292b709eb7af51499bafa0",
-    "generated/discontinuous_orders.csv": "d7e08b49973c775460486c62647e5ed35101fec74e134c3409b2cd55c96b34ba",
-    "generated/rans_clipping_report.csv": "b4d19de7fe3d89e12eb5519909b51f9ee645812813dabea7bdd3639ac6c43462",
-    "generated/rans_drift_SA.csv": "63fca98b5f37a71d7503d2755cb30bf55b9f4d4e513e5d860992a594af0aaf7d",
-    "generated/rans_drift_SST.csv": "9e73ddee7568fb8f2cbb731de883758b77c935b01936465bc825dbba145028f3",
-    "generated/rans_drift_summary.csv": "90071a1623758ac5a0b859892a75e92f608d82c5050704c4464949d956d1e2d5",
-    "generated/rans_integral_summary.csv": "17d5082184af5e4a5129125af046afe36c2de303c8a17edfc60428a1bf21e390",
-    "generated/rans_native_summary.csv": "753f428c82db532bb2b80372ec9b077dff92a61cf9cf68fd0dda31de9c19cb28",
-    "generated/rans_oneshot_SA.csv": "2c53cc6c3536947dac20a376e70e6a5584d27af71c14f4c7f8cbbd11680fe99d",
-    "generated/rans_oneshot_SST.csv": "ff27d651d5faad1ce630ce6a45035b5fe594407a538b01fe738c000f3e158b9e",
-    "generated/rans_oneshot_summary.csv": "8245247ce2390bba589dad8c759785d27135d95f83b6cea961a4b760c6695fb6",
-    "generated/rans_pair_summary.csv": "e1b5217dc0702945a5860f8ea6be46cb06c30ad37661677e7e2f38f895dbcdcd",
-    "generated/rans_pressure_probe_audit.csv": "e7f40cda0ac24917080a731526218ba340adeb3ef9119527740b8413ca33249a",
-    "generated/rans_surface_endpoint.csv": "7533d6d120d8b6e767884960b4352a4cd3248f89f4f82320ae8cee54f6417565",
-    "generated/rans_turbulence_SA.csv": "5cb491ec92e44147b4fff0a7af88f57a65160b8066074e06d6d7d89b5e0e24ff",
-    "generated/rans_turbulence_SST.csv": "eba03599f4f4f6dfd7f2a12921062e7c2561473942730a9b7e3d172278f66e63",
-    "generated/rans_turbulence_endpoint.csv": "35fff7a175e4d91682af8704172228f4a4fcc7fee4265421b1a007d89223b821"
+    "data/Comparison_Conservation.csv": "13c4f497bb4b7700c8d6e3ae7834f4c4b1f5f2bd23bd53c442fa5a2126f0f09e",
+    "data/Comparison_Errors.csv": "928df3b898b0de6b90a336bcf48160eb194cb7919ce0ae3462363d72b6a52e8a",
+    "data/Comparison_Orders.csv": "664be46d22c3699e61e6e0df7429892bb3e3253d8271853d1536a81849cb18ca",
+    "data/discontinuous_boundedness.csv": "a6943d761c4ca0d961421633a72d6bfdb0e2901201652252a6e8ab9ce2988c26",
+    "data/discontinuous_conservation_defect.csv": "f4c6ac1d03cccf42ba6b61e19cffb38a077b083b04926455c447f2d0c14a7284",
+    "data/discontinuous_convergence_L2.csv": "58eb81e298bd7f339d3a7574ef9912ff4b44e136a94d3662cb1e5f49cd26e011",
+    "data/naca_acoustic_delay.csv": "fc53bdd93d9ee2633cab6f44d5adc3f52a6cd693b3e15181f5bb51e19b2d1556",
+    "data/naca_acoustic_delay_fits.csv": "9aa1e445387148fcfffa29f33a7afddfbe6f2740e25f019305e329f45da13815",
+    "data/naca_first_step_CL_plot.csv": "3c47796d4f31c17b503a86c4a17fdb063b59f48f95ed3589ee399b6fdf3854da",
+    "data/naca_first_step_response.csv": "ec7565e65cd98c6a26e5df7fac5a60d4849bd97249e70d6f1b28e3ab16414c17",
+    "data/naca_force_drift.csv": "edf87df81030d687d0b08d653371b8257e7b924efd820a7bbd9c60a498900fd1",
+    "data/naca_force_history.csv": "cde57a0aa8b2ae04e2f638a2a319951eaa5d0fc334cee6b202cb03104d1762d5",
+    "data/naca_global_correction.csv": "23a4994d2d055f99447a617bcd2c2caa0a212647c6a791df2d5df5d5671b21e7",
+    "data/naca_gp3_verification.csv": "f8e36ac5d29f2dc44e024243b3c037697857e52cde75a35ce59dcf9af6efc8e7",
+    "data/naca_identity_wall_split.csv": "503046d9360bc07fd37a3676f5a0cfe9858d12bce852390c8669b50d9319a5eb",
+    "data/naca_initial_residual_identity.csv": "2a9e14ac57b7cdb8f8d140a033f0f43729dd0a4f79d934a977d6aa944a047d74",
+    "data/naca_initial_residual_identity_double.csv": "a2d6d9f52eecea66edfd5ef7fb490f7832234f4078e88e134d88cb73342c9be4",
+    "data/naca_initial_residual_identity_pairs.csv": "87757cb71cc92a340e67d10d3068eda6db9d306278a00d1fd586be1197a2c564",
+    "data/naca_native_convergence.csv": "13c0ae0d8cacb67986ef63f1ba145475dc63111ff590e9b70b40002b38a22cce",
+    "data/naca_pressure_propagation.csv": "c60966e568a5341b49dd3a3eafebda10187b4352cebe81cd7db97ecd9e605302",
+    "data/naca_superposition.csv": "1a1f64372b67875186a1be5e1faff9feebe90ae4a6feca758c5b18fca1455fd2",
+    "data/naca_surface_delta_cp.csv": "97e1ebf7ff270239c5b769f09065334e8ce70151548fea1a3fa1b3309a49c068",
+    "data/naca_transfer_defects.csv": "1eb3c6a2093ad18f1fa4fa7b068ed55a74c6069a0d7eb3273a297bce6dea0d45",
+    "data/riemann_amplitude_global.csv": "81334e0e1035a82fa938ead060f66d5062825057e796733e9831c8f795ce10cd",
+    "data/riemann_frequency_full.csv": "1a0641b471263d5cd64e4528088707fa7e6d21c5a5f324ef1042fb959973c9bf",
+    "data/riemann_global_correction.csv": "1eb41077d6a27da4b626448a150e451b0c8e159484273571bbb21887aecf820a",
+    "data/riemann_limiter_activation.csv": "99d379ed2d70b854ef1e8001511291fcd53ad1708a00dc15ea7c6496939b8b78",
+    "data/riemann_moment_preservation.csv": "8bb3c168ac1e03c51951a3a3b0b539b25662592a278c8fe315e45065842ca7bd",
+    "data/riemann_multicycle.csv": "49d272c03e4423d10352a6dbc59adf73f5b6dbdc343514301b12cbe7b871f64a",
+    "data/riemann_refinement_errors.csv": "7c3f99459d4228da8a6ca277c9beb3e859530bc327445fd4efdad76882dbc933",
+    "data/riemann_refinement_orders.csv": "d5b1afa990580d9a585a6c92a79c6a382866e49d661dda1da8a046eff6e8debc",
+    "data/riemann_stress_representative.csv": "dd92e840d21343f8cdba6aacd24dd337d2e3deb0a9e1435ee82f8021e4af3990",
+    "data/riemann_transition_step399.csv": "2e4e59730739a3ed4271c5f4e82d26b972d1877db4579d1d4cdfb7b221de4575",
+    "generated/asymmetric_conservation_defect.csv": "eaf5c0d1ae4fcf49e77c4016f74ec82eaaa2986d2af7e4f2cbef7631a0fcdd55",
+    "generated/asymmetric_convergence_L2.csv": "b5f95b29595c0ce70a9a405af6545fbc28ee4e760c3d1d6f5875081eb0981ad2",
+    "generated/asymmetric_norm_orders.csv": "b8d6dde24b6bef8a18eba1791663bfbb4f7ea1e0a1860eeed65a518c4d330f49",
+    "generated/asymmetric_orders.csv": "929d044c7bad3349caf3c747b43c22342c35448e1c87f097be8c370fc163d762",
+    "generated/discontinuous_boundedness_plot.csv": "8aba23254adb5fb546bfd217b82aac23031ca756a643cd6224c49ca94a473072",
+    "generated/discontinuous_conservation_defect.csv": "8fae600e8037081fa461e4956083ffa971a0464fce364e1f07a3ebaa11c82662",
+    "generated/discontinuous_convergence_L2.csv": "4a167d134c97a4fa507beda549f5ba84c6e96cb38eea3fb26aa341187eef1c41",
+    "generated/discontinuous_norm_orders.csv": "ab0cf2dfff7e7be4a7d181dfe40bd1d671da2d95518dc98af245a5e6c0646858",
+    "generated/discontinuous_orders.csv": "13baeae6d431b9158b28ef86b3e24f9e4a3d275ffccf4e4981044888b9850b7e",
+    "generated/rans_clipping_report.csv": "08bebc14034180a89b745c277df65ad4af24265ad0aeaa224a7b6a67e058b418",
+    "generated/rans_drift_SA.csv": "6efa3531bf0a6f6cd01ffd829a724dc2be6a5843534765942e1c65d6d78c2bad",
+    "generated/rans_drift_SST.csv": "ff8d54e9eac23e94924f9789bbe9be3c911e177a13b7ec08fc2efdf18a4be4e2",
+    "generated/rans_drift_summary.csv": "ef79087240b16706b3052b0472bdd5adcfbcd9f9feb9f59a489120869d8f9968",
+    "generated/rans_integral_summary.csv": "f5002d31a52d11c776d64ad4089166f77faf5f491b229b568b7bb92ac7023268",
+    "generated/rans_native_summary.csv": "1c728e9b7851e58b28125c57d3c18420636ae9ce3837d7dae743c9fe8d39b361",
+    "generated/rans_oneshot_SA.csv": "dbc68367f2a232b2aa11502b0208d84c76b3baaa33b293faa6da68d017aa9ff9",
+    "generated/rans_oneshot_SST.csv": "a1f371c00714172a0949d73995acc13da9e534d17f11277c7c68bf2d6ff36002",
+    "generated/rans_oneshot_summary.csv": "7074ee761d3e718ef081e62b50c04d56446705ef4b4b64704c15ce7fd50496c8",
+    "generated/rans_pair_summary.csv": "c6ee76719728a944bc984bc6640ec4d8b7e1f21022c976644aec06be342d8984",
+    "generated/rans_pressure_probe_audit.csv": "ce76ee22a6cf82b21bdcce8d956ae394a5360eccfe483675802f32948c2eeef7",
+    "generated/rans_surface_endpoint.csv": "085e464652a06a75b100feaed3fc48ee38a5641697f9f0c686a9d9a704d1f4b2",
+    "generated/rans_turbulence_SA.csv": "6ab6b587b502f353b324ff8b0f8346785742f847b36ec954a285cd300c92c272",
+    "generated/rans_turbulence_SST.csv": "0f7b348dc961a0550c15d08c6a34d94246a10c23259366ea48ff84731f3cb5df",
+    "generated/rans_turbulence_endpoint.csv": "1b3c8a39239f6cf9faf95dc529cceb49bde4417500f76a47637b393d7e56808a"
   },
-  "changed_or_missing_original_csvs": [],
+  "changed_or_missing_original_csvs": [
+    "RANS_PostProcessing/rans_T04_sensitivity.csv",
+    "RANS_PostProcessing/rans_T04_series.csv",
+    "RANS_PostProcessing/rans_code_provenance.csv",
+    "RANS_PostProcessing/rans_deformed_reference.csv",
+    "RANS_PostProcessing/rans_deformed_surface.csv",
+    "RANS_PostProcessing/rans_drift_series.csv",
+    "RANS_PostProcessing/rans_drift_trends.csv",
+    "RANS_PostProcessing/rans_inner_convergence.csv",
+    "RANS_PostProcessing/rans_mesh_quality.csv",
+    "RANS_PostProcessing/rans_mesh_replay.csv",
+    "RANS_PostProcessing/rans_oneshot_fit.csv",
+    "RANS_PostProcessing/rans_oneshot_lags.csv",
+    "RANS_PostProcessing/rans_oneshot_series.csv",
+    "RANS_PostProcessing/rans_pressure_probe.csv",
+    "RANS_PostProcessing/rans_protected_region.csv",
+    "RANS_PostProcessing/rans_protected_summary.csv",
+    "RANS_PostProcessing/rans_runtime_units.csv",
+    "RANS_PostProcessing/rans_surface_forces.csv",
+    "RANS_PostProcessing/rans_surface_norms.csv",
+    "RANS_PostProcessing/rans_surface_profiles.csv",
+    "RANS_PostProcessing/rans_timing.csv",
+    "RANS_PostProcessing/rans_transfer_integrals.csv",
+    "RANS_PostProcessing/rans_turb_state_norms_SA.csv",
+    "RANS_PostProcessing/rans_turb_state_norms_SST.csv",
+    "data/bdf2_raw/naca_first_step_response.csv",
+    "data/bdf2_raw/naca_force_history.csv",
+    "data/bdf2_raw/naca_initial_residual_identity.csv",
+    "data/bdf2_raw/naca_native_convergence.csv",
+    "data/bdf2_raw/naca_superposition.csv",
+    "data/bdf2_raw/naca_surface_delta_cp.csv",
+    "data/bdf2_raw/naca_transfer_defects.csv"
+  ],
   "naca_gc_relative_changes_percent": {
     "NN1": {
-      "epsilon_norm": -0.010853123325391368,
-      "delta_full_norm": -0.008897771450480159,
-      "delta_CL_full": 0.08864371644419021
+      "epsilon_norm": -0.01153324287653152,
+      "delta_full_norm": -0.008214676889371431,
+      "delta_CL_full": 0.08846942707406291
     },
     "BAR2": {
-      "epsilon_norm": -0.0001420541311340501,
+      "epsilon_norm": -0.0002843372808870599,
       "delta_full_norm": 0.0,
-      "delta_CL_full": -0.002736764323535894
+      "delta_CL_full": -0.002745291824528454
     }
   },
   "force_onset_fits": {
     "onset_1": {
-      "slope": 605.7142857142857,
-      "intercept": -17.999999999999993,
-      "R_squared": 0.9888451299201337
+      "slope": 519.4444444444443,
+      "intercept": -12.527777777777771,
+      "R_squared": 0.9322083599914694
     },
     "onset_5": {
-      "slope": 650.0,
-      "intercept": -16.499999999999993,
-      "R_squared": 0.9936500470366886
+      "slope": 575.5555555555554,
+      "intercept": -12.222222222222207,
+      "R_squared": 0.9553860724789393
     },
     "onset_25": {
-      "slope": 772.8571428571429,
-      "intercept": -8.5,
-      "R_squared": 0.9914533678405442
+      "slope": 655.0,
+      "intercept": 2.25,
+      "R_squared": 0.9368267177795031
     },
     "onset_50": {
-      "slope": 927.1428571428571,
-      "intercept": -13.5,
-      "R_squared": 0.9987977463078718
+      "slope": 762.7777777777777,
+      "intercept": -0.36111111111111427,
+      "R_squared": 0.9171663299899191
     }
   },
   "pressure_threshold_sensitivity": {
-    "mean_slope": 848.0,
-    "slope_sample_sd": 56.91045598130452,
-    "mean_speed": 1.1836688593508902,
-    "speed_sample_sd": 0.07915998127038075,
-    "speed_min": 1.0905125408942202,
-    "speed_max": 1.278772378516624,
+    "mean_slope": 794.6111111111111,
+    "slope_sample_sd": 225.4499414518197,
+    "mean_speed": 1.197534176913794,
+    "speed_sample_sd": 0.7188592422351643,
+    "speed_min": -3.4965034965034962,
+    "speed_max": 2.3640661938534278,
     "interpretation": "Six thresholds of one event, not six independent repetitions."
   },
   "drag_trend_means": {
-    "NN2": 3.85e-05,
-    "GP2": 6.5999999999999995e-06
+    "NN2": 3.894e-05,
+    "GP2": 6.611499999999999e-06
   },
-  "drag_trend_ratio_NN2_GP2": 5.833333333333334,
-  "invalid_cosine_rows": [
-    {
-      "family": "NN/BAR variants",
-      "relative_error_min": "2.4e-8",
-      "relative_error_max": "4.2e-8",
-      "cosine_min": "1.0000012",
-      "cosine_max": "1.0000017"
-    },
-    {
-      "family": "GP2",
-      "relative_error_min": "4.4e-6",
-      "relative_error_max": "4.4e-6",
-      "cosine_min": "1.0000016",
-      "cosine_max": "1.0000016"
-    },
-    {
-      "family": "GP3",
-      "relative_error_min": "1.3e-6",
-      "relative_error_max": "1.3e-6",
-      "cosine_min": "1.0000008",
-      "cosine_max": "1.0000008"
-    }
-  ],
+  "drag_trend_ratio_NN2_GP2": 5.889737578461772,
+  "invalid_cosine_rows": [],
   "naca_epsilon_values": {
-    "BAR2": 0.000704,
-    "BAR3": 0.0007117,
-    "GP2": 0.0007137,
-    "GP3": 0.0007126,
+    "BAR2": 0.0007034,
+    "BAR3": 0.0007111,
+    "GP2": 0.0007132,
+    "GP3": 0.000712,
     "NN1": 0.001474,
-    "NN2": 0.0007243,
-    "NN3": 0.0007157
+    "NN2": 0.0007237,
+    "NN3": 0.0007151
   },
-  "naca_higher_order_spread_percent": 2.883522727272725,
+  "naca_higher_order_spread_percent": 2.885982371339213,
   "relaxation_summaries": {
     "NN1": {
-      "peak_over_first": 4.678230702515178,
-      "last_abs_over_first_abs": 0.024111014744145703
+      "peak_over_first": 4.663901848971833,
+      "last_abs_over_first_abs": 0.02014860895109729
     },
     "NN2": {
       "peak_over_first": 1.0,
-      "last_abs_over_first_abs": 0.3911973360359056
+      "last_abs_over_first_abs": 0.389308541545613
     },
     "BAR2": {
       "peak_over_first": 1.0,
-      "last_abs_over_first_abs": 0.2226327312534209
+      "last_abs_over_first_abs": 0.22031571722717916
     },
     "GP2": {
       "peak_over_first": 1.0,
-      "last_abs_over_first_abs": 0.2561200315872598
+      "last_abs_over_first_abs": 0.25386138613861386
     },
     "GP3": {
       "peak_over_first": 1.0,
-      "last_abs_over_first_abs": 0.3364656381486676
+      "last_abs_over_first_abs": 0.334458984100183
     }
   },
   "first_step_ratios": {
@@ -167,96 +180,96 @@
         "older": 0.33347022587268993
       },
       "delta_CL": {
-        "latest": 1.3326973113616651,
-        "older": -0.31777970511708586
+        "latest": 1.3329877311214793,
+        "older": -0.3179540349058234
       }
     },
     "NN2": {
       "delta_norm": {
-        "latest": 1.3330567081604425,
-        "older": 0.33402489626556015
+        "latest": 1.3330564784053156,
+        "older": 0.3340254706533776
       },
       "delta_CL": {
-        "latest": 1.331692485883886,
-        "older": -0.33603590560301144
+        "latest": 1.3317838466008136,
+        "older": -0.3359965136548518
       }
     },
     "BAR2": {
       "delta_norm": {
-        "latest": 1.3330489192263937,
-        "older": 0.3340443686006826
+        "latest": 1.3331910048391689,
+        "older": 0.33404497580415604
       },
       "delta_CL": {
-        "latest": 1.3327859879584019,
-        "older": -0.33593322386425833
+        "latest": 1.33273850377488,
+        "older": -0.33575840768702814
       }
     },
     "GP2": {
       "delta_norm": {
-        "latest": 1.3330527497194165,
-        "older": 0.33403479236812567
+        "latest": 1.3328653657166925,
+        "older": 0.3339884879966306
       },
       "delta_CL": {
-        "latest": 1.3319294551197685,
-        "older": -0.33521979468281127
+        "latest": 1.332013201320132,
+        "older": -0.3351815181518152
       }
     },
     "GP3": {
       "delta_norm": {
-        "latest": 1.3330522765598651,
-        "older": 0.33403597526700396
+        "latest": 1.3331926863572432,
+        "older": 0.33403656821378336
       },
       "delta_CL": {
-        "latest": 1.332538569424965,
-        "older": -0.33590462833099577
+        "latest": 1.3326298016040525,
+        "older": -0.3358660475587449
       }
     }
   },
   "riemann_order_fits": {
     "NN1": {
-      "slope": 1.0100884257880152,
-      "intercept": -2.4880205952752954,
-      "R_squared": 0.9999200291356625
+      "slope": 1.0092722101337421,
+      "intercept": -1.7968179172815995,
+      "R_squared": 0.999970837610678
     },
     "NN2": {
-      "slope": 2.4001370113696647,
-      "intercept": -2.1601103066751364,
-      "R_squared": 0.99726803967797
+      "slope": 2.6128970684461743,
+      "intercept": 0.35992119644568454,
+      "R_squared": 0.9979748458783101
     },
     "NN3": {
-      "slope": 2.9873192105996393,
-      "intercept": 0.3938252759747556,
-      "R_squared": 0.9999751337414853
+      "slope": 2.925137957568567,
+      "intercept": 2.2068317728638007,
+      "R_squared": 0.9998254593533222
     },
     "BAR2": {
-      "slope": 1.9733596823111177,
-      "intercept": -1.3158325170200023,
-      "R_squared": 0.9998691660167611
+      "slope": 1.955962653604305,
+      "intercept": 0.06966281766896731,
+      "R_squared": 0.9999059870575026
     },
     "BAR3": {
-      "slope": 3.202574635469051,
-      "intercept": -0.08987530422141177,
-      "R_squared": 0.9995451758151663
+      "slope": 3.3621898046525827,
+      "intercept": 2.822035966370155,
+      "R_squared": 0.9996734973838095
     },
     "GP2": {
-      "slope": 2.1216513398361156,
-      "intercept": -1.6957603550613145,
-      "R_squared": 0.9996778046402517
+      "slope": 2.2267499456850657,
+      "intercept": 0.2170660691273394,
+      "R_squared": 0.9991893264932835
     },
     "GP3": {
-      "slope": 2.7915093982488783,
-      "intercept": -1.4846528927509404,
-      "R_squared": 0.9984314350489945
+      "slope": 2.888021882646654,
+      "intercept": 0.9092980842772498,
+      "R_squared": 0.9961952338147644
     }
   },
   "riemann_gc_error_changes_percent": {
-    "NN1": 0.0,
-    "NN2": -0.19980019980019303,
-    "NN3": 0.06377551020406713,
-    "BAR2": 0.13355592654424875,
-    "BAR3": 0.6340819022456978,
-    "GP2": 0.0,
-    "GP3": 0.07233273056057588
+    "NN1": 0.00047463026302541067,
+    "NN2": -0.37021898248674745,
+    "NN3": 0.010851568940140055,
+    "BAR2": 0.10301563279222492,
+    "BAR3": 0.8054913409680786,
+    "GP2": -0.009822058541275602,
+    "GP3": 0.10672187316949078
   },
   "static_orders": {
     "asymmetric": [
@@ -271,18 +284,18 @@
       {
         "scheme": "NN2",
         "nominal": "2",
-        "Struct_fit": "2.02670936766592",
+        "Struct_fit": "2.026709367665921",
         "Struct_fine": "2.016977422690085",
-        "Mixed_fit": "2.027562074762217",
+        "Mixed_fit": "2.027562074762218",
         "Mixed_fine": "2.025989226494904"
       },
       {
         "scheme": "NN3",
         "nominal": "3",
-        "Struct_fit": "3.00347861145402",
-        "Struct_fine": "3.003366508277979",
-        "Mixed_fit": "3.004886124210075",
-        "Mixed_fine": "3.04048293018682"
+        "Struct_fit": "3.003478611454044",
+        "Struct_fine": "3.003366508278016",
+        "Mixed_fit": "3.004886124210116",
+        "Mixed_fine": "3.040482930186861"
       },
       {
         "scheme": "BAR2",
@@ -295,43 +308,43 @@
       {
         "scheme": "BAR3",
         "nominal": "3",
-        "Struct_fit": "3.364428275188384",
-        "Struct_fine": "3.239173179755628",
-        "Mixed_fit": "3.274529551401552",
-        "Mixed_fine": "3.220925795930563"
+        "Struct_fit": "3.364428275188685",
+        "Struct_fine": "3.239173179756204",
+        "Mixed_fit": "3.274529551401256",
+        "Mixed_fine": "3.220925795930051"
       },
       {
         "scheme": "GP2",
         "nominal": "2",
-        "Struct_fit": "2.038578432970238",
-        "Struct_fine": "2.025782045406302",
-        "Mixed_fit": "2.016516639044573",
-        "Mixed_fine": "2.063359787972058"
+        "Struct_fit": "2.038578432970224",
+        "Struct_fine": "2.025782045406277",
+        "Mixed_fit": "2.016516639044588",
+        "Mixed_fine": "2.063359787972088"
       },
       {
         "scheme": "GP3",
         "nominal": "3",
-        "Struct_fit": "3.337696745832845",
-        "Struct_fine": "3.211767174981368",
-        "Mixed_fit": "3.239120781165874",
-        "Mixed_fine": "3.203329162018876"
+        "Struct_fit": "3.337696742325014",
+        "Struct_fine": "3.211767169944252",
+        "Mixed_fit": "3.239120782744676",
+        "Mixed_fine": "3.203329165485542"
       }
     ],
     "discontinuous": [
       {
         "scheme": "NN1",
         "nominal": "0.5",
-        "Struct_fit": "0.5102488857241466",
+        "Struct_fit": "0.5102488857241465",
         "Struct_fine": "0.3290258366637993",
-        "Mixed_fit": "0.4305422288428815",
+        "Mixed_fit": "0.4305422288428814",
         "Mixed_fine": "0.4375221903944521"
       },
       {
         "scheme": "NN2",
         "nominal": "0.5",
-        "Struct_fit": "0.5096880050788075",
+        "Struct_fit": "0.5096880050788076",
         "Struct_fine": "0.4072379041404714",
-        "Mixed_fit": "0.4407136242599707",
+        "Mixed_fit": "0.4407136242599706",
         "Mixed_fine": "0.4300462039251521"
       },
       {
@@ -339,13 +352,13 @@
         "nominal": "0.5",
         "Struct_fit": "0.5166942026063603",
         "Struct_fine": "0.3790515541713179",
-        "Mixed_fit": "0.4307145492903391",
+        "Mixed_fit": "0.4307145492903389",
         "Mixed_fine": "0.4366177580840909"
       },
       {
         "scheme": "BAR2",
         "nominal": "0.5",
-        "Struct_fit": "0.5133691020525263",
+        "Struct_fit": "0.5133691020525264",
         "Struct_fine": "0.4907974768123389",
         "Mixed_fit": "0.4478466900076392",
         "Mixed_fine": "0.452303349230547"
@@ -353,7 +366,7 @@
       {
         "scheme": "BAR3",
         "nominal": "0.5",
-        "Struct_fit": "0.5113789496696053",
+        "Struct_fit": "0.5113789496696052",
         "Struct_fine": "0.491137792148213",
         "Mixed_fit": "0.4489828902758038",
         "Mixed_fine": "0.4541947951483662"
@@ -361,18 +374,18 @@
       {
         "scheme": "GP2",
         "nominal": "0.5",
-        "Struct_fit": "0.515167938486247",
+        "Struct_fit": "0.5151679384862472",
         "Struct_fine": "0.4795317589939042",
-        "Mixed_fit": "0.4482486105894184",
+        "Mixed_fit": "0.4482486105894181",
         "Mixed_fine": "0.4512376122768689"
       },
       {
         "scheme": "GP3",
         "nominal": "0.5",
-        "Struct_fit": "0.5147532083982886",
-        "Struct_fine": "0.4817377140287601",
-        "Mixed_fit": "0.4497946755275633",
-        "Mixed_fine": "0.4526737127108066"
+        "Struct_fit": "0.514753208398289",
+        "Struct_fine": "0.4817377140287131",
+        "Mixed_fit": "0.4497946755275606",
+        "Mixed_fine": "0.452673712710801"
       }
     ]
   },
