@@ -1,0 +1,11 @@
+model,setting,method,case,steps,inner_cap,steps_at_cap,inner_median,inner_max,log10_rms_rho_end_median,log10_rms_rho_end_worst
+SA,production,GP2,RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second,398,800,144,697,799,-12.00,-9.12
+SA,production,NN2,RANS_SA_WD_0.01-20_NN_Drift_Second,398,800,156,711,799,-12.00,-9.21
+SA,cap1600,GP2,Ctrl_Cap1600_SA_ConsGalerkinProj,38,1600,0,575,957,-12.00,-12.00
+SA,cap1600,NN2,Ctrl_Cap1600_SA_NN,38,1600,0,593,1044,-12.00,-12.00
+SA,halfstep,GP2,Ctrl_HalfStep_SA_ConsGalerkinProj,78,800,9,430,799,-12.00,-10.95
+SA,halfstep,NN2,Ctrl_HalfStep_SA_NN,78,800,10,429,799,-12.00,-11.28
+SST,production,GP2,RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second,398,800,333,799,799,-11.10,-10.11
+SST,production,NN2,RANS_SST_WD_0.01-20_NN_Drift_Second,398,800,323,799,799,-11.24,-9.52
+SST,cap1600,GP2,Ctrl_Cap1600_SST_ConsGalerkinProj,38,1600,28,1599,1599,-11.33,-10.35
+SST,cap1600,NN2,Ctrl_Cap1600_SST_NN,38,1600,28,1599,1599,-11.33,-10.46

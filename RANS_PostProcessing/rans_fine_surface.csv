@@ -1,0 +1,5 @@
+model,side,coarse_nodes,fine_nodes,rms_dCp,max_dCp,x_max_dCp,rms_dCf,max_dCf,x_max_dCf,max_yplus_coarse,max_yplus_fine
+SA,upper,129,156,1.044e-02,4.909e-02,1.000,1.448e-04,9.646e-04,0.998,2.765,2.750
+SA,lower,127,156,2.752e-03,8.185e-03,0.000,9.767e-05,8.015e-04,0.998,2.406,2.390
+SST,upper,129,156,1.246e-02,4.457e-02,1.000,1.431e-04,9.512e-04,0.998,2.698,2.691
+SST,lower,127,156,4.081e-03,1.244e-02,0.000,9.341e-05,8.005e-04,0.998,2.281,2.266

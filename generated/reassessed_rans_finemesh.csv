@@ -1,4 +1,4 @@
-closure,method,seed,steps,steps_at_cap,end_residual_median,end_residual_worst,inner_cap,target_log10_rms_rho
+closure,coeff,coarse,fine,difference,percent
 SA,CL,0.676257,0.670838,-5.419e-03,-0.801
 SA,CD,0.010229,0.010048,-1.812e-04,-1.771
 SA,CDp,0.003559,0.003401,-1.580e-04,-4.439

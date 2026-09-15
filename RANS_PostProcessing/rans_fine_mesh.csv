@@ -1,0 +1,21 @@
+model,quantity,coeff,coarse,fine,fine_minus_coarse,percent
+SA,steady,CL,0.676257,0.670838,-5.419e-03,-0.801
+SA,steady,CD,0.010229,0.010048,-1.812e-04,-1.771
+SA,steady,CDp,0.003559,0.003401,-1.580e-04,-4.439
+SA,steady,CDv,0.006671,0.006647,-2.400e-05,-0.360
+SA,steady,CMz,0.000671,-0.000530,-1.201e-03,-179.066
+SA,reference mean 100..799,CL,0.676257,0.670838,-5.419e-03,-0.801
+SA,reference range 100..799,CL,6.40e-09,1.12e-07,,
+SA,reference mean 100..799,CD,0.010229,0.010048,-1.812e-04,-1.771
+SA,reference range 100..799,CD,3.94e-09,2.38e-09,,
+SA,fine reference inner iterations min..max,,10,10,,
+SST,steady,CL,0.675605,0.668596,-7.008e-03,-1.037
+SST,steady,CD,0.009858,0.009705,-1.531e-04,-1.553
+SST,steady,CDp,0.003469,0.003321,-1.480e-04,-4.266
+SST,steady,CDv,0.006389,0.006385,-4.000e-06,-0.063
+SST,steady,CMz,0.000382,-0.001155,-1.537e-03,-402.191
+SST,reference mean 100..799,CL,0.675603,0.668596,-7.007e-03,-1.037
+SST,reference range 100..799,CL,7.66e-07,3.81e-08,,
+SST,reference mean 100..799,CD,0.009858,0.009705,-1.531e-04,-1.553
+SST,reference range 100..799,CD,5.89e-08,2.09e-09,,
+SST,fine reference inner iterations min..max,,56,80,,
