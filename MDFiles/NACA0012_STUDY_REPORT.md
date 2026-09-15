@@ -1260,6 +1260,162 @@ Distributions (Cf_x and Cp of case and reference at the key steps) are in `rans_
 | SST 0.20-0.25 ConsGalerkinProj OneShot | 300 | 22877 | 8590 | 394 | 3.558e-05 | 2.242e-04 | 3.478e-04 | 2.711e-02 | 5.070e-05 | 1.767e-04 | 6.464e-05 | 2.573e-03 | 4.911e-07 | 6.668e-06 | 3.087e-05 | 1.687e-03 |
 | SST 0.20-0.25 ConsGalerkinProj OneShot | 395 | 22877 | 8590 | 394 | 5.082e-05 | 3.387e-04 | 3.471e-04 | 2.709e-02 | 5.657e-05 | 1.714e-04 | 6.353e-05 | 2.583e-03 | 4.774e-07 | 6.208e-06 | 2.999e-05 | 1.689e-03 |
 
+## III.9 Numerical controls of the transfer comparison
+
+Steps 2..40 of the seed-1 drift sequence (three transfer events at steps 9, 19, 29) recomputed with a tighter inner loop (cap 1600 instead of 800, same events: the displacement seed is the step index) and, for SA, at half the physical step (dt 5e-4 s, 80 steps, the same three events replayed at the same physical times from the production displacement files, own half-step reference). Rows "X - production" give the change of the case-minus-reference response D_m and of the paired difference P = NN2 - GP2 between the control and the production setting at the common physical steps, as RMS over the window and relative to the production RMS (`rans_control_sensitivity.csv`, series in `rans_control_series.csv`, `RANS_Controls.png`).
+
+| model | setting | quantity | coeff | steps | RMS | max | end | RMS of production | RMS change / production RMS |
+|---|---|---|---|---|---|---|---|---|---|
+| SA | production | GP2 | CL | 39 | 2.6287e-04 | 5.0585e-04 | 2.7047e-04 |  |  |
+| SA | production | GP2 | CD | 39 | 6.5945e-05 | 1.0976e-04 | 7.8642e-05 |  |  |
+| SA | production | GP2 | CDp | 39 | 6.5816e-05 | 1.0979e-04 | 7.8486e-05 |  |  |
+| SA | production | GP2 | CDv | 39 | 2.1156e-07 | 5.7426e-07 | 1.5665e-07 |  |  |
+| SA | production | NN2 | CL | 39 | 2.5978e-04 | 5.1050e-04 | 2.4323e-04 |  |  |
+| SA | production | NN2 | CD | 39 | 6.6334e-05 | 1.1062e-04 | 7.5537e-05 |  |  |
+| SA | production | NN2 | CDp | 39 | 6.6213e-05 | 1.1072e-04 | 7.5462e-05 |  |  |
+| SA | production | NN2 | CDv | 39 | 2.1770e-07 | 5.9668e-07 | 7.6795e-08 |  |  |
+| SA | production | P | CL | 39 | 1.2675e-05 | 4.6771e-05 | -2.7235e-05 |  |  |
+| SA | production | P | CD | 39 | 2.2158e-06 | 6.0325e-06 | -3.1041e-06 |  |  |
+| SA | production | P | CDp | 39 | 2.1982e-06 | 5.9599e-06 | -3.0242e-06 |  |  |
+| SA | production | P | CDv | 39 | 3.1953e-08 | 7.9852e-08 | -7.9852e-08 |  |  |
+| SA | cap1600 | GP2 | CL | 38 | 2.6244e-04 | 5.0617e-04 | 3.6019e-04 |  |  |
+| SA | cap1600 | GP2 | CD | 38 | 6.5526e-05 | 1.0953e-04 | 9.5050e-05 |  |  |
+| SA | cap1600 | GP2 | CDp | 38 | 6.5395e-05 | 1.0955e-04 | 9.5066e-05 |  |  |
+| SA | cap1600 | GP2 | CDv | 38 | 2.1542e-07 | 5.8187e-07 | -9.7577e-09 |  |  |
+| SA | cap1600 | NN2 | CL | 38 | 2.6026e-04 | 5.1050e-04 | 3.1714e-04 |  |  |
+| SA | cap1600 | NN2 | CD | 38 | 6.6063e-05 | 1.1066e-04 | 8.9998e-05 |  |  |
+| SA | cap1600 | NN2 | CDp | 38 | 6.5943e-05 | 1.1075e-04 | 9.0073e-05 |  |  |
+| SA | cap1600 | NN2 | CDv | 38 | 2.1699e-07 | 5.8762e-07 | -6.9659e-08 |  |  |
+| SA | cap1600 | P | CL | 38 | 1.1252e-05 | 4.3056e-05 | -4.3056e-05 |  |  |
+| SA | cap1600 | P | CD | 38 | 2.1140e-06 | 5.1427e-06 | -5.0525e-06 |  |  |
+| SA | cap1600 | P | CDp | 38 | 2.1078e-06 | 5.1134e-06 | -4.9928e-06 |  |  |
+| SA | cap1600 | P | CDv | 38 | 2.6849e-08 | 7.2289e-08 | -5.9901e-08 |  |  |
+| SA | halfstep | GP2 | CL | 38 | 2.6762e-04 | 6.1322e-04 | 1.9666e-04 |  |  |
+| SA | halfstep | GP2 | CD | 38 | 6.3997e-05 | 1.0971e-04 | 7.3405e-05 |  |  |
+| SA | halfstep | GP2 | CDp | 38 | 6.3297e-05 | 1.0870e-04 | 7.1097e-05 |  |  |
+| SA | halfstep | GP2 | CDv | 38 | 9.0214e-07 | 2.3115e-06 | 2.3115e-06 |  |  |
+| SA | halfstep | NN2 | CL | 38 | 2.6639e-04 | 5.9252e-04 | 2.0321e-04 |  |  |
+| SA | halfstep | NN2 | CD | 38 | 6.4201e-05 | 1.0792e-04 | 7.4295e-05 |  |  |
+| SA | halfstep | NN2 | CDp | 38 | 6.3530e-05 | 1.0697e-04 | 7.2002e-05 |  |  |
+| SA | halfstep | NN2 | CDv | 38 | 8.7546e-07 | 2.2970e-06 | 2.2970e-06 |  |  |
+| SA | halfstep | P | CL | 38 | 1.1608e-05 | 3.8803e-05 | 6.5440e-06 |  |  |
+| SA | halfstep | P | CD | 38 | 1.8504e-06 | 5.8499e-06 | 8.9058e-07 |  |  |
+| SA | halfstep | P | CDp | 38 | 1.8530e-06 | 5.8007e-06 | 9.0520e-07 |  |  |
+| SA | halfstep | P | CDv | 38 | 3.2493e-08 | 7.4948e-08 | -1.4497e-08 |  |  |
+| SA | cap1600 - production | GP2 | CL | 38 | 6.5316e-07 | 3.2314e-06 | -8.4570e-07 | 2.6267e-04 | 0.002 |
+| SA | cap1600 - production | GP2 | CD | 38 | 1.3316e-07 | 7.2450e-07 | -7.2450e-07 | 6.5577e-05 | 0.002 |
+| SA | cap1600 - production | GP2 | CDp | 38 | 1.3346e-07 | 7.1969e-07 | -7.1969e-07 | 6.5450e-05 | 0.002 |
+| SA | cap1600 - production | GP2 | CDv | 38 | 7.6850e-09 | 1.8181e-08 | -4.7932e-09 | 2.1281e-07 | 0.036 |
+| SA | cap1600 - production | NN2 | CL | 38 | 8.7936e-07 | 3.0403e-06 | 2.8687e-06 | 2.6020e-04 | 0.003 |
+| SA | cap1600 - production | NN2 | CD | 38 | 6.6917e-08 | 2.5544e-07 | 2.5544e-07 | 6.6075e-05 | 0.001 |
+| SA | cap1600 - production | NN2 | CDp | 38 | 6.3585e-08 | 2.4741e-07 | 2.4741e-07 | 6.5952e-05 | 0.001 |
+| SA | cap1600 - production | NN2 | CDv | 38 | 5.2881e-09 | 2.0359e-08 | 8.8128e-09 | 2.2020e-07 | 0.024 |
+| SA | cap1600 - production | P | CL | 38 | 1.3177e-06 | 4.6899e-06 | 3.7144e-06 | 1.2056e-05 | 0.109 |
+| SA | cap1600 - production | P | CD | 38 | 1.8343e-07 | 9.7994e-07 | 9.7994e-07 | 2.1875e-06 | 0.084 |
+| SA | cap1600 - production | P | CDp | 38 | 1.8186e-07 | 9.6710e-07 | 9.6710e-07 | 2.1722e-06 | 0.084 |
+| SA | cap1600 - production | P | CDv | 38 | 1.1005e-08 | 3.0923e-08 | 1.3606e-08 | 2.9666e-08 | 0.371 |
+| SA | halfstep - production | GP2 | CL | 38 | 1.1103e-04 | 2.8854e-04 | -1.6438e-04 | 2.6267e-04 | 0.423 |
+| SA | halfstep - production | GP2 | CD | 38 | 1.5985e-05 | 4.0174e-05 | -2.2370e-05 | 6.5577e-05 | 0.244 |
+| SA | halfstep - production | GP2 | CDp | 38 | 1.6435e-05 | 4.2116e-05 | -2.4689e-05 | 6.5450e-05 | 0.251 |
+| SA | halfstep - production | GP2 | CDv | 38 | 8.1237e-07 | 2.3165e-06 | 2.3165e-06 | 2.1281e-07 | 3.817 |
+| SA | halfstep - production | NN2 | CL | 38 | 1.0612e-04 | 2.7160e-04 | -1.1106e-04 | 2.6020e-04 | 0.408 |
+| SA | halfstep - production | NN2 | CD | 38 | 1.5825e-05 | 4.3126e-05 | -1.5447e-05 | 6.6075e-05 | 0.240 |
+| SA | halfstep - production | NN2 | CDp | 38 | 1.6284e-05 | 4.4849e-05 | -1.7824e-05 | 6.5952e-05 | 0.247 |
+| SA | halfstep - production | NN2 | CDv | 38 | 8.1140e-07 | 2.3755e-06 | 2.3755e-06 | 2.2020e-07 | 3.685 |
+| SA | halfstep - production | P | CL | 38 | 1.6712e-05 | 5.3315e-05 | 5.3315e-05 | 1.2056e-05 | 1.386 |
+| SA | halfstep - production | P | CD | 38 | 3.2119e-06 | 7.7407e-06 | 6.9230e-06 | 2.1875e-06 | 1.468 |
+| SA | halfstep - production | P | CDp | 38 | 3.1951e-06 | 7.7346e-06 | 6.8651e-06 | 2.1722e-06 | 1.471 |
+| SA | halfstep - production | P | CDv | 38 | 3.9522e-08 | 1.2306e-07 | 5.9011e-08 | 2.9666e-08 | 1.332 |
+| SST | production | GP2 | CL | 39 | 1.6331e-04 | 3.9496e-04 | -3.6097e-05 |  |  |
+| SST | production | GP2 | CD | 39 | 5.4299e-05 | 8.7759e-05 | 4.6261e-05 |  |  |
+| SST | production | GP2 | CDp | 39 | 5.5066e-05 | 8.9198e-05 | 4.7708e-05 |  |  |
+| SST | production | GP2 | CDv | 39 | 8.3380e-07 | 1.4587e-06 | -1.4463e-06 |  |  |
+| SST | production | NN2 | CL | 39 | 1.6329e-04 | 3.8733e-04 | -1.6240e-05 |  |  |
+| SST | production | NN2 | CD | 39 | 5.4934e-05 | 8.9994e-05 | 4.7353e-05 |  |  |
+| SST | production | NN2 | CDp | 39 | 5.5692e-05 | 9.1425e-05 | 4.8838e-05 |  |  |
+| SST | production | NN2 | CDv | 39 | 8.2698e-07 | 1.4849e-06 | -1.4849e-06 |  |  |
+| SST | production | P | CL | 39 | 6.7012e-06 | 1.9857e-05 | 1.9857e-05 |  |  |
+| SST | production | P | CD | 39 | 1.5769e-06 | 3.6014e-06 | 1.0918e-06 |  |  |
+| SST | production | P | CDp | 39 | 1.5744e-06 | 3.5803e-06 | 1.1299e-06 |  |  |
+| SST | production | P | CDv | 39 | 1.6001e-08 | 3.8557e-08 | -3.8557e-08 |  |  |
+| SST | cap1600 | GP2 | CL | 38 | 1.6485e-04 | 3.8718e-04 | 5.5082e-05 |  |  |
+| SST | cap1600 | GP2 | CD | 38 | 5.4579e-05 | 8.8809e-05 | 6.2680e-05 |  |  |
+| SST | cap1600 | GP2 | CDp | 38 | 5.5478e-05 | 9.0540e-05 | 6.4234e-05 |  |  |
+| SST | cap1600 | GP2 | CDv | 38 | 9.5799e-07 | 1.7269e-06 | -1.5514e-06 |  |  |
+| SST | cap1600 | NN2 | CL | 38 | 1.6540e-04 | 3.8150e-04 | 5.3618e-05 |  |  |
+| SST | cap1600 | NN2 | CD | 38 | 5.5229e-05 | 9.1087e-05 | 6.2711e-05 |  |  |
+| SST | cap1600 | NN2 | CDp | 38 | 5.6119e-05 | 9.2832e-05 | 6.4309e-05 |  |  |
+| SST | cap1600 | NN2 | CDv | 38 | 9.5397e-07 | 1.7475e-06 | -1.5964e-06 |  |  |
+| SST | cap1600 | P | CL | 38 | 5.6821e-06 | 1.6198e-05 | -1.4634e-06 |  |  |
+| SST | cap1600 | P | CD | 38 | 1.6213e-06 | 3.6526e-06 | 3.0618e-08 |  |  |
+| SST | cap1600 | P | CDp | 38 | 1.6187e-06 | 3.6230e-06 | 7.5436e-08 |  |  |
+| SST | cap1600 | P | CDv | 38 | 1.8193e-08 | 4.4952e-08 | -4.4952e-08 |  |  |
+| SST | cap1600 - production | GP2 | CL | 38 | 6.1744e-06 | 1.3551e-05 | -8.0065e-06 | 1.6534e-04 | 0.037 |
+| SST | cap1600 - production | GP2 | CD | 38 | 6.1471e-07 | 1.5461e-06 | -7.3941e-07 | 5.4494e-05 | 0.011 |
+| SST | cap1600 - production | GP2 | CDp | 38 | 7.2612e-07 | 1.8351e-06 | -6.4663e-07 | 5.5247e-05 | 0.013 |
+| SST | cap1600 - production | GP2 | CDv | 38 | 2.0382e-07 | 3.7229e-07 | -9.2768e-08 | 8.1146e-07 | 0.251 |
+| SST | cap1600 - production | NN2 | CL | 38 | 6.0004e-06 | 1.3805e-05 | -6.9360e-06 | 1.6540e-04 | 0.036 |
+| SST | cap1600 - production | NN2 | CD | 38 | 5.7343e-07 | 1.3357e-06 | -6.8166e-07 | 5.5120e-05 | 0.010 |
+| SST | cap1600 - production | NN2 | CDp | 38 | 6.9920e-07 | 1.6420e-06 | -5.6971e-07 | 5.5861e-05 | 0.013 |
+| SST | cap1600 - production | NN2 | CDv | 38 | 2.0719e-07 | 3.7987e-07 | -1.1241e-07 | 8.0241e-07 | 0.258 |
+| SST | cap1600 - production | P | CL | 38 | 8.1872e-07 | 2.2582e-06 | 1.0705e-06 | 5.9760e-06 | 0.137 |
+| SST | cap1600 - production | P | CD | 38 | 9.5874e-08 | 2.6040e-07 | 5.7745e-08 | 1.5877e-06 | 0.060 |
+| SST | cap1600 - production | P | CDp | 38 | 9.6319e-08 | 2.8537e-07 | 7.6920e-08 | 1.5845e-06 | 0.061 |
+| SST | cap1600 - production | P | CDv | 38 | 9.4598e-09 | 2.4150e-08 | -1.9645e-08 | 1.4955e-08 | 0.633 |
+
+Inner-loop record of the control runs (`rans_control_inner.csv`):
+
+| model | setting | method | steps | cap | steps at cap | median inner | max inner | median log10 rms(rho) at end | worst |
+|---|---|---|---|---|---|---|---|---|---|
+| SA | production | GP2 | 398 | 800 | 144 | 697 | 799 | -12.00 | -9.12 |
+| SA | production | NN2 | 398 | 800 | 156 | 711 | 799 | -12.00 | -9.21 |
+| SA | cap1600 | GP2 | 38 | 1600 | 0 | 575 | 957 | -12.00 | -12.00 |
+| SA | cap1600 | NN2 | 38 | 1600 | 0 | 593 | 1044 | -12.00 | -12.00 |
+| SA | halfstep | GP2 | 78 | 800 | 9 | 430 | 799 | -12.00 | -10.95 |
+| SA | halfstep | NN2 | 78 | 800 | 10 | 429 | 799 | -12.00 | -11.28 |
+| SST | production | GP2 | 398 | 800 | 333 | 799 | 799 | -11.10 | -10.11 |
+| SST | production | NN2 | 398 | 800 | 323 | 799 | 799 | -11.24 | -9.52 |
+| SST | cap1600 | GP2 | 38 | 1600 | 28 | 1599 | 1599 | -11.33 | -10.35 |
+| SST | cap1600 | NN2 | 38 | 1600 | 28 | 1599 | 1599 | -11.33 | -10.46 |
+
+Event replay check (`rans_control_replay.csv`): 30 displacement files compared with the production case by md5, 30 identical, 0 different.
+
+## III.10 Viscous-mesh sensitivity of the no-transfer baseline
+
+`Meshes/Coarse_Sharp_Finer.su2` (32102 nodes, 15128 quadrilaterals, 312 airfoil nodes, same first off-wall spacing 5e-6, finer wall-normal growth and tangential spacing) against the production grid `Meshes/Coarse_Sharp.su2` (23271 nodes): steady state and 800-step no-transfer reference per closure, no transfer involved (`rans_fine_mesh.csv`, `rans_fine_surface.csv`, `RANS_FineMesh_<MODEL>.png`).
+
+| model | quantity | coeff | coarse | fine | fine - coarse | % |
+|---|---|---|---|---|---|---|
+| SA | steady | CL | 0.676257 | 0.670838 | -5.419e-03 | -0.801 |
+| SA | steady | CD | 0.010229 | 0.010048 | -1.812e-04 | -1.771 |
+| SA | steady | CDp | 0.003559 | 0.003401 | -1.580e-04 | -4.439 |
+| SA | steady | CDv | 0.006671 | 0.006647 | -2.400e-05 | -0.360 |
+| SA | steady | CMz | 0.000671 | -0.000530 | -1.201e-03 | -179.066 |
+| SA | reference mean 100..799 | CL | 0.676257 | 0.670838 | -5.419e-03 | -0.801 |
+| SA | reference range 100..799 | CL | 6.40e-09 | 1.12e-07 |  |  |
+| SA | reference mean 100..799 | CD | 0.010229 | 0.010048 | -1.812e-04 | -1.771 |
+| SA | reference range 100..799 | CD | 3.94e-09 | 2.38e-09 |  |  |
+| SA | fine reference inner iterations min..max |  | 10 | 10 |  |  |
+| SST | steady | CL | 0.675605 | 0.668596 | -7.008e-03 | -1.037 |
+| SST | steady | CD | 0.009858 | 0.009705 | -1.531e-04 | -1.553 |
+| SST | steady | CDp | 0.003469 | 0.003321 | -1.480e-04 | -4.266 |
+| SST | steady | CDv | 0.006389 | 0.006385 | -4.000e-06 | -0.063 |
+| SST | steady | CMz | 0.000382 | -0.001155 | -1.537e-03 | -402.191 |
+| SST | reference mean 100..799 | CL | 0.675603 | 0.668596 | -7.007e-03 | -1.037 |
+| SST | reference range 100..799 | CL | 7.66e-07 | 3.81e-08 |  |  |
+| SST | reference mean 100..799 | CD | 0.009858 | 0.009705 | -1.531e-04 | -1.553 |
+| SST | reference range 100..799 | CD | 5.89e-08 | 2.09e-09 |  |  |
+| SST | fine reference inner iterations min..max |  | 56 | 80 |  |  |
+
+Surface pressure and skin friction, fine field interpolated onto the coarse airfoil nodes along each side:
+
+| model | side | coarse nodes | fine nodes | RMS dCp | max dCp | x | RMS dCf | max dCf | x | max y+ coarse | max y+ fine |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| SA | upper | 129 | 156 | 1.044e-02 | 4.909e-02 | 1.000 | 1.448e-04 | 9.646e-04 | 0.998 | 2.765 | 2.750 |
+| SA | lower | 127 | 156 | 2.752e-03 | 8.185e-03 | 0.000 | 9.767e-05 | 8.015e-04 | 0.998 | 2.406 | 2.390 |
+| SST | upper | 129 | 156 | 1.246e-02 | 4.457e-02 | 1.000 | 1.431e-04 | 9.512e-04 | 0.998 | 2.698 | 2.691 |
+| SST | lower | 127 | 156 | 4.081e-03 | 1.244e-02 | 0.000 | 9.341e-05 | 8.005e-04 | 0.998 | 2.281 | 2.266 |
+
 ## III.7b Cost of one transfer event
 
 Wall-clock times from the launcher's per-event timing files (`rans_timing.csv`). "Transfer" is the sum of the two interpolations of an event (state k and BDF2 level k−1), including geometry search and supermesh construction on each call (nothing is reused between events); the first event includes the numba just-in-time compilation. Mesh move = RandomMeshMovements. CFD = one 10-step window on 4 MPI ranks. Transfer and mesh motion ran on 4 threads. No memory measurement was recorded.
@@ -1279,6 +1435,9 @@ Wall-clock times from the launcher's per-event timing files (`rans_timing.csv`).
 
 Figures (`Figures/RANS/`):
 
+- `RANS_Controls.png`
+- `RANS_FineMesh_SA.png`
+- `RANS_FineMesh_SST.png`
 - `RANS_SA_AcousticDelay_CL.png`
 - `RANS_SA_DeformedReference.png`
 - `RANS_SA_Drift_DragSplit_Surface.png`
@@ -1321,13 +1480,17 @@ Figures (`Figures/RANS/`):
 
 Tables (`RANS_PostProcessing/`):
 
-- `rans_T04_sensitivity.csv`
-- `rans_T04_series.csv`
 - `rans_code_provenance.csv`
+- `rans_control_inner.csv`
+- `rans_control_replay.csv`
+- `rans_control_sensitivity.csv`
+- `rans_control_series.csv`
 - `rans_deformed_reference.csv`
 - `rans_deformed_surface.csv`
 - `rans_drift_series.csv`
 - `rans_drift_trends.csv`
+- `rans_fine_mesh.csv`
+- `rans_fine_surface.csv`
 - `rans_inner_convergence.csv`
 - `rans_mesh_quality.csv`
 - `rans_mesh_replay.csv`
