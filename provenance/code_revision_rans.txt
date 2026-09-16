@@ -1,0 +1,11 @@
+MeshAdaptation commit: 35d865ebdea88fc265a62d32bbba2527a187491c  (Wed Sep 9 17:57:44 2026 +0200)
+dirty files: 10
+SU2: 2025-12-10 16:49  commit dcee051d8ee7fba29ebe4d5f373c63a5fa198906
+built: 2026-09-09 20:51:16
+d0ca621366e75511  InterpSolution.py
+5530368696ee491e  FunScripts/InterpSolution_Fun.py
+74cbb8a4e603dd2f  RandomMeshMovements.py
+25985929d43c869c  FunScripts/RandomMeshMovements_Fun.py
+ad21fcdb2e2f67c5  RunCase_UnsteadyAdaptation.sh
+8ed9f85b994789d8  FSI.py
+877411d2119518e8  Readers/MeshReader.py

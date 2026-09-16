@@ -32,7 +32,11 @@ DATA := \
 	data/naca_global_correction.csv \
 	data/naca_force_history.csv \
 	data/naca_surface_delta_cp.csv \
-	data/naca_gp3_verification.csv
+	data/naca_gp3_verification.csv \
+	data/naca_identity_wall_split.csv \
+	data/naca_initial_residual_identity_pairs.csv \
+	data/naca_initial_residual_identity_double.csv \
+	data/riemann_amplitude_seeds.csv
 GENERATED_STAMP := generated/.stamp
 RANS_DATA := $(wildcard RANS_PostProcessing/*.csv)
 RANS_STAMP := generated/.rans_stamp
@@ -47,8 +51,9 @@ $(GENERATED_STAMP): scripts/build_plot_data.py $(DATA)
 	$(PYTHON) scripts/build_plot_data.py --data-dir data --out-dir generated
 	@touch $(GENERATED_STAMP)
 
-$(RANS_STAMP): scripts/build_rans_data.py $(RANS_DATA) MDFiles/NACA0012_STUDY_REPORT.md
+$(RANS_STAMP): scripts/build_rans_data.py scripts/build_views.py $(RANS_DATA) MDFiles/NACA0012_STUDY_REPORT.md
 	$(PYTHON) scripts/build_rans_data.py
+	$(PYTHON) scripts/build_views.py
 	@touch $(RANS_STAMP)
 
 $(PDF): $(MAIN) References.bib $(GENERATED_STAMP) $(RANS_STAMP)
