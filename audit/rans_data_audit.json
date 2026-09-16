@@ -248,7 +248,25 @@
   "inputs_differing_from_delivered_snapshot": [
     "RANS_PostProcessing/rans_T04_sensitivity.csv",
     "RANS_PostProcessing/rans_T04_series.csv",
-    "data/riemann_multicycle.csv"
+    "data/naca_first_step_CL_plot.csv",
+    "data/naca_first_step_response.csv",
+    "data/naca_force_history.csv",
+    "data/naca_global_correction.csv",
+    "data/naca_initial_residual_identity.csv",
+    "data/naca_native_convergence.csv",
+    "data/naca_superposition.csv",
+    "data/naca_surface_delta_cp.csv",
+    "data/naca_transfer_defects.csv",
+    "data/riemann_amplitude_global.csv",
+    "data/riemann_frequency_full.csv",
+    "data/riemann_global_correction.csv",
+    "data/riemann_limiter_activation.csv",
+    "data/riemann_moment_preservation.csv",
+    "data/riemann_multicycle.csv",
+    "data/riemann_refinement_errors.csv",
+    "data/riemann_refinement_orders.csv",
+    "data/riemann_stress_representative.csv",
+    "data/riemann_transition_step399.csv"
   ],
   "bibliography": "References.bib",
   "raw_simulations_rerun": false

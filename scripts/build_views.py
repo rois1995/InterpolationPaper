@@ -71,7 +71,7 @@ def controls():
 
 
 def finemesh():
-    out = [[x['model'], x['coeff'], x['coarse'], x['fine'], x['fine_minus_coarse'], x['percent']] for x in rows('rans_fine_mesh.csv') if x['quantity'] == 'steady']
+    out = [[x['model'], x['coeff'], x['coarse'], x['fine'], x['fine_minus_coarse'], x['percent']] for x in rows('rans_fine_mesh.csv') if x['quantity'] == 'steady' and x['coeff'] != 'CMz']
     if out:
         write('reassessed_rans_finemesh.csv', ['closure', 'coeff', 'coarse', 'fine', 'difference', 'percent'], out)
 
