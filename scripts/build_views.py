@@ -68,6 +68,7 @@ def controls():
            for x in rows('rans_control_sensitivity.csv') if x['setting'].endswith('- production') and x['coeff'] in ('CL', 'CD', 'CDv')]
     if out:
         write('reassessed_rans_controls.csv', ['closure', 'control', 'quantity', 'coeff', 'production_rms', 'change_rms', 'change_over_production'], out)
+        write('reassessed_rans_controls_compact.csv', ['closure', 'control', 'quantity', 'coeff', 'production_rms', 'change_rms', 'change_over_production'], [r for r in out if r[3] in ('CL', 'CD')])
 
 
 def finemesh():
