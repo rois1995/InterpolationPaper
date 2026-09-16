@@ -1,7 +1,7 @@
 # Release v1.0
 
-Commit 6d59bf6, tag v1.0, https://github.com/rois1995/InterpolationPaper.git.
-Archive: InterpolationPaper_v1.0.tar.gz (git archive of the tag), SHA-256 9aa4cfd4962a76780cd10a97c5222038384b4f4d36c1471c79485cc9efc1ee29.
+Commit 3050289, tag v1.0, https://github.com/rois1995/InterpolationPaper.git.
+Archive: InterpolationPaper_v1.0.tar.gz (git archive of the tag), SHA-256 3119cdd22847254071574c365ad586d69e56608c6568e928b3b4c6650354332b.
 
 Release checks (closure plan T16), all run on 2026-09-16:
 
