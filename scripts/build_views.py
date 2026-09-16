@@ -27,7 +27,7 @@ def write(name, header, data):
     os.makedirs(GEN, exist_ok=True)
     p = os.path.join(GEN, name)
     text = ','.join(header) + '\n' + ''.join(','.join(str(v) for v in r) + '\n' for r in data)
-    if not os.path.exists(p) or open(p).read() != text:
+    if not os.path.exists(p) or open(p, 'rb').read() != text.encode():
         open(p, 'w').write(text)
     print(f'{name}: {len(data)} rows')
 
