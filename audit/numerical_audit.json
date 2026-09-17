@@ -82,6 +82,7 @@
     "RANS_PostProcessing/rans_fine_mesh.csv",
     "RANS_PostProcessing/rans_fine_surface.csv",
     "RANS_PostProcessing/rans_inner_convergence.csv",
+    "RANS_PostProcessing/rans_mesh_levels.csv",
     "RANS_PostProcessing/rans_mesh_quality.csv",
     "RANS_PostProcessing/rans_mesh_replay.csv",
     "RANS_PostProcessing/rans_oneshot_fit.csv",
@@ -104,10 +105,7 @@
     "data/bdf2_raw/naca_native_convergence.csv",
     "data/bdf2_raw/naca_superposition.csv",
     "data/bdf2_raw/naca_surface_delta_cp.csv",
-    "data/bdf2_raw/naca_transfer_defects.csv",
-    "data/riemann_amplitude_seeds.csv",
-    "data/riemann_multicycle.csv",
-    "generated/reassessed_rans_controls.csv"
+    "data/bdf2_raw/naca_transfer_defects.csv"
   ],
   "naca_gc_relative_changes_percent": {
     "NN1": {

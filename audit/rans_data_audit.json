@@ -250,15 +250,8 @@
   "probe_below_three_ulp": 13,
   "pressure_ulp": 5.960464477539063e-08,
   "short_run_convective_duration": 0.04,
-  "old_and_raw_csv_snapshot_count": 67,
-  "inputs_differing_from_delivered_snapshot": [
-    "RANS_PostProcessing/rans_control_inner.csv",
-    "RANS_PostProcessing/rans_control_replay.csv",
-    "RANS_PostProcessing/rans_control_sensitivity.csv",
-    "RANS_PostProcessing/rans_control_series.csv",
-    "RANS_PostProcessing/rans_mesh_replay.csv",
-    "data/riemann_multicycle.csv"
-  ],
+  "old_and_raw_csv_snapshot_count": 68,
+  "inputs_differing_from_delivered_snapshot": [],
   "bibliography": "References.bib",
   "raw_simulations_rerun": false
 }
