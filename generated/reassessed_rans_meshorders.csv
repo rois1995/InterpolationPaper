@@ -1,0 +1,9 @@
+closure,coeff,order,extrapolated,coarse_to_finer_change,finer_error_estimate
+SA,CL,4.21,extrapolated 0.666833,coarse-to-finer change 7.722e-03,finer error estimate 1.701e-03
+SA,CD,6.07,extrapolated 0.009974,coarse-to-finer change 2.338e-04,finer error estimate 2.154e-05
+SA,CDp,3.93,extrapolated 0.003272,coarse-to-finer change 2.290e-04,finer error estimate 5.794e-05
+SA,CDv,not monotone or ratios differ,2.400e-05,-1.800e-05,
+SST,CL,5.69,extrapolated 0.665385,coarse-to-finer change 9.211e-03,finer error estimate 1.009e-03
+SST,CD,4.49,extrapolated 0.009603,coarse-to-finer change 2.144e-04,finer error estimate 4.101e-05
+SST,CDp,3.41,extrapolated 0.003173,coarse-to-finer change 2.220e-04,finer error estimate 7.400e-05
+SST,CDv,not monotone or ratios differ,4.000e-06,-1.200e-05,
