@@ -58,9 +58,10 @@ def main() -> int:
     read = lambda name: load_rows(root / name)
     out: dict[str, Any] = {}
     out['scope'] = 'Recomputation from archived tables; no raw-field/solver validation.'
+    # every released table: data/ (with subdirectories), the derived views, and the RANS analysis outputs
     out['csv_sha256'] = {str(f.relative_to(root)): hashlib.sha256(f.read_bytes()).hexdigest()
-                         for folder in ('data', 'generated')
-                         for f in sorted((root/folder).glob('*.csv'))}
+                         for pattern in ('data/**/*.csv', 'generated/*.csv', 'RANS_PostProcessing/*.csv')
+                         for f in sorted(root.glob(pattern))}
     manifest = root/'audit/original_csv_sha256.json'
     if manifest.exists():
         original = json.loads(manifest.read_text())
