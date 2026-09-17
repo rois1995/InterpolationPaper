@@ -3,6 +3,10 @@ SA,production,GP2,RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second,398,800,144,6
 SA,production,NN2,RANS_SA_WD_0.01-20_NN_Drift_Second,398,800,156,711,799,-12.00,-9.21
 SA,cap1600,GP2,Ctrl_Cap1600_SA_ConsGalerkinProj,38,1600,0,575,957,-12.00,-12.00
 SA,cap1600,NN2,Ctrl_Cap1600_SA_NN,38,1600,0,593,1044,-12.00,-12.00
+SA,halfstep,GP2,Ctrl_HalfStep_SA_ConsGalerkinProj,78,800,0,317,657,-12.00,-12.00
+SA,halfstep,NN2,Ctrl_HalfStep_SA_NN,78,800,0,314,763,-12.00,-12.00
+SA,quarterstep,GP2,Ctrl_QuarterStep_SA_ConsGalerkinProj,158,800,0,195,387,-12.00,-12.00
+SA,quarterstep,NN2,Ctrl_QuarterStep_SA_NN,158,800,0,199,392,-12.00,-12.00
 SA,finemesh,GP2,Fine_Ctrl_SA_ConsGalerkinProj,38,800,7,483,799,-12.00,-10.95
 SA,finemesh,NN2,Fine_Ctrl_SA_NN,38,800,5,466,799,-12.00,-10.90
 SST,production,GP2,RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second,398,800,333,799,799,-11.10,-10.11
@@ -11,3 +15,5 @@ SST,cap1600,GP2,Ctrl_Cap1600_SST_ConsGalerkinProj,38,1600,28,1599,1599,-11.33,-1
 SST,cap1600,NN2,Ctrl_Cap1600_SST_NN,38,1600,28,1599,1599,-11.33,-10.46
 SST,cap6400,GP2,Ctrl_Cap6400_SST_ConsGalerkinProj,38,6400,28,6399,6399,-11.38,-10.29
 SST,cap6400,NN2,Ctrl_Cap6400_SST_NN,38,6400,30,6399,6399,-11.28,-10.38
+SST,halfstep,GP2,Ctrl_HalfStep_SST_ConsGalerkinProj,78,800,57,799,799,-11.24,-10.31
+SST,halfstep,NN2,Ctrl_HalfStep_SST_NN,78,800,58,799,799,-11.29,-10.35
