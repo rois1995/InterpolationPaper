@@ -36,7 +36,9 @@ DATA := \
 	data/naca_identity_wall_split.csv \
 	data/naca_initial_residual_identity_pairs.csv \
 	data/naca_initial_residual_identity_double.csv \
-	data/riemann_amplitude_seeds.csv
+	data/riemann_amplitude_seeds.csv \
+	data/naca_cancellation.csv \
+	data/naca_amplitude_sequence.csv
 GENERATED_STAMP := generated/.stamp
 RANS_DATA := $(wildcard RANS_PostProcessing/*.csv)
 RANS_STAMP := generated/.rans_stamp

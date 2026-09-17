@@ -77,5 +77,15 @@ def finemesh():
         write('reassessed_rans_finemesh.csv', ['closure', 'coeff', 'coarse', 'fine', 'difference', 'percent'], out)
 
 
+def meshlevels():
+    out = [[x['model'], x['level'], x['nodes'], x['h_over_h_coarse'], x['CL'], x['CD'], x['CDp'], x['CDv']]
+           for x in rows('rans_mesh_levels.csv') if x['level'] in ('coarse', 'fine', 'finer')]
+    if out:
+        write('reassessed_rans_meshlevels.csv', ['closure', 'level', 'nodes', 'h_ratio', 'CL', 'CD', 'CDp', 'CDv'], out)
+    orders = [[x['model'], x['level'].replace('observed order ', ''), x['CL'], x['CD'], x['CDp'], x['CDv']] for x in rows('rans_mesh_levels.csv') if x['level'].startswith('observed order')]
+    if orders:
+        write('reassessed_rans_meshorders.csv', ['closure', 'coeff', 'order', 'extrapolated', 'coarse_to_finer_change', 'finer_error_estimate'], orders)
+
+
 if __name__ == '__main__':
-    integrals(); inner(); controls(); finemesh()
+    integrals(); inner(); controls(); finemesh(); meshlevels()

@@ -9,6 +9,8 @@
     "data/discontinuous_convergence_L2.csv": "58eb81e298bd7f339d3a7574ef9912ff4b44e136a94d3662cb1e5f49cd26e011",
     "data/naca_acoustic_delay.csv": "fc53bdd93d9ee2633cab6f44d5adc3f52a6cd693b3e15181f5bb51e19b2d1556",
     "data/naca_acoustic_delay_fits.csv": "9aa1e445387148fcfffa29f33a7afddfbe6f2740e25f019305e329f45da13815",
+    "data/naca_amplitude_sequence.csv": "08bb9225aae159c8e564ec386aefe8be0ba2e5b95e867560d3aaa4c5931a7b1e",
+    "data/naca_cancellation.csv": "ad80308579c70b6205e0f1b6bc997068e0736be872a65736d011ac0075cf1037",
     "data/naca_first_step_CL_plot.csv": "fe58b5dc0e97524857643fb1a85fe9104d77dd0281248d054ff6f64ca7f7aad7",
     "data/naca_first_step_response.csv": "28cace11714c424946b2a77400769f8803ad885d6dbeba0a7b7eca3a53049cd7",
     "data/naca_force_drift.csv": "edf87df81030d687d0b08d653371b8257e7b924efd820a7bbd9c60a498900fd1",
@@ -25,12 +27,12 @@
     "data/naca_surface_delta_cp.csv": "5221f33bacd9996a83c56a335b8838537266638d022b1e173803c718cd4a3cae",
     "data/naca_transfer_defects.csv": "0186be7f8e9a7818bf174adf206fc123646db2936eb739d44f2a77142c269c1e",
     "data/riemann_amplitude_global.csv": "07117351869624a68eaff85ff0e3f536ab9d199d16f8ef1813e81337f2e3dd18",
-    "data/riemann_amplitude_seeds.csv": "2e3796ba326e41621ed6f550a3e1e8ca9fde429eac75e381111678420f7b10c5",
+    "data/riemann_amplitude_seeds.csv": "81ce510f46d784ad8a23930b8a59c1d47f3e034c4094dbe668f2d8e04e2aff45",
     "data/riemann_frequency_full.csv": "312560ef29b0439be01265c9eab45dca175b71556a7db4695716b16da60870ee",
     "data/riemann_global_correction.csv": "ad4c6fb34b7bee8a2fda546bb13b2f7ead4482fbb7aba5dfb0ae819bdd9df1c3",
     "data/riemann_limiter_activation.csv": "36a8321868763ce0fa479e9f0e5844b3359bbc3a62e8ab5a058634678f13e706",
     "data/riemann_moment_preservation.csv": "5d0d54c33a9b8969d9b205705158fc1ec46d690f5484a87011c4111eb9a429b7",
-    "data/riemann_multicycle.csv": "28f12a229769d6cca461f3e334da4c193f57a397fcef58a12c1a6b5a0a69f928",
+    "data/riemann_multicycle.csv": "ca89c8a01caf4c96b3bdc91a76982d2848675102985aceb13174cd5d0cbc9ea9",
     "data/riemann_refinement_errors.csv": "641dbc0aabc8bef79081a80af5f53c6cbcee59da9493cad889493bdd486f7b72",
     "data/riemann_refinement_orders.csv": "e0de43738d9b2251c07935e8b7a4b72f816902b2d62bc96f6383b5bba00f54b9",
     "data/riemann_stress_representative.csv": "a3d9230a6065602f48bad90c673c5346d9888cdf3d90f934f85e9b70639a1a0e",
@@ -59,11 +61,12 @@
     "generated/rans_turbulence_SA.csv": "6ab6b587b502f353b324ff8b0f8346785742f847b36ec954a285cd300c92c272",
     "generated/rans_turbulence_SST.csv": "0f7b348dc961a0550c15d08c6a34d94246a10c23259366ea48ff84731f3cb5df",
     "generated/rans_turbulence_endpoint.csv": "1b3c8a39239f6cf9faf95dc529cceb49bde4417500f76a47637b393d7e56808a",
-    "generated/reassessed_rans_controls.csv": "2e604b262bf58bcb07841e7e4f0d4b87be679a95aad03877fc7b2f0ac6849fb3",
-    "generated/reassessed_rans_controls_compact.csv": "6f3f91c56ebb7f68e843083abb0ed38e76eaa33766b17b5a67ddc44b439058d2",
+    "generated/reassessed_rans_controls.csv": "96bc4d9d3a170e61405de7e56074b972572ce5122fba60399a7c1f9de7623428",
+    "generated/reassessed_rans_controls_compact.csv": "a6078168eb27a7b55c433a9683cb2a52a382013d07a67e73ce5ef35739e512bf",
     "generated/reassessed_rans_finemesh.csv": "44fb46437ae67d56bba3b967252b31df7f1015cb6866ebfbfc973f9557256b5f",
     "generated/reassessed_rans_inner.csv": "4a83c2796119865990ab2b63aaf8b270bb14f100154668a863b93c98f21472a1",
-    "generated/reassessed_rans_integrals.csv": "26f38f7e545694a6b6be347113a8d01e3529a091c41842c1abc155b622bfe03a"
+    "generated/reassessed_rans_integrals.csv": "26f38f7e545694a6b6be347113a8d01e3529a091c41842c1abc155b622bfe03a",
+    "generated/reassessed_rans_meshlevels.csv": "6b16cde5db63d87530ff810f5fa76999d6665c972efe3074087b6150520b453a"
   },
   "changed_or_missing_original_csvs": [
     "RANS_PostProcessing/rans_code_provenance.csv",
@@ -100,7 +103,10 @@
     "data/bdf2_raw/naca_native_convergence.csv",
     "data/bdf2_raw/naca_superposition.csv",
     "data/bdf2_raw/naca_surface_delta_cp.csv",
-    "data/bdf2_raw/naca_transfer_defects.csv"
+    "data/bdf2_raw/naca_transfer_defects.csv",
+    "data/riemann_amplitude_seeds.csv",
+    "data/riemann_multicycle.csv",
+    "generated/reassessed_rans_controls.csv"
   ],
   "naca_gc_relative_changes_percent": {
     "NN1": {
