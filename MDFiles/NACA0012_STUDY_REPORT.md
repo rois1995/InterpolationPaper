@@ -573,7 +573,7 @@ Same experiment as Part I on a wall-resolved hybrid grid with the Spalart–Allm
 | FSI.py used by the SA cases (sha256) | 8ed9f85b994789d8a302d58c4bc4f41990e33ba7b431a071ee387f68c1766eb5 |  |
 | FSI.py used by the SST cases (sha256) | 8ed9f85b994789d8a302d58c4bc4f41990e33ba7b431a071ee387f68c1766eb5 |  |
 
-**Mesh replay.** The applied displacement of every one of the 40 events is byte-identical across the four seed-1 drift cases (SA/SST × ConsGalerkinProj/NN): 40 of 40 events identical (`rans_mesh_replay.csv`, md5 of the displacement arrays). The motion is generated from the seed and the event index only (`seed = Seed + event`), never from the flow state. The saved `Grid_Velocity` in the volume files is at most 1.8e-32: the grid is stationary between replacements. After each transfer the solver restarts with `DUAL_TIME_STEPPING-2ND_ORDER` from the two transferred levels (log: "second order in time", "Read flow solution from restart_flow_<k-1>/<k>"); the first-order scheme is used only in the start-up window 0→1 with a ten times smaller step. Note for a time-step refinement: the event index enters the seed, so a run with a different step count must replay the archived displacement files by physical event rather than regenerate them.
+**Mesh replay.** The applied displacement of every one of the 80 events is byte-identical across the four seed-1 drift cases (SA/SST × ConsGalerkinProj/NN): 80 of 80 events identical (`rans_mesh_replay.csv`, md5 of the displacement arrays). The motion is generated from the seed and the event index only (`seed = Seed + event`), never from the flow state. The saved `Grid_Velocity` in the volume files is at most 1.8e-32: the grid is stationary between replacements. After each transfer the solver restarts with `DUAL_TIME_STEPPING-2ND_ORDER` from the two transferred levels (log: "second order in time", "Read flow solution from restart_flow_<k-1>/<k>"); the first-order scheme is used only in the start-up window 0→1 with a ten times smaller step. Note for a time-step refinement: the event index enters the seed, so a run with a different step count must replay the archived displacement files by physical event rather than regenerate them.
 
 **Protected region** (`rans_protected_summary.csv`, node sets in `rans_protected_region.csv`):
 
@@ -1290,18 +1290,18 @@ Steps 2..40 of the seed-1 drift sequence (three transfer events at steps 9, 19, 
 | SA | cap1600 | P | CD | 38 | 2.1140e-06 | 5.1427e-06 | -5.0525e-06 |  |  |
 | SA | cap1600 | P | CDp | 38 | 2.1078e-06 | 5.1134e-06 | -4.9928e-06 |  |  |
 | SA | cap1600 | P | CDv | 38 | 2.6849e-08 | 7.2289e-08 | -5.9901e-08 |  |  |
-| SA | halfstep | GP2 | CL | 38 | 2.6762e-04 | 6.1322e-04 | 1.9666e-04 |  |  |
-| SA | halfstep | GP2 | CD | 38 | 6.3997e-05 | 1.0971e-04 | 7.3405e-05 |  |  |
-| SA | halfstep | GP2 | CDp | 38 | 6.3297e-05 | 1.0870e-04 | 7.1097e-05 |  |  |
-| SA | halfstep | GP2 | CDv | 38 | 9.0214e-07 | 2.3115e-06 | 2.3115e-06 |  |  |
-| SA | halfstep | NN2 | CL | 38 | 2.6639e-04 | 5.9252e-04 | 2.0321e-04 |  |  |
-| SA | halfstep | NN2 | CD | 38 | 6.4201e-05 | 1.0792e-04 | 7.4295e-05 |  |  |
-| SA | halfstep | NN2 | CDp | 38 | 6.3530e-05 | 1.0697e-04 | 7.2002e-05 |  |  |
-| SA | halfstep | NN2 | CDv | 38 | 8.7546e-07 | 2.2970e-06 | 2.2970e-06 |  |  |
-| SA | halfstep | P | CL | 38 | 1.1608e-05 | 3.8803e-05 | 6.5440e-06 |  |  |
-| SA | halfstep | P | CD | 38 | 1.8504e-06 | 5.8499e-06 | 8.9058e-07 |  |  |
-| SA | halfstep | P | CDp | 38 | 1.8530e-06 | 5.8007e-06 | 9.0520e-07 |  |  |
-| SA | halfstep | P | CDv | 38 | 3.2493e-08 | 7.4948e-08 | -1.4497e-08 |  |  |
+| SA | finemesh | GP2 | CL | 38 | 1.0765e-04 | 2.6122e-04 | 2.6122e-04 |  |  |
+| SA | finemesh | GP2 | CD | 38 | 5.3847e-05 | 8.5073e-05 | 8.5073e-05 |  |  |
+| SA | finemesh | GP2 | CDp | 38 | 5.3771e-05 | 8.4468e-05 | 8.4468e-05 |  |  |
+| SA | finemesh | GP2 | CDv | 38 | 2.2198e-07 | 6.0564e-07 | 6.0564e-07 |  |  |
+| SA | finemesh | NN2 | CL | 38 | 1.0661e-04 | 2.6241e-04 | 2.6241e-04 |  |  |
+| SA | finemesh | NN2 | CD | 38 | 5.3913e-05 | 8.6180e-05 | 8.6180e-05 |  |  |
+| SA | finemesh | NN2 | CDp | 38 | 5.3834e-05 | 8.5590e-05 | 8.5590e-05 |  |  |
+| SA | finemesh | NN2 | CDv | 38 | 2.1434e-07 | 5.9023e-07 | 5.9023e-07 |  |  |
+| SA | finemesh | P | CL | 38 | 8.7701e-06 | 2.6501e-05 | 1.1834e-06 |  |  |
+| SA | finemesh | P | CD | 38 | 9.9421e-07 | 2.9016e-06 | 1.1066e-06 |  |  |
+| SA | finemesh | P | CDp | 38 | 9.9710e-07 | 2.9327e-06 | 1.1227e-06 |  |  |
+| SA | finemesh | P | CDv | 38 | 1.8483e-08 | 4.4873e-08 | -1.5413e-08 |  |  |
 | SA | cap1600 - production | GP2 | CL | 38 | 6.5316e-07 | 3.2314e-06 | -8.4570e-07 | 2.6267e-04 | 0.002 |
 | SA | cap1600 - production | GP2 | CD | 38 | 1.3316e-07 | 7.2450e-07 | -7.2450e-07 | 6.5577e-05 | 0.002 |
 | SA | cap1600 - production | GP2 | CDp | 38 | 1.3346e-07 | 7.1969e-07 | -7.1969e-07 | 6.5450e-05 | 0.002 |
@@ -1314,18 +1314,18 @@ Steps 2..40 of the seed-1 drift sequence (three transfer events at steps 9, 19, 
 | SA | cap1600 - production | P | CD | 38 | 1.8343e-07 | 9.7994e-07 | 9.7994e-07 | 2.1875e-06 | 0.084 |
 | SA | cap1600 - production | P | CDp | 38 | 1.8186e-07 | 9.6710e-07 | 9.6710e-07 | 2.1722e-06 | 0.084 |
 | SA | cap1600 - production | P | CDv | 38 | 1.1005e-08 | 3.0923e-08 | 1.3606e-08 | 2.9666e-08 | 0.371 |
-| SA | halfstep - production | GP2 | CL | 38 | 1.1103e-04 | 2.8854e-04 | -1.6438e-04 | 2.6267e-04 | 0.423 |
-| SA | halfstep - production | GP2 | CD | 38 | 1.5985e-05 | 4.0174e-05 | -2.2370e-05 | 6.5577e-05 | 0.244 |
-| SA | halfstep - production | GP2 | CDp | 38 | 1.6435e-05 | 4.2116e-05 | -2.4689e-05 | 6.5450e-05 | 0.251 |
-| SA | halfstep - production | GP2 | CDv | 38 | 8.1237e-07 | 2.3165e-06 | 2.3165e-06 | 2.1281e-07 | 3.817 |
-| SA | halfstep - production | NN2 | CL | 38 | 1.0612e-04 | 2.7160e-04 | -1.1106e-04 | 2.6020e-04 | 0.408 |
-| SA | halfstep - production | NN2 | CD | 38 | 1.5825e-05 | 4.3126e-05 | -1.5447e-05 | 6.6075e-05 | 0.240 |
-| SA | halfstep - production | NN2 | CDp | 38 | 1.6284e-05 | 4.4849e-05 | -1.7824e-05 | 6.5952e-05 | 0.247 |
-| SA | halfstep - production | NN2 | CDv | 38 | 8.1140e-07 | 2.3755e-06 | 2.3755e-06 | 2.2020e-07 | 3.685 |
-| SA | halfstep - production | P | CL | 38 | 1.6712e-05 | 5.3315e-05 | 5.3315e-05 | 1.2056e-05 | 1.386 |
-| SA | halfstep - production | P | CD | 38 | 3.2119e-06 | 7.7407e-06 | 6.9230e-06 | 2.1875e-06 | 1.468 |
-| SA | halfstep - production | P | CDp | 38 | 3.1951e-06 | 7.7346e-06 | 6.8651e-06 | 2.1722e-06 | 1.471 |
-| SA | halfstep - production | P | CDv | 38 | 3.9522e-08 | 1.2306e-07 | 5.9011e-08 | 2.9666e-08 | 1.332 |
+| SA | finemesh - production | GP2 | CL | 38 | 1.9708e-04 | 4.5141e-04 | -9.9818e-05 | 2.6267e-04 | 0.750 |
+| SA | finemesh - production | GP2 | CD | 38 | 2.1047e-05 | 4.5072e-05 | -1.0701e-05 | 6.5577e-05 | 0.321 |
+| SA | finemesh - production | GP2 | CDp | 38 | 2.0945e-05 | 4.4622e-05 | -1.1318e-05 | 6.5450e-05 | 0.320 |
+| SA | finemesh - production | GP2 | CDv | 38 | 3.4299e-07 | 7.5635e-07 | 6.1061e-07 | 2.1281e-07 | 1.612 |
+| SA | finemesh - production | NN2 | CL | 38 | 1.9859e-04 | 4.4984e-04 | -5.1864e-05 | 2.6020e-04 | 0.763 |
+| SA | finemesh - production | NN2 | CD | 38 | 2.1863e-05 | 4.8453e-05 | -3.5623e-06 | 6.6075e-05 | 0.331 |
+| SA | finemesh - production | NN2 | CDp | 38 | 2.1754e-05 | 4.7993e-05 | -4.2353e-06 | 6.5952e-05 | 0.330 |
+| SA | finemesh - production | NN2 | CDv | 38 | 3.6001e-07 | 7.8750e-07 | 6.6870e-07 | 2.2020e-07 | 1.635 |
+| SA | finemesh - production | P | CL | 38 | 1.4281e-05 | 4.7954e-05 | 4.7954e-05 | 1.2056e-05 | 1.185 |
+| SA | finemesh - production | P | CD | 38 | 2.2598e-06 | 7.1391e-06 | 7.1391e-06 | 2.1875e-06 | 1.033 |
+| SA | finemesh - production | P | CDp | 38 | 2.2554e-06 | 7.0826e-06 | 7.0826e-06 | 2.1722e-06 | 1.038 |
+| SA | finemesh - production | P | CDv | 38 | 2.6429e-08 | 7.1203e-08 | 5.8095e-08 | 2.9666e-08 | 0.891 |
 | SST | production | GP2 | CL | 39 | 1.6331e-04 | 3.9496e-04 | -3.6097e-05 |  |  |
 | SST | production | GP2 | CD | 39 | 5.4299e-05 | 8.7759e-05 | 4.6261e-05 |  |  |
 | SST | production | GP2 | CDp | 39 | 5.5066e-05 | 8.9198e-05 | 4.7708e-05 |  |  |
@@ -1350,6 +1350,18 @@ Steps 2..40 of the seed-1 drift sequence (three transfer events at steps 9, 19, 
 | SST | cap1600 | P | CD | 38 | 1.6213e-06 | 3.6526e-06 | 3.0618e-08 |  |  |
 | SST | cap1600 | P | CDp | 38 | 1.6187e-06 | 3.6230e-06 | 7.5436e-08 |  |  |
 | SST | cap1600 | P | CDv | 38 | 1.8193e-08 | 4.4952e-08 | -4.4952e-08 |  |  |
+| SST | cap6400 | GP2 | CL | 38 | 1.6633e-04 | 3.8652e-04 | 4.4478e-05 |  |  |
+| SST | cap6400 | GP2 | CD | 38 | 5.4743e-05 | 9.0011e-05 | 6.1807e-05 |  |  |
+| SST | cap6400 | GP2 | CDp | 38 | 5.5733e-05 | 9.1911e-05 | 6.3250e-05 |  |  |
+| SST | cap6400 | GP2 | CDv | 38 | 1.0507e-06 | 1.9288e-06 | -1.4411e-06 |  |  |
+| SST | cap6400 | NN2 | CL | 38 | 1.6424e-04 | 3.6871e-04 | 3.8301e-05 |  |  |
+| SST | cap6400 | NN2 | CD | 38 | 5.5271e-05 | 9.2059e-05 | 6.1404e-05 |  |  |
+| SST | cap6400 | NN2 | CDp | 38 | 5.6247e-05 | 9.3990e-05 | 6.2895e-05 |  |  |
+| SST | cap6400 | NN2 | CDv | 38 | 1.0435e-06 | 1.9495e-06 | -1.4910e-06 |  |  |
+| SST | cap6400 | P | CL | 38 | 8.3400e-06 | 2.7610e-05 | -6.1769e-06 |  |  |
+| SST | cap6400 | P | CD | 38 | 1.6366e-06 | 3.9253e-06 | -4.0340e-07 |  |  |
+| SST | cap6400 | P | CDp | 38 | 1.6303e-06 | 3.8783e-06 | -3.5440e-07 |  |  |
+| SST | cap6400 | P | CDv | 38 | 3.3980e-08 | 8.7479e-08 | -4.9893e-08 |  |  |
 | SST | cap1600 - production | GP2 | CL | 38 | 6.1744e-06 | 1.3551e-05 | -8.0065e-06 | 1.6534e-04 | 0.037 |
 | SST | cap1600 - production | GP2 | CD | 38 | 6.1471e-07 | 1.5461e-06 | -7.3941e-07 | 5.4494e-05 | 0.011 |
 | SST | cap1600 - production | GP2 | CDp | 38 | 7.2612e-07 | 1.8351e-06 | -6.4663e-07 | 5.5247e-05 | 0.013 |
@@ -1362,6 +1374,18 @@ Steps 2..40 of the seed-1 drift sequence (three transfer events at steps 9, 19, 
 | SST | cap1600 - production | P | CD | 38 | 9.5874e-08 | 2.6040e-07 | 5.7745e-08 | 1.5877e-06 | 0.060 |
 | SST | cap1600 - production | P | CDp | 38 | 9.6319e-08 | 2.8537e-07 | 7.6920e-08 | 1.5845e-06 | 0.061 |
 | SST | cap1600 - production | P | CDv | 38 | 9.4598e-09 | 2.4150e-08 | -1.9645e-08 | 1.4955e-08 | 0.633 |
+| SST | cap6400 - production | GP2 | CL | 38 | 1.1461e-05 | 2.8733e-05 | -1.8610e-05 | 1.6534e-04 | 0.069 |
+| SST | cap6400 - production | GP2 | CD | 38 | 1.1599e-06 | 3.1448e-06 | -1.6124e-06 | 5.4494e-05 | 0.021 |
+| SST | cap6400 - production | GP2 | CDp | 38 | 1.3620e-06 | 3.6619e-06 | -1.6306e-06 | 5.5247e-05 | 0.025 |
+| SST | cap6400 - production | GP2 | CDv | 38 | 3.2902e-07 | 6.2197e-07 | 1.7592e-08 | 8.1146e-07 | 0.405 |
+| SST | cap6400 - production | NN2 | CL | 38 | 1.4158e-05 | 3.1522e-05 | -2.2253e-05 | 1.6540e-04 | 0.086 |
+| SST | cap6400 - production | NN2 | CD | 38 | 1.3957e-06 | 3.3941e-06 | -1.9886e-06 | 5.5120e-05 | 0.025 |
+| SST | cap6400 - production | NN2 | CDp | 38 | 1.6020e-06 | 3.9756e-06 | -1.9835e-06 | 5.5861e-05 | 0.029 |
+| SST | cap6400 - production | NN2 | CDv | 38 | 3.3536e-07 | 6.2751e-07 | -6.9941e-09 | 8.0241e-07 | 0.418 |
+| SST | cap6400 - production | P | CL | 38 | 4.0682e-06 | 1.0735e-05 | -3.6430e-06 | 5.9760e-06 | 0.681 |
+| SST | cap6400 - production | P | CD | 38 | 4.0737e-07 | 1.0936e-06 | -3.7627e-07 | 1.5877e-06 | 0.257 |
+| SST | cap6400 - production | P | CDp | 38 | 4.2113e-07 | 1.1646e-06 | -3.5291e-07 | 1.5845e-06 | 0.266 |
+| SST | cap6400 - production | P | CDv | 38 | 2.6916e-08 | 7.5739e-08 | -2.4586e-08 | 1.4955e-08 | 1.800 |
 
 Inner-loop record of the control runs (`rans_control_inner.csv`):
 
@@ -1371,12 +1395,14 @@ Inner-loop record of the control runs (`rans_control_inner.csv`):
 | SA | production | NN2 | 398 | 800 | 156 | 711 | 799 | -12.00 | -9.21 |
 | SA | cap1600 | GP2 | 38 | 1600 | 0 | 575 | 957 | -12.00 | -12.00 |
 | SA | cap1600 | NN2 | 38 | 1600 | 0 | 593 | 1044 | -12.00 | -12.00 |
-| SA | halfstep | GP2 | 78 | 800 | 9 | 430 | 799 | -12.00 | -10.95 |
-| SA | halfstep | NN2 | 78 | 800 | 10 | 429 | 799 | -12.00 | -11.28 |
+| SA | finemesh | GP2 | 38 | 800 | 7 | 483 | 799 | -12.00 | -10.95 |
+| SA | finemesh | NN2 | 38 | 800 | 5 | 466 | 799 | -12.00 | -10.90 |
 | SST | production | GP2 | 398 | 800 | 333 | 799 | 799 | -11.10 | -10.11 |
 | SST | production | NN2 | 398 | 800 | 323 | 799 | 799 | -11.24 | -9.52 |
 | SST | cap1600 | GP2 | 38 | 1600 | 28 | 1599 | 1599 | -11.33 | -10.35 |
 | SST | cap1600 | NN2 | 38 | 1600 | 28 | 1599 | 1599 | -11.33 | -10.46 |
+| SST | cap6400 | GP2 | 38 | 6400 | 28 | 6399 | 6399 | -11.38 | -10.29 |
+| SST | cap6400 | NN2 | 38 | 6400 | 30 | 6399 | 6399 | -11.28 | -10.38 |
 
 Event replay check (`rans_control_replay.csv`): 30 displacement files compared with the production case by md5, 30 identical, 0 different.
 
@@ -1406,6 +1432,15 @@ Event replay check (`rans_control_replay.csv`): 30 displacement files compared w
 | SST | reference mean 100..799 | CD | 0.009858 | 0.009705 | -1.531e-04 | -1.553 |
 | SST | reference range 100..799 | CD | 5.89e-08 | 2.09e-09 |  |  |
 | SST | fine reference inner iterations min..max |  | 56 | 80 |  |  |
+
+Three-level sequence (`rans_mesh_levels.csv`; `Meshes/Coarse_Sharp_FinerFiner.su2`: 48228 nodes, 23764 quadrilaterals, 516 airfoil nodes, same first spacing): steady loads per level with the effective spacing ratio sqrt(N_coarse/N), and the observed order from the three levels where the sequence is monotone (Richardson extrapolation of the finest value):
+
+| model | level | nodes | h / h_coarse | CL | CD | CDp | CDv |
+|---|---|---|---|---|---|---|---|
+| SA | coarse | 23271 | 1.0000 | 0.676257 | 0.010229 | 0.003559 | 0.006671 |
+| SA | fine | 32102 | 0.8514 | 0.670838 | 0.010048 | 0.003401 | 0.006647 |
+| SST | coarse | 23271 | 1.0000 | 0.675605 | 0.009858 | 0.003469 | 0.006389 |
+| SST | fine | 32102 | 0.8514 | 0.668596 | 0.009705 | 0.003321 | 0.006385 |
 
 Surface pressure and skin friction, fine field interpolated onto the coarse airfoil nodes along each side:
 
@@ -1492,6 +1527,7 @@ Tables (`RANS_PostProcessing/`):
 - `rans_fine_mesh.csv`
 - `rans_fine_surface.csv`
 - `rans_inner_convergence.csv`
+- `rans_mesh_levels.csv`
 - `rans_mesh_quality.csv`
 - `rans_mesh_replay.csv`
 - `rans_oneshot_fit.csv`

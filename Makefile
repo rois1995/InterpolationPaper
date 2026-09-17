@@ -71,6 +71,7 @@ distclean: clean
 # Recompute manuscript-table checks without altering the numerical data.
 audit:
 	$(PYTHON) scripts/audit_results.py
+	$(PYTHON) scripts/check_typed_tables.py
 
 rans-audit:
 	$(PYTHON) scripts/build_rans_data.py

@@ -1,3 +1,5 @@
+> Dated 2026-09-09: this register audited the package as delivered on that date (MeshAdaptation 831f1fc8). Every simulation was rerun afterwards at 35d865eb; the current evidence and checks are in closure/RELEASE.md, provenance/, and the data tables.
+
 # Claim register — RANS part of `paper.tex` (T01), 2026-09-09
 
 Baseline: working copy `interpolation_paper_rans_results_closure`, commit 9e2d6cd
