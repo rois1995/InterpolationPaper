@@ -1439,8 +1439,18 @@ Three-level sequence (`rans_mesh_levels.csv`; `Meshes/Coarse_Sharp_FinerFiner.su
 |---|---|---|---|---|---|---|---|
 | SA | coarse | 23271 | 1.0000 | 0.676257 | 0.010229 | 0.003559 | 0.006671 |
 | SA | fine | 32102 | 0.8514 | 0.670838 | 0.010048 | 0.003401 | 0.006647 |
+| SA | finer | 48228 | 0.6946 | 0.668535 | 0.009996 | 0.003330 | 0.006665 |
+| SA | observed order CL |  |  | 4.21 | extrapolated 0.666833 | coarse-to-finer change 7.722e-03 | finer error estimate 1.701e-03 |
+| SA | observed order CD |  |  | 6.07 | extrapolated 0.009974 | coarse-to-finer change 2.338e-04 | finer error estimate 2.154e-05 |
+| SA | observed order CDp |  |  | 3.93 | extrapolated 0.003272 | coarse-to-finer change 2.290e-04 | finer error estimate 5.794e-05 |
+| SA | observed order CDv |  |  | not monotone or ratios differ | 2.400e-05 | -1.800e-05 |  |
 | SST | coarse | 23271 | 1.0000 | 0.675605 | 0.009858 | 0.003469 | 0.006389 |
 | SST | fine | 32102 | 0.8514 | 0.668596 | 0.009705 | 0.003321 | 0.006385 |
+| SST | finer | 48228 | 0.6946 | 0.666394 | 0.009644 | 0.003247 | 0.006397 |
+| SST | observed order CL |  |  | 5.69 | extrapolated 0.665385 | coarse-to-finer change 9.211e-03 | finer error estimate 1.009e-03 |
+| SST | observed order CD |  |  | 4.49 | extrapolated 0.009603 | coarse-to-finer change 2.144e-04 | finer error estimate 4.101e-05 |
+| SST | observed order CDp |  |  | 3.41 | extrapolated 0.003173 | coarse-to-finer change 2.220e-04 | finer error estimate 7.400e-05 |
+| SST | observed order CDv |  |  | not monotone or ratios differ | 4.000e-06 | -1.200e-05 |  |
 
 Surface pressure and skin friction, fine field interpolated onto the coarse airfoil nodes along each side:
 
