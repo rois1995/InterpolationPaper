@@ -1,0 +1,19 @@
+To the Editors of Computers & Fluids
+
+Dear Editors,
+
+We submit “Mesh-to-Mesh Transfer Errors in Multistep Unsteady Flow Simulations” for consideration as a research article in Computers & Fluids.
+
+The manuscript examines how solution transfer interacts with the receiving spatial discretization and the histories required by a multistep integrator. It compares established nearest-neighbor Taylor, barycentric, and Galerkin constructions, including global integral correction. The contribution is a controlled assessment of restart consistency and its numerical consequences, rather than a new interpolation formula.
+
+Repeated Euler remeshing provides a replicated counterexample to using global conservation as a measure of spatial fidelity: the density integral can be preserved to roundoff while substantial profile broadening persists. Controlled airfoil restarts then separate the two backward-differentiation histories and demonstrate a finite next-step response when only the older history is perturbed. The analysis also accounts for boundary admissibility and representation changes.
+
+Fixed-body Reynolds-averaged Navier–Stokes calculations connect these findings to turbulence transport and viscous loads. Their numerical controls distinguish improved transfer-integral preservation from an aerodynamic ranking that the time-step and inner-iteration sensitivities do not resolve. These limitations are retained explicitly.
+
+The combination of transfer verification, multistep analysis, and flow-solver response is intended for researchers developing and assessing adaptive numerical methods for fluid flow. The numerical tables and analysis scripts supporting the comparisons are available in the versioned project repository.
+
+Sincerely,
+
+[Corresponding author]
+[Affiliation]
+[Institutional email]

@@ -1,0 +1,5 @@
+- Interpolation order, bounds and integral conservation require separate tests.
+- Global correction preserves mass but does not recover a diffused profile.
+- An older-history error perturbs the next step even when the latest is exact.
+- Boundary enforcement modifies momentum transferred by Galerkin projection.
+- A load ranking remains unresolved despite better integral preservation.

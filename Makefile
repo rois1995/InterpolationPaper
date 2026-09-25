@@ -2,6 +2,7 @@ PYTHON ?= python3
 LATEXMK ?= latexmk
 MAIN := paper.tex
 PDF := paper.pdf
+SUBMISSION_TEX := submission/author_details.tex submission/author_declarations.tex
 DATA := \
 	data/Comparison_Errors.csv \
 	data/Comparison_Conservation.csv \
@@ -43,7 +44,7 @@ GENERATED_STAMP := generated/.stamp
 RANS_DATA := $(wildcard RANS_PostProcessing/*.csv)
 RANS_STAMP := generated/.rans_stamp
 
-.PHONY: all data audit rans-audit clean distclean
+.PHONY: all data audit rans-audit clean distclean cf-author-check cf-package cf-draft-package
 
 all: $(PDF)
 
@@ -58,7 +59,7 @@ $(RANS_STAMP): scripts/build_rans_data.py scripts/build_views.py $(RANS_DATA) MD
 	$(PYTHON) scripts/build_views.py
 	@touch $(RANS_STAMP)
 
-$(PDF): $(MAIN) References.bib $(GENERATED_STAMP) $(RANS_STAMP)
+$(PDF): $(MAIN) $(SUBMISSION_TEX) References.bib $(GENERATED_STAMP) $(RANS_STAMP)
 	$(LATEXMK) -pdf -interaction=nonstopmode -halt-on-error $(MAIN)
 
 clean:
@@ -75,3 +76,21 @@ audit:
 
 rans-audit:
 	$(PYTHON) scripts/build_rans_data.py
+
+# Export-only targets: source datasets and their locations are not changed.
+cf-author-check:
+	$(PYTHON) scripts/prepare_cf_submission.py --check-only
+
+cf-package: $(PDF) cf-figures
+	$(PYTHON) scripts/prepare_cf_submission.py
+
+cf-draft-package: $(PDF) cf-figures
+	$(PYTHON) scripts/prepare_cf_submission.py --allow-incomplete
+
+# Mechanical preflight reports author fields separately from manuscript checks.
+.PHONY: cf-preflight cf-figures
+cf-preflight:
+	$(PYTHON) scripts/check_manuscript.py
+
+cf-figures:
+	$(PYTHON) scripts/export_manuscript_figures.py
