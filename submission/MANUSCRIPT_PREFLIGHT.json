@@ -5,14 +5,14 @@
     "submission/author_declarations.tex"
   ],
   "journal_specific_guide_status": "Journal of Computational and Applied Mathematics Guide for Authors (ScienceDirect) checked 2026-10-23: abstract <=250 words, 1-7 keywords, 3-5 highlights of <=85 characters, numbered references; confirm portal requirements at submission.",
-  "abstract_words": 218,
+  "abstract_words": 219,
   "keyword_count": 6,
   "highlight_characters": [
+    78,
+    68,
+    83,
     77,
-    73,
-    76,
-    77,
-    71
+    67
   ],
   "defined_acronyms_at_first_source_use": {
     "abstract:NN": "unused",
@@ -21,7 +21,7 @@
     "abstract:CV": "unused",
     "abstract:GC": "unused",
     "abstract:RANS": "unused",
-    "abstract:BDF2": "unused",
+    "abstract:BDF2": "defined at first use",
     "abstract:BJ": "unused",
     "abstract:SF": "unused",
     "abstract:NACA": "unused",
