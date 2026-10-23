@@ -12,7 +12,7 @@ Same experiment as Part I on a wall-resolved hybrid grid with the Spalart–Allm
 
 **SST solver settings** (`Base_Interp_RANS_SST/Unsteady_SecondOrder.cfg`): SOLVER = RANS, KIND_TURB_MODEL = SST, TIME_MARCHING = DUAL_TIME_STEPPING-2ND_ORDER, TIME_STEP = 1e-3, INNER_ITER = 800, MACH_NUMBER = 0.1, AOA = 6.0, REYNOLDS_NUMBER = 6.0E6, REF_DIMENSIONALIZATION = FREESTREAM_VEL_EQ_MACH, NUM_METHOD_GRAD = WEIGHTED_LEAST_SQUARES, CFL_NUMBER = 6.0, LINEAR_SOLVER = FGMRES, LINEAR_SOLVER_PREC = ILU, LINEAR_SOLVER_ITER = 60, CONV_NUM_METHOD_FLOW = HLLC, MUSCL_FLOW = YES, SLOPE_LIMITER_FLOW = VAN_ALBADA_EDGE, CONV_NUM_METHOD_TURB = SCALAR_UPWIND, MUSCL_TURB = NO.
 
-**Transfer and mesh motion** (both models): InterpMethod = ConsGalerkinProj, InterpOrder = Second, WLSDegree = 1, BoundaryTreatment = False, BoundaryPointValue = False, EnforceConservation = False, ConservationCorrection = True, GalerkinLimit = True, findOneToOneCorrespondence = True, MinWallDistance = 0.01, MaxWallDistance = 20, FreezeBoundary = True, Field = "white", SafeFactor = 4.0, QualityFloor = 0.2, Seed = 12345. The launcher sets the drift band and one-shot bands per case (see the case names). The wall band `MinWallDistance` and every boundary node are held fixed; the wall-layer quadrilaterals therefore never move. The transferred fields are Density, Momentum_x, Momentum_y, Energy and the model's transported turbulence variables (Nu_Tilde for SA; Turb_Kin_Energy and Omega for SST, both transferred as rho-weighted quantities).
+**Transfer and mesh motion** (both models): InterpMethod = ConsGalerkinProj, InterpOrder = Second, WLSDegree = 1, BoundaryTreatment = False, EnforceConservation = False, GalerkinLimit = True, findOneToOneCorrespondence = True, MinWallDistance = 0.01, MaxWallDistance = 20, FreezeBoundary = True, Field = "white", SafeFactor = 4.0, QualityFloor = 0.2, Seed = 12345. The launcher sets the drift band and one-shot bands per case (see the case names). The wall band `MinWallDistance` and every boundary node are held fixed; the wall-layer quadrilaterals therefore never move. The transferred fields are Density, Momentum_x, Momentum_y, Energy and the model's transported turbulence variables (Nu_Tilde for SA; Turb_Kin_Energy and Omega for SST, both transferred as rho-weighted quantities).
 
 **Time units (recovered from the SU2 startup tables of the executed runs).** `REF_DIMENSIONALIZATION = FREESTREAM_VEL_EQ_MACH` with a dimensional free stream (T = 300 K): the reference velocity is the sound speed 347.224 m/s, the reference time L_ref/a = 0.00287999 s, and the configured `TIME_STEP = 0.001` is in seconds ("Unsteady time step provided by the user (s): 0.001"). The internal non-dimensional step is therefore **0.347224** (a = 1, U_inf = 0.1 in code units), as printed in the startup table "| Time Step | 0.001 | 0.00287999 | s | 0.347224 |". Consequences: an acoustic front travels 0.347 chords per step, the predicted force-response lag for a perturbation at radius d is **2.88·d steps** (below one step for every band used), and 400 steps span 138.9 time units = **13.9 chord flow-throughs**. The Euler study (p = rho = T = 1, reference factor 1) advanced 1e-3 per step: 845·d steps and 0.047 chord flow-throughs over 400 steps. The RANS first-order start-up window uses 1e-4 s = 0.0347 non-dimensional.
 
@@ -49,22 +49,22 @@ Same experiment as Part I on a wall-resolved hybrid grid with the Spalart–Allm
 | SU2_CFD binary | 11736224 | 2025-12-10 |
 | SU2 source commit | dcee051d8ee7fba29ebe4d5f373c63a5fa198906 | Fri Jun 27 08:21:49 2025 +0200 |
 | SU2 working tree dirty files | 0 |  |
-| MeshAdaptation commit (transfer / motion code, as built into the case bases) | 35d865ebdea88fc265a62d32bbba2527a187491c | Wed Sep 9 17:57:44 2026 +0200 |
-| MeshAdaptation dirty files at build time | 10 |  |
-| InterpSolution.py used by the SA cases (sha256) | d0ca621366e755117d61412bc81965ad3a110e0ef25fcd238a087d3c207604af |  |
-| InterpSolution.py used by the SST cases (sha256) | d0ca621366e755117d61412bc81965ad3a110e0ef25fcd238a087d3c207604af |  |
-| FunScripts/InterpSolution_Fun.py used by the SA cases (sha256) | 5530368696ee491ef6818612cdf669aeb59949697733fe38ea26f759684c3d81 |  |
-| FunScripts/InterpSolution_Fun.py used by the SST cases (sha256) | 5530368696ee491ef6818612cdf669aeb59949697733fe38ea26f759684c3d81 |  |
+| MeshAdaptation commit (transfer / motion code, as built into the case bases) | b3054414ab1b629ced169681aa6bf1ba467f9a7a | Fri Oct 9 10:03:45 2026 +0200 |
+| MeshAdaptation dirty files at build time | 9 |  |
+| InterpSolution.py used by the SA cases (sha256) | 7f221b841806e5aa46f4fc0595abae2fb27dbc42945518721afd7847f82bb3c0 |  |
+| InterpSolution.py used by the SST cases (sha256) | 7f221b841806e5aa46f4fc0595abae2fb27dbc42945518721afd7847f82bb3c0 |  |
+| FunScripts/InterpSolution_Fun.py used by the SA cases (sha256) | a17ecfa9b5884f57c9f7fe800b254ddc59c0ec84cd8113d5baf008aad3a5b506 |  |
+| FunScripts/InterpSolution_Fun.py used by the SST cases (sha256) | a17ecfa9b5884f57c9f7fe800b254ddc59c0ec84cd8113d5baf008aad3a5b506 |  |
 | RandomMeshMovements.py used by the SA cases (sha256) | 74cbb8a4e603dd2f3a59145b887a22c1536172b900ed8c3d0ef69bca0503057e |  |
 | RandomMeshMovements.py used by the SST cases (sha256) | 74cbb8a4e603dd2f3a59145b887a22c1536172b900ed8c3d0ef69bca0503057e |  |
 | FunScripts/RandomMeshMovements_Fun.py used by the SA cases (sha256) | 25985929d43c869c4b8f5367f6b851d862c5018e7a46f176bfc9ac8f8ee29718 |  |
 | FunScripts/RandomMeshMovements_Fun.py used by the SST cases (sha256) | 25985929d43c869c4b8f5367f6b851d862c5018e7a46f176bfc9ac8f8ee29718 |  |
-| RunCase_UnsteadyAdaptation.sh used by the SA cases (sha256) | ad21fcdb2e2f67c533731297950c1e626ff402099de9195374e382439e865e45 |  |
-| RunCase_UnsteadyAdaptation.sh used by the SST cases (sha256) | ad21fcdb2e2f67c533731297950c1e626ff402099de9195374e382439e865e45 |  |
+| RunCase_UnsteadyAdaptation.sh used by the SA cases (sha256) | c51526d3863cf5315ec9b9271d253034098e87c79de25af30cdc88e56c4dd9c3 |  |
+| RunCase_UnsteadyAdaptation.sh used by the SST cases (sha256) | c51526d3863cf5315ec9b9271d253034098e87c79de25af30cdc88e56c4dd9c3 |  |
 | FSI.py used by the SA cases (sha256) | 8ed9f85b994789d8a302d58c4bc4f41990e33ba7b431a071ee387f68c1766eb5 |  |
 | FSI.py used by the SST cases (sha256) | 8ed9f85b994789d8a302d58c4bc4f41990e33ba7b431a071ee387f68c1766eb5 |  |
 
-**Mesh replay.** The applied displacement of every one of the 40 events is byte-identical across the four seed-1 drift cases (SA/SST × ConsGalerkinProj/NN): 40 of 40 events identical (`rans_mesh_replay.csv`, md5 of the displacement arrays). The motion is generated from the seed and the event index only (`seed = Seed + event`), never from the flow state. The saved `Grid_Velocity` in the volume files is at most 1.8e-32: the grid is stationary between replacements. After each transfer the solver restarts with `DUAL_TIME_STEPPING-2ND_ORDER` from the two transferred levels (log: "second order in time", "Read flow solution from restart_flow_<k-1>/<k>"); the first-order scheme is used only in the start-up window 0→1 with a ten times smaller step. Note for a time-step refinement: the event index enters the seed, so a run with a different step count must replay the archived displacement files by physical event rather than regenerate them.
+**Mesh replay.** The applied displacement of every one of the 80 events is byte-identical across the four seed-1 drift cases (SA/SST × ConsGalerkinProj/NN): 80 of 80 events identical (`rans_mesh_replay.csv`, md5 of the displacement arrays). The motion is generated from the seed and the event index only (`seed = Seed + event`), never from the flow state. The saved `Grid_Velocity` in the volume files is at most 1.8e-32: the grid is stationary between replacements. After each transfer the solver restarts with `DUAL_TIME_STEPPING-2ND_ORDER` from the two transferred levels (log: "second order in time", "Read flow solution from restart_flow_<k-1>/<k>"); the first-order scheme is used only in the start-up window 0→1 with a ten times smaller step. Note for a time-step refinement: the event index enters the seed, so a run with a different step count must replay the archived displacement files by physical event rather than regenerate them.
 
 **Protected region** (`rans_protected_summary.csv`, node sets in `rans_protected_region.csv`):
 
@@ -84,25 +84,29 @@ Same experiment as Part I on a wall-resolved hybrid grid with the Spalart–Allm
 | boundary nodes frozen | yes (airfoil 370 + farfield 63) |
 | max displacement (first event) | 2.389e-01 |
 
-**Mesh quality over the event sequence** (`rans_mesh_quality.csv`, 340 mesh generations): corner-triangle area ratio deformed/undeformed, per-event minimum between 0.209 and 0.574 (quality floor setting 0.2), nodes reduced by the admissibility backoff: 6 at most. The grid is valid at every event.
+**Mesh quality over the event sequence** (`rans_mesh_quality.csv`, 500 mesh generations): corner-triangle area ratio deformed/undeformed, per-event minimum between 0.209 and 0.574 (quality floor setting 0.2), nodes reduced by the admissibility backoff: 6 at most. The grid is valid at every event.
 
 **Inner-iteration usage per physical step** (`rans_inner_convergence.csv`). SU2 stops the inner loop when log10 rms[Rho] < CONV_RESIDUAL_MINVAL at a check, or at the INNER_ITER cap. The number of inner iterations used, the density residual level reached at the end of each physical step and the linear-solver effort are listed per run.
 
 | run | steps | inner min | inner max | at cap | log10 rms start (min/med/max) | log10 rms end (min/med/max) | linsol iters (min/med/max) | log10 linsol res (min/med/max) | INNER_ITER | CONV_RESIDUAL_MINVAL | CONV_STARTITER |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| SA 0.01-20 ConsGalerkinProj Drift | 398 | 10 | 799 | 144 | -12.28/-7.39/-6.39 | -12.19/-12.00/-9.12 | 9/10/10 | -8.80/-8.43/-8.00 | 800 | -12 | 10 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | 398 | 10 | 799 | 169 | -12.28/-7.36/-6.33 | -12.19/-12.00/-9.70 | 9/9/10 | -8.82/-8.31/-8.00 | 800 | -12 | 10 |
-| SA 0.01-20 NN Drift | 398 | 10 | 799 | 156 | -12.28/-7.35/-6.41 | -12.19/-12.00/-9.21 | 9/10/10 | -8.85/-8.41/-8.00 | 800 | -12 | 10 |
+| SA 0.01-20 ConsGalerkinProj Drift | 398 | 10 | 799 | 152 | -12.28/-7.39/-6.39 | -12.19/-12.00/-9.12 | 9/10/10 | -8.80/-8.40/-8.00 | 800 | -12 | 10 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | 398 | 10 | 799 | 171 | -12.28/-7.36/-6.33 | -12.19/-12.00/-9.70 | 9/9/10 | -8.82/-8.31/-8.00 | 800 | -12 | 10 |
+| SA 0.01-20 Conservative Drift | 398 | 10 | 799 | 147 | -12.28/-7.39/-6.43 | -12.19/-12.00/-9.53 | 9/10/10 | -8.86/-8.44/-8.00 | 800 | -12 | 10 |
+| SA 0.01-20 Conservative Drift Seed2 | 398 | 10 | 799 | 176 | -12.28/-7.37/-6.29 | -12.19/-12.00/-9.56 | 9/9/10 | -8.81/-8.34/-8.00 | 800 | -12 | 10 |
+| SA 0.01-20 NN Drift | 398 | 10 | 799 | 155 | -12.28/-7.35/-6.41 | -12.19/-12.00/-9.21 | 9/10/10 | -8.85/-8.45/-8.00 | 800 | -12 | 10 |
 | SA 0.01-20 NN Drift Seed2 | 398 | 10 | 799 | 171 | -12.28/-7.34/-6.24 | -12.19/-12.00/-9.32 | 9/10/10 | -8.84/-8.37/-8.00 | 800 | -12 | 10 |
 | SA 0.05-0.10 ConsGalerkinProj OneShot | 398 | 10 | 305 | 0 | -12.41/-9.88/-7.18 | -12.99/-12.32/-12.00 | 9/10/12 | -8.80/-8.22/-8.00 | 800 | -12 | 10 |
 | SA 0.10-0.15 ConsGalerkinProj OneShot SF2 | 398 | 10 | 200 | 0 | -12.41/-9.72/-7.06 | -12.73/-12.29/-12.00 | 9/10/12 | -8.78/-8.31/-8.01 | 800 | -12 | 10 |
 | SA 0.10-0.15 ConsGalerkinProj OneShot | 398 | 10 | 158 | 0 | -12.41/-10.05/-7.36 | -12.75/-12.31/-12.00 | 9/10/11 | -8.78/-8.30/-8.01 | 800 | -12 | 10 |
 | SA 0.20-0.25 ConsGalerkinProj OneShot Long | 798 | 10 | 88 | 0 | -12.61/-10.54/-7.62 | -12.74/-12.44/-12.00 | 9/10/12 | -8.78/-8.57/-8.01 | 800 | -12 | 10 |
 | SA 0.20-0.25 ConsGalerkinProj OneShot | 398 | 10 | 129 | 0 | -12.41/-10.05/-7.50 | -12.85/-12.31/-12.00 | 9/10/12 | -8.78/-8.31/-8.01 | 800 | -12 | 10 |
-| SST 0.01-20 ConsGalerkinProj Drift | 398 | 10 | 799 | 333 | -12.06/-7.39/-6.56 | -12.08/-11.10/-10.11 | 8/9/11 | -8.82/-8.30/-8.00 | 800 | -12 | 10 |
+| SST 0.01-20 ConsGalerkinProj Drift | 398 | 10 | 799 | 333 | -12.06/-7.39/-6.56 | -12.08/-11.10/-10.14 | 8/9/11 | -8.82/-8.33/-8.00 | 800 | -12 | 10 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | 398 | 10 | 799 | 284 | -12.06/-7.37/-6.31 | -12.08/-11.31/-9.46 | 8/9/11 | -8.86/-8.40/-8.00 | 800 | -12 | 10 |
-| SST 0.01-20 NN Drift | 398 | 10 | 799 | 323 | -12.06/-7.36/-6.51 | -12.08/-11.24/-9.52 | 9/9/11 | -8.86/-8.36/-8.00 | 800 | -12 | 10 |
-| SST 0.01-20 NN Drift Seed2 | 398 | 10 | 799 | 277 | -12.06/-7.35/-6.34 | -12.08/-11.24/-9.34 | 8/9/11 | -8.87/-8.41/-8.00 | 800 | -12 | 10 |
+| SST 0.01-20 Conservative Drift | 398 | 10 | 799 | 336 | -12.06/-7.39/-6.54 | -12.08/-11.11/-9.09 | 8/9/11 | -8.78/-8.32/-8.00 | 800 | -12 | 10 |
+| SST 0.01-20 Conservative Drift Seed2 | 398 | 10 | 799 | 282 | -12.06/-7.37/-6.30 | -12.08/-11.33/-9.32 | 8/9/11 | -8.81/-8.43/-8.00 | 800 | -12 | 10 |
+| SST 0.01-20 NN Drift | 398 | 10 | 799 | 324 | -12.06/-7.36/-6.51 | -12.08/-11.24/-9.52 | 9/9/11 | -8.86/-8.36/-8.00 | 800 | -12 | 10 |
+| SST 0.01-20 NN Drift Seed2 | 398 | 10 | 799 | 277 | -12.06/-7.35/-6.34 | -12.08/-11.25/-9.34 | 8/9/11 | -8.87/-8.42/-8.00 | 800 | -12 | 10 |
 | SST 0.05-0.10 ConsGalerkinProj OneShot | 398 | 10 | 270 | 0 | -12.06/-9.88/-7.18 | -12.26/-12.10/-12.00 | 10/10/11 | -8.71/-8.16/-8.01 | 800 | -12 | 10 |
 | SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | 398 | 10 | 218 | 0 | -12.06/-9.74/-7.07 | -12.24/-12.10/-12.00 | 10/11/12 | -8.75/-8.25/-8.00 | 800 | -12 | 10 |
 | SST 0.10-0.15 ConsGalerkinProj OneShot | 398 | 10 | 185 | 0 | -12.06/-10.05/-7.37 | -12.22/-12.10/-12.00 | 10/11/11 | -8.76/-8.24/-8.03 | 800 | -12 | 10 |
@@ -136,11 +140,13 @@ The final grid of the SA ConsGalerkinProj drift case after its 40 events (`Meshe
 | SA | steady | 19999 | 6.912e-04 | 1.054e-04 | 1.040e-04 | 1.000e-06 | 1.834e-04 |
 | SA | unsteady 100..399 | 300 | 7.002e-04 (trend -9.9e-07 ± 5.2e-07) | 1.059e-04 (trend -1.5e-07 ± 1.1e-07) |  |  | 1.848e-04 (trend -2.5e-07 ± 2.8e-07) |
 | SA | drift case first window 10..19: RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second | 10 | 2.788e-05 (min 1.4e-05, max 5.5e-05) | 3.778e-05 (min 3.1e-05, max 4.8e-05) |  |  | 2.818e-06 (min -1.8e-05, max 2.4e-05) |
+| SA | drift case first window 10..19: RANS_SA_WD_0.01-20_Conservative_Drift_Second | 10 | 2.765e-05 (min 9.9e-06, max 5.3e-05) | 3.762e-05 (min 2.9e-05, max 4.7e-05) |  |  | 2.665e-06 (min -1.7e-05, max 2.4e-05) |
 | SA | drift case first window 10..19: RANS_SA_WD_0.01-20_NN_Drift_Second | 10 | 2.949e-05 (min 1.6e-05, max 5.2e-05) | 3.791e-05 (min 3.2e-05, max 4.9e-05) |  |  | 3.267e-06 (min -1.7e-05, max 2.4e-05) |
 | SA | steady, surface integration | 0 | 6.910e-04 | 1.053e-04 | 1.043e-04 | 1.087e-06 |  |
 | SST | steady | 19999 | 6.249e-04 | 8.671e-05 | 8.800e-05 | -1.000e-06 | 1.852e-04 |
 | SST | unsteady 100..399 | 300 | 6.169e-04 (trend -2.1e-08 ± 1.5e-08) | 8.574e-05 (trend 3.8e-09 ± 1.2e-08) |  |  | 1.810e-04 (trend 7.2e-09 ± 3.2e-08) |
 | SST | drift case first window 10..19: RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second | 10 | -3.706e-05 (min -6.4e-05, max 1.9e-05) | 3.548e-05 (min 2.7e-05, max 4.6e-05) |  |  | -2.633e-05 (min -5.6e-05, max 1.7e-07) |
+| SST | drift case first window 10..19: RANS_SST_WD_0.01-20_Conservative_Drift_Second | 10 | -3.803e-05 (min -6.2e-05, max 1.5e-05) | 3.537e-05 (min 2.6e-05, max 4.6e-05) |  |  | -2.714e-05 (min -5.5e-05, max -2.4e-06) |
 | SST | drift case first window 10..19: RANS_SST_WD_0.01-20_NN_Drift_Second | 10 | -3.500e-05 (min -6.3e-05, max 1.6e-05) | 3.569e-05 (min 2.8e-05, max 4.4e-05) |  |  | -2.601e-05 (min -5.4e-05, max -1.7e-06) |
 | SST | steady, surface integration | 0 | 6.249e-04 | 8.671e-05 | 8.744e-05 | -7.369e-07 |  |
 
@@ -157,59 +163,83 @@ Deviation from the reference, OLS trend per 100 steps with the standard error of
 
 | case | coeff | ref mean | offset | scatter | max |dev| | trend /100it | ± OLS | resolved OLS | lag-1 r | ± AR(1) | N_eff | resolved AR(1) | % /100it |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| SA 0.01-20 ConsGalerkinProj Drift | CL | 6.762569e-01 | 7.232e-05 | 2.098e-04 | 8.266e-04 | -6.742e-05 | 8.53e-06 | yes | 0.939 | 4.82e-05 | 12 | no | -0.0100 |
-| SA 0.01-20 ConsGalerkinProj Drift | CD | 1.022935e-02 | 5.923e-05 | 2.544e-05 | 1.269e-04 | -1.252e-06 | 1.11e-06 | no | 0.930 | 5.84e-06 | 14 | no | -0.0122 |
-| SA 0.01-20 ConsGalerkinProj Drift | CDp | 3.559000e-03 | 5.684e-05 | 2.556e-05 | 1.250e-04 | -1.345e-06 | 1.12e-06 | no | 0.931 | 5.88e-06 | 14 | no | -0.0378 |
-| SA 0.01-20 ConsGalerkinProj Drift | CDv | 6.671000e-03 | 1.754e-06 | 1.418e-06 | 6.000e-06 | 6.331e-08 | 6.19e-08 | no | 0.970 | 5.01e-07 | 6 | no | 0.0009 |
-| SA 0.01-20 ConsGalerkinProj Drift | CMz | 6.708957e-04 | 2.747e-05 | 9.099e-05 | 3.358e-04 | -1.892e-05 | 3.86e-06 | yes | 0.919 | 1.89e-05 | 17 | no | -2.8196 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | CL | 6.762569e-01 | -3.523e-05 | 2.148e-04 | 6.303e-04 | -2.051e-05 | 9.34e-06 | yes | 0.940 | 5.30e-05 | 12 | no | -0.0030 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | CD | 1.022935e-02 | 5.580e-05 | 2.397e-05 | 1.200e-04 | 3.983e-06 | 1.03e-06 | yes | 0.919 | 5.01e-06 | 17 | no | 0.0389 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | CDp | 3.559000e-03 | 5.430e-05 | 2.381e-05 | 1.170e-04 | 4.274e-06 | 1.02e-06 | yes | 0.917 | 4.90e-06 | 17 | no | 0.1201 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | CDv | 6.671000e-03 | 8.317e-07 | 2.563e-06 | 1.300e-05 | -3.362e-07 | 1.11e-07 | yes | 0.986 | 1.34e-06 | 3 | no | -0.0050 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | CMz | 6.708957e-04 | 9.099e-06 | 9.410e-05 | 2.779e-04 | -2.344e-06 | 4.11e-06 | no | 0.919 | 2.00e-05 | 17 | no | -0.3494 |
-| SA 0.01-20 NN Drift | CL | 6.762569e-01 | 5.929e-05 | 2.111e-04 | 7.782e-04 | -6.585e-05 | 8.62e-06 | yes | 0.943 | 5.02e-05 | 12 | no | -0.0097 |
-| SA 0.01-20 NN Drift | CD | 1.022935e-02 | 5.819e-05 | 2.587e-05 | 1.241e-04 | -6.967e-07 | 1.13e-06 | no | 0.935 | 6.16e-06 | 13 | no | -0.0068 |
-| SA 0.01-20 NN Drift | CDp | 3.559000e-03 | 5.591e-05 | 2.591e-05 | 1.220e-04 | -7.605e-07 | 1.13e-06 | no | 0.935 | 6.18e-06 | 13 | no | -0.0214 |
-| SA 0.01-20 NN Drift | CDv | 6.671000e-03 | 1.646e-06 | 1.424e-06 | 6.000e-06 | 2.040e-08 | 6.23e-08 | no | 0.969 | 4.96e-07 | 6 | no | 0.0003 |
-| SA 0.01-20 NN Drift | CMz | 6.708957e-04 | 2.489e-05 | 9.139e-05 | 3.258e-04 | -1.807e-05 | 3.89e-06 | yes | 0.923 | 1.94e-05 | 16 | no | -2.6933 |
+| SA 0.01-20 ConsGalerkinProj Drift | CL | 6.762569e-01 | 7.200e-05 | 2.086e-04 | 8.266e-04 | -6.762e-05 | 8.47e-06 | yes | 0.939 | 4.78e-05 | 12 | no | -0.0100 |
+| SA 0.01-20 ConsGalerkinProj Drift | CD | 1.022935e-02 | 5.913e-05 | 2.530e-05 | 1.255e-04 | -1.316e-06 | 1.10e-06 | no | 0.929 | 5.76e-06 | 15 | no | -0.0129 |
+| SA 0.01-20 ConsGalerkinProj Drift | CDp | 3.559000e-03 | 5.674e-05 | 2.537e-05 | 1.230e-04 | -1.400e-06 | 1.11e-06 | no | 0.929 | 5.79e-06 | 15 | no | -0.0393 |
+| SA 0.01-20 ConsGalerkinProj Drift | CDv | 6.671000e-03 | 1.744e-06 | 1.403e-06 | 6.000e-06 | 4.960e-08 | 6.13e-08 | no | 0.969 | 4.91e-07 | 6 | no | 0.0007 |
+| SA 0.01-20 ConsGalerkinProj Drift | CMz | 6.708957e-04 | 2.761e-05 | 9.025e-05 | 3.358e-04 | -1.877e-05 | 3.83e-06 | yes | 0.919 | 1.86e-05 | 17 | no | -2.7979 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | CL | 6.762569e-01 | -3.526e-05 | 2.150e-04 | 6.303e-04 | -2.054e-05 | 9.35e-06 | yes | 0.939 | 5.28e-05 | 12 | no | -0.0030 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | CD | 1.022935e-02 | 5.595e-05 | 2.404e-05 | 1.200e-04 | 4.200e-06 | 1.03e-06 | yes | 0.919 | 5.02e-06 | 17 | no | 0.0411 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | CDp | 3.559000e-03 | 5.444e-05 | 2.388e-05 | 1.170e-04 | 4.478e-06 | 1.02e-06 | yes | 0.917 | 4.91e-06 | 17 | no | 0.1258 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | CDv | 6.671000e-03 | 8.618e-07 | 2.539e-06 | 1.300e-05 | -2.997e-07 | 1.10e-07 | yes | 0.986 | 1.32e-06 | 3 | no | -0.0045 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | CMz | 6.708957e-04 | 8.940e-06 | 9.424e-05 | 2.779e-04 | -2.552e-06 | 4.12e-06 | no | 0.918 | 1.99e-05 | 17 | no | -0.3804 |
+| SA 0.01-20 Conservative Drift | CL | 6.762569e-01 | 4.498e-05 | 2.054e-04 | 6.898e-04 | -6.044e-05 | 8.45e-06 | yes | 0.941 | 4.84e-05 | 12 | no | -0.0089 |
+| SA 0.01-20 Conservative Drift | CD | 1.022935e-02 | 5.756e-05 | 2.623e-05 | 1.277e-04 | 6.679e-07 | 1.15e-06 | no | 0.937 | 6.33e-06 | 13 | no | 0.0065 |
+| SA 0.01-20 Conservative Drift | CDp | 3.559000e-03 | 5.551e-05 | 2.638e-05 | 1.260e-04 | 4.262e-07 | 1.15e-06 | no | 0.937 | 6.40e-06 | 13 | no | 0.0120 |
+| SA 0.01-20 Conservative Drift | CDv | 6.671000e-03 | 1.407e-06 | 1.209e-06 | 4.000e-06 | 2.060e-07 | 5.19e-08 | yes (rounding) | 0.962 | 3.75e-07 | 8 | no | 0.0031 |
+| SA 0.01-20 Conservative Drift | CMz | 6.708957e-04 | 2.205e-05 | 8.929e-05 | 3.043e-04 | -1.640e-05 | 3.82e-06 | yes | 0.921 | 1.88e-05 | 16 | no | -2.4444 |
+| SA 0.01-20 Conservative Drift Seed2 | CL | 6.762569e-01 | -2.426e-05 | 2.227e-04 | 6.316e-04 | -1.856e-05 | 9.69e-06 | no | 0.943 | 5.66e-05 | 12 | no | -0.0027 |
+| SA 0.01-20 Conservative Drift Seed2 | CD | 1.022935e-02 | 5.670e-05 | 2.485e-05 | 1.207e-04 | 3.965e-06 | 1.07e-06 | yes | 0.924 | 5.36e-06 | 16 | no | 0.0388 |
+| SA 0.01-20 Conservative Drift Seed2 | CDp | 3.559000e-03 | 5.529e-05 | 2.479e-05 | 1.200e-04 | 4.378e-06 | 1.06e-06 | yes | 0.922 | 5.28e-06 | 16 | no | 0.1230 |
+| SA 0.01-20 Conservative Drift Seed2 | CDv | 6.671000e-03 | 7.889e-07 | 2.783e-06 | 1.400e-05 | -4.227e-07 | 1.20e-07 | yes | 0.987 | 1.49e-06 | 3 | no | -0.0063 |
+| SA 0.01-20 Conservative Drift Seed2 | CMz | 6.708957e-04 | 1.059e-05 | 9.650e-05 | 2.639e-04 | -2.650e-06 | 4.22e-06 | no | 0.927 | 2.17e-05 | 15 | no | -0.3950 |
+| SA 0.01-20 NN Drift | CL | 6.762569e-01 | 5.941e-05 | 2.117e-04 | 7.782e-04 | -6.584e-05 | 8.65e-06 | yes | 0.943 | 5.05e-05 | 12 | no | -0.0097 |
+| SA 0.01-20 NN Drift | CD | 1.022935e-02 | 5.829e-05 | 2.603e-05 | 1.252e-04 | -6.180e-07 | 1.14e-06 | no | 0.935 | 6.23e-06 | 13 | no | -0.0060 |
+| SA 0.01-20 NN Drift | CDp | 3.559000e-03 | 5.599e-05 | 2.607e-05 | 1.230e-04 | -7.075e-07 | 1.14e-06 | no | 0.935 | 6.24e-06 | 13 | no | -0.0199 |
+| SA 0.01-20 NN Drift | CDv | 6.671000e-03 | 1.653e-06 | 1.437e-06 | 6.000e-06 | 3.339e-08 | 6.28e-08 | no | 0.970 | 5.05e-07 | 6 | no | 0.0005 |
+| SA 0.01-20 NN Drift | CMz | 6.708957e-04 | 2.476e-05 | 9.136e-05 | 3.258e-04 | -1.820e-05 | 3.89e-06 | yes | 0.922 | 1.93e-05 | 16 | no | -2.7125 |
 | SA 0.01-20 NN Drift Seed2 | CL | 6.762569e-01 | -2.451e-05 | 2.117e-04 | 6.536e-04 | -1.511e-05 | 9.23e-06 | no | 0.941 | 5.29e-05 | 12 | no | -0.0022 |
 | SA 0.01-20 NN Drift Seed2 | CD | 1.022935e-02 | 5.621e-05 | 2.331e-05 | 1.167e-04 | 3.790e-06 | 1.00e-06 | yes | 0.918 | 4.84e-06 | 17 | no | 0.0371 |
 | SA 0.01-20 NN Drift Seed2 | CDp | 3.559000e-03 | 5.461e-05 | 2.321e-05 | 1.160e-04 | 4.190e-06 | 9.93e-07 | yes | 0.916 | 4.74e-06 | 17 | no | 0.1177 |
 | SA 0.01-20 NN Drift Seed2 | CDv | 6.671000e-03 | 9.271e-07 | 2.869e-06 | 1.400e-05 | -4.292e-07 | 1.24e-07 | yes | 0.988 | 1.59e-06 | 2 | no | -0.0064 |
-| SA 0.01-20 NN Drift Seed2 | CMz | 6.708957e-04 | 1.183e-05 | 9.401e-05 | 2.734e-04 | 4.530e-08 | 4.11e-06 | no | 0.920 | 2.02e-05 | 17 | no | 0.0068 |
-| SST 0.01-20 ConsGalerkinProj Drift | CL | 6.756033e-01 | -9.986e-05 | 2.423e-04 | 8.247e-04 | -7.922e-05 | 9.82e-06 | yes | 0.935 | 5.37e-05 | 13 | no | -0.0117 |
-| SST 0.01-20 ConsGalerkinProj Drift | CD | 9.858431e-03 | 6.000e-05 | 2.992e-05 | 1.369e-04 | 1.864e-06 | 1.31e-06 | no | 0.929 | 6.80e-06 | 15 | no | 0.0189 |
-| SST 0.01-20 ConsGalerkinProj Drift | CDp | 3.469000e-03 | 5.997e-05 | 2.987e-05 | 1.360e-04 | 1.809e-06 | 1.30e-06 | no | 0.929 | 6.79e-06 | 15 | no | 0.0521 |
+| SA 0.01-20 NN Drift Seed2 | CMz | 6.708957e-04 | 1.183e-05 | 9.401e-05 | 2.734e-04 | 4.531e-08 | 4.11e-06 | no | 0.920 | 2.02e-05 | 17 | no | 0.0068 |
+| SST 0.01-20 ConsGalerkinProj Drift | CL | 6.756033e-01 | -9.969e-05 | 2.424e-04 | 8.264e-04 | -7.896e-05 | 9.83e-06 | yes | 0.935 | 5.38e-05 | 13 | no | -0.0117 |
+| SST 0.01-20 ConsGalerkinProj Drift | CD | 9.858431e-03 | 6.001e-05 | 2.993e-05 | 1.370e-04 | 1.870e-06 | 1.31e-06 | no | 0.929 | 6.81e-06 | 15 | no | 0.0190 |
+| SST 0.01-20 ConsGalerkinProj Drift | CDp | 3.469000e-03 | 5.997e-05 | 2.992e-05 | 1.370e-04 | 1.811e-06 | 1.31e-06 | no | 0.929 | 6.81e-06 | 15 | no | 0.0522 |
 | SST 0.01-20 ConsGalerkinProj Drift | CDv | 6.389000e-03 | 4.221e-07 | 1.231e-06 | 3.000e-06 | 1.247e-07 | 5.35e-08 | yes (rounding) | 0.961 | 3.81e-07 | 8 | no | 0.0020 |
-| SST 0.01-20 ConsGalerkinProj Drift | CMz | 3.819379e-04 | -4.037e-06 | 1.050e-04 | 3.285e-04 | -1.779e-05 | 4.50e-06 | yes | 0.918 | 2.18e-05 | 17 | no | -4.6587 |
+| SST 0.01-20 ConsGalerkinProj Drift | CMz | 3.819379e-04 | -4.004e-06 | 1.050e-04 | 3.288e-04 | -1.775e-05 | 4.51e-06 | yes | 0.918 | 2.19e-05 | 17 | no | -4.6471 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | CL | 6.756033e-01 | -2.035e-04 | 2.748e-04 | 1.010e-03 | -7.879e-05 | 1.13e-05 | yes | 0.939 | 6.39e-05 | 13 | no | -0.0117 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | CD | 9.858431e-03 | 5.845e-05 | 3.072e-05 | 1.288e-04 | 3.075e-06 | 1.33e-06 | yes | 0.927 | 6.88e-06 | 15 | no | 0.0312 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | CDp | 3.469000e-03 | 5.858e-05 | 3.086e-05 | 1.290e-04 | 2.916e-06 | 1.34e-06 | yes | 0.927 | 6.92e-06 | 15 | no | 0.0841 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | CDv | 6.389000e-03 | 3.040e-07 | 2.697e-06 | 1.400e-05 | 1.862e-07 | 1.18e-07 | no | 0.979 | 1.15e-06 | 4 | no | 0.0029 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | CMz | 3.819379e-04 | -2.311e-05 | 1.153e-04 | 3.458e-04 | -1.512e-05 | 4.99e-06 | yes | 0.921 | 2.47e-05 | 16 | no | -3.9598 |
+| SST 0.01-20 Conservative Drift | CL | 6.756033e-01 | -9.702e-05 | 2.411e-04 | 8.159e-04 | -7.525e-05 | 9.84e-06 | yes | 0.937 | 5.47e-05 | 13 | no | -0.0111 |
+| SST 0.01-20 Conservative Drift | CD | 9.858431e-03 | 6.083e-05 | 2.999e-05 | 1.411e-04 | 2.248e-06 | 1.31e-06 | no | 0.931 | 6.90e-06 | 14 | no | 0.0228 |
+| SST 0.01-20 Conservative Drift | CDp | 3.469000e-03 | 6.077e-05 | 2.995e-05 | 1.410e-04 | 2.160e-06 | 1.31e-06 | no | 0.931 | 6.90e-06 | 14 | no | 0.0623 |
+| SST 0.01-20 Conservative Drift | CDv | 6.389000e-03 | 4.422e-07 | 1.288e-06 | 3.000e-06 | 1.149e-07 | 5.60e-08 | yes (rounding) | 0.960 | 3.93e-07 | 8 | no | 0.0018 |
+| SST 0.01-20 Conservative Drift | CMz | 3.819379e-04 | -2.256e-06 | 1.057e-04 | 3.232e-04 | -1.537e-05 | 4.56e-06 | yes | 0.921 | 2.25e-05 | 16 | no | -4.0231 |
+| SST 0.01-20 Conservative Drift Seed2 | CL | 6.756033e-01 | -2.077e-04 | 2.739e-04 | 9.440e-04 | -7.773e-05 | 1.13e-05 | yes | 0.939 | 6.39e-05 | 13 | no | -0.0115 |
+| SST 0.01-20 Conservative Drift Seed2 | CD | 9.858431e-03 | 5.790e-05 | 3.091e-05 | 1.314e-04 | 2.720e-06 | 1.34e-06 | yes | 0.929 | 7.01e-06 | 15 | no | 0.0276 |
+| SST 0.01-20 Conservative Drift Seed2 | CDp | 3.469000e-03 | 5.819e-05 | 3.115e-05 | 1.310e-04 | 2.559e-06 | 1.36e-06 | no | 0.930 | 7.10e-06 | 15 | no | 0.0738 |
+| SST 0.01-20 Conservative Drift Seed2 | CDv | 6.389000e-03 | 1.558e-07 | 2.565e-06 | 1.400e-05 | 1.601e-07 | 1.12e-07 | no | 0.978 | 1.06e-06 | 4 | no | 0.0025 |
+| SST 0.01-20 Conservative Drift Seed2 | CMz | 3.819379e-04 | -2.471e-05 | 1.147e-04 | 3.263e-04 | -1.563e-05 | 4.95e-06 | yes | 0.920 | 2.43e-05 | 17 | no | -4.0918 |
 | SST 0.01-20 NN Drift | CL | 6.756033e-01 | -9.703e-05 | 2.456e-04 | 8.222e-04 | -7.924e-05 | 9.98e-06 | yes | 0.935 | 5.45e-05 | 13 | no | -0.0117 |
 | SST 0.01-20 NN Drift | CD | 9.858431e-03 | 6.069e-05 | 3.041e-05 | 1.375e-04 | 1.730e-06 | 1.33e-06 | no | 0.928 | 6.85e-06 | 15 | no | 0.0176 |
 | SST 0.01-20 NN Drift | CDp | 3.469000e-03 | 6.054e-05 | 3.042e-05 | 1.370e-04 | 1.667e-06 | 1.33e-06 | no | 0.928 | 6.85e-06 | 15 | no | 0.0480 |
 | SST 0.01-20 NN Drift | CDv | 6.389000e-03 | 5.628e-07 | 1.311e-06 | 4.000e-06 | 5.680e-08 | 5.73e-08 | no (rounding) | 0.962 | 4.11e-07 | 8 | no | 0.0009 |
-| SST 0.01-20 NN Drift | CMz | 3.819379e-04 | -1.994e-06 | 1.067e-04 | 3.230e-04 | -1.711e-05 | 4.59e-06 | yes | 0.918 | 2.22e-05 | 17 | no | -4.4789 |
-| SST 0.01-20 NN Drift Seed2 | CL | 6.756033e-01 | -1.963e-04 | 2.530e-04 | 9.459e-04 | -5.603e-05 | 1.07e-05 | yes | 0.936 | 5.89e-05 | 13 | no | -0.0083 |
-| SST 0.01-20 NN Drift Seed2 | CD | 9.858431e-03 | 5.937e-05 | 2.990e-05 | 1.311e-04 | 4.743e-06 | 1.29e-06 | yes | 0.930 | 6.77e-06 | 14 | no | 0.0481 |
-| SST 0.01-20 NN Drift Seed2 | CDp | 3.469000e-03 | 6.007e-05 | 2.976e-05 | 1.300e-04 | 5.068e-06 | 1.28e-06 | yes | 0.929 | 6.64e-06 | 15 | no | 0.1461 |
+| SST 0.01-20 NN Drift | CMz | 3.819379e-04 | -1.993e-06 | 1.067e-04 | 3.230e-04 | -1.711e-05 | 4.59e-06 | yes | 0.918 | 2.22e-05 | 17 | no | -4.4789 |
+| SST 0.01-20 NN Drift Seed2 | CL | 6.756033e-01 | -1.964e-04 | 2.532e-04 | 9.459e-04 | -5.616e-05 | 1.07e-05 | yes | 0.936 | 5.89e-05 | 13 | no | -0.0083 |
+| SST 0.01-20 NN Drift Seed2 | CD | 9.858431e-03 | 5.936e-05 | 2.990e-05 | 1.311e-04 | 4.731e-06 | 1.29e-06 | yes | 0.930 | 6.77e-06 | 14 | no | 0.0480 |
+| SST 0.01-20 NN Drift Seed2 | CDp | 3.469000e-03 | 6.008e-05 | 2.977e-05 | 1.300e-04 | 5.074e-06 | 1.28e-06 | yes | 0.929 | 6.65e-06 | 15 | no | 0.1463 |
 | SST 0.01-20 NN Drift Seed2 | CDv | 6.389000e-03 | -3.116e-07 | 2.026e-06 | 8.000e-06 | -2.996e-07 | 8.73e-08 | yes | 0.979 | 8.45e-07 | 4 | no | -0.0047 |
-| SST 0.01-20 NN Drift Seed2 | CMz | 3.819379e-04 | -1.881e-05 | 1.086e-04 | 3.446e-04 | -7.450e-06 | 4.74e-06 | no | 0.919 | 2.30e-05 | 17 | no | -1.9505 |
+| SST 0.01-20 NN Drift Seed2 | CMz | 3.819379e-04 | -1.884e-05 | 1.087e-04 | 3.447e-04 | -7.493e-06 | 4.74e-06 | no | 0.919 | 2.31e-05 | 17 | no | -1.9619 |
 
 Drag split at full precision (surface integration of Cp and Cf, `rans_surface_forces.csv`), same OLS trend per 100 steps:
 
 | case | steps | dCL mean | dCL max | dCL trend | dCDp mean | dCDp max | dCDp trend | dCDv mean | dCDv max | dCDv trend |
 |---|---|---|---|---|---|---|---|---|---|---|
-| SA 0.01-20 ConsGalerkinProj Drift | 478 | 7.515e-05 | 8.266e-04 | -6.758e-05 ± 8.0e-06 * | 5.794e-05 | 1.253e-04 | -1.170e-06 ± 1.0e-06 | 1.930e-06 | 6.446e-06 | 6.570e-08 ± 5.6e-08 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | 478 | -3.033e-05 | 6.302e-04 | -2.054e-05 ± 8.8e-06 * | 5.552e-05 | 1.173e-04 | 4.504e-06 ± 9.6e-07 * | 1.028e-06 | 1.287e-05 | -3.048e-07 ± 9.9e-08 * |
-| SA 0.01-20 NN Drift | 478 | 6.201e-05 | 7.783e-04 | -6.574e-05 ± 8.0e-06 * | 5.680e-05 | 1.223e-04 | -4.904e-07 ± 1.0e-06 | 1.840e-06 | 6.069e-06 | 3.833e-08 ± 5.5e-08 |
-| SA 0.01-20 NN Drift Seed2 | 478 | -2.077e-05 | 6.536e-04 | -1.538e-05 ± 8.7e-06 | 5.552e-05 | 1.161e-04 | 4.363e-06 ± 9.3e-07 * | 1.141e-06 | 1.453e-05 | -4.023e-07 ± 1.1e-07 * |
-| SST 0.01-20 ConsGalerkinProj Drift | 478 | -9.673e-05 | 8.246e-04 | -7.858e-05 ± 9.0e-06 * | 6.044e-05 | 1.361e-04 | 1.926e-06 ± 1.2e-06 | 2.835e-07 | 2.968e-06 | 9.766e-08 ± 4.7e-08 * |
-| SST 0.01-20 ConsGalerkinProj Drift Seed2 | 478 | -2.002e-04 | 1.010e-03 | -8.123e-05 ± 1.1e-05 * | 5.912e-05 | 1.285e-04 | 2.513e-06 ± 1.2e-06 * | 8.818e-08 | 1.399e-05 | 1.727e-07 ± 1.1e-07 |
-| SST 0.01-20 NN Drift | 478 | -9.476e-05 | 8.222e-04 | -7.798e-05 ± 9.2e-06 * | 6.076e-05 | 1.367e-04 | 1.928e-06 ± 1.2e-06 | 3.982e-07 | 3.330e-06 | 6.495e-08 ± 4.9e-08 |
-| SST 0.01-20 NN Drift Seed2 | 478 | -1.925e-04 | 9.458e-04 | -5.850e-05 ± 9.9e-06 * | 6.069e-05 | 1.296e-04 | 4.688e-06 ± 1.2e-06 * | -4.902e-07 | 7.709e-06 | -2.929e-07 ± 7.9e-08 * |
+| SA 0.01-20 ConsGalerkinProj Drift | 478 | 7.472e-05 | 8.266e-04 | -6.791e-05 ± 7.9e-06 * | 5.786e-05 | 1.238e-04 | -1.225e-06 ± 1.0e-06 | 1.922e-06 | 6.448e-06 | 5.569e-08 ± 5.6e-08 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | 478 | -3.039e-05 | 6.302e-04 | -2.064e-05 ± 8.8e-06 * | 5.563e-05 | 1.173e-04 | 4.671e-06 ± 9.6e-07 * | 1.042e-06 | 1.287e-05 | -2.880e-07 ± 9.9e-08 * |
+| SA 0.01-20 Conservative Drift | 478 | 4.785e-05 | 6.898e-04 | -6.028e-05 ± 7.9e-06 * | 5.653e-05 | 1.262e-04 | 6.972e-07 ± 1.1e-06 | 1.607e-06 | 4.605e-06 | 2.241e-07 ± 4.7e-08 * |
+| SA 0.01-20 Conservative Drift Seed2 | 478 | -1.853e-05 | 6.315e-04 | -1.878e-05 ± 9.1e-06 * | 5.650e-05 | 1.207e-04 | 4.491e-06 ± 1.0e-06 * | 9.685e-07 | 1.396e-05 | -4.049e-07 ± 1.1e-07 * |
+| SA 0.01-20 NN Drift | 478 | 6.205e-05 | 7.783e-04 | -6.579e-05 ± 8.0e-06 * | 5.689e-05 | 1.233e-04 | -4.269e-07 ± 1.0e-06 | 1.848e-06 | 6.069e-06 | 5.046e-08 ± 5.6e-08 |
+| SA 0.01-20 NN Drift Seed2 | 478 | -2.078e-05 | 6.536e-04 | -1.538e-05 ± 8.7e-06 | 5.552e-05 | 1.161e-04 | 4.363e-06 ± 9.3e-07 * | 1.141e-06 | 1.453e-05 | -4.023e-07 ± 1.1e-07 * |
+| SST 0.01-20 ConsGalerkinProj Drift | 478 | -9.659e-05 | 8.264e-04 | -7.836e-05 ± 9.0e-06 * | 6.045e-05 | 1.363e-04 | 1.930e-06 ± 1.2e-06 | 2.825e-07 | 2.968e-06 | 9.689e-08 ± 4.7e-08 * |
+| SST 0.01-20 ConsGalerkinProj Drift Seed2 | 478 | -2.002e-04 | 1.010e-03 | -8.123e-05 ± 1.1e-05 * | 5.913e-05 | 1.285e-04 | 2.513e-06 ± 1.2e-06 * | 8.817e-08 | 1.399e-05 | 1.727e-07 ± 1.1e-07 |
+| SST 0.01-20 Conservative Drift | 478 | -9.432e-05 | 8.159e-04 | -7.430e-05 ± 9.1e-06 * | 6.119e-05 | 1.404e-04 | 2.289e-06 ± 1.2e-06 | 3.097e-07 | 3.263e-06 | 1.101e-07 ± 4.9e-08 * |
+| SST 0.01-20 Conservative Drift Seed2 | 478 | -2.044e-04 | 9.440e-04 | -8.061e-05 ± 1.1e-05 * | 5.856e-05 | 1.310e-04 | 2.081e-06 ± 1.3e-06 | -2.844e-08 | 1.335e-05 | 1.779e-07 ± 1.0e-07 |
+| SST 0.01-20 NN Drift | 478 | -9.475e-05 | 8.222e-04 | -7.798e-05 ± 9.2e-06 * | 6.076e-05 | 1.367e-04 | 1.927e-06 ± 1.2e-06 | 3.983e-07 | 3.330e-06 | 6.494e-08 ± 4.9e-08 |
+| SST 0.01-20 NN Drift Seed2 | 478 | -1.926e-04 | 9.459e-04 | -5.865e-05 ± 9.9e-06 * | 6.068e-05 | 1.296e-04 | 4.671e-06 ± 1.2e-06 * | -4.890e-07 | 7.709e-06 | -2.913e-07 ± 7.9e-08 * |
 
 (* = resolved at 2 standard errors)
 
@@ -477,14 +507,20 @@ RMS and maximum over the 370 airfoil nodes of the difference to the reference at
 | case | when | step | RMS dCf_x | max dCf_x | x of max | RMS dCp | max dCp | x of max | max dy+ | min Cf_x ref | x | max y+ ref |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | SA 0.01-20 ConsGalerkinProj Drift | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7840e-03 | 0.0014 | 2.765 |
-| SA 0.01-20 ConsGalerkinProj Drift | step 200 | 200 | 7.379e-06 | 4.185e-05 | 0.1535 | 1.863e-03 | 8.473e-03 | 0.2284 | 1.820e-02 | -2.7840e-03 | 0.0014 | 2.765 |
-| SA 0.01-20 ConsGalerkinProj Drift | last | 399 | 5.621e-06 | 2.160e-05 | 0.9086 | 1.492e-03 | 8.617e-03 | 0.6276 | 8.245e-03 | -2.7840e-03 | 0.0014 | 2.765 |
+| SA 0.01-20 ConsGalerkinProj Drift | step 200 | 200 | 7.378e-06 | 4.184e-05 | 0.1535 | 1.863e-03 | 8.473e-03 | 0.2284 | 1.820e-02 | -2.7840e-03 | 0.0014 | 2.765 |
+| SA 0.01-20 ConsGalerkinProj Drift | last | 399 | 5.579e-06 | 2.158e-05 | 0.9086 | 1.483e-03 | 8.615e-03 | 0.6276 | 8.461e-03 | -2.7840e-03 | 0.0014 | 2.765 |
 | SA 0.01-20 ConsGalerkinProj Drift Seed2 | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7840e-03 | 0.0014 | 2.765 |
 | SA 0.01-20 ConsGalerkinProj Drift Seed2 | step 200 | 200 | 5.648e-06 | 2.633e-05 | 0.6640 | 1.684e-03 | 9.838e-03 | 0.7316 | 5.543e-03 | -2.7840e-03 | 0.0014 | 2.765 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | last | 399 | 7.648e-06 | 3.876e-05 | 0.1646 | 1.833e-03 | 9.374e-03 | 0.3233 | 1.493e-02 | -2.7840e-03 | 0.0014 | 2.765 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | last | 399 | 8.452e-06 | 5.652e-05 | 0.3062 | 1.925e-03 | 1.116e-02 | 0.3233 | 1.466e-02 | -2.7840e-03 | 0.0014 | 2.765 |
+| SA 0.01-20 Conservative Drift | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7840e-03 | 0.0014 | 2.765 |
+| SA 0.01-20 Conservative Drift | step 200 | 200 | 7.443e-06 | 4.201e-05 | 0.1535 | 1.859e-03 | 8.472e-03 | 0.2284 | 1.823e-02 | -2.7840e-03 | 0.0014 | 2.765 |
+| SA 0.01-20 Conservative Drift | last | 399 | 5.897e-06 | 2.178e-05 | 0.8919 | 1.582e-03 | 8.541e-03 | 0.5513 | 8.180e-03 | -2.7840e-03 | 0.0014 | 2.765 |
+| SA 0.01-20 Conservative Drift Seed2 | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7840e-03 | 0.0014 | 2.765 |
+| SA 0.01-20 Conservative Drift Seed2 | step 200 | 200 | 5.526e-06 | 2.507e-05 | 0.6640 | 1.829e-03 | 9.436e-03 | 0.2284 | 5.277e-03 | -2.7840e-03 | 0.0014 | 2.765 |
+| SA 0.01-20 Conservative Drift Seed2 | last | 399 | 7.883e-06 | 4.006e-05 | 0.3062 | 1.883e-03 | 1.074e-02 | 0.3233 | 1.474e-02 | -2.7840e-03 | 0.0014 | 2.765 |
 | SA 0.01-20 NN Drift | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7840e-03 | 0.0014 | 2.765 |
 | SA 0.01-20 NN Drift | step 200 | 200 | 7.462e-06 | 4.216e-05 | 0.1535 | 1.839e-03 | 8.130e-03 | 0.2284 | 1.742e-02 | -2.7840e-03 | 0.0014 | 2.765 |
-| SA 0.01-20 NN Drift | last | 399 | 5.748e-06 | 2.149e-05 | 0.8919 | 1.544e-03 | 8.971e-03 | 0.6276 | 8.379e-03 | -2.7840e-03 | 0.0014 | 2.765 |
+| SA 0.01-20 NN Drift | last | 399 | 5.815e-06 | 2.201e-05 | 0.8919 | 1.545e-03 | 8.953e-03 | 0.6276 | 8.219e-03 | -2.7840e-03 | 0.0014 | 2.765 |
 | SA 0.01-20 NN Drift Seed2 | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7840e-03 | 0.0014 | 2.765 |
 | SA 0.01-20 NN Drift Seed2 | step 200 | 200 | 6.058e-06 | 2.542e-05 | 0.6640 | 1.910e-03 | 9.743e-03 | 0.2284 | 5.869e-03 | -2.7840e-03 | 0.0014 | 2.765 |
 | SA 0.01-20 NN Drift Seed2 | last | 399 | 7.638e-06 | 4.078e-05 | 0.3062 | 1.873e-03 | 1.065e-02 | 0.3233 | 1.421e-02 | -2.7840e-03 | 0.0014 | 2.765 |
@@ -510,16 +546,22 @@ RMS and maximum over the 370 airfoil nodes of the difference to the reference at
 | SA 0.20-0.25 ConsGalerkinProj OneShot | last | 399 | 4.688e-07 | 1.579e-06 | 0.0048 | 1.315e-04 | 3.695e-04 | 0.0041 | 8.940e-04 | -2.7840e-03 | 0.0014 | 2.765 |
 | SST 0.01-20 ConsGalerkinProj Drift | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.01-20 ConsGalerkinProj Drift | step 200 | 200 | 8.339e-06 | 5.032e-05 | 0.1535 | 2.214e-03 | 1.246e-02 | 0.7769 | 1.570e-02 | -2.7153e-03 | 0.0014 | 2.698 |
-| SST 0.01-20 ConsGalerkinProj Drift | last | 399 | 7.046e-06 | 2.379e-05 | 0.4925 | 1.519e-03 | 7.863e-03 | 0.5121 | 1.140e-02 | -2.7153e-03 | 0.0014 | 2.698 |
+| SST 0.01-20 ConsGalerkinProj Drift | last | 399 | 7.058e-06 | 2.376e-05 | 0.4925 | 1.528e-03 | 7.861e-03 | 0.5121 | 1.137e-02 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | step 200 | 200 | 7.142e-06 | 2.371e-05 | 0.8919 | 1.753e-03 | 8.872e-03 | 0.2284 | 6.445e-03 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | last | 399 | 9.689e-06 | 5.716e-05 | 0.3062 | 2.074e-03 | 1.214e-02 | 0.3233 | 1.427e-02 | -2.7153e-03 | 0.0014 | 2.698 |
+| SST 0.01-20 Conservative Drift | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7153e-03 | 0.0014 | 2.698 |
+| SST 0.01-20 Conservative Drift | step 200 | 200 | 8.668e-06 | 5.121e-05 | 0.1535 | 2.518e-03 | 1.201e-02 | 0.7769 | 1.516e-02 | -2.7153e-03 | 0.0014 | 2.698 |
+| SST 0.01-20 Conservative Drift | last | 399 | 7.220e-06 | 2.930e-05 | 0.2896 | 1.690e-03 | 9.747e-03 | 0.2735 | 1.131e-02 | -2.7153e-03 | 0.0014 | 2.698 |
+| SST 0.01-20 Conservative Drift Seed2 | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7153e-03 | 0.0014 | 2.698 |
+| SST 0.01-20 Conservative Drift Seed2 | step 200 | 200 | 7.276e-06 | 2.844e-05 | 0.2145 | 1.821e-03 | 8.993e-03 | 0.2284 | 6.568e-03 | -2.7153e-03 | 0.0014 | 2.698 |
+| SST 0.01-20 Conservative Drift Seed2 | last | 399 | 9.670e-06 | 5.774e-05 | 0.3062 | 2.082e-03 | 1.229e-02 | 0.3233 | 1.429e-02 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.01-20 NN Drift | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.01-20 NN Drift | step 200 | 200 | 8.231e-06 | 4.768e-05 | 0.1535 | 2.346e-03 | 1.200e-02 | 0.7769 | 1.418e-02 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.01-20 NN Drift | last | 399 | 7.002e-06 | 2.346e-05 | 0.5121 | 1.510e-03 | 7.654e-03 | 0.5121 | 1.126e-02 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.01-20 NN Drift Seed2 | step 9 | 9 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.01-20 NN Drift Seed2 | step 200 | 200 | 7.375e-06 | 3.104e-05 | 0.7910 | 1.700e-03 | 8.992e-03 | 0.8173 | 7.366e-03 | -2.7153e-03 | 0.0014 | 2.698 |
-| SST 0.01-20 NN Drift Seed2 | last | 399 | 9.749e-06 | 5.736e-05 | 0.3062 | 2.166e-03 | 1.269e-02 | 0.3233 | 1.462e-02 | -2.7153e-03 | 0.0014 | 2.698 |
+| SST 0.01-20 NN Drift Seed2 | last | 399 | 9.743e-06 | 5.736e-05 | 0.3062 | 2.168e-03 | 1.269e-02 | 0.3233 | 1.463e-02 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.05-0.10 ConsGalerkinProj OneShot | event-1 | 199 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | 0.000e+00 | 1.0000 | 0.000e+00 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.05-0.10 ConsGalerkinProj OneShot | event+1 | 201 | 6.639e-08 | 2.529e-07 | 0.1646 | 1.356e-04 | 6.201e-04 | 0.3957 | 3.375e-04 | -2.7153e-03 | 0.0014 | 2.698 |
 | SST 0.05-0.10 ConsGalerkinProj OneShot | event+50 | 250 | 6.304e-07 | 2.127e-06 | 0.0099 | 1.521e-04 | 5.705e-04 | 0.4533 | 1.012e-03 | -2.7153e-03 | 0.0014 | 2.698 |
@@ -549,87 +591,107 @@ Distributions (Cf_x and Cp of case and reference at the key steps) are in `rans_
 
 | case | field | events | max |defect| | median |defect| | min change between events | max change between events | net change first→last event |
 |---|---|---|---|---|---|---|---|
-| SA 0.01-20 ConsGalerkinProj Drift | Density | 40 | 4.4e-13 | 2.5e-13 | -3.596e-11 | 3.783e-11 | 5.229e-11 |
-| SA 0.01-20 ConsGalerkinProj Drift | Energy | 40 | 5.8e-13 | 3.0e-13 | -4.942e-11 | 5.521e-11 | 9.900e-11 |
-| SA 0.01-20 ConsGalerkinProj Drift | Nu_Tilde | 40 | 6.6e-09 | 2.3e-09 | -6.121e-07 | 1.305e-07 | -7.299e-06 |
+| SA 0.01-20 ConsGalerkinProj Drift | Density | 40 | 4.4e-13 | 2.5e-13 | -3.597e-11 | 3.785e-11 | 5.229e-11 |
+| SA 0.01-20 ConsGalerkinProj Drift | Energy | 40 | 5.8e-13 | 3.1e-13 | -4.942e-11 | 5.523e-11 | 9.917e-11 |
+| SA 0.01-20 ConsGalerkinProj Drift | Nu_Tilde | 40 | 6.6e-09 | 2.3e-09 | -6.123e-07 | 1.293e-07 | -7.365e-06 |
 | SA 0.01-20 ConsGalerkinProj Drift Seed2 | Density | 40 | 4.5e-13 | 2.3e-13 | -2.337e-11 | 3.339e-11 | 3.380e-11 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | Energy | 40 | 5.4e-13 | 3.0e-13 | -3.058e-11 | 4.771e-11 | 7.763e-11 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | Nu_Tilde | 40 | 6.9e-09 | 1.9e-09 | -4.511e-07 | 7.276e-07 | -3.376e-06 |
-| SA 0.01-20 NN Drift | Density | 40 | 6.8e-11 | 2.0e-11 | -7.130e-11 | 8.913e-11 | 2.257e-10 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | Energy | 40 | 5.4e-13 | 2.9e-13 | -3.058e-11 | 4.771e-11 | 7.781e-11 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | Nu_Tilde | 40 | 6.9e-09 | 1.9e-09 | -4.509e-07 | 7.269e-07 | -3.302e-06 |
+| SA 0.01-20 Conservative Drift | Density | 40 | 7.1e-15 | 1.5e-15 | -3.568e-11 | 3.682e-11 | 4.719e-11 |
+| SA 0.01-20 Conservative Drift | Energy | 40 | 5.7e-15 | 1.8e-15 | -4.964e-11 | 5.378e-11 | 8.920e-11 |
+| SA 0.01-20 Conservative Drift | Nu_Tilde | 40 | 2.0e-12 | 1.9e-15 | -5.207e-07 | 2.131e-07 | -7.001e-06 |
+| SA 0.01-20 Conservative Drift Seed2 | Density | 40 | 5.6e-15 | 1.8e-15 | -2.344e-11 | 3.351e-11 | 4.049e-11 |
+| SA 0.01-20 Conservative Drift Seed2 | Energy | 40 | 1.2e-14 | 2.0e-15 | -3.063e-11 | 4.793e-11 | 8.618e-11 |
+| SA 0.01-20 Conservative Drift Seed2 | Nu_Tilde | 40 | 7.4e-15 | 2.0e-15 | -5.085e-07 | 6.833e-07 | -3.336e-06 |
+| SA 0.01-20 NN Drift | Density | 40 | 6.8e-11 | 2.0e-11 | -7.130e-11 | 8.914e-11 | 2.257e-10 |
 | SA 0.01-20 NN Drift | Energy | 40 | 5.7e-11 | 1.7e-11 | -5.416e-11 | 1.189e-10 | 5.573e-10 |
-| SA 0.01-20 NN Drift | Nu_Tilde | 40 | 1.7e-06 | 5.3e-07 | -1.695e-06 | 1.271e-06 | -1.786e-06 |
+| SA 0.01-20 NN Drift | Nu_Tilde | 40 | 1.7e-06 | 5.3e-07 | -1.687e-06 | 1.268e-06 | -1.763e-06 |
 | SA 0.01-20 NN Drift Seed2 | Density | 40 | 8.4e-11 | 2.0e-11 | -8.709e-11 | 8.208e-11 | -1.476e-10 |
 | SA 0.01-20 NN Drift Seed2 | Energy | 40 | 9.5e-11 | 2.2e-11 | -9.967e-11 | 8.306e-11 | -1.004e-10 |
 | SA 0.01-20 NN Drift Seed2 | Nu_Tilde | 40 | 1.5e-06 | 3.5e-07 | -1.649e-06 | 1.621e-06 | -4.631e-06 |
-| SA 0.05-0.10 ConsGalerkinProj OneShot | Density | 2 | 2.3e-13 | 1.2e-13 | 3.671e-13 | 3.671e-13 | 3.189e-13 |
-| SA 0.05-0.10 ConsGalerkinProj OneShot | Energy | 2 | 3.0e-13 | 1.6e-13 | 2.428e-13 | 2.428e-13 | 1.781e-13 |
-| SA 0.05-0.10 ConsGalerkinProj OneShot | Nu_Tilde | 2 | 7.5e-12 | 5.5e-12 | 3.735e-07 | 3.735e-07 | 3.735e-07 |
-| SA 0.10-0.15 ConsGalerkinProj OneShot SF2 | Density | 2 | 9.9e-14 | 6.2e-14 | 2.298e-13 | 2.298e-13 | 3.189e-13 |
-| SA 0.10-0.15 ConsGalerkinProj OneShot SF2 | Energy | 2 | 1.3e-13 | 7.2e-14 | -2.675e-13 | -2.675e-13 | -3.560e-13 |
-| SA 0.10-0.15 ConsGalerkinProj OneShot SF2 | Nu_Tilde | 2 | 1.3e-12 | 7.4e-13 | 4.801e-07 | 4.801e-07 | 4.801e-07 |
-| SA 0.10-0.15 ConsGalerkinProj OneShot | Density | 2 | 1.2e-14 | 1.1e-14 | 3.036e-13 | 3.036e-13 | 3.189e-13 |
-| SA 0.10-0.15 ConsGalerkinProj OneShot | Energy | 2 | 1.5e-14 | 7.8e-15 | -5.023e-13 | -5.023e-13 | -5.341e-13 |
-| SA 0.10-0.15 ConsGalerkinProj OneShot | Nu_Tilde | 2 | 2.5e-13 | 1.6e-13 | -3.638e-08 | -3.638e-08 | -3.638e-08 |
-| SA 0.20-0.25 ConsGalerkinProj OneShot Long | Density | 2 | 9.3e-16 | 7.5e-16 | -5.174e-12 | -5.174e-12 | -5.101e-12 |
-| SA 0.20-0.25 ConsGalerkinProj OneShot Long | Energy | 2 | 1.2e-15 | 7.8e-16 | -5.794e-12 | -5.794e-12 | -5.876e-12 |
-| SA 0.20-0.25 ConsGalerkinProj OneShot Long | Nu_Tilde | 2 | 5.9e-15 | 3.0e-15 | -2.599e-07 | -2.599e-07 | -2.599e-07 |
-| SA 0.20-0.25 ConsGalerkinProj OneShot | Density | 2 | 4.4e-15 | 2.4e-15 | -7.258e-13 | -7.258e-13 | -6.377e-13 |
-| SA 0.20-0.25 ConsGalerkinProj OneShot | Energy | 2 | 1.2e-15 | 6.5e-16 | 1.474e-12 | 1.474e-12 | 1.424e-12 |
-| SA 0.20-0.25 ConsGalerkinProj OneShot | Nu_Tilde | 2 | 4.6e-15 | 4.4e-15 | -8.473e-08 | -8.473e-08 | -8.473e-08 |
-| SST 0.01-20 ConsGalerkinProj Drift | Density | 40 | 4.5e-13 | 2.6e-13 | -3.609e-11 | 3.601e-11 | 6.122e-11 |
-| SST 0.01-20 ConsGalerkinProj Drift | Energy | 40 | 5.7e-13 | 3.1e-13 | -4.976e-11 | 5.214e-11 | 9.704e-11 |
-| SST 0.01-20 ConsGalerkinProj Drift | Turb_Kin_Energy | 40 | 4.2e-08 | 2.0e-08 | -3.764e-06 | 1.506e-06 | -2.603e-05 |
-| SST 0.01-20 ConsGalerkinProj Drift | Omega | 40 | 2.1e-09 | 5.1e-10 | -1.080e-07 | 1.833e-07 | 5.676e-07 |
-| SST 0.01-20 ConsGalerkinProj Drift Seed2 | Density | 40 | 4.5e-13 | 2.4e-13 | -2.477e-11 | 3.260e-11 | 5.452e-11 |
-| SST 0.01-20 ConsGalerkinProj Drift Seed2 | Energy | 40 | 5.6e-13 | 3.1e-13 | -3.295e-11 | 4.614e-11 | 9.330e-11 |
-| SST 0.01-20 ConsGalerkinProj Drift Seed2 | Turb_Kin_Energy | 40 | 4.8e-08 | 1.8e-08 | -7.639e-06 | 2.077e-05 | -1.496e-05 |
-| SST 0.01-20 ConsGalerkinProj Drift Seed2 | Omega | 40 | 1.6e-09 | 5.7e-10 | -5.905e-07 | 1.161e-06 | 8.980e-07 |
+| SA 0.05-0.10 ConsGalerkinProj OneShot | Density | 2 | 2.4e-13 | 1.2e-13 | 3.707e-13 | 3.707e-13 | 3.189e-13 |
+| SA 0.05-0.10 ConsGalerkinProj OneShot | Energy | 2 | 3.0e-13 | 1.5e-13 | 2.461e-13 | 2.461e-13 | 1.781e-13 |
+| SA 0.05-0.10 ConsGalerkinProj OneShot | Nu_Tilde | 2 | 7.2e-12 | 5.3e-12 | 3.736e-07 | 3.736e-07 | 3.736e-07 |
+| SA 0.10-0.15 ConsGalerkinProj OneShot SF2 | Density | 2 | 9.8e-14 | 6.2e-14 | 2.335e-13 | 2.335e-13 | 3.189e-13 |
+| SA 0.10-0.15 ConsGalerkinProj OneShot SF2 | Energy | 2 | 1.3e-13 | 7.2e-14 | -2.634e-13 | -2.634e-13 | -3.560e-13 |
+| SA 0.10-0.15 ConsGalerkinProj OneShot SF2 | Nu_Tilde | 2 | 1.2e-12 | 7.0e-13 | 4.799e-07 | 4.799e-07 | 4.799e-07 |
+| SA 0.10-0.15 ConsGalerkinProj OneShot | Density | 2 | 1.2e-14 | 1.1e-14 | 3.062e-13 | 3.062e-13 | 3.189e-13 |
+| SA 0.10-0.15 ConsGalerkinProj OneShot | Energy | 2 | 1.3e-14 | 7.1e-15 | -4.989e-13 | -4.989e-13 | -5.341e-13 |
+| SA 0.10-0.15 ConsGalerkinProj OneShot | Nu_Tilde | 2 | 2.4e-13 | 1.6e-13 | -3.644e-08 | -3.644e-08 | -3.644e-08 |
+| SA 0.20-0.25 ConsGalerkinProj OneShot Long | Density | 2 | 1.0e-15 | 5.8e-16 | -5.171e-12 | -5.171e-12 | -5.101e-12 |
+| SA 0.20-0.25 ConsGalerkinProj OneShot Long | Energy | 2 | 7.8e-16 | 6.5e-16 | -5.790e-12 | -5.790e-12 | -5.876e-12 |
+| SA 0.20-0.25 ConsGalerkinProj OneShot Long | Nu_Tilde | 2 | 8.6e-15 | 4.4e-15 | -2.599e-07 | -2.599e-07 | -2.599e-07 |
+| SA 0.20-0.25 ConsGalerkinProj OneShot | Density | 2 | 4.5e-15 | 2.3e-15 | -7.226e-13 | -7.226e-13 | -6.377e-13 |
+| SA 0.20-0.25 ConsGalerkinProj OneShot | Energy | 2 | 1.6e-15 | 9.7e-16 | 1.479e-12 | 1.479e-12 | 1.424e-12 |
+| SA 0.20-0.25 ConsGalerkinProj OneShot | Nu_Tilde | 2 | 3.4e-15 | 2.9e-15 | -8.479e-08 | -8.479e-08 | -8.479e-08 |
+| SST 0.01-20 ConsGalerkinProj Drift | Density | 40 | 4.5e-13 | 2.6e-13 | -3.609e-11 | 3.599e-11 | 6.090e-11 |
+| SST 0.01-20 ConsGalerkinProj Drift | Energy | 40 | 5.7e-13 | 3.1e-13 | -4.976e-11 | 5.213e-11 | 9.668e-11 |
+| SST 0.01-20 ConsGalerkinProj Drift | Turb_Kin_Energy | 40 | 3.9e-08 | 1.7e-08 | -3.763e-06 | 1.504e-06 | -2.607e-05 |
+| SST 0.01-20 ConsGalerkinProj Drift | Omega | 40 | 2.1e-09 | 5.1e-10 | -1.082e-07 | 1.833e-07 | 5.693e-07 |
+| SST 0.01-20 ConsGalerkinProj Drift Seed2 | Density | 40 | 4.5e-13 | 2.4e-13 | -2.477e-11 | 3.259e-11 | 5.452e-11 |
+| SST 0.01-20 ConsGalerkinProj Drift Seed2 | Energy | 40 | 5.6e-13 | 3.1e-13 | -3.295e-11 | 4.613e-11 | 9.312e-11 |
+| SST 0.01-20 ConsGalerkinProj Drift Seed2 | Turb_Kin_Energy | 40 | 4.2e-08 | 1.5e-08 | -7.636e-06 | 2.077e-05 | -1.507e-05 |
+| SST 0.01-20 ConsGalerkinProj Drift Seed2 | Omega | 40 | 1.6e-09 | 5.4e-10 | -5.904e-07 | 1.161e-06 | 8.978e-07 |
+| SST 0.01-20 Conservative Drift | Density | 40 | 1.4e-14 | 1.6e-15 | -3.728e-11 | 3.534e-11 | 6.696e-11 |
+| SST 0.01-20 Conservative Drift | Energy | 40 | 9.2e-15 | 2.3e-15 | -5.150e-11 | 5.115e-11 | 1.038e-10 |
+| SST 0.01-20 Conservative Drift | Turb_Kin_Energy | 40 | 7.0e-15 | 1.5e-15 | -4.173e-06 | 1.770e-06 | -2.636e-05 |
+| SST 0.01-20 Conservative Drift | Omega | 40 | 8.2e-15 | 2.6e-15 | -1.202e-07 | 2.070e-07 | 5.556e-07 |
+| SST 0.01-20 Conservative Drift Seed2 | Density | 40 | 5.5e-15 | 1.7e-15 | -2.543e-11 | 3.274e-11 | 5.452e-11 |
+| SST 0.01-20 Conservative Drift Seed2 | Energy | 40 | 1.2e-14 | 1.9e-15 | -3.403e-11 | 4.639e-11 | 9.152e-11 |
+| SST 0.01-20 Conservative Drift Seed2 | Turb_Kin_Energy | 40 | 8.1e-15 | 1.9e-15 | -8.230e-06 | 2.048e-05 | -1.556e-05 |
+| SST 0.01-20 Conservative Drift Seed2 | Omega | 40 | 9.3e-15 | 2.5e-15 | -5.858e-07 | 1.119e-06 | 8.677e-07 |
 | SST 0.01-20 NN Drift | Density | 40 | 6.6e-11 | 2.0e-11 | -6.935e-11 | 9.011e-11 | 2.238e-10 |
 | SST 0.01-20 NN Drift | Energy | 40 | 5.7e-11 | 1.7e-11 | -5.314e-11 | 1.154e-10 | 5.329e-10 |
 | SST 0.01-20 NN Drift | Turb_Kin_Energy | 40 | 2.2e-06 | 5.5e-07 | -4.008e-06 | 2.643e-06 | -2.401e-05 |
 | SST 0.01-20 NN Drift | Omega | 40 | 7.9e-08 | 2.1e-08 | -1.405e-07 | 1.925e-07 | 6.350e-07 |
-| SST 0.01-20 NN Drift Seed2 | Density | 40 | 8.3e-11 | 1.9e-11 | -8.576e-11 | 7.823e-11 | -1.253e-10 |
-| SST 0.01-20 NN Drift Seed2 | Energy | 40 | 9.4e-11 | 2.2e-11 | -9.870e-11 | 8.767e-11 | -8.654e-11 |
-| SST 0.01-20 NN Drift Seed2 | Turb_Kin_Energy | 40 | 1.8e-06 | 4.1e-07 | -6.824e-06 | 1.915e-05 | -2.447e-05 |
-| SST 0.01-20 NN Drift Seed2 | Omega | 40 | 6.0e-08 | 2.0e-08 | -5.808e-07 | 1.049e-06 | 6.371e-07 |
-| SST 0.05-0.10 ConsGalerkinProj OneShot | Density | 2 | 2.3e-13 | 1.2e-13 | 2.166e-12 | 2.166e-12 | 2.232e-12 |
-| SST 0.05-0.10 ConsGalerkinProj OneShot | Energy | 2 | 2.9e-13 | 1.5e-13 | 9.687e-13 | 9.687e-13 | 8.902e-13 |
+| SST 0.01-20 NN Drift Seed2 | Density | 40 | 8.3e-11 | 1.9e-11 | -8.576e-11 | 7.822e-11 | -1.253e-10 |
+| SST 0.01-20 NN Drift Seed2 | Energy | 40 | 9.4e-11 | 2.2e-11 | -9.870e-11 | 8.768e-11 | -8.654e-11 |
+| SST 0.01-20 NN Drift Seed2 | Turb_Kin_Energy | 40 | 1.8e-06 | 4.1e-07 | -6.824e-06 | 1.915e-05 | -2.448e-05 |
+| SST 0.01-20 NN Drift Seed2 | Omega | 40 | 6.0e-08 | 2.0e-08 | -5.808e-07 | 1.049e-06 | 6.368e-07 |
+| SST 0.05-0.10 ConsGalerkinProj OneShot | Density | 2 | 2.3e-13 | 1.2e-13 | 2.159e-12 | 2.159e-12 | 2.232e-12 |
+| SST 0.05-0.10 ConsGalerkinProj OneShot | Energy | 2 | 2.9e-13 | 1.5e-13 | 9.593e-13 | 9.593e-13 | 8.902e-13 |
 | SST 0.05-0.10 ConsGalerkinProj OneShot | Turb_Kin_Energy | 2 | 6.6e-12 | 5.2e-12 | -1.034e-06 | -1.034e-06 | -1.034e-06 |
 | SST 0.05-0.10 ConsGalerkinProj OneShot | Omega | 2 | 1.9e-11 | 1.2e-11 | -3.163e-08 | -3.163e-08 | -3.163e-08 |
-| SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | Density | 2 | 9.8e-14 | 6.0e-14 | 1.574e-12 | 1.574e-12 | 1.594e-12 |
-| SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | Energy | 2 | 1.3e-13 | 7.0e-14 | -8.473e-14 | -8.473e-14 | -1.781e-13 |
-| SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | Turb_Kin_Energy | 2 | 2.2e-11 | 1.1e-11 | 2.648e-06 | 2.648e-06 | 2.648e-06 |
+| SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | Density | 2 | 9.8e-14 | 6.1e-14 | 1.568e-12 | 1.568e-12 | 1.594e-12 |
+| SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | Energy | 2 | 1.3e-13 | 6.9e-14 | -9.483e-14 | -9.483e-14 | -1.781e-13 |
+| SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | Turb_Kin_Energy | 2 | 2.0e-13 | 1.4e-13 | 2.648e-06 | 2.648e-06 | 2.648e-06 |
 | SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | Omega | 2 | 1.6e-12 | 1.5e-12 | 7.905e-08 | 7.905e-08 | 7.906e-08 |
-| SST 0.10-0.15 ConsGalerkinProj OneShot | Density | 2 | 1.2e-14 | 1.1e-14 | 1.456e-12 | 1.456e-12 | 1.275e-12 |
-| SST 0.10-0.15 ConsGalerkinProj OneShot | Energy | 2 | 1.5e-14 | 8.0e-15 | -3.563e-13 | -3.563e-13 | -3.562e-13 |
+| SST 0.10-0.15 ConsGalerkinProj OneShot | Density | 2 | 1.2e-14 | 1.2e-14 | 1.450e-12 | 1.450e-12 | 1.275e-12 |
+| SST 0.10-0.15 ConsGalerkinProj OneShot | Energy | 2 | 1.5e-14 | 8.2e-15 | -3.647e-13 | -3.647e-13 | -3.562e-13 |
 | SST 0.10-0.15 ConsGalerkinProj OneShot | Turb_Kin_Energy | 2 | 7.6e-14 | 6.4e-14 | 5.143e-07 | 5.143e-07 | 5.143e-07 |
 | SST 0.10-0.15 ConsGalerkinProj OneShot | Omega | 2 | 6.2e-13 | 3.6e-13 | 2.238e-08 | 2.238e-08 | 2.238e-08 |
-| SST 0.20-0.25 ConsGalerkinProj OneShot Long | Density | 2 | 2.1e-15 | 1.7e-15 | -1.636e-12 | -1.636e-12 | -1.594e-12 |
-| SST 0.20-0.25 ConsGalerkinProj OneShot Long | Energy | 2 | 2.6e-16 | 1.3e-16 | -4.904e-12 | -4.904e-12 | -4.986e-12 |
+| SST 0.20-0.25 ConsGalerkinProj OneShot Long | Density | 2 | 2.2e-15 | 2.2e-15 | -1.645e-12 | -1.645e-12 | -1.594e-12 |
+| SST 0.20-0.25 ConsGalerkinProj OneShot Long | Energy | 2 | 1.3e-15 | 7.8e-16 | -4.915e-12 | -4.915e-12 | -4.986e-12 |
 | SST 0.20-0.25 ConsGalerkinProj OneShot Long | Turb_Kin_Energy | 2 | 4.5e-14 | 4.5e-14 | -2.820e-06 | -2.820e-06 | -2.820e-06 |
 | SST 0.20-0.25 ConsGalerkinProj OneShot Long | Omega | 2 | 1.4e-13 | 1.4e-13 | -5.957e-08 | -5.957e-08 | -5.957e-08 |
-| SST 0.20-0.25 ConsGalerkinProj OneShot | Density | 2 | 2.8e-15 | 1.4e-15 | 5.946e-13 | 5.946e-13 | 6.377e-13 |
-| SST 0.20-0.25 ConsGalerkinProj OneShot | Energy | 2 | 1.4e-15 | 8.4e-16 | 1.618e-12 | 1.618e-12 | 1.602e-12 |
-| SST 0.20-0.25 ConsGalerkinProj OneShot | Turb_Kin_Energy | 2 | 4.4e-10 | 2.2e-10 | 7.013e-07 | 7.013e-07 | 7.013e-07 |
+| SST 0.20-0.25 ConsGalerkinProj OneShot | Density | 2 | 2.9e-15 | 1.6e-15 | 5.875e-13 | 5.875e-13 | 6.377e-13 |
+| SST 0.20-0.25 ConsGalerkinProj OneShot | Energy | 2 | 7.8e-16 | 5.8e-16 | 1.607e-12 | 1.607e-12 | 1.602e-12 |
+| SST 0.20-0.25 ConsGalerkinProj OneShot | Turb_Kin_Energy | 2 | 4.7e-14 | 4.5e-14 | 7.013e-07 | 7.013e-07 | 7.013e-07 |
 | SST 0.20-0.25 ConsGalerkinProj OneShot | Omega | 2 | 1.4e-13 | 1.4e-13 | 1.316e-08 | 1.316e-08 | 1.316e-08 |
 
 **Minimum of the transferred turbulence variables** over all transfers of each case (source mesh and target mesh, from the interpolation's `Minimums_<step>.csv`). These are the rho-weighted values the interpolation checks (rho*nu_tilde, rho*k, rho*omega), so the free-stream floor of k appears as 0.98e-10 rather than 1e-10; the clipping of III.6 acts on the primitive variables after the division by rho, before this check. "files with target < 0" counts the transfers whose interpolated field contained a negative value before that clipping (SST) or, for SA, which runs without clipping, in the returned state:
 
 | case | field | transfers | min source | min target | files with target < 0 |
 |---|---|---|---|---|---|
-| SA 0.01-20 ConsGalerkinProj Drift | Nu_Tilde | 80 | 0.000e+00 | -6.150e-17 | 70 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | Nu_Tilde | 80 | 0.000e+00 | -6.377e-17 | 62 |
-| SA 0.01-20 NN Drift | Nu_Tilde | 80 | 0.000e+00 | -2.954e-08 | 5 |
-| SA 0.01-20 NN Drift Seed2 | Nu_Tilde | 80 | 0.000e+00 | -2.698e-09 | 2 |
-| SA 0.05-0.10 ConsGalerkinProj OneShot | Nu_Tilde | 4 | 0.000e+00 | -4.980e-18 | 4 |
-| SA 0.10-0.15 ConsGalerkinProj OneShot SF2 | Nu_Tilde | 4 | 0.000e+00 | -5.372e-18 | 4 |
-| SA 0.10-0.15 ConsGalerkinProj OneShot | Nu_Tilde | 4 | 0.000e+00 | -4.915e-18 | 4 |
-| SA 0.20-0.25 ConsGalerkinProj OneShot Long | Nu_Tilde | 4 | 0.000e+00 | -4.922e-18 | 4 |
-| SA 0.20-0.25 ConsGalerkinProj OneShot | Nu_Tilde | 4 | 0.000e+00 | -4.792e-18 | 4 |
+| SA 0.01-20 ConsGalerkinProj Drift | Nu_Tilde | 80 | 0.000e+00 | 0.000e+00 | 0 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | Nu_Tilde | 80 | 0.000e+00 | 0.000e+00 | 0 |
+| SA 0.01-20 Conservative Drift | Nu_Tilde | 80 | 0.000e+00 | 0.000e+00 | 0 |
+| SA 0.01-20 Conservative Drift Seed2 | Nu_Tilde | 80 | 0.000e+00 | 0.000e+00 | 0 |
+| SA 0.01-20 NN Drift | Nu_Tilde | 80 | 0.000e+00 | 0.000e+00 | 0 |
+| SA 0.01-20 NN Drift Seed2 | Nu_Tilde | 80 | 0.000e+00 | 0.000e+00 | 0 |
+| SA 0.05-0.10 ConsGalerkinProj OneShot | Nu_Tilde | 4 | 0.000e+00 | 0.000e+00 | 0 |
+| SA 0.10-0.15 ConsGalerkinProj OneShot SF2 | Nu_Tilde | 4 | 0.000e+00 | 0.000e+00 | 0 |
+| SA 0.10-0.15 ConsGalerkinProj OneShot | Nu_Tilde | 4 | 0.000e+00 | 0.000e+00 | 0 |
+| SA 0.20-0.25 ConsGalerkinProj OneShot Long | Nu_Tilde | 4 | 0.000e+00 | 0.000e+00 | 0 |
+| SA 0.20-0.25 ConsGalerkinProj OneShot | Nu_Tilde | 4 | 0.000e+00 | 0.000e+00 | 0 |
 | SST 0.01-20 ConsGalerkinProj Drift | Turb_Kin_Energy | 80 | 9.814e-11 | 9.814e-11 | 0 |
 | SST 0.01-20 ConsGalerkinProj Drift | Omega | 80 | 7.660e-03 | 3.380e-03 | 0 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | Turb_Kin_Energy | 80 | 9.814e-11 | 9.814e-11 | 0 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | Omega | 80 | 7.660e-03 | 9.994e-05 | 0 |
+| SST 0.01-20 Conservative Drift | Turb_Kin_Energy | 80 | 9.814e-11 | 9.814e-11 | 0 |
+| SST 0.01-20 Conservative Drift | Omega | 80 | 7.660e-03 | 7.660e-03 | 0 |
+| SST 0.01-20 Conservative Drift Seed2 | Turb_Kin_Energy | 80 | 9.814e-11 | 9.814e-11 | 0 |
+| SST 0.01-20 Conservative Drift Seed2 | Omega | 80 | 7.660e-03 | 7.660e-03 | 0 |
 | SST 0.01-20 NN Drift | Turb_Kin_Energy | 80 | 9.814e-11 | 9.814e-11 | 0 |
 | SST 0.01-20 NN Drift | Omega | 80 | 7.660e-03 | 7.660e-03 | 0 |
 | SST 0.01-20 NN Drift Seed2 | Turb_Kin_Energy | 80 | 9.814e-11 | 9.814e-11 | 0 |
@@ -651,6 +713,8 @@ Distributions (Cf_x and Cp of case and reference at the key steps) are in `rans_
 |---|---|---|---|---|---|---|---|---|
 | SA 0.01-20 ConsGalerkinProj Drift | [] | - | 80 | - | - | - | - | - |
 | SA 0.01-20 ConsGalerkinProj Drift Seed2 | [] | - | 80 | - | - | - | - | - |
+| SA 0.01-20 Conservative Drift | [] | - | 80 | - | - | - | - | - |
+| SA 0.01-20 Conservative Drift Seed2 | [] | - | 80 | - | - | - | - | - |
 | SA 0.01-20 NN Drift | [] | - | 80 | - | - | - | - | - |
 | SA 0.01-20 NN Drift Seed2 | [] | - | 80 | - | - | - | - | - |
 | SA 0.05-0.10 ConsGalerkinProj OneShot | [] | - | 4 | - | - | - | - | - |
@@ -658,42 +722,41 @@ Distributions (Cf_x and Cp of case and reference at the key steps) are in `rans_
 | SA 0.10-0.15 ConsGalerkinProj OneShot | [] | - | 4 | - | - | - | - | - |
 | SA 0.20-0.25 ConsGalerkinProj OneShot Long | [] | - | 4 | - | - | - | - | - |
 | SA 0.20-0.25 ConsGalerkinProj OneShot | [] | - | 4 | - | - | - | - | - |
-| SST 0.01-20 ConsGalerkinProj Drift | ['Turb_Kin_Energy', 'Omega'] | Omega | 80 | 0.0001 | 0 | 0 | 3.38e-03 | 0.00e+00 |
-| SST 0.01-20 ConsGalerkinProj Drift | ['Turb_Kin_Energy', 'Omega'] | Turb_Kin_Energy | 80 | 1e-10 | 80 | 191 | -2.21e-07 | 5.24e-07 |
-| SST 0.01-20 ConsGalerkinProj Drift Seed2 | ['Turb_Kin_Energy', 'Omega'] | Omega | 80 | 0.0001 | 2 | 2 | -7.83e-02 | 9.61e-02 |
-| SST 0.01-20 ConsGalerkinProj Drift Seed2 | ['Turb_Kin_Energy', 'Omega'] | Turb_Kin_Energy | 80 | 1e-10 | 80 | 337 | -4.02e-07 | 1.32e-06 |
-| SST 0.01-20 NN Drift | ['Turb_Kin_Energy', 'Omega'] | Omega | 80 | 0.0001 | 0 | 0 | 7.66e-03 | 0.00e+00 |
-| SST 0.01-20 NN Drift | ['Turb_Kin_Energy', 'Omega'] | Turb_Kin_Energy | 80 | 1e-10 | 80 | 13 | -1.98e-07 | 3.71e-07 |
-| SST 0.01-20 NN Drift Seed2 | ['Turb_Kin_Energy', 'Omega'] | Omega | 80 | 0.0001 | 2 | 1 | -3.22e-02 | 3.23e-02 |
-| SST 0.01-20 NN Drift Seed2 | ['Turb_Kin_Energy', 'Omega'] | Turb_Kin_Energy | 80 | 1e-10 | 80 | 20 | -3.49e-07 | 9.69e-07 |
-| SST 0.05-0.10 ConsGalerkinProj OneShot | ['Turb_Kin_Energy', 'Omega'] | Omega | 4 | 0.0001 | 0 | 0 | 7.66e-03 | 0.00e+00 |
-| SST 0.05-0.10 ConsGalerkinProj OneShot | ['Turb_Kin_Energy', 'Omega'] | Turb_Kin_Energy | 4 | 1e-10 | 4 | 168 | 1.00e-10 | 4.51e-16 |
-| SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | ['Turb_Kin_Energy', 'Omega'] | Omega | 4 | 0.0001 | 0 | 0 | 7.66e-03 | 0.00e+00 |
-| SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | ['Turb_Kin_Energy', 'Omega'] | Turb_Kin_Energy | 4 | 1e-10 | 4 | 169 | -2.06e-10 | 3.06e-10 |
-| SST 0.10-0.15 ConsGalerkinProj OneShot | ['Turb_Kin_Energy', 'Omega'] | Omega | 4 | 0.0001 | 0 | 0 | 7.66e-03 | 0.00e+00 |
-| SST 0.10-0.15 ConsGalerkinProj OneShot | ['Turb_Kin_Energy', 'Omega'] | Turb_Kin_Energy | 4 | 1e-10 | 4 | 168 | 1.00e-10 | 4.50e-16 |
-| SST 0.20-0.25 ConsGalerkinProj OneShot Long | ['Turb_Kin_Energy', 'Omega'] | Omega | 4 | 0.0001 | 0 | 0 | 7.66e-03 | 0.00e+00 |
-| SST 0.20-0.25 ConsGalerkinProj OneShot Long | ['Turb_Kin_Energy', 'Omega'] | Turb_Kin_Energy | 4 | 1e-10 | 4 | 168 | 1.00e-10 | 4.50e-16 |
-| SST 0.20-0.25 ConsGalerkinProj OneShot | ['Turb_Kin_Energy', 'Omega'] | Omega | 4 | 0.0001 | 0 | 0 | 7.66e-03 | 0.00e+00 |
-| SST 0.20-0.25 ConsGalerkinProj OneShot | ['Turb_Kin_Energy', 'Omega'] | Turb_Kin_Energy | 4 | 1e-10 | 4 | 169 | -2.21e-09 | 2.31e-09 |
+| SST 0.01-20 ConsGalerkinProj Drift | ['Turb_Kin_Energy', 'Omega'] | - | 80 | - | - | - | - | - |
+| SST 0.01-20 ConsGalerkinProj Drift Seed2 | ['Turb_Kin_Energy', 'Omega'] | - | 80 | - | - | - | - | - |
+| SST 0.01-20 Conservative Drift | ['Turb_Kin_Energy', 'Omega'] | - | 80 | - | - | - | - | - |
+| SST 0.01-20 Conservative Drift Seed2 | ['Turb_Kin_Energy', 'Omega'] | - | 80 | - | - | - | - | - |
+| SST 0.01-20 NN Drift | ['Turb_Kin_Energy', 'Omega'] | - | 80 | - | - | - | - | - |
+| SST 0.01-20 NN Drift Seed2 | ['Turb_Kin_Energy', 'Omega'] | - | 80 | - | - | - | - | - |
+| SST 0.05-0.10 ConsGalerkinProj OneShot | ['Turb_Kin_Energy', 'Omega'] | - | 4 | - | - | - | - | - |
+| SST 0.10-0.15 ConsGalerkinProj OneShot SF2 | ['Turb_Kin_Energy', 'Omega'] | - | 4 | - | - | - | - | - |
+| SST 0.10-0.15 ConsGalerkinProj OneShot | ['Turb_Kin_Energy', 'Omega'] | - | 4 | - | - | - | - | - |
+| SST 0.20-0.25 ConsGalerkinProj OneShot Long | ['Turb_Kin_Energy', 'Omega'] | - | 4 | - | - | - | - | - |
+| SST 0.20-0.25 ConsGalerkinProj OneShot | ['Turb_Kin_Energy', 'Omega'] | - | 4 | - | - | - | - | - |
 
 **SA: node-wise discrepancy on never-displaced nodes** (`rans_turb_state_norms_SA.csv`). Nodes whose coordinates coincide with the reference to 1e-12 are compared directly; "band" = wall distance < 0.01 (the wall-layer nodes), "outer" = the other fixed nodes. Values are RMS and max of |case − reference| divided by the reference maximum over the same node set.
 
 | case | step | fixed nodes | of which band | moved nodes | Eddy_Viscosity band RMS | band max | outer RMS | outer max | Nu_Tilde band RMS | band max | outer RMS | outer max |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| SA 0.01-20 ConsGalerkinProj Drift | 10 | 10669 | 8590 | 12602 | 1.345e-04 | 3.165e-03 | 6.930e-05 | 1.727e-03 | 1.334e-04 | 3.182e-03 | 2.857e-05 | 7.290e-04 |
-| SA 0.01-20 ConsGalerkinProj Drift | 200 | 10669 | 8590 | 12602 | 7.702e-04 | 1.074e-02 | 2.123e-04 | 6.027e-03 | 7.694e-04 | 1.073e-02 | 9.747e-05 | 2.832e-03 |
-| SA 0.01-20 ConsGalerkinProj Drift | 395 | 10669 | 8590 | 12602 | 1.165e-03 | 1.055e-02 | 3.043e-04 | 6.372e-03 | 1.165e-03 | 1.055e-02 | 1.352e-04 | 2.893e-03 |
+| SA 0.01-20 ConsGalerkinProj Drift | 10 | 10669 | 8590 | 12602 | 1.345e-04 | 3.164e-03 | 6.930e-05 | 1.727e-03 | 1.334e-04 | 3.181e-03 | 2.857e-05 | 7.290e-04 |
+| SA 0.01-20 ConsGalerkinProj Drift | 200 | 10669 | 8590 | 12602 | 7.701e-04 | 1.074e-02 | 2.123e-04 | 6.027e-03 | 7.694e-04 | 1.073e-02 | 9.747e-05 | 2.832e-03 |
+| SA 0.01-20 ConsGalerkinProj Drift | 395 | 10669 | 8590 | 12602 | 1.222e-03 | 1.066e-02 | 3.043e-04 | 6.372e-03 | 1.222e-03 | 1.066e-02 | 1.352e-04 | 2.893e-03 |
 | SA 0.01-20 ConsGalerkinProj Drift Seed2 | 10 | 10669 | 8590 | 12602 | 1.680e-04 | 3.917e-03 | 8.684e-05 | 2.548e-03 | 1.673e-04 | 3.918e-03 | 3.398e-05 | 7.917e-04 |
 | SA 0.01-20 ConsGalerkinProj Drift Seed2 | 200 | 10669 | 8590 | 12602 | 1.066e-03 | 1.229e-02 | 3.085e-04 | 8.039e-03 | 1.066e-03 | 1.229e-02 | 1.243e-04 | 2.456e-03 |
-| SA 0.01-20 ConsGalerkinProj Drift Seed2 | 395 | 10669 | 8590 | 12602 | 1.416e-03 | 1.635e-02 | 2.830e-04 | 5.755e-03 | 1.416e-03 | 1.636e-02 | 1.101e-04 | 1.755e-03 |
+| SA 0.01-20 ConsGalerkinProj Drift Seed2 | 395 | 10669 | 8590 | 12602 | 1.407e-03 | 1.644e-02 | 2.830e-04 | 5.755e-03 | 1.407e-03 | 1.645e-02 | 1.101e-04 | 1.755e-03 |
+| SA 0.01-20 Conservative Drift | 10 | 10669 | 8590 | 12602 | 1.272e-04 | 2.978e-03 | 4.630e-05 | 1.090e-03 | 1.261e-04 | 2.995e-03 | 1.927e-05 | 5.007e-04 |
+| SA 0.01-20 Conservative Drift | 200 | 10669 | 8590 | 12602 | 7.151e-04 | 1.041e-02 | 2.109e-04 | 5.608e-03 | 7.144e-04 | 1.041e-02 | 9.651e-05 | 2.634e-03 |
+| SA 0.01-20 Conservative Drift | 395 | 10669 | 8590 | 12602 | 1.026e-03 | 1.053e-02 | 2.599e-04 | 5.423e-03 | 1.026e-03 | 1.053e-02 | 1.200e-04 | 2.796e-03 |
+| SA 0.01-20 Conservative Drift Seed2 | 10 | 10669 | 8590 | 12602 | 1.671e-04 | 3.846e-03 | 5.687e-05 | 1.771e-03 | 1.664e-04 | 3.848e-03 | 2.183e-05 | 5.396e-04 |
+| SA 0.01-20 Conservative Drift Seed2 | 200 | 10669 | 8590 | 12602 | 9.630e-04 | 1.265e-02 | 2.692e-04 | 6.118e-03 | 9.632e-04 | 1.265e-02 | 1.131e-04 | 2.638e-03 |
+| SA 0.01-20 Conservative Drift Seed2 | 395 | 10669 | 8590 | 12602 | 1.427e-03 | 1.722e-02 | 2.369e-04 | 4.390e-03 | 1.427e-03 | 1.723e-02 | 9.558e-05 | 1.486e-03 |
 | SA 0.01-20 NN Drift | 10 | 10669 | 8590 | 12602 | 1.265e-04 | 2.855e-03 | 4.289e-06 | 1.479e-04 | 1.256e-04 | 2.863e-03 | 1.903e-06 | 4.988e-05 |
 | SA 0.01-20 NN Drift | 200 | 10669 | 8590 | 12602 | 6.811e-04 | 9.931e-03 | 3.004e-04 | 6.959e-03 | 6.804e-04 | 9.928e-03 | 1.248e-04 | 2.749e-03 |
-| SA 0.01-20 NN Drift | 395 | 10669 | 8590 | 12602 | 1.036e-03 | 1.045e-02 | 3.536e-04 | 8.128e-03 | 1.036e-03 | 1.045e-02 | 1.426e-04 | 2.469e-03 |
+| SA 0.01-20 NN Drift | 395 | 10669 | 8590 | 12602 | 1.032e-03 | 1.055e-02 | 3.536e-04 | 8.128e-03 | 1.032e-03 | 1.055e-02 | 1.426e-04 | 2.469e-03 |
 | SA 0.01-20 NN Drift Seed2 | 10 | 10669 | 8590 | 12602 | 1.672e-04 | 3.754e-03 | 6.745e-06 | 2.726e-04 | 1.666e-04 | 3.756e-03 | 2.471e-06 | 8.295e-05 |
 | SA 0.01-20 NN Drift Seed2 | 200 | 10669 | 8590 | 12602 | 1.144e-03 | 1.351e-02 | 2.521e-04 | 5.863e-03 | 1.145e-03 | 1.351e-02 | 1.077e-04 | 2.754e-03 |
 | SA 0.01-20 NN Drift Seed2 | 395 | 10669 | 8590 | 12602 | 8.336e-04 | 1.048e-02 | 2.263e-04 | 4.852e-03 | 8.332e-04 | 1.048e-02 | 9.684e-05 | 2.203e-03 |
-| SA 0.05-0.10 ConsGalerkinProj OneShot | 200 | 22047 | 8590 | 1224 | 1.825e-06 | 2.785e-05 | 1.141e-04 | 7.982e-03 | 1.767e-06 | 2.808e-05 | 1.139e-04 | 7.995e-03 |
+| SA 0.05-0.10 ConsGalerkinProj OneShot | 200 | 22047 | 8590 | 1224 | 1.825e-06 | 2.785e-05 | 1.141e-04 | 7.982e-03 | 1.767e-06 | 2.808e-05 | 1.139e-04 | 7.996e-03 |
 | SA 0.05-0.10 ConsGalerkinProj OneShot | 250 | 22047 | 8590 | 1224 | 5.488e-05 | 3.274e-04 | 1.945e-04 | 1.094e-02 | 5.482e-05 | 3.262e-04 | 1.935e-04 | 1.096e-02 |
 | SA 0.05-0.10 ConsGalerkinProj OneShot | 300 | 22047 | 8590 | 1224 | 5.850e-05 | 3.549e-04 | 1.949e-04 | 1.098e-02 | 5.835e-05 | 3.542e-04 | 1.938e-04 | 1.100e-02 |
 | SA 0.05-0.10 ConsGalerkinProj OneShot | 395 | 22047 | 8590 | 1224 | 5.365e-05 | 3.230e-04 | 1.942e-04 | 1.094e-02 | 5.346e-05 | 3.224e-04 | 1.932e-04 | 1.096e-02 |
@@ -720,16 +783,22 @@ Distributions (Cf_x and Cp of case and reference at the key steps) are in `rans_
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | SST 0.01-20 ConsGalerkinProj Drift | 10 | 10669 | 8590 | 12602 | 1.556e-03 | 4.732e-02 | 6.946e-05 | 1.923e-03 | 1.305e-04 | 2.385e-03 | 1.841e-06 | 4.715e-05 | 2.131e-06 | 1.534e-04 | 7.007e-08 | 1.479e-06 |
 | SST 0.01-20 ConsGalerkinProj Drift | 200 | 10669 | 8590 | 12602 | 3.444e-03 | 1.152e-01 | 2.425e-04 | 6.707e-03 | 1.005e-03 | 1.019e-02 | 6.320e-06 | 1.857e-04 | 3.944e-06 | 7.403e-05 | 2.370e-07 | 5.973e-06 |
-| SST 0.01-20 ConsGalerkinProj Drift | 395 | 10669 | 8590 | 12602 | 3.042e-03 | 6.666e-02 | 3.378e-04 | 8.758e-03 | 5.951e-04 | 5.818e-03 | 8.572e-06 | 1.896e-04 | 3.226e-06 | 5.969e-05 | 2.907e-07 | 5.615e-06 |
+| SST 0.01-20 ConsGalerkinProj Drift | 395 | 10669 | 8590 | 12602 | 3.044e-03 | 6.665e-02 | 3.378e-04 | 8.758e-03 | 5.940e-04 | 5.818e-03 | 8.572e-06 | 1.896e-04 | 3.229e-06 | 6.017e-05 | 2.907e-07 | 5.615e-06 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | 10 | 10669 | 8590 | 12602 | 1.991e-03 | 5.633e-02 | 8.150e-05 | 2.161e-03 | 1.520e-04 | 3.106e-03 | 2.182e-06 | 5.304e-05 | 1.097e-06 | 3.388e-05 | 8.383e-08 | 1.687e-06 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | 200 | 10669 | 8590 | 12602 | 3.064e-03 | 7.830e-02 | 2.895e-04 | 5.748e-03 | 1.001e-03 | 1.053e-02 | 7.936e-06 | 1.571e-04 | 3.946e-06 | 8.335e-05 | 2.762e-07 | 4.895e-06 |
 | SST 0.01-20 ConsGalerkinProj Drift Seed2 | 395 | 10669 | 8590 | 12602 | 3.601e-03 | 9.260e-02 | 2.600e-04 | 5.262e-03 | 1.472e-03 | 1.728e-02 | 6.793e-06 | 1.095e-04 | 4.080e-06 | 8.606e-05 | 2.343e-07 | 3.380e-06 |
+| SST 0.01-20 Conservative Drift | 10 | 10669 | 8590 | 12602 | 1.548e-03 | 4.776e-02 | 4.662e-05 | 1.341e-03 | 1.287e-04 | 2.190e-03 | 1.252e-06 | 3.281e-05 | 2.096e-06 | 1.506e-04 | 4.622e-08 | 1.023e-06 |
+| SST 0.01-20 Conservative Drift | 200 | 10669 | 8590 | 12602 | 3.481e-03 | 1.200e-01 | 2.399e-04 | 6.242e-03 | 9.836e-04 | 9.498e-03 | 6.287e-06 | 1.728e-04 | 3.988e-06 | 7.392e-05 | 2.319e-07 | 5.543e-06 |
+| SST 0.01-20 Conservative Drift | 395 | 10669 | 8590 | 12602 | 3.053e-03 | 6.676e-02 | 3.074e-04 | 8.440e-03 | 6.029e-04 | 5.990e-03 | 7.661e-06 | 1.823e-04 | 3.306e-06 | 6.000e-05 | 2.614e-07 | 5.322e-06 |
+| SST 0.01-20 Conservative Drift Seed2 | 10 | 10669 | 8590 | 12602 | 1.990e-03 | 5.634e-02 | 5.072e-05 | 1.381e-03 | 1.510e-04 | 3.105e-03 | 1.391e-06 | 3.398e-05 | 1.093e-06 | 3.388e-05 | 5.306e-08 | 1.090e-06 |
+| SST 0.01-20 Conservative Drift Seed2 | 200 | 10669 | 8590 | 12602 | 3.048e-03 | 7.791e-02 | 2.716e-04 | 6.179e-03 | 9.868e-04 | 1.018e-02 | 7.272e-06 | 1.693e-04 | 4.002e-06 | 9.067e-05 | 2.555e-07 | 5.240e-06 |
+| SST 0.01-20 Conservative Drift Seed2 | 395 | 10669 | 8590 | 12602 | 3.504e-03 | 9.332e-02 | 2.329e-04 | 4.882e-03 | 1.410e-03 | 1.587e-02 | 5.983e-06 | 1.013e-04 | 4.077e-06 | 8.553e-05 | 2.069e-07 | 3.080e-06 |
 | SST 0.01-20 NN Drift | 10 | 10669 | 8590 | 12602 | 1.535e-03 | 4.776e-02 | 5.740e-06 | 1.939e-04 | 1.262e-04 | 2.082e-03 | 1.285e-07 | 3.690e-06 | 2.081e-06 | 1.496e-04 | 6.819e-09 | 1.123e-07 |
 | SST 0.01-20 NN Drift | 200 | 10669 | 8590 | 12602 | 3.447e-03 | 1.206e-01 | 2.984e-04 | 7.678e-03 | 9.197e-04 | 9.327e-03 | 8.146e-06 | 1.805e-04 | 3.910e-06 | 7.472e-05 | 2.821e-07 | 5.717e-06 |
-| SST 0.01-20 NN Drift | 395 | 10669 | 8590 | 12602 | 3.069e-03 | 6.678e-02 | 3.233e-04 | 7.451e-03 | 6.055e-04 | 5.533e-03 | 8.567e-06 | 1.595e-04 | 3.251e-06 | 6.076e-05 | 2.930e-07 | 4.765e-06 |
+| SST 0.01-20 NN Drift | 395 | 10669 | 8590 | 12602 | 3.069e-03 | 6.678e-02 | 3.233e-04 | 7.451e-03 | 6.055e-04 | 5.534e-03 | 8.567e-06 | 1.595e-04 | 3.251e-06 | 6.075e-05 | 2.930e-07 | 4.765e-06 |
 | SST 0.01-20 NN Drift Seed2 | 10 | 10669 | 8590 | 12602 | 1.995e-03 | 5.645e-02 | 5.479e-06 | 1.342e-04 | 1.497e-04 | 3.162e-03 | 1.643e-07 | 5.692e-06 | 1.086e-06 | 3.299e-05 | 7.367e-09 | 1.983e-07 |
 | SST 0.01-20 NN Drift Seed2 | 200 | 10669 | 8590 | 12602 | 4.385e-03 | 9.574e-02 | 2.623e-04 | 6.444e-03 | 1.256e-03 | 1.062e-02 | 7.039e-06 | 1.796e-04 | 4.100e-06 | 1.162e-04 | 2.496e-07 | 5.892e-06 |
-| SST 0.01-20 NN Drift Seed2 | 395 | 10669 | 8590 | 12602 | 2.784e-03 | 8.912e-02 | 2.370e-04 | 6.175e-03 | 1.137e-03 | 9.777e-03 | 6.226e-06 | 1.521e-04 | 4.037e-06 | 8.473e-05 | 2.113e-07 | 4.950e-06 |
+| SST 0.01-20 NN Drift Seed2 | 395 | 10669 | 8590 | 12602 | 2.791e-03 | 8.912e-02 | 2.370e-04 | 6.175e-03 | 1.131e-03 | 9.777e-03 | 6.226e-06 | 1.521e-04 | 4.074e-06 | 8.473e-05 | 2.113e-07 | 4.950e-06 |
 | SST 0.05-0.10 ConsGalerkinProj OneShot | 200 | 22047 | 8590 | 1224 | 6.308e-06 | 2.053e-04 | 2.035e-04 | 1.680e-02 | 2.750e-06 | 2.729e-05 | 7.836e-05 | 4.692e-03 | 1.210e-07 | 4.634e-06 | 4.878e-05 | 3.511e-03 |
 | SST 0.05-0.10 ConsGalerkinProj OneShot | 250 | 22047 | 8590 | 1224 | 5.163e-05 | 3.711e-04 | 4.782e-04 | 2.993e-02 | 6.587e-05 | 4.519e-04 | 1.261e-04 | 5.896e-03 | 7.648e-07 | 1.023e-05 | 8.264e-05 | 4.622e-03 |
 | SST 0.05-0.10 ConsGalerkinProj OneShot | 300 | 22047 | 8590 | 1224 | 6.033e-05 | 3.593e-04 | 4.777e-04 | 2.996e-02 | 6.975e-05 | 4.813e-04 | 1.266e-04 | 5.951e-03 | 7.545e-07 | 1.012e-05 | 8.233e-05 | 4.630e-03 |
@@ -751,6 +820,358 @@ Distributions (Cf_x and Cp of case and reference at the key steps) are in `rans_
 | SST 0.20-0.25 ConsGalerkinProj OneShot | 300 | 22877 | 8590 | 394 | 3.558e-05 | 2.242e-04 | 3.478e-04 | 2.711e-02 | 5.070e-05 | 1.767e-04 | 6.464e-05 | 2.573e-03 | 4.911e-07 | 6.668e-06 | 3.087e-05 | 1.687e-03 |
 | SST 0.20-0.25 ConsGalerkinProj OneShot | 395 | 22877 | 8590 | 394 | 5.082e-05 | 3.387e-04 | 3.471e-04 | 2.709e-02 | 5.657e-05 | 1.714e-04 | 6.353e-05 | 2.583e-03 | 4.774e-07 | 6.208e-06 | 2.999e-05 | 1.689e-03 |
 
+## III.9 Numerical controls of the transfer comparison
+
+Steps 2..40 of the seed-1 drift sequence (three transfer events at steps 9, 19, 29) recomputed with a tighter inner loop (cap 1600 instead of 800, same events: the displacement seed is the step index) and, for SA, at half the physical step (dt 5e-4 s, 80 steps, the same three events replayed at the same physical times from the production displacement files, own half-step reference). Rows "X - production" give the change of the case-minus-reference response D_m and of the paired difference P = NN2 - GP2 between the control and the production setting at the common physical steps, as RMS over the window and relative to the production RMS (`rans_control_sensitivity.csv`, series in `rans_control_series.csv`, `RANS_Controls.png`).
+
+| model | setting | quantity | coeff | steps | RMS | max | end | RMS of production | RMS change / production RMS |
+|---|---|---|---|---|---|---|---|---|---|
+| SA | production | GP2 | CL | 39 | 2.6287e-04 | 5.0585e-04 | 2.7046e-04 |  |  |
+| SA | production | GP2 | CD | 39 | 6.5945e-05 | 1.0976e-04 | 7.8640e-05 |  |  |
+| SA | production | GP2 | CDp | 39 | 6.5816e-05 | 1.0979e-04 | 7.8485e-05 |  |  |
+| SA | production | GP2 | CDv | 39 | 2.1155e-07 | 5.7424e-07 | 1.5656e-07 |  |  |
+| SA | production | NN2 | CL | 39 | 2.5978e-04 | 5.1050e-04 | 2.4323e-04 |  |  |
+| SA | production | NN2 | CD | 39 | 6.6334e-05 | 1.1063e-04 | 7.5537e-05 |  |  |
+| SA | production | NN2 | CDp | 39 | 6.6213e-05 | 1.1072e-04 | 7.5462e-05 |  |  |
+| SA | production | NN2 | CDv | 39 | 2.1770e-07 | 5.9668e-07 | 7.6801e-08 |  |  |
+| SA | production | CV2 | CL | 39 | 2.6172e-04 | 5.0800e-04 | 2.5240e-04 |  |  |
+| SA | production | CV2 | CD | 39 | 6.5987e-05 | 1.0857e-04 | 7.7864e-05 |  |  |
+| SA | production | CV2 | CDp | 39 | 6.5855e-05 | 1.0858e-04 | 7.7712e-05 |  |  |
+| SA | production | CV2 | CDv | 39 | 2.1032e-07 | 5.6900e-07 | 1.5353e-07 |  |  |
+| SA | production | P | CL | 39 | 1.2671e-05 | 4.6755e-05 | -2.7222e-05 |  |  |
+| SA | production | P | CD | 39 | 2.2156e-06 | 6.0304e-06 | -3.1028e-06 |  |  |
+| SA | production | P | CDp | 39 | 2.1980e-06 | 5.9579e-06 | -3.0231e-06 |  |  |
+| SA | production | P | CDv | 39 | 3.1935e-08 | 7.9763e-08 | -7.9763e-08 |  |  |
+| SA | cap1600 | GP2 | CL | 38 | 2.6244e-04 | 5.0617e-04 | 3.6021e-04 |  |  |
+| SA | cap1600 | GP2 | CD | 38 | 6.5527e-05 | 1.0953e-04 | 9.5051e-05 |  |  |
+| SA | cap1600 | GP2 | CDp | 38 | 6.5395e-05 | 1.0955e-04 | 9.5066e-05 |  |  |
+| SA | cap1600 | GP2 | CDv | 38 | 2.1542e-07 | 5.8185e-07 | -9.1324e-09 |  |  |
+| SA | cap1600 | NN2 | CL | 38 | 2.6026e-04 | 5.1050e-04 | 3.1714e-04 |  |  |
+| SA | cap1600 | NN2 | CD | 38 | 6.6063e-05 | 1.1066e-04 | 8.9998e-05 |  |  |
+| SA | cap1600 | NN2 | CDp | 38 | 6.5943e-05 | 1.1075e-04 | 9.0073e-05 |  |  |
+| SA | cap1600 | NN2 | CDv | 38 | 2.1699e-07 | 5.8762e-07 | -6.9648e-08 |  |  |
+| SA | cap1600 | CV2 | CL | 38 | 2.6198e-04 | 5.0802e-04 | 3.3724e-04 |  |  |
+| SA | cap1600 | CV2 | CD | 38 | 6.5649e-05 | 1.0860e-04 | 9.2125e-05 |  |  |
+| SA | cap1600 | CV2 | CDp | 38 | 6.5522e-05 | 1.0863e-04 | 9.2137e-05 |  |  |
+| SA | cap1600 | CV2 | CDv | 38 | 2.1138e-07 | 5.7115e-07 | -6.1367e-09 |  |  |
+| SA | cap1600 | P | CL | 38 | 1.1256e-05 | 4.3073e-05 | -4.3073e-05 |  |  |
+| SA | cap1600 | P | CD | 38 | 2.1140e-06 | 5.1428e-06 | -5.0536e-06 |  |  |
+| SA | cap1600 | P | CDp | 38 | 2.1077e-06 | 5.1132e-06 | -4.9929e-06 |  |  |
+| SA | cap1600 | P | CDv | 38 | 2.7103e-08 | 7.3253e-08 | -6.0515e-08 |  |  |
+| SA | halfstep | GP2 | CL | 38 | 2.5808e-04 | 5.1511e-04 | 2.7909e-04 |  |  |
+| SA | halfstep | GP2 | CD | 38 | 6.4807e-05 | 1.0667e-04 | 8.2895e-05 |  |  |
+| SA | halfstep | GP2 | CDp | 38 | 6.4664e-05 | 1.0670e-04 | 8.2959e-05 |  |  |
+| SA | halfstep | GP2 | CDv | 38 | 2.4738e-07 | 6.4220e-07 | -5.8335e-08 |  |  |
+| SA | halfstep | NN2 | CL | 38 | 2.5802e-04 | 5.2789e-04 | 2.2751e-04 |  |  |
+| SA | halfstep | NN2 | CD | 38 | 6.5780e-05 | 1.1433e-04 | 7.3633e-05 |  |  |
+| SA | halfstep | NN2 | CDp | 38 | 6.5647e-05 | 1.1438e-04 | 7.3711e-05 |  |  |
+| SA | halfstep | NN2 | CDv | 38 | 2.5254e-07 | 6.5366e-07 | -7.3043e-08 |  |  |
+| SA | halfstep | CV2 | CL | 38 | 2.5517e-04 | 5.1736e-04 | 2.6907e-04 |  |  |
+| SA | halfstep | CV2 | CD | 38 | 6.4312e-05 | 1.0481e-04 | 8.3498e-05 |  |  |
+| SA | halfstep | CV2 | CDp | 38 | 6.4166e-05 | 1.0464e-04 | 8.3552e-05 |  |  |
+| SA | halfstep | CV2 | CDv | 38 | 2.5047e-07 | 6.5006e-07 | -4.8995e-08 |  |  |
+| SA | halfstep | P | CL | 38 | 1.6035e-05 | 5.1585e-05 | -5.1585e-05 |  |  |
+| SA | halfstep | P | CD | 38 | 3.7679e-06 | 1.0690e-05 | -9.2623e-06 |  |  |
+| SA | halfstep | P | CDp | 38 | 3.7758e-06 | 1.0748e-05 | -9.2479e-06 |  |  |
+| SA | halfstep | P | CDv | 38 | 2.4633e-08 | 6.1232e-08 | -1.4708e-08 |  |  |
+| SA | quarterstep | GP2 | CL | 38 | 2.6688e-04 | 5.3926e-04 | 2.6982e-04 |  |  |
+| SA | quarterstep | GP2 | CD | 38 | 6.5180e-05 | 1.1225e-04 | 8.2916e-05 |  |  |
+| SA | quarterstep | GP2 | CDp | 38 | 6.5138e-05 | 1.1205e-04 | 8.3326e-05 |  |  |
+| SA | quarterstep | GP2 | CDv | 38 | 3.0688e-07 | 6.7265e-07 | -4.0425e-07 |  |  |
+| SA | quarterstep | NN2 | CL | 38 | 2.6359e-04 | 5.6756e-04 | 2.2499e-04 |  |  |
+| SA | quarterstep | NN2 | CD | 38 | 6.5426e-05 | 1.2010e-04 | 7.6150e-05 |  |  |
+| SA | quarterstep | NN2 | CDp | 38 | 6.5373e-05 | 1.1987e-04 | 7.6532e-05 |  |  |
+| SA | quarterstep | NN2 | CDv | 38 | 3.1341e-07 | 6.9085e-07 | -3.7623e-07 |  |  |
+| SA | quarterstep | CV2 | CL | 38 | 2.6625e-04 | 5.4040e-04 | 2.6264e-04 |  |  |
+| SA | quarterstep | CV2 | CD | 38 | 6.5243e-05 | 1.1301e-04 | 8.2400e-05 |  |  |
+| SA | quarterstep | CV2 | CDp | 38 | 6.5194e-05 | 1.1279e-04 | 8.2805e-05 |  |  |
+| SA | quarterstep | CV2 | CDv | 38 | 3.1254e-07 | 6.8964e-07 | -3.9932e-07 |  |  |
+| SA | quarterstep | P | CL | 38 | 2.0771e-05 | 6.9244e-05 | -4.4828e-05 |  |  |
+| SA | quarterstep | P | CD | 38 | 4.5544e-06 | 1.4378e-05 | -6.7662e-06 |  |  |
+| SA | quarterstep | P | CDp | 38 | 4.5564e-06 | 1.4395e-05 | -6.7944e-06 |  |  |
+| SA | quarterstep | P | CDv | 38 | 1.2718e-08 | 2.8019e-08 | 2.8019e-08 |  |  |
+| SA | finemesh | GP2 | CL | 38 | 1.0764e-04 | 2.6122e-04 | 2.6122e-04 |  |  |
+| SA | finemesh | GP2 | CD | 38 | 5.3847e-05 | 8.5073e-05 | 8.5073e-05 |  |  |
+| SA | finemesh | GP2 | CDp | 38 | 5.3771e-05 | 8.4468e-05 | 8.4468e-05 |  |  |
+| SA | finemesh | GP2 | CDv | 38 | 2.2198e-07 | 6.0564e-07 | 6.0564e-07 |  |  |
+| SA | finemesh | NN2 | CL | 38 | 1.0661e-04 | 2.6241e-04 | 2.6241e-04 |  |  |
+| SA | finemesh | NN2 | CD | 38 | 5.3913e-05 | 8.6180e-05 | 8.6180e-05 |  |  |
+| SA | finemesh | NN2 | CDp | 38 | 5.3834e-05 | 8.5590e-05 | 8.5590e-05 |  |  |
+| SA | finemesh | NN2 | CDv | 38 | 2.1434e-07 | 5.9023e-07 | 5.9023e-07 |  |  |
+| SA | finemesh | CV2 | CL | 38 | 1.0678e-04 | 2.6312e-04 | 2.6312e-04 |  |  |
+| SA | finemesh | CV2 | CD | 38 | 5.3838e-05 | 8.5055e-05 | 8.5055e-05 |  |  |
+| SA | finemesh | CV2 | CDp | 38 | 5.3752e-05 | 8.4419e-05 | 8.4419e-05 |  |  |
+| SA | finemesh | CV2 | CDv | 38 | 2.2555e-07 | 6.3615e-07 | 6.3615e-07 |  |  |
+| SA | finemesh | P | CL | 38 | 8.7700e-06 | 2.6500e-05 | 1.1838e-06 |  |  |
+| SA | finemesh | P | CD | 38 | 9.9421e-07 | 2.9016e-06 | 1.1067e-06 |  |  |
+| SA | finemesh | P | CDp | 38 | 9.9711e-07 | 2.9326e-06 | 1.1228e-06 |  |  |
+| SA | finemesh | P | CDv | 38 | 1.8483e-08 | 4.4870e-08 | -1.5407e-08 |  |  |
+| SA | cap1600 - production | GP2 | CL | 38 | 6.4453e-07 | 3.1925e-06 | -8.1270e-07 | 2.6266e-04 | 0.002 |
+| SA | cap1600 - production | GP2 | CD | 38 | 1.3232e-07 | 7.2138e-07 | -7.2138e-07 | 6.5577e-05 | 0.002 |
+| SA | cap1600 - production | GP2 | CDp | 38 | 1.3282e-07 | 7.1729e-07 | -7.1729e-07 | 6.5449e-05 | 0.002 |
+| SA | cap1600 - production | GP2 | CDv | 38 | 7.7621e-09 | 1.8171e-08 | -4.1209e-09 | 2.1280e-07 | 0.036 |
+| SA | cap1600 - production | NN2 | CL | 38 | 8.7936e-07 | 3.0403e-06 | 2.8687e-06 | 2.6020e-04 | 0.003 |
+| SA | cap1600 - production | NN2 | CD | 38 | 6.6918e-08 | 2.5545e-07 | 2.5545e-07 | 6.6075e-05 | 0.001 |
+| SA | cap1600 - production | NN2 | CDp | 38 | 6.3598e-08 | 2.4774e-07 | 2.4774e-07 | 6.5952e-05 | 0.001 |
+| SA | cap1600 - production | NN2 | CDv | 38 | 5.2878e-09 | 2.0359e-08 | 8.8184e-09 | 2.2020e-07 | 0.024 |
+| SA | cap1600 - production | CV2 | CL | 38 | 1.0963e-07 | 3.7090e-07 | 3.4630e-07 | 2.6196e-04 | 0.000 |
+| SA | cap1600 - production | CV2 | CD | 38 | 1.2727e-08 | 4.5760e-08 | 4.5760e-08 | 6.5646e-05 | 0.000 |
+| SA | cap1600 - production | CV2 | CDp | 38 | 1.8170e-08 | 5.6898e-08 | 5.4979e-08 | 6.5514e-05 | 0.000 |
+| SA | cap1600 - production | CV2 | CDv | 38 | 7.9969e-09 | 2.2758e-08 | -9.4512e-09 | 2.1161e-07 | 0.038 |
+| SA | cap1600 - production | P | CL | 38 | 1.3087e-06 | 4.6510e-06 | 3.6814e-06 | 1.2053e-05 | 0.109 |
+| SA | cap1600 - production | P | CD | 38 | 1.8265e-07 | 9.7683e-07 | 9.7683e-07 | 2.1874e-06 | 0.084 |
+| SA | cap1600 - production | P | CDp | 38 | 1.8133e-07 | 9.6503e-07 | 9.6503e-07 | 2.1721e-06 | 0.083 |
+| SA | cap1600 - production | P | CDv | 38 | 1.1067e-08 | 3.0920e-08 | 1.2939e-08 | 2.9652e-08 | 0.373 |
+| SA | halfstep - production | GP2 | CL | 38 | 3.9630e-05 | 1.1836e-04 | -8.1930e-05 | 2.6266e-04 | 0.151 |
+| SA | halfstep - production | GP2 | CD | 38 | 5.2767e-06 | 1.4202e-05 | -1.2877e-05 | 6.5577e-05 | 0.080 |
+| SA | halfstep - production | GP2 | CDp | 38 | 5.2815e-06 | 1.4335e-05 | -1.2824e-05 | 6.5449e-05 | 0.081 |
+| SA | halfstep - production | GP2 | CDv | 38 | 5.0488e-08 | 1.3250e-07 | -5.3324e-08 | 2.1280e-07 | 0.237 |
+| SA | halfstep - production | NN2 | CL | 38 | 4.2935e-05 | 1.2716e-04 | -8.6760e-05 | 2.6020e-04 | 0.165 |
+| SA | halfstep - production | NN2 | CD | 38 | 6.7485e-06 | 1.8441e-05 | -1.6109e-05 | 6.6075e-05 | 0.102 |
+| SA | halfstep - production | NN2 | CDp | 38 | 6.7677e-06 | 1.8538e-05 | -1.6114e-05 | 6.5952e-05 | 0.103 |
+| SA | halfstep - production | NN2 | CDv | 38 | 4.6465e-08 | 1.3949e-07 | 5.4227e-09 | 2.2020e-07 | 0.211 |
+| SA | halfstep - production | CV2 | CL | 38 | 4.1814e-05 | 1.2692e-04 | -6.7819e-05 | 2.6196e-04 | 0.160 |
+| SA | halfstep - production | CV2 | CD | 38 | 5.8650e-06 | 1.6520e-05 | -8.5815e-06 | 6.5646e-05 | 0.089 |
+| SA | halfstep - production | CV2 | CDp | 38 | 5.8780e-06 | 1.6672e-05 | -8.5294e-06 | 6.5514e-05 | 0.090 |
+| SA | halfstep - production | CV2 | CDv | 38 | 5.2657e-08 | 1.5271e-07 | -5.2309e-08 | 2.1161e-07 | 0.249 |
+| SA | halfstep - production | P | CL | 38 | 9.0662e-06 | 2.2338e-05 | -4.8300e-06 | 1.2053e-05 | 0.752 |
+| SA | halfstep - production | P | CD | 38 | 2.8160e-06 | 8.5556e-06 | -3.2319e-06 | 2.1874e-06 | 1.287 |
+| SA | halfstep - production | P | CDp | 38 | 2.8199e-06 | 8.5543e-06 | -3.2900e-06 | 2.1721e-06 | 1.298 |
+| SA | halfstep - production | P | CDv | 38 | 1.6197e-08 | 5.8746e-08 | 5.8746e-08 | 2.9652e-08 | 0.546 |
+| SA | quarterstep - production | GP2 | CL | 38 | 4.7507e-05 | 1.2500e-04 | -9.1206e-05 | 2.6266e-04 | 0.181 |
+| SA | quarterstep - production | GP2 | CD | 38 | 8.1190e-06 | 2.2198e-05 | -1.2857e-05 | 6.5577e-05 | 0.124 |
+| SA | quarterstep - production | GP2 | CDp | 38 | 8.1206e-06 | 2.2429e-05 | -1.2457e-05 | 6.5449e-05 | 0.124 |
+| SA | quarterstep - production | GP2 | CDv | 38 | 1.9397e-07 | 4.3542e-07 | -3.9924e-07 | 2.1280e-07 | 0.911 |
+| SA | quarterstep - production | NN2 | CL | 38 | 4.9009e-05 | 1.2302e-04 | -8.9279e-05 | 2.6020e-04 | 0.188 |
+| SA | quarterstep - production | NN2 | CD | 38 | 9.8922e-06 | 2.8274e-05 | -1.3592e-05 | 6.6075e-05 | 0.150 |
+| SA | quarterstep - production | NN2 | CDp | 38 | 9.9019e-06 | 2.8490e-05 | -1.3294e-05 | 6.5952e-05 | 0.150 |
+| SA | quarterstep - production | NN2 | CDv | 38 | 1.6834e-07 | 3.7024e-07 | -2.9777e-07 | 2.2020e-07 | 0.764 |
+| SA | quarterstep - production | CV2 | CL | 38 | 4.6742e-05 | 1.3086e-04 | -7.4255e-05 | 2.6196e-04 | 0.178 |
+| SA | quarterstep - production | CV2 | CD | 38 | 8.1211e-06 | 2.3934e-05 | -9.6795e-06 | 6.5646e-05 | 0.124 |
+| SA | quarterstep - production | CV2 | CDp | 38 | 8.1380e-06 | 2.4175e-05 | -9.2774e-06 | 6.5514e-05 | 0.124 |
+| SA | quarterstep - production | CV2 | CDv | 38 | 1.9465e-07 | 4.5042e-07 | -4.0264e-07 | 2.1161e-07 | 0.920 |
+| SA | quarterstep - production | P | CL | 38 | 1.5853e-05 | 3.7998e-05 | 1.9270e-06 | 1.2053e-05 | 1.315 |
+| SA | quarterstep - production | P | CD | 38 | 3.7404e-06 | 1.2195e-05 | -7.3578e-07 | 2.1874e-06 | 1.710 |
+| SA | quarterstep - production | P | CDp | 38 | 3.7432e-06 | 1.2277e-05 | -8.3643e-07 | 2.1721e-06 | 1.723 |
+| SA | quarterstep - production | P | CDv | 38 | 2.8869e-08 | 1.0147e-07 | 1.0147e-07 | 2.9652e-08 | 0.974 |
+| SA | finemesh - production | GP2 | CL | 38 | 1.9708e-04 | 4.5141e-04 | -9.9802e-05 | 2.6266e-04 | 0.750 |
+| SA | finemesh - production | GP2 | CD | 38 | 2.1047e-05 | 4.5072e-05 | -1.0699e-05 | 6.5577e-05 | 0.321 |
+| SA | finemesh - production | GP2 | CDp | 38 | 2.0945e-05 | 4.4622e-05 | -1.1316e-05 | 6.5449e-05 | 0.320 |
+| SA | finemesh - production | GP2 | CDv | 38 | 3.4300e-07 | 7.5634e-07 | 6.1065e-07 | 2.1280e-07 | 1.612 |
+| SA | finemesh - production | NN2 | CL | 38 | 1.9859e-04 | 4.4984e-04 | -5.1864e-05 | 2.6020e-04 | 0.763 |
+| SA | finemesh - production | NN2 | CD | 38 | 2.1863e-05 | 4.8453e-05 | -3.5622e-06 | 6.6075e-05 | 0.331 |
+| SA | finemesh - production | NN2 | CDp | 38 | 2.1754e-05 | 4.7993e-05 | -4.2350e-06 | 6.5952e-05 | 0.330 |
+| SA | finemesh - production | NN2 | CDv | 38 | 3.6001e-07 | 7.8750e-07 | 6.6869e-07 | 2.2020e-07 | 1.635 |
+| SA | finemesh - production | CV2 | CL | 38 | 1.9838e-04 | 4.5265e-04 | -7.3779e-05 | 2.6196e-04 | 0.757 |
+| SA | finemesh - production | CV2 | CD | 38 | 2.1254e-05 | 4.7174e-05 | -7.0247e-06 | 6.5646e-05 | 0.324 |
+| SA | finemesh - production | CV2 | CDp | 38 | 2.1150e-05 | 4.6722e-05 | -7.6632e-06 | 6.5514e-05 | 0.323 |
+| SA | finemesh - production | CV2 | CDv | 38 | 3.4257e-07 | 7.4693e-07 | 6.3283e-07 | 2.1161e-07 | 1.619 |
+| SA | finemesh - production | P | CL | 38 | 1.4278e-05 | 4.7938e-05 | 4.7938e-05 | 1.2053e-05 | 1.185 |
+| SA | finemesh - production | P | CD | 38 | 2.2595e-06 | 7.1370e-06 | 7.1370e-06 | 2.1874e-06 | 1.033 |
+| SA | finemesh - production | P | CDp | 38 | 2.2552e-06 | 7.0807e-06 | 7.0807e-06 | 2.1721e-06 | 1.038 |
+| SA | finemesh - production | P | CDv | 38 | 2.6417e-08 | 7.1185e-08 | 5.8047e-08 | 2.9652e-08 | 0.891 |
+| SST | production | GP2 | CL | 39 | 1.6331e-04 | 3.9496e-04 | -3.6097e-05 |  |  |
+| SST | production | GP2 | CD | 39 | 5.4299e-05 | 8.7759e-05 | 4.6261e-05 |  |  |
+| SST | production | GP2 | CDp | 39 | 5.5066e-05 | 8.9198e-05 | 4.7708e-05 |  |  |
+| SST | production | GP2 | CDv | 39 | 8.3381e-07 | 1.4587e-06 | -1.4463e-06 |  |  |
+| SST | production | NN2 | CL | 39 | 1.6329e-04 | 3.8734e-04 | -1.6238e-05 |  |  |
+| SST | production | NN2 | CD | 39 | 5.4934e-05 | 8.9994e-05 | 4.7353e-05 |  |  |
+| SST | production | NN2 | CDp | 39 | 5.5692e-05 | 9.1425e-05 | 4.8838e-05 |  |  |
+| SST | production | NN2 | CDv | 39 | 8.2697e-07 | 1.4849e-06 | -1.4849e-06 |  |  |
+| SST | production | CV2 | CL | 39 | 1.6325e-04 | 3.9259e-04 | -2.2307e-05 |  |  |
+| SST | production | CV2 | CD | 39 | 5.4468e-05 | 8.7470e-05 | 4.8266e-05 |  |  |
+| SST | production | CV2 | CDp | 39 | 5.5236e-05 | 8.8904e-05 | 4.9722e-05 |  |  |
+| SST | production | CV2 | CDv | 39 | 8.3310e-07 | 1.4624e-06 | -1.4560e-06 |  |  |
+| SST | production | P | CL | 39 | 6.7016e-06 | 1.9858e-05 | 1.9858e-05 |  |  |
+| SST | production | P | CD | 39 | 1.5769e-06 | 3.6014e-06 | 1.0919e-06 |  |  |
+| SST | production | P | CDp | 39 | 1.5745e-06 | 3.5798e-06 | 1.1299e-06 |  |  |
+| SST | production | P | CDv | 39 | 1.6011e-08 | 3.8528e-08 | -3.8528e-08 |  |  |
+| SST | cap1600 | GP2 | CL | 38 | 1.6485e-04 | 3.8718e-04 | 5.5082e-05 |  |  |
+| SST | cap1600 | GP2 | CD | 38 | 5.4579e-05 | 8.8809e-05 | 6.2680e-05 |  |  |
+| SST | cap1600 | GP2 | CDp | 38 | 5.5478e-05 | 9.0540e-05 | 6.4234e-05 |  |  |
+| SST | cap1600 | GP2 | CDv | 38 | 9.5799e-07 | 1.7269e-06 | -1.5514e-06 |  |  |
+| SST | cap1600 | NN2 | CL | 38 | 1.6540e-04 | 3.8150e-04 | 5.3621e-05 |  |  |
+| SST | cap1600 | NN2 | CD | 38 | 5.5229e-05 | 9.1087e-05 | 6.2711e-05 |  |  |
+| SST | cap1600 | NN2 | CDp | 38 | 5.6119e-05 | 9.2832e-05 | 6.4309e-05 |  |  |
+| SST | cap1600 | NN2 | CDv | 38 | 9.5396e-07 | 1.7475e-06 | -1.5964e-06 |  |  |
+| SST | cap1600 | CV2 | CL | 38 | 1.6405e-04 | 3.8115e-04 | 5.2682e-05 |  |  |
+| SST | cap1600 | CV2 | CD | 38 | 5.4677e-05 | 8.8717e-05 | 6.3448e-05 |  |  |
+| SST | cap1600 | CV2 | CDp | 38 | 5.5570e-05 | 9.0441e-05 | 6.5011e-05 |  |  |
+| SST | cap1600 | CV2 | CDv | 38 | 9.5231e-07 | 1.7210e-06 | -1.5609e-06 |  |  |
+| SST | cap1600 | P | CL | 38 | 5.6824e-06 | 1.6197e-05 | -1.4611e-06 |  |  |
+| SST | cap1600 | P | CD | 38 | 1.6214e-06 | 3.6529e-06 | 3.0807e-08 |  |  |
+| SST | cap1600 | P | CDp | 38 | 1.6188e-06 | 3.6232e-06 | 7.5291e-08 |  |  |
+| SST | cap1600 | P | CDv | 38 | 1.8198e-08 | 4.4927e-08 | -4.4927e-08 |  |  |
+| SST | cap6400 | GP2 | CL | 38 | 1.6632e-04 | 3.8649e-04 | 4.4421e-05 |  |  |
+| SST | cap6400 | GP2 | CD | 38 | 5.4741e-05 | 9.0012e-05 | 6.1785e-05 |  |  |
+| SST | cap6400 | GP2 | CDp | 38 | 5.5732e-05 | 9.1913e-05 | 6.3227e-05 |  |  |
+| SST | cap6400 | GP2 | CDv | 38 | 1.0507e-06 | 1.9288e-06 | -1.4410e-06 |  |  |
+| SST | cap6400 | NN2 | CL | 38 | 1.6422e-04 | 3.6862e-04 | 3.8408e-05 |  |  |
+| SST | cap6400 | NN2 | CD | 38 | 5.5271e-05 | 9.2068e-05 | 6.1397e-05 |  |  |
+| SST | cap6400 | NN2 | CDp | 38 | 5.6247e-05 | 9.3998e-05 | 6.2889e-05 |  |  |
+| SST | cap6400 | NN2 | CDv | 38 | 1.0435e-06 | 1.9495e-06 | -1.4910e-06 |  |  |
+| SST | cap6400 | CV2 | CL | 38 | 1.6492e-04 | 3.7684e-04 | 4.2018e-05 |  |  |
+| SST | cap6400 | CV2 | CD | 38 | 5.4812e-05 | 8.9506e-05 | 6.2289e-05 |  |  |
+| SST | cap6400 | CV2 | CDp | 38 | 5.5794e-05 | 9.1408e-05 | 6.3756e-05 |  |  |
+| SST | cap6400 | CV2 | CDv | 38 | 1.0426e-06 | 1.9254e-06 | -1.4656e-06 |  |  |
+| SST | cap6400 | P | CL | 38 | 8.3222e-06 | 2.7629e-05 | -6.0131e-06 |  |  |
+| SST | cap6400 | P | CD | 38 | 1.6383e-06 | 3.9305e-06 | -3.8850e-07 |  |  |
+| SST | cap6400 | P | CDp | 38 | 1.6320e-06 | 3.8833e-06 | -3.3846e-07 |  |  |
+| SST | cap6400 | P | CDv | 38 | 3.3962e-08 | 8.7428e-08 | -4.9913e-08 |  |  |
+| SST | halfstep | GP2 | CL | 38 | 1.7023e-04 | 3.9607e-04 | 2.8939e-05 |  |  |
+| SST | halfstep | GP2 | CD | 38 | 5.5219e-05 | 9.1235e-05 | 6.0004e-05 |  |  |
+| SST | halfstep | GP2 | CDp | 38 | 5.6110e-05 | 9.3037e-05 | 6.1686e-05 |  |  |
+| SST | halfstep | GP2 | CDv | 38 | 9.6486e-07 | 1.8259e-06 | -1.6813e-06 |  |  |
+| SST | halfstep | NN2 | CL | 38 | 1.6914e-04 | 3.7479e-04 | 1.6719e-05 |  |  |
+| SST | halfstep | NN2 | CD | 38 | 5.5515e-05 | 9.6143e-05 | 5.4245e-05 |  |  |
+| SST | halfstep | NN2 | CDp | 38 | 5.6390e-05 | 9.7943e-05 | 5.5967e-05 |  |  |
+| SST | halfstep | NN2 | CDv | 38 | 9.5950e-07 | 1.8368e-06 | -1.7209e-06 |  |  |
+| SST | halfstep | CV2 | CL | 38 | 1.6843e-04 | 3.9360e-04 | 5.7269e-05 |  |  |
+| SST | halfstep | CV2 | CD | 38 | 5.5035e-05 | 8.7865e-05 | 6.3325e-05 |  |  |
+| SST | halfstep | CV2 | CDp | 38 | 5.5928e-05 | 8.9663e-05 | 6.5040e-05 |  |  |
+| SST | halfstep | CV2 | CDv | 38 | 9.6619e-07 | 1.8240e-06 | -1.7124e-06 |  |  |
+| SST | halfstep | P | CL | 38 | 1.1821e-05 | 2.6560e-05 | -1.2220e-05 |  |  |
+| SST | halfstep | P | CD | 38 | 2.3449e-06 | 5.7586e-06 | -5.7586e-06 |  |  |
+| SST | halfstep | P | CDp | 38 | 2.3384e-06 | 5.7190e-06 | -5.7190e-06 |  |  |
+| SST | halfstep | P | CDv | 38 | 1.7730e-08 | 3.9598e-08 | -3.9598e-08 |  |  |
+| SST | cap1600 - production | GP2 | CL | 38 | 6.1744e-06 | 1.3552e-05 | -8.0065e-06 | 1.6534e-04 | 0.037 |
+| SST | cap1600 - production | GP2 | CD | 38 | 6.1471e-07 | 1.5461e-06 | -7.3941e-07 | 5.4494e-05 | 0.011 |
+| SST | cap1600 - production | GP2 | CDp | 38 | 7.2611e-07 | 1.8351e-06 | -6.4663e-07 | 5.5247e-05 | 0.013 |
+| SST | cap1600 - production | GP2 | CDv | 38 | 2.0382e-07 | 3.7229e-07 | -9.2765e-08 | 8.1147e-07 | 0.251 |
+| SST | cap1600 - production | NN2 | CL | 38 | 6.0004e-06 | 1.3805e-05 | -6.9359e-06 | 1.6540e-04 | 0.036 |
+| SST | cap1600 - production | NN2 | CD | 38 | 5.7342e-07 | 1.3357e-06 | -6.8165e-07 | 5.5120e-05 | 0.010 |
+| SST | cap1600 - production | NN2 | CDp | 38 | 6.9926e-07 | 1.6421e-06 | -5.6991e-07 | 5.5861e-05 | 0.013 |
+| SST | cap1600 - production | NN2 | CDv | 38 | 2.0719e-07 | 3.7986e-07 | -1.1241e-07 | 8.0240e-07 | 0.258 |
+| SST | cap1600 - production | CV2 | CL | 38 | 7.5065e-06 | 1.6459e-05 | -1.4872e-05 | 1.6535e-04 | 0.045 |
+| SST | cap1600 - production | CV2 | CD | 38 | 7.6150e-07 | 1.6715e-06 | -1.0302e-06 | 5.4622e-05 | 0.014 |
+| SST | cap1600 - production | CV2 | CDp | 38 | 8.5528e-07 | 1.9538e-06 | -9.3198e-07 | 5.5374e-05 | 0.015 |
+| SST | cap1600 - production | CV2 | CDv | 38 | 2.0280e-07 | 3.5898e-07 | -9.8466e-08 | 8.1026e-07 | 0.250 |
+| SST | cap1600 - production | P | CL | 38 | 8.1885e-07 | 2.2587e-06 | 1.0706e-06 | 5.9763e-06 | 0.137 |
+| SST | cap1600 - production | P | CD | 38 | 9.5883e-08 | 2.6040e-07 | 5.7754e-08 | 1.5877e-06 | 0.060 |
+| SST | cap1600 - production | P | CDp | 38 | 9.6306e-08 | 2.8534e-07 | 7.6718e-08 | 1.5845e-06 | 0.061 |
+| SST | cap1600 - production | P | CDv | 38 | 9.4582e-09 | 2.4134e-08 | -1.9650e-08 | 1.4968e-08 | 0.632 |
+| SST | cap6400 - production | GP2 | CL | 38 | 1.1479e-05 | 2.8768e-05 | -1.8667e-05 | 1.6534e-04 | 0.069 |
+| SST | cap6400 - production | GP2 | CD | 38 | 1.1644e-06 | 3.1623e-06 | -1.6343e-06 | 5.4494e-05 | 0.021 |
+| SST | cap6400 - production | GP2 | CDp | 38 | 1.3658e-06 | 3.6796e-06 | -1.6529e-06 | 5.5247e-05 | 0.025 |
+| SST | cap6400 - production | GP2 | CDv | 38 | 3.2901e-07 | 6.2196e-07 | 1.7628e-08 | 8.1147e-07 | 0.405 |
+| SST | cap6400 - production | NN2 | CL | 38 | 1.4139e-05 | 3.1448e-05 | -2.2148e-05 | 1.6540e-04 | 0.085 |
+| SST | cap6400 - production | NN2 | CD | 38 | 1.3940e-06 | 3.3886e-06 | -1.9959e-06 | 5.5120e-05 | 0.025 |
+| SST | cap6400 - production | NN2 | CDp | 38 | 1.6004e-06 | 3.9698e-06 | -1.9899e-06 | 5.5861e-05 | 0.029 |
+| SST | cap6400 - production | NN2 | CDv | 38 | 3.3535e-07 | 6.2751e-07 | -7.0086e-09 | 8.0240e-07 | 0.418 |
+| SST | cap6400 - production | CV2 | CL | 38 | 1.3696e-05 | 3.2474e-05 | -2.5537e-05 | 1.6535e-04 | 0.083 |
+| SST | cap6400 - production | CV2 | CD | 38 | 1.4230e-06 | 3.7121e-06 | -2.1891e-06 | 5.4622e-05 | 0.026 |
+| SST | cap6400 - production | CV2 | CDp | 38 | 1.6154e-06 | 4.2274e-06 | -2.1869e-06 | 5.5374e-05 | 0.029 |
+| SST | cap6400 - production | CV2 | CDv | 38 | 3.2502e-07 | 6.0693e-07 | -3.2459e-09 | 8.1026e-07 | 0.401 |
+| SST | cap6400 - production | P | CL | 38 | 4.0434e-06 | 1.0751e-05 | -3.4814e-06 | 5.9763e-06 | 0.677 |
+| SST | cap6400 - production | P | CD | 38 | 4.0426e-07 | 1.0719e-06 | -3.6156e-07 | 1.5877e-06 | 0.255 |
+| SST | cap6400 - production | P | CDp | 38 | 4.1793e-07 | 1.1419e-06 | -3.3703e-07 | 1.5845e-06 | 0.264 |
+| SST | cap6400 - production | P | CDv | 38 | 2.6889e-08 | 7.5654e-08 | -2.4637e-08 | 1.4968e-08 | 1.796 |
+| SST | halfstep - production | GP2 | CL | 38 | 3.2865e-05 | 9.2940e-05 | -3.4150e-05 | 1.6534e-04 | 0.199 |
+| SST | halfstep - production | GP2 | CD | 38 | 5.6000e-06 | 1.7980e-05 | -3.4159e-06 | 5.4494e-05 | 0.103 |
+| SST | halfstep - production | GP2 | CDp | 38 | 5.6236e-06 | 1.8062e-05 | -3.1938e-06 | 5.5247e-05 | 0.102 |
+| SST | halfstep - production | GP2 | CDv | 38 | 2.0186e-07 | 3.8491e-07 | -2.2267e-07 | 8.1147e-07 | 0.249 |
+| SST | halfstep - production | NN2 | CL | 38 | 3.3908e-05 | 9.2025e-05 | -4.3838e-05 | 1.6540e-04 | 0.205 |
+| SST | halfstep - production | NN2 | CD | 38 | 5.9716e-06 | 1.8360e-05 | -9.1476e-06 | 5.5120e-05 | 0.108 |
+| SST | halfstep - production | NN2 | CDp | 38 | 5.9805e-06 | 1.8429e-05 | -8.9114e-06 | 5.5861e-05 | 0.107 |
+| SST | halfstep - production | NN2 | CDv | 38 | 2.0683e-07 | 3.9281e-07 | -2.3699e-07 | 8.0240e-07 | 0.258 |
+| SST | halfstep - production | CV2 | CL | 38 | 3.1092e-05 | 8.6604e-05 | -1.0286e-05 | 1.6535e-04 | 0.188 |
+| SST | halfstep - production | CV2 | CD | 38 | 5.2688e-06 | 1.7659e-05 | -1.1526e-06 | 5.4622e-05 | 0.096 |
+| SST | halfstep - production | CV2 | CDp | 38 | 5.2829e-06 | 1.7734e-05 | -9.0315e-07 | 5.5374e-05 | 0.095 |
+| SST | halfstep - production | CV2 | CDv | 38 | 2.0496e-07 | 3.8643e-07 | -2.5003e-07 | 8.1026e-07 | 0.253 |
+| SST | halfstep - production | P | CL | 38 | 8.7338e-06 | 2.7093e-05 | -9.6881e-06 | 5.9763e-06 | 1.461 |
+| SST | halfstep - production | P | CD | 38 | 1.7520e-06 | 5.7317e-06 | -5.7317e-06 | 1.5877e-06 | 1.103 |
+| SST | halfstep - production | P | CDp | 38 | 1.7504e-06 | 5.7176e-06 | -5.7176e-06 | 1.5845e-06 | 1.105 |
+| SST | halfstep - production | P | CDv | 38 | 9.7729e-09 | 2.7757e-08 | -1.4322e-08 | 1.4968e-08 | 0.653 |
+
+Inner-loop record of the control runs (`rans_control_inner.csv`):
+
+| model | setting | method | steps | cap | steps at cap | median inner | max inner | median log10 rms(rho) at end | worst |
+|---|---|---|---|---|---|---|---|---|---|
+| SA | production | GP2 | 398 | 800 | 152 | 710 | 799 | -12.00 | -9.12 |
+| SA | production | NN2 | 398 | 800 | 155 | 710 | 799 | -12.00 | -9.21 |
+| SA | production | CV2 | 398 | 800 | 147 | 672 | 799 | -12.00 | -9.53 |
+| SA | cap1600 | GP2 | 38 | 1600 | 0 | 575 | 957 | -12.00 | -12.00 |
+| SA | cap1600 | NN2 | 38 | 1600 | 0 | 593 | 1044 | -12.00 | -12.00 |
+| SA | cap1600 | CV2 | 38 | 1600 | 0 | 570 | 973 | -12.00 | -12.00 |
+| SA | halfstep | GP2 | 78 | 800 | 0 | 317 | 657 | -12.00 | -12.00 |
+| SA | halfstep | NN2 | 78 | 800 | 0 | 314 | 763 | -12.00 | -12.00 |
+| SA | halfstep | CV2 | 78 | 800 | 0 | 320 | 610 | -12.00 | -12.00 |
+| SA | quarterstep | GP2 | 158 | 800 | 0 | 195 | 387 | -12.00 | -12.00 |
+| SA | quarterstep | NN2 | 158 | 800 | 0 | 199 | 392 | -12.00 | -12.00 |
+| SA | quarterstep | CV2 | 158 | 800 | 0 | 195 | 424 | -12.00 | -12.00 |
+| SA | finemesh | GP2 | 38 | 800 | 7 | 483 | 799 | -12.00 | -10.95 |
+| SA | finemesh | NN2 | 38 | 800 | 5 | 466 | 799 | -12.00 | -10.90 |
+| SA | finemesh | CV2 | 38 | 800 | 6 | 487 | 799 | -12.00 | -10.92 |
+| SST | production | GP2 | 398 | 800 | 333 | 799 | 799 | -11.10 | -10.14 |
+| SST | production | NN2 | 398 | 800 | 324 | 799 | 799 | -11.24 | -9.52 |
+| SST | production | CV2 | 398 | 800 | 336 | 799 | 799 | -11.11 | -9.09 |
+| SST | cap1600 | GP2 | 38 | 1600 | 28 | 1599 | 1599 | -11.33 | -10.35 |
+| SST | cap1600 | NN2 | 38 | 1600 | 28 | 1599 | 1599 | -11.33 | -10.46 |
+| SST | cap1600 | CV2 | 38 | 1600 | 30 | 1599 | 1599 | -11.27 | -10.37 |
+| SST | cap6400 | GP2 | 38 | 6400 | 28 | 6399 | 6399 | -11.27 | -10.29 |
+| SST | cap6400 | NN2 | 38 | 6400 | 30 | 6399 | 6399 | -11.17 | -10.34 |
+| SST | cap6400 | CV2 | 38 | 6400 | 29 | 6399 | 6399 | -11.18 | -10.28 |
+| SST | halfstep | GP2 | 78 | 800 | 56 | 799 | 799 | -11.27 | -10.30 |
+| SST | halfstep | NN2 | 78 | 800 | 58 | 799 | 799 | -11.32 | -10.31 |
+| SST | halfstep | CV2 | 78 | 800 | 60 | 799 | 799 | -11.23 | -10.33 |
+
+Event replay check (`rans_control_replay.csv`): 72 displacement files compared with the production case by md5, 72 identical, 0 different.
+
+## III.10 Viscous-mesh sensitivity of the no-transfer baseline
+
+`Meshes/Coarse_Sharp_Finer.su2` (32102 nodes, 15128 quadrilaterals, 312 airfoil nodes, same first off-wall spacing 5e-6, finer wall-normal growth and tangential spacing) against the production grid `Meshes/Coarse_Sharp.su2` (23271 nodes): steady state and 800-step no-transfer reference per closure, no transfer involved (`rans_fine_mesh.csv`, `rans_fine_surface.csv`, `RANS_FineMesh_<MODEL>.png`).
+
+| model | quantity | coeff | coarse | fine | fine - coarse | % |
+|---|---|---|---|---|---|---|
+| SA | steady | CL | 0.676257 | 0.670838 | -5.419e-03 | -0.801 |
+| SA | steady | CD | 0.010229 | 0.010048 | -1.812e-04 | -1.771 |
+| SA | steady | CDp | 0.003559 | 0.003401 | -1.580e-04 | -4.439 |
+| SA | steady | CDv | 0.006671 | 0.006647 | -2.400e-05 | -0.360 |
+| SA | steady | CMz | 0.000671 | -0.000530 | -1.201e-03 | -179.066 |
+| SA | reference mean 100..799 | CL | 0.676257 | 0.670838 | -5.419e-03 | -0.801 |
+| SA | reference range 100..799 | CL | 6.40e-09 | 1.12e-07 |  |  |
+| SA | reference mean 100..799 | CD | 0.010229 | 0.010048 | -1.812e-04 | -1.771 |
+| SA | reference range 100..799 | CD | 3.94e-09 | 2.38e-09 |  |  |
+| SA | fine reference inner iterations min..max |  | 10 | 10 |  |  |
+| SST | steady | CL | 0.675605 | 0.668596 | -7.008e-03 | -1.037 |
+| SST | steady | CD | 0.009858 | 0.009705 | -1.531e-04 | -1.553 |
+| SST | steady | CDp | 0.003469 | 0.003321 | -1.480e-04 | -4.266 |
+| SST | steady | CDv | 0.006389 | 0.006385 | -4.000e-06 | -0.063 |
+| SST | steady | CMz | 0.000382 | -0.001155 | -1.537e-03 | -402.191 |
+| SST | reference mean 100..799 | CL | 0.675603 | 0.668596 | -7.007e-03 | -1.037 |
+| SST | reference range 100..799 | CL | 7.66e-07 | 3.81e-08 |  |  |
+| SST | reference mean 100..799 | CD | 0.009858 | 0.009705 | -1.531e-04 | -1.553 |
+| SST | reference range 100..799 | CD | 5.89e-08 | 2.09e-09 |  |  |
+| SST | fine reference inner iterations min..max |  | 56 | 80 |  |  |
+
+Three-level sequence (`rans_mesh_levels.csv`; `Meshes/Coarse_Sharp_FinerFiner.su2`: 48228 nodes, 23764 quadrilaterals, 516 airfoil nodes, same first spacing): steady loads per level with the effective spacing ratio sqrt(N_coarse/N), and the observed order from the three levels where the sequence is monotone (Richardson extrapolation of the finest value):
+
+| model | level | nodes | h / h_coarse | CL | CD | CDp | CDv |
+|---|---|---|---|---|---|---|---|
+| SA | coarse | 23271 | 1.0000 | 0.676257 | 0.010229 | 0.003559 | 0.006671 |
+| SA | fine | 32102 | 0.8514 | 0.670838 | 0.010048 | 0.003401 | 0.006647 |
+| SA | finer | 48228 | 0.6946 | 0.668535 | 0.009996 | 0.003330 | 0.006665 |
+| SA | observed order CL |  |  | 4.21 | extrapolated 0.666833 | coarse-to-finer change 7.722e-03 | finer error estimate 1.701e-03 |
+| SA | observed order CD |  |  | 6.07 | extrapolated 0.009974 | coarse-to-finer change 2.338e-04 | finer error estimate 2.154e-05 |
+| SA | observed order CDp |  |  | 3.93 | extrapolated 0.003272 | coarse-to-finer change 2.290e-04 | finer error estimate 5.794e-05 |
+| SA | observed order CDv |  |  | not monotone or ratios differ | 2.400e-05 | -1.800e-05 |  |
+| SST | coarse | 23271 | 1.0000 | 0.675605 | 0.009858 | 0.003469 | 0.006389 |
+| SST | fine | 32102 | 0.8514 | 0.668596 | 0.009705 | 0.003321 | 0.006385 |
+| SST | finer | 48228 | 0.6946 | 0.666394 | 0.009644 | 0.003247 | 0.006397 |
+| SST | observed order CL |  |  | 5.69 | extrapolated 0.665385 | coarse-to-finer change 9.211e-03 | finer error estimate 1.009e-03 |
+| SST | observed order CD |  |  | 4.49 | extrapolated 0.009603 | coarse-to-finer change 2.144e-04 | finer error estimate 4.101e-05 |
+| SST | observed order CDp |  |  | 3.41 | extrapolated 0.003173 | coarse-to-finer change 2.220e-04 | finer error estimate 7.400e-05 |
+| SST | observed order CDv |  |  | not monotone or ratios differ | 4.000e-06 | -1.200e-05 |  |
+
+Surface pressure and skin friction, fine field interpolated onto the coarse airfoil nodes along each side:
+
+| model | side | coarse nodes | fine nodes | RMS dCp | max dCp | x | RMS dCf | max dCf | x | max y+ coarse | max y+ fine |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| SA | upper | 129 | 156 | 1.044e-02 | 4.909e-02 | 1.000 | 1.448e-04 | 9.646e-04 | 0.998 | 2.765 | 2.750 |
+| SA | lower | 127 | 156 | 2.752e-03 | 8.185e-03 | 0.000 | 9.767e-05 | 8.015e-04 | 0.998 | 2.406 | 2.390 |
+| SST | upper | 129 | 156 | 1.246e-02 | 4.457e-02 | 1.000 | 1.431e-04 | 9.512e-04 | 0.998 | 2.698 | 2.691 |
+| SST | lower | 127 | 156 | 4.081e-03 | 1.244e-02 | 0.000 | 9.341e-05 | 8.005e-04 | 0.998 | 2.281 | 2.266 |
+
 ## III.7b Cost of one transfer event
 
 Wall-clock times from the launcher's per-event timing files (`rans_timing.csv`). "Transfer" is the sum of the two interpolations of an event (state k and BDF2 level k−1), including geometry search and supermesh construction on each call (nothing is reused between events); the first event includes the numba just-in-time compilation. Mesh move = RandomMeshMovements. CFD = one 10-step window on 4 MPI ranks. Transfer and mesh motion ran on 4 threads. No memory measurement was recorded.
@@ -770,6 +1191,9 @@ Wall-clock times from the launcher's per-event timing files (`rans_timing.csv`).
 
 Figures (`Figures/RANS/`):
 
+- `RANS_Controls.png`
+- `RANS_FineMesh_SA.png`
+- `RANS_FineMesh_SST.png`
 - `RANS_SA_AcousticDelay_CL.png`
 - `RANS_SA_DeformedReference.png`
 - `RANS_SA_Drift_DragSplit_Surface.png`
@@ -782,6 +1206,8 @@ Figures (`Figures/RANS/`):
 - `RANS_SA_TurbState.png`
 - `RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Second_Cf_Cp.png`
 - `RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second_Cf_Cp.png`
+- `RANS_SA_WD_0.01-20_Conservative_Drift_Second_Cf_Cp.png`
+- `RANS_SA_WD_0.01-20_Conservative_Drift_Seed2_Second_Cf_Cp.png`
 - `RANS_SA_WD_0.01-20_NN_Drift_Second_Cf_Cp.png`
 - `RANS_SA_WD_0.01-20_NN_Drift_Seed2_Second_Cf_Cp.png`
 - `RANS_SA_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second_Cf_Cp.png`
@@ -801,6 +1227,8 @@ Figures (`Figures/RANS/`):
 - `RANS_SST_TurbState.png`
 - `RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Second_Cf_Cp.png`
 - `RANS_SST_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second_Cf_Cp.png`
+- `RANS_SST_WD_0.01-20_Conservative_Drift_Second_Cf_Cp.png`
+- `RANS_SST_WD_0.01-20_Conservative_Drift_Seed2_Second_Cf_Cp.png`
 - `RANS_SST_WD_0.01-20_NN_Drift_Second_Cf_Cp.png`
 - `RANS_SST_WD_0.01-20_NN_Drift_Seed2_Second_Cf_Cp.png`
 - `RANS_SST_WD_0.05-0.10_ConsGalerkinProj_OneShot_Second_Cf_Cp.png`
@@ -812,14 +1240,19 @@ Figures (`Figures/RANS/`):
 
 Tables (`RANS_PostProcessing/`):
 
-- `rans_T04_sensitivity.csv`
-- `rans_T04_series.csv`
 - `rans_code_provenance.csv`
+- `rans_control_inner.csv`
+- `rans_control_replay.csv`
+- `rans_control_sensitivity.csv`
+- `rans_control_series.csv`
 - `rans_deformed_reference.csv`
 - `rans_deformed_surface.csv`
 - `rans_drift_series.csv`
 - `rans_drift_trends.csv`
+- `rans_fine_mesh.csv`
+- `rans_fine_surface.csv`
 - `rans_inner_convergence.csv`
+- `rans_mesh_levels.csv`
 - `rans_mesh_quality.csv`
 - `rans_mesh_replay.csv`
 - `rans_oneshot_fit.csv`

@@ -91,9 +91,10 @@ def main() -> int:
         'interpretation':'Six thresholds of one event, not six independent repetitions.'}
     rows = read('data/naca_force_drift.csv')
     means = {m:statistics.mean(float(r['CD_trend']) for r in rows if r['method']==m)
-             for m in ('NN2','GP2')}
+             for m in ('NN2','GP2','CV2')}
     out['drag_trend_means'] = means
     out['drag_trend_ratio_NN2_GP2'] = means['NN2']/means['GP2']
+    out['drag_trend_ratio_NN2_CV2'] = means['NN2']/means['CV2']
     rows = read('data/naca_initial_residual_identity.csv')
     out['invalid_cosine_rows'] = [r for r in rows
                                   if not (-1 <= float(r['cosine_min']) <= 1)
@@ -119,7 +120,8 @@ def main() -> int:
     rows = read('data/riemann_refinement_errors.csv')
     x = [math.log(float(r['h'])) for r in rows]
     out['riemann_order_fits'] = {m:linear_fit(x,[math.log(float(r[m])) for r in rows])
-                                for m in rows[0] if m!='h'}
+                                for m in rows[0] if m!='h'
+                                and all(math.isfinite(float(r[m])) for r in rows)}   # schemes without a refinement sweep are nan
     rows = read('data/riemann_global_correction.csv')
     out['riemann_gc_error_changes_percent'] = {
         r['scheme']:100*(float(r['l1_global'])/float(r['l1_off'])-1) for r in rows}

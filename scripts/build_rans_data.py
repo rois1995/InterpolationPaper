@@ -32,7 +32,7 @@ def case_info(case: str) -> tuple[str, str, int]:
     m = re.match(r'RANS_(SA|SST)_WD_', case)
     if m is None:
         raise ValueError(f'Unrecognized case: {case}')
-    method = 'GP2' if '_ConsGalerkinProj_' in case else 'NN2' if '_NN_' in case else None
+    method = 'GP2' if '_ConsGalerkinProj_' in case else 'NN2' if '_NN_' in case else 'CV2' if '_Conservative_' in case else None
     if method is None or not case.endswith('_Second'):
         raise ValueError(f'Unexpected method/order: {case}')
     return m.group(1), method, 2 if '_Seed2_' in case else 1
@@ -148,9 +148,10 @@ def build(root: Path) -> None:
     for model, fields in [('SA',['Density','Energy','Nu_Tilde']),('SST',['Density','Energy','Turb_Kin_Energy','Omega'])]:
         for field in fields:
             row={'model':model,'field':field}
-            for method, token in [('NN2','_NN_'),('GP2','_ConsGalerkinProj_')]:
+            for method, token in [('NN2','_NN_'),('GP2','_ConsGalerkinProj_'),('CV2','_Conservative_')]:
                 a=valid[valid.model.eq(model)&valid.field.eq(field)&valid['case'].str.contains(token,regex=False)]
                 y=a['rel_defect_(tgt-src)/src'].abs()
+                if method=='CV2' and not len(y): continue      # CV2 columns only when CV2 cases are exported
                 if len(y)!=156: raise ValueError(f'Expected 39 events x two histories x two seeds: {model} {field} {method}: {len(y)}')
                 row[method+'_max']=y.max(); row[method+'_median']=y.median(); row[method+'_n']=len(y)
             row['max_ratio_NN2_GP2']=row['NN2_max']/row['GP2_max']
@@ -164,10 +165,11 @@ def build(root: Path) -> None:
     clip=clip[clip['case'].str.contains('Drift') & clip.field.eq('Turb_Kin_Energy')].copy()
     clipping=[]
     for _,r in clip.iterrows():
-        clipping.append(dict(model='SST',method='GP2' if 'ConsGalerkinProj' in r['case'] else 'NN2',
+        clipping.append(dict(model='SST',method='GP2' if 'ConsGalerkinProj' in r['case'] else 'CV2' if 'Conservative' in r['case'] else 'NN2',
              seed=2 if 'Seed2' in r['case'] else 1,exported_history_transfers=int(r.transfers),with_raises=int(r['with raises']),
              max_nodes=int(r['max nodes']),min_before=first_number(r['lowest before']),floor=first_number(r.floor)))
-    write_csv(gen/'rans_clipping_report.csv',pd.DataFrame(clipping))
+    clip_cols=['model','method','seed','exported_history_transfers','with_raises','max_nodes','min_before','floor']
+    write_csv(gen/'rans_clipping_report.csv',pd.DataFrame(clipping,columns=clip_cols))      # header only when no floor was raised
     # Native comparisons: their deltas are rounded source summaries, not complete time series.
     native=[]
     for _,r in frames['rans_deformed_reference.csv'].query("what == 'steady'").iterrows():

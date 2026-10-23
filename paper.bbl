@@ -7,47 +7,72 @@
 
 \bibitem{AlauzetLoseilleOlivier2018}
 F.~Alauzet, A.~Loseille, G.~Olivier, Time-accurate multi-scale anisotropic mesh
-  adaptation for unsteady flows in {CFD}, Journal of Computational Physics 373
-  (2018) 28--63.
+  adaptation for unsteady flows in {CFD}, J. Comput. Phys. 373 (2018) 28--63.
 \newblock \href {https://doi.org/10.1016/j.jcp.2018.06.043}
   {\path{doi:10.1016/j.jcp.2018.06.043}}.
 
 \bibitem{SauvageAlauzetDervieux2024}
 B.~Sauvage, F.~Alauzet, A.~Dervieux, A space and time fixed point mesh
-  adaptation method, Journal of Computational Physics 519 (2024) 113389.
+  adaptation method, J. Comput. Phys. 519 (2024) 113389.
 \newblock \href {https://doi.org/10.1016/j.jcp.2024.113389}
   {\path{doi:10.1016/j.jcp.2024.113389}}.
 
 \bibitem{LevyMay2025}
 T.~Lev{\'y}, G.~May, Towards a robust time-accurate anisotropically adaptive
-  hybridized discontinuous {Galerkin} method, Computers \& Fluids 301 (2025)
-  106792.
+  hybridized discontinuous {Galerkin} method, Comput. Fluids 301 (2025) 106792.
 \newblock \href {https://doi.org/10.1016/j.compfluid.2025.106792}
   {\path{doi:10.1016/j.compfluid.2025.106792}}.
 
 \bibitem{JiaoHeath2004}
 X.~Jiao, M.~T. Heath, Common-refinement-based data transfer between
-  non-matching meshes in multiphysics simulations, International Journal for
-  Numerical Methods in Engineering 61 (2004) 2402--2427.
+  non-matching meshes in multiphysics simulations, Int. J. Numer. Methods Eng.
+  61 (2004) 2402--2427.
 
 \bibitem{FarrellMaddison2011}
 P.~E. Farrell, J.~R. Maddison, Conservative interpolation between volume meshes
-  by local {Galerkin} projection, Computer Methods in Applied Mechanics and
-  Engineering 200~(1--4) (2011) 89--100.
+  by local {Galerkin} projection, Comput. Methods Appl. Mech. Eng. 200~(1--4)
+  (2011) 89--100.
 \newblock \href {https://doi.org/10.1016/j.cma.2010.07.015}
   {\path{doi:10.1016/j.cma.2010.07.015}}.
 
 \bibitem{MaddisonHiester2017}
 J.~R. Maddison, H.~R. Hiester, Optimal constrained interpolation in
-  mesh-adaptive finite element modeling, SIAM Journal on Scientific Computing
-  39~(5) (2017) A2257--A2286.
+  mesh-adaptive finite element modeling, SIAM J. Sci. Comput. 39~(5) (2017)
+  A2257--A2286.
 \newblock \href {https://doi.org/10.1137/15M102054X}
   {\path{doi:10.1137/15M102054X}}.
 
+\bibitem{DukowiczKodis1987}
+J.~K. Dukowicz, J.~W. Kodis, Accurate conservative remapping (rezoning) for
+  arbitrary {L}agrangian--{E}ulerian computations, SIAM J. Sci. Stat. Comput.
+  8~(3) (1987) 305--321.
+\newblock \href {https://doi.org/10.1137/0908037} {\path{doi:10.1137/0908037}}.
+
+\bibitem{MargolinShashkov2003}
+L.~G. Margolin, M.~Shashkov, Second-order sign-preserving conservative
+  interpolation (remapping) on general grids, J. Comput. Phys. 184~(1) (2003)
+  266--298.
+\newblock \href {https://doi.org/10.1016/S0021-9991(02)00033-5}
+  {\path{doi:10.1016/S0021-9991(02)00033-5}}.
+
+\bibitem{AlauzetMehrenberger2010}
+F.~Alauzet, M.~Mehrenberger, {$P^1$}-conservative solution interpolation on
+  unstructured triangular meshes, Int. J. Numer. Methods Eng. 84~(13) (2010)
+  1552--1588.
+\newblock \href {https://doi.org/10.1002/nme.2951}
+  {\path{doi:10.1002/nme.2951}}.
+
+\bibitem{Alauzet2016}
+F.~Alauzet, A parallel matrix-free conservative solution interpolation on
+  unstructured tetrahedral meshes, Comput. Methods Appl. Mech. Eng. 299 (2016)
+  116--142.
+\newblock \href {https://doi.org/10.1016/j.cma.2015.10.012}
+  {\path{doi:10.1016/j.cma.2015.10.012}}.
+
 \bibitem{LevyMay2024}
 T.~Lev{\'y}, G.~May, Conservative solution transfer between anisotropic meshes
-  for time-accurate hybridized discontinuous {Galerkin} methods, International
-  Journal for Numerical Methods in Fluids 96~(6) (2024) 1011--1030.
+  for time-accurate hybridized discontinuous {Galerkin} methods, Int. J. Numer.
+  Methods Fluids 96~(6) (2024) 1011--1030.
 \newblock \href {https://doi.org/10.1002/fld.5278}
   {\path{doi:10.1002/fld.5278}}.
 
@@ -64,7 +89,7 @@ T.~J. Barth, Recent developments in high order $k$-exact reconstruction on
 \bibitem{Mavriplis2003}
 D.~J. Mavriplis, Revisiting the least-squares procedure for gradient
   reconstruction on unstructured meshes, in: 16th AIAA Computational Fluid
-  Dynamics Conference, Orlando, Florida, 2003, aIAA Paper 2003-3986.
+  Dynamics Conference, Orlando, Florida, 2003, {AIAA} Paper 2003-3986.
 \newblock \href {https://doi.org/10.2514/6.2003-3986}
   {\path{doi:10.2514/6.2003-3986}}.
 
@@ -81,51 +106,49 @@ T.~J. Barth, D.~C. Jespersen, The design and application of upwind schemes on
   {\path{doi:10.2514/6.1989-366}}.
 
 \bibitem{Dunavant1985}
-D.~A. Dunavant, High degree efficient symmetrical gaussian quadrature rules for
-  the triangle, International Journal for Numerical Methods in Engineering
-  21~(6) (1985) 1129--1148.
+D.~A. Dunavant, High degree efficient symmetrical {G}aussian quadrature rules
+  for the triangle, Int. J. Numer. Methods Eng. 21~(6) (1985) 1129--1148.
 
 \bibitem{Keast1986}
-P.~Keast, Moderate-degree tetrahedral quadrature formulas, Computer Methods in
-  Applied Mechanics and Engineering 55 (1986) 339--348.
+P.~Keast, Moderate-degree tetrahedral quadrature formulas, Comput. Methods
+  Appl. Mech. Eng. 55 (1986) 339--348.
 
 \bibitem{ShashkovWendroff2004}
 M.~Shashkov, B.~Wendroff, The repair paradigm and application to conservation
-  laws, Journal of Computational Physics 198~(1) (2004) 265--277.
+  laws, J. Comput. Phys. 198~(1) (2004) 265--277.
 
 \bibitem{KucharikShashkovWendroff2003}
 M.~Kucharik, M.~Shashkov, B.~Wendroff, An efficient
-  linearity-and-bound-preserving remapping method, Journal of Computational
-  Physics 188~(2) (2003) 462--471.
+  linearity-and-bound-preserving remapping method, J. Comput. Phys. 188~(2)
+  (2003) 462--471.
 
 \bibitem{KoobusFarhat1999}
 B.~Koobus, C.~Farhat, Second-order time-accurate and geometrically conservative
   implicit schemes for flow computations on unstructured dynamic meshes,
-  Computer Methods in Applied Mechanics and Engineering 170~(1--2) (1999)
-  103--129.
+  Comput. Methods Appl. Mech. Eng. 170~(1--2) (1999) 103--129.
 \newblock \href {https://doi.org/10.1016/S0045-7825(98)00207-2}
   {\path{doi:10.1016/S0045-7825(98)00207-2}}.
 
 \bibitem{GeuzaineGrandmontFarhat2003}
 P.~Geuzaine, C.~Grandmont, C.~Farhat, Design and analysis of {ALE} schemes with
   provable second-order time-accuracy for inviscid and viscous flow
-  simulations, Journal of Computational Physics 191~(1) (2003) 206--227.
+  simulations, J. Comput. Phys. 191~(1) (2003) 206--227.
 \newblock \href {https://doi.org/10.1016/S0021-9991(03)00311-5}
   {\path{doi:10.1016/S0021-9991(03)00311-5}}.
 
 \bibitem{SpalartAllmaras1994}
 P.~R. Spalart, S.~R. Allmaras, A one-equation turbulence model for aerodynamic
-  flows, La Recherche A\'erospatiale~(1) (1994) 5--21.
+  flows, Rech. A\'erosp.~(1) (1994) 5--21.
 
 \bibitem{Menter1994}
 F.~R. Menter, Two-equation eddy-viscosity turbulence models for engineering
-  applications, AIAA Journal 32~(8) (1994) 1598--1605.
+  applications, AIAA J. 32~(8) (1994) 1598--1605.
 \newblock \href {https://doi.org/10.2514/3.12149} {\path{doi:10.2514/3.12149}}.
 
 \bibitem{EconomonEtAl2016SU2}
 T.~D. Economon, F.~Palacios, S.~R. Copeland, T.~W. Lukaczyk, J.~J. Alonso,
-  {SU2}: An open-source suite for multiphysics simulation and design, AIAA
-  Journal 54~(3) (2016) 828--846.
+  {SU2}: An open-source suite for multiphysics simulation and design, AIAA J.
+  54~(3) (2016) 828--846.
 \newblock \href {https://doi.org/10.2514/1.J053813}
   {\path{doi:10.2514/1.J053813}}.
 

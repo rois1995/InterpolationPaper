@@ -1,6 +1,6 @@
 threshold,slope,R2,speed,case,travel_exclusion,n_shells,field
 2,461,0.792,2.170,WD_0.05-0.10_ConsGalerkinProj_OneShot_Second,0.0,4,Pressure
-5,635,0.920,1.575,WD_0.05-0.10_ConsGalerkinProj_OneShot_Second,0.0,4,Pressure
+5,623,0.913,1.606,WD_0.05-0.10_ConsGalerkinProj_OneShot_Second,0.0,4,Pressure
 10,753,0.969,1.328,WD_0.05-0.10_ConsGalerkinProj_OneShot_Second,0.0,4,Pressure
 25,911,0.998,1.097,WD_0.05-0.10_ConsGalerkinProj_OneShot_Second,0.0,4,Pressure
 50,983,0.999,1.018,WD_0.05-0.10_ConsGalerkinProj_OneShot_Second,0.0,4,Pressure
@@ -53,3 +53,15 @@ threshold,slope,R2,speed,case,travel_exclusion,n_shells,field
 50,823,0.968,1.215,WD_0.20-0.25_ConsGalerkinProj_OneShot_Second,0.08,7,Pressure
 75,869,0.996,1.151,WD_0.20-0.25_ConsGalerkinProj_OneShot_Second,0.0,10,Pressure
 75,903,0.992,1.107,WD_0.20-0.25_ConsGalerkinProj_OneShot_Second,0.08,7,Pressure
+2,461,0.801,2.169,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.0,10,Pressure
+2,802,0.899,1.247,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.08,7,Pressure
+5,603,0.899,1.660,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.0,10,Pressure
+5,938,0.983,1.066,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.08,7,Pressure
+10,712,0.963,1.404,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.0,10,Pressure
+10,910,0.992,1.099,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.08,7,Pressure
+25,738,0.987,1.355,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.0,10,Pressure
+25,816,0.998,1.226,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.08,7,Pressure
+50,744,0.995,1.343,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.0,10,Pressure
+50,790,0.998,1.266,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.08,7,Pressure
+75,727,0.998,1.375,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.0,10,Pressure
+75,770,0.997,1.299,WD_0.20-0.25_Conservative_OneShot_Long_Second,0.08,7,Pressure

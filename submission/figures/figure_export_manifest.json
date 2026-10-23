@@ -1,0 +1,16 @@
+{
+  "source_tex_sha256": "105016584dcc0b049675f5a7f48901d38b6da5ac75011de0c8015205e333c78b",
+  "csv_inputs_unchanged": true,
+  "figures": [
+    {
+      "figure": 1,
+      "file": "Figure_1.pdf",
+      "sha256": "e712fad662acd619c0e27d8e91f8802334601aad960f15957f03377c435e83b6"
+    },
+    {
+      "figure": 2,
+      "file": "Figure_2.pdf",
+      "sha256": "5d1bb8e44f14a9f222c227d4b987437b2a844892b8e65cb0028b96bee48f4815"
+    }
+  ]
+}

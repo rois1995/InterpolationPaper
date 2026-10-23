@@ -1,5 +1,0 @@
-method,max_abs_delta_Cp,x_over_c,side
-NN1,0.45,0.001,lower
-BAR2,0.40,0.999,upper
-GP2,0.29,0.003,upper
-GP3,0.30,0.999,upper

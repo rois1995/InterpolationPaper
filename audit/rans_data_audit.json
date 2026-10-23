@@ -1,64 +1,63 @@
 {
   "source_hashes": {
-    "RANS_PostProcessing/rans_code_provenance.csv": "0f6de4b6eb34a259e948833d53809c4b3557167e1ef6fc806687daa42da5094a",
-    "RANS_PostProcessing/rans_control_inner.csv": "abfa4a6017294015f5c90c548d107be1aa191bf9a826422291370e104848aec3",
-    "RANS_PostProcessing/rans_control_replay.csv": "8d3bfeaa140947ee8dc16dabd3ec088129deae271d1292e1b65c1d42f7605b6a",
-    "RANS_PostProcessing/rans_control_sensitivity.csv": "6afa067b0d5d0324759013ff4b2d64898a338797ea907b30aa8196f87236ddec",
-    "RANS_PostProcessing/rans_control_series.csv": "241fa93bd4388e6d98f3995b08e9a723795c01e56bba6a28437da68fca4c103a",
-    "RANS_PostProcessing/rans_deformed_reference.csv": "77bac485e606ee402cfe341bb90710289634f70accb1fbd625201b48c7a138e2",
+    "RANS_PostProcessing/rans_code_provenance.csv": "f779f8d85ea6445e367faf3d726c066f2f5e42cd338e46414bceedd932f27546",
+    "RANS_PostProcessing/rans_control_inner.csv": "facbea573be0a3eb18bab2dfb5977ec578374252a44168ed31023c03ec259ef1",
+    "RANS_PostProcessing/rans_control_replay.csv": "31ffdca5c7085c08c50e0ad3f7d9db7e437f9308e5153ee77f24fa7ad2cc5e2a",
+    "RANS_PostProcessing/rans_control_sensitivity.csv": "39ec5822db6bbad6c5e857e7634a90d885a8f267f33e8ccb3691ccda2df5a62d",
+    "RANS_PostProcessing/rans_control_series.csv": "74bf35a1f9680e78f549fe552578fd7806b8b741300ea26bbfecc0e3c9ff4da3",
+    "RANS_PostProcessing/rans_deformed_reference.csv": "b42c8ca814e6bcf7658b3fbc330c02c7be7100011d0a61b93a8eab3b3dea1691",
     "RANS_PostProcessing/rans_deformed_surface.csv": "634e97d339475caba23b655d422afd3b4e46d4fcfa8a52d8d10e2a5d0a2ec864",
-    "RANS_PostProcessing/rans_drift_series.csv": "066bb4f8dae315f67e2e371fd5349cec0797a8dfd6bfa4cfc8f26647e47e97f6",
-    "RANS_PostProcessing/rans_drift_trends.csv": "6188b7885171920789801896b2ef0dbc3e948bccf93a07c60b0852a3d989ddce",
+    "RANS_PostProcessing/rans_drift_series.csv": "a3ed7c7310c4e2f88d700e6d02accf5761d5f441fe9710a1a54544a08992c226",
+    "RANS_PostProcessing/rans_drift_trends.csv": "ed57f7fac70a009a30ea6811eb03a86bd1ac85b39d805f8b8837ec90fa3b58a9",
     "RANS_PostProcessing/rans_fine_mesh.csv": "87a6eacbbc83695f7116a05215eac060f1a6ff720156535890997be889fc0ec4",
     "RANS_PostProcessing/rans_fine_surface.csv": "1eb7e72e94bcd0b4ec0521f1764c0d5fe24515b7b14c16975f80cf8d91c219b7",
-    "RANS_PostProcessing/rans_inner_convergence.csv": "e18c57a2a712eb0014209e94b55041f38089a269fe17290da6f365d24f904b4b",
+    "RANS_PostProcessing/rans_inner_convergence.csv": "de19ce50663b2b7ee87a03cd2a8f4f9c43c6237b6faf2ec504a2825cff5ecc57",
     "RANS_PostProcessing/rans_mesh_levels.csv": "9074e835c2ac28b4b29ff0b2ea611400dfa8b04fcddb3ee69866727bfe221567",
-    "RANS_PostProcessing/rans_mesh_quality.csv": "c0dce953c2fe2727bcb32668a0c3ebb6b08ff205688c7bb5814b5e6c540e1ebb",
-    "RANS_PostProcessing/rans_mesh_replay.csv": "531be30eca16a022859050df99a9469ed5b75fe22c67c6087a8bb03a6684af5c",
+    "RANS_PostProcessing/rans_mesh_quality.csv": "bc3bfc97e9062b6aaeb00acca929d8015e4c301c42f1cdbbfbe00cba77a63757",
+    "RANS_PostProcessing/rans_mesh_replay.csv": "514c86cdc5f67232ea86a726819241189fbb99ad41cbff134bfe0072e30e2dc0",
     "RANS_PostProcessing/rans_oneshot_fit.csv": "f89cb601cd4ed875fd7941ba599314cd2060eada7072349d3ea94cd8b8a4fd6e",
     "RANS_PostProcessing/rans_oneshot_lags.csv": "063d97e66de86e5e016e8e892c635d4a48488fa51e4dbca210fd7c265bdc9112",
-    "RANS_PostProcessing/rans_oneshot_series.csv": "676ac3d08d2356c259363ea59562a4ab50e8a7645ed9361172c83c2137772529",
+    "RANS_PostProcessing/rans_oneshot_series.csv": "cdfd81149b60f8efee7e23957f67a683e3f3f9a2ce1430483cace1afd3483597",
     "RANS_PostProcessing/rans_pressure_probe.csv": "eb73701ef38b44a906fabfed49394d68ba0410e7b5b5cced64854ef2b12bbf32",
     "RANS_PostProcessing/rans_protected_region.csv": "b2335a4bdc0390e4b2338ab43bd130a327443d762d48bb286e77cc26df63702a",
     "RANS_PostProcessing/rans_protected_summary.csv": "169758aff6b0280657e620c3f1a657f779febc15cd556eaf9fcf606e9754861a",
     "RANS_PostProcessing/rans_runtime_units.csv": "dd71b72697b70e57d43e6131cd0f61bdb1f60bfb4367f864282f8909cc688032",
-    "RANS_PostProcessing/rans_surface_forces.csv": "db37796686dd933aae05d1579d7cad58df5aac7bcbf9aacbdef8684bf0231e76",
-    "RANS_PostProcessing/rans_surface_norms.csv": "3178b8799d31b9360be28d5f1a6f97310f4f6e00e0b43e3dd24bf0f3df8e08c3",
-    "RANS_PostProcessing/rans_surface_profiles.csv": "9371b7a7203f19af1e40a7b77f19e98938e91cf55a87ab3a9b29401bd018b03b",
-    "RANS_PostProcessing/rans_timing.csv": "89c2a4addab68615a2d54cec89071991ec27534ef45c5bd2e739205c70cad1c7",
-    "RANS_PostProcessing/rans_transfer_integrals.csv": "222194a44b4a6d82373bb6db170d75cb49368b42dd270b176ad84cc81971f681",
-    "RANS_PostProcessing/rans_turb_state_norms_SA.csv": "0c5cfe31343b8d4be5d27a3789c46ed5be9ed969dcbf8612c08aa02f8953e127",
-    "RANS_PostProcessing/rans_turb_state_norms_SST.csv": "8c44a1a9073a064a102c29745913d0e0c053daf742cff3f85812f14aa28b117d"
+    "RANS_PostProcessing/rans_surface_forces.csv": "9435ff8207f377b24424f7b596842f668f279a6d86c36f1861d2431c23bba39f",
+    "RANS_PostProcessing/rans_surface_norms.csv": "f2c3e9a258de5b1b2bd43d0ea339bf2fb80629d96b43e2a396464c04b8fe74de",
+    "RANS_PostProcessing/rans_surface_profiles.csv": "b99ad29c1070847d6e501ab07a86d166d78ff045f5658bb576fe6f9e6c47dec9",
+    "RANS_PostProcessing/rans_transfer_integrals.csv": "7ae0ecf20088ee331886dcf972f9b31fea349604caf0fdf56ef32aea14d0a23f",
+    "RANS_PostProcessing/rans_turb_state_norms_SA.csv": "97a1591106c7aaa3a7b2f9ee168cbfbdb49b5c11953db3c63dfc36432ec97bef",
+    "RANS_PostProcessing/rans_turb_state_norms_SST.csv": "02898c4cf2f621ac5eef1590973b71737a46fa9c30c2294a4d6cc417684cfa0c"
   },
   "source_tables": {
     "rans_code_provenance.csv": {
-      "input_rows": 69,
-      "unique_rows": 69,
+      "input_rows": 63,
+      "unique_rows": 63,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_control_inner.csv": {
-      "input_rows": 18,
-      "unique_rows": 18,
+      "input_rows": 27,
+      "unique_rows": 27,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_control_replay.csv": {
-      "input_rows": 48,
-      "unique_rows": 48,
+      "input_rows": 72,
+      "unique_rows": 72,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_control_sensitivity.csv": {
-      "input_rows": 192,
-      "unique_rows": 192,
+      "input_rows": 256,
+      "unique_rows": 256,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_control_series.csv": {
-      "input_rows": 4128,
-      "unique_rows": 4128,
+      "input_rows": 5504,
+      "unique_rows": 5504,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_deformed_reference.csv": {
-      "input_rows": 10,
-      "unique_rows": 10,
+      "input_rows": 12,
+      "unique_rows": 12,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_deformed_surface.csv": {
@@ -67,13 +66,13 @@
       "exact_duplicates_removed_in_view": 0
     },
     "rans_drift_series.csv": {
-      "input_rows": 3184,
-      "unique_rows": 3184,
+      "input_rows": 4776,
+      "unique_rows": 4776,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_drift_trends.csv": {
-      "input_rows": 40,
-      "unique_rows": 40,
+      "input_rows": 60,
+      "unique_rows": 60,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_fine_mesh.csv": {
@@ -87,8 +86,8 @@
       "exact_duplicates_removed_in_view": 0
     },
     "rans_inner_convergence.csv": {
-      "input_rows": 20,
-      "unique_rows": 20,
+      "input_rows": 24,
+      "unique_rows": 24,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_mesh_levels.csv": {
@@ -97,8 +96,8 @@
       "exact_duplicates_removed_in_view": 0
     },
     "rans_mesh_quality.csv": {
-      "input_rows": 340,
-      "unique_rows": 340,
+      "input_rows": 500,
+      "unique_rows": 500,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_mesh_replay.csv": {
@@ -142,38 +141,33 @@
       "exact_duplicates_removed_in_view": 0
     },
     "rans_surface_forces.csv": {
-      "input_rows": 8644,
-      "unique_rows": 7964,
-      "exact_duplicates_removed_in_view": 680
+      "input_rows": 10556,
+      "unique_rows": 9556,
+      "exact_duplicates_removed_in_view": 1000
     },
     "rans_surface_norms.csv": {
-      "input_rows": 8644,
-      "unique_rows": 7964,
-      "exact_duplicates_removed_in_view": 680
+      "input_rows": 10556,
+      "unique_rows": 9556,
+      "exact_duplicates_removed_in_view": 1000
     },
     "rans_surface_profiles.csv": {
-      "input_rows": 28160,
-      "unique_rows": 18944,
-      "exact_duplicates_removed_in_view": 9216
-    },
-    "rans_timing.csv": {
-      "input_rows": 8,
-      "unique_rows": 8,
-      "exact_duplicates_removed_in_view": 0
+      "input_rows": 33280,
+      "unique_rows": 22016,
+      "exact_duplicates_removed_in_view": 11264
     },
     "rans_transfer_integrals.csv": {
-      "input_rows": 3740,
-      "unique_rows": 3740,
+      "input_rows": 5500,
+      "unique_rows": 5500,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_turb_state_norms_SA.csv": {
-      "input_rows": 791,
-      "unique_rows": 791,
+      "input_rows": 949,
+      "unique_rows": 949,
       "exact_duplicates_removed_in_view": 0
     },
     "rans_turb_state_norms_SST.csv": {
-      "input_rows": 791,
-      "unique_rows": 791,
+      "input_rows": 949,
+      "unique_rows": 949,
       "exact_duplicates_removed_in_view": 0
     }
   },
@@ -188,6 +182,22 @@
     },
     {
       "case": "RANS_SA_WD_0.01-20_ConsGalerkinProj_Drift_Seed2_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
+      "case": "RANS_SA_WD_0.01-20_Conservative_Drift_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
+      "case": "RANS_SA_WD_0.01-20_Conservative_Drift_Seed2_Second",
       "exported_history_pairs": 40,
       "pairs_with_poststep_in_window": 39,
       "excluded_terminal_state_steps": [
@@ -227,6 +237,22 @@
       ]
     },
     {
+      "case": "RANS_SST_WD_0.01-20_Conservative_Drift_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
+      "case": "RANS_SST_WD_0.01-20_Conservative_Drift_Seed2_Second",
+      "exported_history_pairs": 40,
+      "pairs_with_poststep_in_window": 39,
+      "excluded_terminal_state_steps": [
+        399
+      ]
+    },
+    {
       "case": "RANS_SST_WD_0.01-20_NN_Drift_Second",
       "exported_history_pairs": 40,
       "pairs_with_poststep_in_window": 39,
@@ -250,7 +276,7 @@
   "probe_below_three_ulp": 13,
   "pressure_ulp": 5.960464477539063e-08,
   "short_run_convective_duration": 0.04,
-  "old_and_raw_csv_snapshot_count": 68,
+  "old_and_raw_csv_snapshot_count": 71,
   "inputs_differing_from_delivered_snapshot": [],
   "bibliography": "References.bib",
   "raw_simulations_rerun": false

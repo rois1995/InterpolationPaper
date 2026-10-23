@@ -1,6 +1,0 @@
-metric,value
-Constant patch maximum error,0.000e+00
-Linear patch maximum error,1.150e-10
-Maximum target-cell coverage,1.000000
-Nodes with error above 1e-6,0
-Target nodes,22508

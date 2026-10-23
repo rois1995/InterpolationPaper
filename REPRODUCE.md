@@ -7,10 +7,11 @@ installations, the meshes and the case trees named below.
 
 Dependencies: Python 3.8+ with numpy and pandas (`scripts/build_plot_data.py`,
 `scripts/build_rans_data.py`); a TeX distribution with `latexmk`, `pgfplots` >= 1.18 (the manuscript
-sets `compat=1.18`), `pgfplotstable`, `siunitx`, `booktabs`, `biblatex`.
+sets `compat=1.18`), `pgfplotstable`, `siunitx`, `booktabs`, the STIX fonts and BibTeX with `elsarticle-num.bst`;
+the Elsevier CAS class files `cas-sc.cls` and `cas-common.sty` are included in the project root.
 
     make distclean      # removes generated/*.csv, generated/rans_numbers.tex and the PDF
-    make data           # rebuilds generated/ from data/ and RANS_PostProcessing/ (byte-identical to the committed files)
+    make data           # rebuilds generated/ from data/ and RANS_PostProcessing/ (byte-identical to the released files)
     make                # builds paper.pdf
     make audit          # scripts/audit_results.py: table checks, citation and label consistency
     make rans-audit     # scripts/build_rans_data.py: duplicate policy and input digests (audit/rans_data_audit.json)
@@ -22,8 +23,9 @@ by the build. `generated/` holds derived views only. `closure/csv_sha256_baselin
 
 ## Level 2: the simulations behind the reduced data
 
-Code: MeshAdaptation `Scripts/` at commit 35d865eb (transfer and mesh-motion code; the built case
-bases are recorded in `provenance/code_revision_*.txt` with per-file SHA-256), SU2 v8 commit
+Code: MeshAdaptation `Scripts/` at commit b3054414 (transfer and mesh-motion code, including the
+NN, Barycentric, ConsGalerkinProj and Conservative (CV2) transfers; the built case bases are recorded in
+`provenance/code_revision_*.txt` with per-file SHA-256), SU2 v8 commit
 dcee051d (binary of 2025-12-10). Meshes and steady restart checkpoints: `provenance/checkpoints_sha256.txt`.
 The runs need 4 MPI ranks and the case trees under `TestInterp/` of the validation workspace:
 
@@ -31,10 +33,14 @@ The runs need 4 MPI ranks and the case trees under `TestInterp/` of the validati
 |---|---|---|
 | static transfer tests | `TestInterp/RunCases_static.sh`, `DiscontinuousBoundedness.sh` | `Comparison.py`, `DiscontinuousTables.py` |
 | Euler NACA 0012 | `SteadyNACA/RunAll_Euler.sh` | `ForceDriftAnalysis.py`, `AcousticDelayAnalysis.py`, `PressureProbeAnalysis.py` |
-| BDF2 history study | `SteadyNACA/BDF2/run_bdf2_all.sh` | `bdf2_analysis.py`, `bdf2_identity_double.py`, `bdf2_identity_localize.py`, `PatchTests.py` |
+| BDF2 history study | `SteadyNACA/BDF2/run_bdf2_all.sh` | `bdf2_analysis.py`, `bdf2_cancellation.py`, `bdf2_amplitude.py`, `bdf2_identity_double.py`, `bdf2_identity_localize.py`; wall split of the residual identity: `TestInterp/CV_Campaign/identity_wall_split.py` |
 | 2D Riemann | `2D_Riemann/RunAll_Riemann.sh`, `RunSeeds_Riemann.sh`, `RunTier0Refine.sh` | the `2D_Riemann/*.py` analyses, `RiemannTransitionExtract.py`, `RiemannTransitionSummary.py` |
 | RANS NACA 0012 | `SteadyNACA/run_rans_campaign.sh`, `run_controls_rans.sh` | `run_rans_postprocessing.sh` |
-| all of the above in order | `TestInterp/run_everything.sh` | `TestInterp/ExportPaperData.py` writes `data/`, `RANS_PostProcessing/`, commits and pushes |
+| all of the above in order | `TestInterp/CV_Campaign/run_campaign.sh`, `run_post_analysis.sh` | `TestInterp/ExportPaperData.py` writes `data/` and `RANS_PostProcessing/` and runs the builders |
+
+The no-transfer references (steady solutions, fixed-mesh and native-mesh continuations, mesh-level
+studies) are inputs of the transfer runs, which reproduce their start-up states bit for bit; their
+digests are in `provenance/checkpoints_sha256.txt`.
 
 Limits: the case trees (about 150 GB with the per-step volume fields) and the Pointwise mesh
-projects are not part of this repository; the runs took about eight days on 4 ranks.
+projects are not part of this repository; the transfer runs take about two weeks on 4 ranks.

@@ -57,40 +57,60 @@ def main() -> int:
     abstract=re.search(r'\\begin\{abstract\}(.*?)\\end\{abstract\}',s,re.S).group(1)
     abstract_words=len(abstract.split())
     if re.search(r'\\cite',abstract): errors.append('Review citation in abstract')
-    definitions={
-      'NN':r'NN for nearest-neighbor Taylor interpolation',
-      'BAR':r'BAR for barycentric interpolation',
-      'GP':r'GP for Galerkin projection',
-      'RANS':r'Reynolds-averaged Navier--Stokes \(RANS\)',
-      'BDF2':r'second-order backward differentiation formula \(BDF2\)',
-      'BJ':r'Barth--Jespersen \(BJ\)',
-      'GC':r'global correction, denoted GC',
-      'SF':r'safety factor \(SF\)',
-      'NACA':r'National Advisory Committee for Aeronautics \(NACA\)',
-      'SA':r'Spalart--Allmaras \(SA\)',
-      'SST':r'shear-stress-transport \(SST\)',
-      'SU2':r'Stanford University Unstructured \(SU2\)',
-      'HLLC':r'Harten--Lax--van Leer contact \(HLLC\)',
-      'MUSCL':r'monotonic upstream-centered scheme for conservation laws \(MUSCL\)',
-      'CFL':r'Courant--Friedrichs--Lewy \(CFL\)',
-      'FGMRES':r'flexible generalized minimal residual \(FGMRES\)',
-      'ILU':r'incomplete lower--upper \(ILU\)',
-      'RMS':r'root-mean-square \(RMS\)',
-      'AI':r'artificial intelligence \(AI\)',
-      'CRediT':r'Contributor Roles Taxonomy \(CRediT\)',
+    # Acronyms and a word stem of their expansion. The wording is free: the first use of
+    # each acronym in a scope must itself be the definition "full name (ACR)", with an
+    # optional order suffix such as NN1 or CV2, and the stem within the preceding words.
+    expansions={
+      'NN':'nearest-neighbor','BAR':'barycentric','GP':'Galerkin projection',
+      'CV':'control-volume transfer','GC':'global correction',
+      'RANS':'Reynolds-averaged Navier--Stokes',
+      'BDF2':'backward differentiation formula','BJ':'Barth--Jespersen',
+      'SF':'safety factor',
+      'NACA':'National Advisory Committee for Aeronautics','SA':'Spalart--Allmaras',
+      'SST':'shear-stress-transport','SU2':'Stanford University Unstructured',
+      'HLLC':'Harten--Lax--van Leer contact',
+      'MUSCL':'monotonic upstream-centered scheme for conservation laws',
+      'CFL':'Courant--Friedrichs--Lewy','FGMRES':'flexible generalized minimal residual',
+      'ILU':'incomplete lower--upper','BiCGSTAB':'biconjugate-gradient',
+      'RMS':'root-mean-square','AI':'artificial intelligence',
+      'CRediT':'Contributor Roles Taxonomy',
     }
+    suffixed={'NN','BAR','GP','CV'}  # method families carry an order suffix
+    # The abstract must stand alone, so it is checked as its own scope; the main text
+    # (after \maketitle) is checked again from its own start.
+    scopes={'abstract':abstract,'main text':s.split(r'\maketitle',1)[1]}
+    def norm(x: str) -> str:
+        # Compare expansions without case, line breaks or the en-dash spelling.
+        return re.sub(r'\s+',' ',x.replace('--','-')).lower()
     acronym_checks={}
-    for key,definition in definitions.items():
-        first=re.search(r'(?<![A-Za-z0-9])'+key+r'(?:[1234])?(?![A-Za-z0-9])',s)
-        defined=re.search(definition,s)
-        ok=bool(first and defined and defined.start()<=first.start()<defined.end())
-        acronym_checks[key]=ok
-        if not ok: errors.append('Review first-use definition: '+key)
-    kw=re.search(r'\\begin\{keyword\}(.*?)\\end\{keyword\}',s,re.S).group(1)
+    for scope,text in scopes.items():
+        for key,stem in expansions.items():
+            pat=r'(?<![A-Za-z0-9\\])'+re.escape(key)+(r'[1-3]?' if key in suffixed else '')+r'(?![A-Za-z0-9])'
+            first=re.search(pat,text)
+            if not first:
+                acronym_checks[f'{scope}:{key}']='unused'; continue
+            before=text[max(0,first.start()-160):first.start()]
+            after=text[first.end():first.end()+1]
+            # Accepted forms: "full name (ACR)" and "full name, denoted ACR".
+            in_parens=before.endswith('(') and after==')'
+            denoted=bool(re.search(r'denoted\s*$',before))
+            ok=(in_parens or denoted) and norm(stem) in norm(before)
+            acronym_checks[f'{scope}:{key}']='defined at first use' if ok else 'used before definition'
+            if not ok:
+                ln=text[:first.start()].count('\n')+1
+                errors.append(f'Review first-use definition: {key} ({scope}, line {ln} of scope: '
+                              +re.sub(r'\s+',' ',text[max(0,first.start()-50):first.end()+10])+')')
+    kw=re.search(r'\\begin\{keywords\}(.*?)\\end\{keywords\}',s,re.S).group(1)
     keywords=[x.strip() for x in kw.split(r'\sep')]
+    if len(keywords) not in range(1,8): errors.append('Keyword count outside journal 1–7 requirement')
+    if abstract_words>250: errors.append('Abstract exceeds 250 words')
     hl=[x[2:].strip() for x in (ROOT/'submission/highlights.txt').read_text().splitlines() if x.startswith('- ')]
     if len(hl) not in range(3,6): errors.append('Highlights count outside publisher 3–5 guidance')
     if any(len(x)>85 for x in hl): errors.append('Highlight exceeds 85 characters')
+    # The highlights page of the CAS manuscript must repeat the separate highlights file.
+    hl_env=re.search(r'\\begin\{highlights\}(.*?)\\end\{highlights\}',s,re.S)
+    hl_tex=[x.strip() for x in hl_env.group(1).split(r'\item')[1:]] if hl_env else []
+    if hl_tex!=hl: errors.append('Highlights in paper.tex differ from submission/highlights.txt')
     ai=s.index(r'\section*{Declaration of generative AI')
     if ai<s.index(r'\appendix'): errors.append('Writing assistance declaration precedes appendices')
     if r'\section' in s[ai+len(r'\section*'):s.index(r'\bibliographystyle')]: errors.append('Another section follows writing assistance declaration')
@@ -104,7 +124,7 @@ def main() -> int:
     csvs={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(ROOT.rglob('*.csv')) if 'dist' not in p.parts}
     blg=(ROOT/'paper.blg').read_text(errors='replace') if (ROOT/'paper.blg').exists() else ''
     report={'mechanical_errors':errors,'author_confirmations_pending':pending,
-      'journal_specific_guide_status':'Not verified: live Computers & Fluids guide returned HTTP 403; confirm portal requirements.',
+      'journal_specific_guide_status':'Journal of Computational and Applied Mathematics Guide for Authors (ScienceDirect) checked 2026-10-23: abstract <=250 words, 1-7 keywords, 3-5 highlights of <=85 characters, numbered references; confirm portal requirements at submission.',
       'abstract_words':abstract_words,'keyword_count':len(keywords),'highlight_characters':[len(x) for x in hl],
       'defined_acronyms_at_first_source_use':acronym_checks,
       'source_labels':len(labels),'bibliography_entries':len(keys),'cited_keys':len(citekeys),

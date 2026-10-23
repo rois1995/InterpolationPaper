@@ -37,8 +37,7 @@ def main() -> None:
     args=ap.parse_args(); out=args.output_dir.resolve(); out.mkdir(parents=True,exist_ok=True)
     source=(ROOT/'paper.tex').read_text(encoding='utf-8')
     preamble=source.split(r'\begin{document}',1)[0]
-    preamble=re.sub(r'\\documentclass(?:\[[^]]*\])?\{[^}]*\}',r'\\documentclass[12pt]{article}',preamble,count=1)
-    preamble=re.sub(r'^\\(?:journal|biboptions)\{[^\n]*\}\s*$', '',preamble,flags=re.M)
+    # The manuscript class (cas-sc) is kept so text width and fonts match the paper.
     preamble+='\n'+r'\usepackage[active,tightpage]{preview}'+'\n'+r'\PreviewEnvironment{preview}'+'\n'+r'\setlength\PreviewBorder{3pt}'+'\n'
     figs=re.findall(r'\\begin\{figure\}(?:\[[^]]*\])?.*?\\end\{figure\}',source,re.S)
     if len(figs)!=2:
@@ -50,7 +49,8 @@ def main() -> None:
         for n,fig in enumerate(figs,1):
             content,caption=strip_command(fig,'caption')
             content=re.sub(r'\\label\{[^}]*\}', '',content)
-            content=re.sub(r'\\begin\{figure\}(?:\[[^]]*\])?', r'\\begin{preview}\\begin{minipage}{\\textwidth}', content)
+            # cas-sc typesets figure bodies in \sffamily\small; the export reproduces that setting.
+            content=re.sub(r'\\begin\{figure\}(?:\[[^]]*\])?', r'\\begin{preview}\\begin{minipage}{\\textwidth}\\sffamily\\small', content)
             content=content.replace(r'\end{figure}',r'\end{minipage}\end{preview}')
             tex=build/f'Figure_{n}.tex'
             tex.write_text(preamble+'\n\\begin{document}\n'+content+'\n\\end{document}\n')

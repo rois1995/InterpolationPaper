@@ -3,6 +3,8 @@ LATEXMK ?= latexmk
 MAIN := paper.tex
 PDF := paper.pdf
 SUBMISSION_TEX := submission/author_details.tex submission/author_declarations.tex
+# Elsevier CAS single-column class files (template v2.4), kept unmodified beside paper.tex.
+CLASS_FILES := cas-sc.cls cas-common.sty
 DATA := \
 	data/Comparison_Errors.csv \
 	data/Comparison_Conservation.csv \
@@ -32,8 +34,6 @@ DATA := \
 	data/naca_superposition.csv \
 	data/naca_global_correction.csv \
 	data/naca_force_history.csv \
-	data/naca_surface_delta_cp.csv \
-	data/naca_gp3_verification.csv \
 	data/naca_identity_wall_split.csv \
 	data/naca_initial_residual_identity_pairs.csv \
 	data/naca_initial_residual_identity_double.csv \
@@ -59,7 +59,7 @@ $(RANS_STAMP): scripts/build_rans_data.py scripts/build_views.py $(RANS_DATA) MD
 	$(PYTHON) scripts/build_views.py
 	@touch $(RANS_STAMP)
 
-$(PDF): $(MAIN) $(SUBMISSION_TEX) References.bib $(GENERATED_STAMP) $(RANS_STAMP)
+$(PDF): $(MAIN) $(CLASS_FILES) $(SUBMISSION_TEX) References.bib $(GENERATED_STAMP) $(RANS_STAMP)
 	$(LATEXMK) -pdf -interaction=nonstopmode -halt-on-error $(MAIN)
 
 clean:

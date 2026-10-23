@@ -4,3 +4,4 @@ distance,onset_1,onset_5,onset_25,onset_50,peak_lag,predicted,case,event,window,
 0.10,37,44,75,82,97,84.52,WD_0.10-0.15_ConsGalerkinProj_OneShot_Second,200,199,0,5.657e-05,CL
 0.20,105,115,144,171,203,169.03,WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second,400,399,0,3.129e-05,CL
 0.20,79,92,118,130,199,169.03,WD_0.20-0.25_ConsGalerkinProj_OneShot_Second,200,199,1,2.541e-05,CL
+0.20,92,120,140,160,197,169.03,WD_0.20-0.25_Conservative_OneShot_Long_Second,400,399,0,3.184e-05,CL

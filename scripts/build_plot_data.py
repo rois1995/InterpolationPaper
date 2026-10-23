@@ -20,13 +20,14 @@ METHOD_MAP = {
     "NN": "NN",
     "Barycentric": "BAR",
     "ConsGalerkinProj": "GP",
+    "Conservative": "CV",
 }
 ORDER_MAP = {
     "FirstOrder": "1",
     "SecondOrder": "2",
     "ThirdOrder": "3",
 }
-SCHEME_ORDER = ["NN1", "NN2", "NN3", "BAR2", "BAR3", "GP2", "GP3"]
+SCHEME_ORDER = ["NN1", "NN2", "NN3", "BAR2", "BAR3", "GP2", "GP3", "CV2"]
 NOMINAL_ORDER = {
     "NN1": 1,
     "NN2": 2,
@@ -35,6 +36,7 @@ NOMINAL_ORDER = {
     "BAR3": 3,
     "GP2": 2,
     "GP3": 3,
+    "CV2": 2,
 }
 
 
@@ -137,19 +139,19 @@ def make_norm_order_summary(errors: pd.DataFrame, solution: str) -> pd.DataFrame
 
 def make_boundedness_plot_data(df: pd.DataFrame) -> pd.DataFrame:
     order_short = {"First": "1", "Second": "2", "Third": "3"}
-    method_short = {"NN": "NN", "Barycentric": "BAR", "ConsGalerkinProj": "GP"}
+    method_short = {"NN": "NN", "Barycentric": "BAR", "ConsGalerkinProj": "GP", "Conservative": "CV"}
     labels = []
     for row in df.itertuples(index=False):
         base = method_short[row.method] + order_short[row.order]
-        if row.method == "ConsGalerkinProj":
+        if row.method in ("ConsGalerkinProj", "Conservative"):
             suffix = {"soft": "S", "hard": "H", "none": "U"}.get(str(row.limiter), str(row.limiter))
         else:
             if row.limiter == "none":
                 suffix = "U"
             else:
                 suffix = str(row.limiter)
-            if str(row.enforce_cons) == "Global":
-                suffix += "-GC"
+        if str(row.enforce_cons) == "Global":
+            suffix += "-GC"
         labels.append(f"{base}-{suffix}")
     out = df.copy()
     out.insert(0, "idx", np.arange(len(out), dtype=int))
@@ -215,6 +217,7 @@ def main() -> int:
         "NN1": "NN1", "NN2": "NN2", "NN3": "NN3",
         "BAR2": "Bary2", "BAR3": "Bary3",
         "GP2": "Gal2", "GP3": "Gal3",
+        "CV2": "CV2",
     }
     required_wide = ["N", "h_Struct", "h_Mixed"] + [
         f"{grid}_{source_suffix[scheme]}"

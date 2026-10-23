@@ -1,19 +1,25 @@
-To the Editors of Computers & Fluids
+To the Editors of the Journal of Computational and Applied Mathematics
 
 Dear Editors,
 
-We submit “Mesh-to-Mesh Transfer Errors in Multistep Unsteady Flow Simulations” for consideration as a research article in Computers & Fluids.
+We submit “Mesh-to-Mesh Transfer Errors in Multistep Unsteady Flow Simulations” for consideration as an original research paper in the Journal of Computational and Applied Mathematics.
 
-The manuscript examines how solution transfer interacts with the receiving spatial discretization and the histories required by a multistep integrator. It compares established nearest-neighbor Taylor, barycentric, and Galerkin constructions, including global integral correction. The contribution is a controlled assessment of restart consistency and its numerical consequences, rather than a new interpolation formula.
+The manuscript analyzes solution-transfer operators as restart operators for multistep time integration on replaced meshes. It gives properties of these operators that interpolation norms or global conservation alone do not reveal, and verifies them on nontrivial examples:
 
-Repeated Euler remeshing provides a replicated counterexample to using global conservation as a measure of spatial fidelity: the density integral can be preserved to roundoff while substantial profile broadening persists. Controlled airfoil restarts then separate the two backward-differentiation histories and demonstrate a finite next-step response when only the older history is perturbed. The analysis also accounts for boundary admissibility and representation changes.
+1. A history-forcing identity for transferred multistep histories. For the second-order backward differentiation formula (BDF2), the receiving residual at a common trial state changes exactly by −M η/Δt, with M the finite-volume mass matrix and η = 2ε^n − ε^(n−1)/2 formed from the discrepancies of the two transferred histories. The identity, stated as a proposition with proof, needs neither a linear spatial residual nor small discrepancies. It is verified to a relative error of about 10^−7 for every transfer, slip-wall vertices included; controlled restarts show that an older-history discrepancy alone produces a finite next-step response.
 
-Fixed-body Reynolds-averaged Navier–Stokes calculations connect these findings to turbulence transport and viscous loads. Their numerical controls distinguish improved transfer-integral preservation from an aerodynamic ranking that the time-step and inner-iteration sensitivities do not resolve. These limitations are retained explicitly.
+2. Counterexamples that separate interpolation order, integral preservation and profile preservation. Vertex restriction can give an exact quadratic projection a second-order error in the solver integral; an unlimited conservative transfer preserves the integral to roundoff while exceeding the source bounds; and under repeated Euler remeshing a globally corrected first-order transfer keeps its cumulative integral defect at roundoff while the density transition broadens by 18 to 26 reference cells.
 
-The combination of transfer verification, multistep analysis, and flow-solver response is intended for researchers developing and assessing adaptive numerical methods for fluid flow. The numerical tables and analysis scripts supporting the comparisons are available in the versioned project repository.
+3. A control-volume P1 transfer posed as a Petrov–Galerkin condition on the solver’s median-dual cells, with hat-function trial space and control-volume indicators as test functions. Its source field integrates to the solver’s lumped integral on every element type. The recovery matrix has the control-volume measures as row and column sums and is symmetric positive definite in two dimensions and on tetrahedra; on simplicial meshes the Jacobi-preconditioned spectrum lies in a fixed disc about one. The transfer is globally conservative; per control volume, its condition holds before limiting and away from the boundary trace. Against Galerkin projection on the same P1 space, it holds the repeated-remeshing integral at roundoff with comparable broadening of at most 0.07 cell.
+
+4. A stage-wise assessment of conservation, which reports integral defects at stated processing stages (construction, limiting, boundary trace, admissibility conditioning) instead of inferring them from the unconstrained operator.
+
+Reynolds-averaged Navier–Stokes calculations with two turbulence closures are an application that tests these criteria under turbulence transport and viscous loads. The transfer-level differences are resolved: Galerkin projection and the control-volume transfer reduce turbulence-integral defects relative to nearest-neighbor Taylor interpolation, the latter to below 5×10^−12. Time-step and inner-iteration controls show that the paired aerodynamic difference is not resolved at the tested settings; the manuscript reports this as a quantified limit of the comparison, not as an aerodynamic ranking.
+
+The numerical tables and analysis scripts are available in the versioned project repository [TODO(author): DOI of the archived release]. The manuscript is not under consideration elsewhere [TODO(author): confirm]. [TODO(author): suggested reviewers are entered in the submission system.]
 
 Sincerely,
 
-[Corresponding author]
-[Affiliation]
-[Institutional email]
+[TODO(author): corresponding author name]
+[TODO(author): affiliation and postal address]
+[TODO(author): institutional e-mail]

@@ -1,165 +1,169 @@
 {
   "scope": "Recomputation from archived tables; no raw-field/solver validation.",
   "csv_sha256": {
-    "data/Comparison_Conservation.csv": "13c4f497bb4b7700c8d6e3ae7834f4c4b1f5f2bd23bd53c442fa5a2126f0f09e",
-    "data/Comparison_Errors.csv": "928df3b898b0de6b90a336bcf48160eb194cb7919ce0ae3462363d72b6a52e8a",
-    "data/Comparison_Orders.csv": "664be46d22c3699e61e6e0df7429892bb3e3253d8271853d1536a81849cb18ca",
-    "data/bdf2_raw/naca_first_step_response.csv": "429921ecaa594e7c6f2188e0faa9a91dd99ff629ffc9808ec69a0c9825dfbb39",
-    "data/bdf2_raw/naca_force_history.csv": "cf8736732c82a50926c7ae62bef2053dcdbde91c005ab74bc5e392f9b94399e1",
-    "data/bdf2_raw/naca_initial_residual_identity.csv": "87757cb71cc92a340e67d10d3068eda6db9d306278a00d1fd586be1197a2c564",
+    "data/Comparison_Conservation.csv": "11911e4c64d17660d30bcfe67c32703e7d0f4cb1ca479734f0cbec8d162b3084",
+    "data/Comparison_Errors.csv": "c32782ea7239647df24fedb94162113693624793b743455c2732ddf0f98e2b5d",
+    "data/Comparison_Orders.csv": "1c47fde988bf06da42dc15826ea919ddb055fc2669477fcd84125516e59d3551",
+    "data/bdf2_raw/naca_first_step_response.csv": "1ee275c5cc57bd6c253f21607aa184d2194d94ad9b10a32131047f4239f28be3",
+    "data/bdf2_raw/naca_force_history.csv": "ca008f9b7d35966d8c21140ee1cc597a68eca4ff5ba8b82373da55b7aaafcddf",
+    "data/bdf2_raw/naca_initial_residual_identity.csv": "4ec162daac634e5625b4b4f0ab7296486a0552ea282911452996d30b9adab47d",
     "data/bdf2_raw/naca_native_convergence.csv": "1a2bf45541414c0f377e0bb1c1cf998d7f337bff37367ff58ccbd75f84f4d98c",
-    "data/bdf2_raw/naca_superposition.csv": "83899f6493327124b2edcb2ae44920879810dedefdd408e4c0a0045f1e85084f",
-    "data/bdf2_raw/naca_surface_delta_cp.csv": "de5f4df58f2c50481d98fa2e7ad2a11b8367207f351d978fd9a316e76e9d786d",
-    "data/bdf2_raw/naca_transfer_defects.csv": "e6b85c5547ab76942d6f924ddef7a4d05245047243051d53d7b9a418477d3e0c",
-    "data/discontinuous_boundedness.csv": "a6943d761c4ca0d961421633a72d6bfdb0e2901201652252a6e8ab9ce2988c26",
-    "data/discontinuous_conservation_defect.csv": "f4c6ac1d03cccf42ba6b61e19cffb38a077b083b04926455c447f2d0c14a7284",
-    "data/discontinuous_convergence_L2.csv": "58eb81e298bd7f339d3a7574ef9912ff4b44e136a94d3662cb1e5f49cd26e011",
-    "data/naca_acoustic_delay.csv": "fc53bdd93d9ee2633cab6f44d5adc3f52a6cd693b3e15181f5bb51e19b2d1556",
+    "data/bdf2_raw/naca_superposition.csv": "fdcc54c3b0dd3e992dc30f3b3ecee5d1c2f9b4fca679068cc169f92bcb90acdb",
+    "data/bdf2_raw/naca_transfer_defects.csv": "0d0674a674f3a5f8751408bf0025e9f13e3a4c70a83ab6cbd043085abecb9077",
+    "data/discontinuous_boundedness.csv": "32d3f1d37ab051f058c3e6bb37cfc9df37f4e0edff500468a97c273bf4ff5f23",
+    "data/discontinuous_conservation_defect.csv": "379a2dbbf0ec889a95435a76f21d01fb7ea967a2dcb2db8ea7a2ca5c76c1b302",
+    "data/discontinuous_convergence_L2.csv": "e2cdb69538e25780b2d3ec729d056b54e641d4aa443188a122b8133bc02b8942",
+    "data/naca_acoustic_delay.csv": "ae1118d79d692d9fe57001eb4bc895b7d2584864e24007f321a04b506f469ce9",
     "data/naca_acoustic_delay_fits.csv": "9aa1e445387148fcfffa29f33a7afddfbe6f2740e25f019305e329f45da13815",
-    "data/naca_amplitude_sequence.csv": "08bb9225aae159c8e564ec386aefe8be0ba2e5b95e867560d3aaa4c5931a7b1e",
-    "data/naca_cancellation.csv": "ad80308579c70b6205e0f1b6bc997068e0736be872a65736d011ac0075cf1037",
-    "data/naca_first_step_CL_plot.csv": "fe58b5dc0e97524857643fb1a85fe9104d77dd0281248d054ff6f64ca7f7aad7",
-    "data/naca_first_step_response.csv": "28cace11714c424946b2a77400769f8803ad885d6dbeba0a7b7eca3a53049cd7",
-    "data/naca_force_drift.csv": "edf87df81030d687d0b08d653371b8257e7b924efd820a7bbd9c60a498900fd1",
-    "data/naca_force_history.csv": "ec2be86b62e42c419422cb202cefd74269325f904993d68b5b7a0ae7bea17664",
-    "data/naca_global_correction.csv": "f3734461874e892c7981147686281ce106ed3548a8300ba130279daea0104c44",
-    "data/naca_gp3_verification.csv": "f8e36ac5d29f2dc44e024243b3c037697857e52cde75a35ce59dcf9af6efc8e7",
-    "data/naca_identity_wall_split.csv": "503046d9360bc07fd37a3676f5a0cfe9858d12bce852390c8669b50d9319a5eb",
-    "data/naca_initial_residual_identity.csv": "8249c5c3fa784c913b4ca5586ca628aa22418308260007d119e8baab69b88c72",
-    "data/naca_initial_residual_identity_double.csv": "a2d6d9f52eecea66edfd5ef7fb490f7832234f4078e88e134d88cb73342c9be4",
-    "data/naca_initial_residual_identity_pairs.csv": "87757cb71cc92a340e67d10d3068eda6db9d306278a00d1fd586be1197a2c564",
+    "data/naca_amplitude_sequence.csv": "9a56111d2b32c2e5937c2feee63002a157edfb24bea94c23d5d1f4d66386cbf9",
+    "data/naca_cancellation.csv": "db2a7416e12f40a3a95d695b07be57914f5f18b10e1233a19d827b4c431e5c22",
+    "data/naca_first_step_CL_plot.csv": "5900e26ff0aec2f84d5eee5114abd9773bfe645fd5bef60a9ef71e69584f52dd",
+    "data/naca_first_step_response.csv": "339a7bf7e1f8a9a9518ba3ee3bf9e4df7181566450b9ea6f8e833ffbc0cc80a4",
+    "data/naca_force_drift.csv": "9e7ff975ee6b2cfcf0b27525df125f337516cc25e0bf0d1b183e7ccd8e90b6ec",
+    "data/naca_force_history.csv": "7a3526cd2db5b851e40dd71450d99de4b43b6a55f926bf64b30c873d3b6ec409",
+    "data/naca_global_correction.csv": "762e13eed8e7e8e7e779c8c28eac581ba3ebc6b35f1df5080b3ef6be9fc77a02",
+    "data/naca_identity_wall_split.csv": "2f6dec723bf511b0c529e2ec5203c21f0022ca1b5ff4eeadfc3fb5622bf38eb4",
+    "data/naca_initial_residual_identity.csv": "cb3d3501d14fead70a64cf971afc9d55ebd078d9363cfae487c828dc2e452293",
+    "data/naca_initial_residual_identity_double.csv": "f2ca69b6ef94a6305d0b5739aea3055a3fb8ac185ab470476106af073d0b801c",
+    "data/naca_initial_residual_identity_pairs.csv": "4ec162daac634e5625b4b4f0ab7296486a0552ea282911452996d30b9adab47d",
     "data/naca_native_convergence.csv": "85a4d47afbee695c170529a5e302f0954ff1f16cf6e0a00b314ecf381bd90ba3",
-    "data/naca_pressure_propagation.csv": "c60966e568a5341b49dd3a3eafebda10187b4352cebe81cd7db97ecd9e605302",
-    "data/naca_superposition.csv": "ddb7afcd79d4c0448fb2039f6f6c3a52dfba2b44abd52693cb80fe17412b37f7",
-    "data/naca_surface_delta_cp.csv": "5221f33bacd9996a83c56a335b8838537266638d022b1e173803c718cd4a3cae",
-    "data/naca_transfer_defects.csv": "0186be7f8e9a7818bf174adf206fc123646db2936eb739d44f2a77142c269c1e",
-    "data/riemann_amplitude_global.csv": "07117351869624a68eaff85ff0e3f536ab9d199d16f8ef1813e81337f2e3dd18",
-    "data/riemann_amplitude_seeds.csv": "81ce510f46d784ad8a23930b8a59c1d47f3e034c4094dbe668f2d8e04e2aff45",
-    "data/riemann_frequency_full.csv": "312560ef29b0439be01265c9eab45dca175b71556a7db4695716b16da60870ee",
-    "data/riemann_global_correction.csv": "ad4c6fb34b7bee8a2fda546bb13b2f7ead4482fbb7aba5dfb0ae819bdd9df1c3",
-    "data/riemann_limiter_activation.csv": "36a8321868763ce0fa479e9f0e5844b3359bbc3a62e8ab5a058634678f13e706",
-    "data/riemann_moment_preservation.csv": "5d0d54c33a9b8969d9b205705158fc1ec46d690f5484a87011c4111eb9a429b7",
-    "data/riemann_multicycle.csv": "ca89c8a01caf4c96b3bdc91a76982d2848675102985aceb13174cd5d0cbc9ea9",
-    "data/riemann_refinement_errors.csv": "641dbc0aabc8bef79081a80af5f53c6cbcee59da9493cad889493bdd486f7b72",
+    "data/naca_pressure_propagation.csv": "ab15de3ecc3c8b33c908694edfa65c92e124848e48a306350dbdfe558d583516",
+    "data/naca_superposition.csv": "d6917c3ad19a2a5b9843afa4795a25f7c7be0a9313964d7faa38d646c60e41a7",
+    "data/naca_transfer_defects.csv": "63e63e8f34d307526b237f601f356379b28e7bbad2654bd73ecfdeaaa8963b1c",
+    "data/riemann_amplitude_global.csv": "f3639d5f462c1db72553861107fdf12cbf83851a23aac2b411d9b37d82ee1470",
+    "data/riemann_amplitude_seeds.csv": "3d056c3a720c46b89ad09a38b6bb7f50c7f1998c829efe9fac91660f01dceb59",
+    "data/riemann_frequency_full.csv": "006381e5f8560ec7045acb5d83fe542a7ceba850388893aa68c00be48dab84fb",
+    "data/riemann_global_correction.csv": "7cd0b2eaf831414121259fe2f710b3d92c18d243ebafb4992ac77bc2b35e38e2",
+    "data/riemann_limiter_activation.csv": "1864989e50cc512e5bfa4eef8a95368fd3de26f7f81d7488273073719f3b3a5a",
+    "data/riemann_moment_preservation.csv": "1de0f7943886ac15b107385bed308e25001dc7a2156dbaf4afbc593c19898ddb",
+    "data/riemann_multicycle.csv": "1f7cff7457737762202ce7c65290e2958e7806eaccb726ee0cebc603ad6c0c69",
+    "data/riemann_refinement_errors.csv": "e46c95fdf35c3403584ef2a6018d34031325eaadd20c8421b96125bf3b1ffd33",
     "data/riemann_refinement_orders.csv": "e0de43738d9b2251c07935e8b7a4b72f816902b2d62bc96f6383b5bba00f54b9",
-    "data/riemann_stress_representative.csv": "a3d9230a6065602f48bad90c673c5346d9888cdf3d90f934f85e9b70639a1a0e",
-    "data/riemann_transition_step399.csv": "da68561049c2b4a084d3355931afe46eb11bd11fbde05f10e95bfa006a85f6bf",
-    "generated/asymmetric_conservation_defect.csv": "eaf5c0d1ae4fcf49e77c4016f74ec82eaaa2986d2af7e4f2cbef7631a0fcdd55",
-    "generated/asymmetric_convergence_L2.csv": "b5f95b29595c0ce70a9a405af6545fbc28ee4e760c3d1d6f5875081eb0981ad2",
-    "generated/asymmetric_norm_orders.csv": "b8d6dde24b6bef8a18eba1791663bfbb4f7ea1e0a1860eeed65a518c4d330f49",
-    "generated/asymmetric_orders.csv": "929d044c7bad3349caf3c747b43c22342c35448e1c87f097be8c370fc163d762",
-    "generated/discontinuous_boundedness_plot.csv": "8aba23254adb5fb546bfd217b82aac23031ca756a643cd6224c49ca94a473072",
-    "generated/discontinuous_conservation_defect.csv": "8fae600e8037081fa461e4956083ffa971a0464fce364e1f07a3ebaa11c82662",
-    "generated/discontinuous_convergence_L2.csv": "4a167d134c97a4fa507beda549f5ba84c6e96cb38eea3fb26aa341187eef1c41",
-    "generated/discontinuous_norm_orders.csv": "ab0cf2dfff7e7be4a7d181dfe40bd1d671da2d95518dc98af245a5e6c0646858",
-    "generated/discontinuous_orders.csv": "13baeae6d431b9158b28ef86b3e24f9e4a3d275ffccf4e4981044888b9850b7e",
-    "generated/rans_clipping_report.csv": "08bebc14034180a89b745c277df65ad4af24265ad0aeaa224a7b6a67e058b418",
-    "generated/rans_drift_SA.csv": "6efa3531bf0a6f6cd01ffd829a724dc2be6a5843534765942e1c65d6d78c2bad",
-    "generated/rans_drift_SST.csv": "ff8d54e9eac23e94924f9789bbe9be3c911e177a13b7ec08fc2efdf18a4be4e2",
-    "generated/rans_drift_summary.csv": "ef79087240b16706b3052b0472bdd5adcfbcd9f9feb9f59a489120869d8f9968",
-    "generated/rans_integral_summary.csv": "f5002d31a52d11c776d64ad4089166f77faf5f491b229b568b7bb92ac7023268",
+    "data/riemann_stress_representative.csv": "ed0e7f9ea0ceaac281466a1b6197398b59fbf820a92dc400a4872ec895982844",
+    "data/riemann_transition_step399.csv": "0cfefee6230b41c4680ac9070d709131402ac7c02ea77fd11ccac1dc192b5796",
+    "generated/asymmetric_conservation_defect.csv": "b2247c3c3d208ee47335c7c5cbb382df544efb68da4769c94b10e93e8a638571",
+    "generated/asymmetric_convergence_L2.csv": "6fb76dbf39445f2ef078f1259a96ab0abcde738d0fa5c319c3f0d51ce2cb3c8a",
+    "generated/asymmetric_norm_orders.csv": "a9c5d7ac7e3b6bf08b3a22cf849e150c9202b56274924ad86dfc6d5f3f8cbeaa",
+    "generated/asymmetric_orders.csv": "77742df8b3e46557ec0aa7fb374c460eece387cee0068d4b9b08d699ae462676",
+    "generated/discontinuous_boundedness_plot.csv": "54ebc9a96d5f8cc5d0dcfc3748852c45e8dd164452cd25ad95d2dee3256592f6",
+    "generated/discontinuous_conservation_defect.csv": "330a9070ac675a5ca047973bd6a45861cde2f70c85933a60f69cb3e7df63179b",
+    "generated/discontinuous_convergence_L2.csv": "54934d421a03884aec7758a18b1b0a58c212d74d6e274fca881b0c61ef0b8700",
+    "generated/discontinuous_norm_orders.csv": "c5984d66ed100daed43410ffeeba22bc645583b3b5975308fb068cf6c883333c",
+    "generated/discontinuous_orders.csv": "aaad794308731d3b550ed81c9c8b6d5ff0dd17ae7228575b1e767391788024b7",
+    "generated/rans_clipping_report.csv": "97774eca0008ed5f6bf8d45d6af72d7972cfb9167c4f6e584f9a03dc415e64c9",
+    "generated/rans_drift_SA.csv": "1b29a44ce6ceb22325d08b94b8d2e0731ed1d049879af5e712ad35cae878698a",
+    "generated/rans_drift_SST.csv": "2451126903872dbc30e558c8a531e1788f89f243b9347c819bb9dda2299a4420",
+    "generated/rans_drift_summary.csv": "fa902af756e1c96461625f0569c03361b662064070bfde7c99e20315419b498b",
+    "generated/rans_integral_summary.csv": "286a9398755c406dede1b1c3a210b0d19dcb2347bdc58cb3f1b15c9ba1ace82c",
     "generated/rans_native_summary.csv": "1c728e9b7851e58b28125c57d3c18420636ae9ce3837d7dae743c9fe8d39b361",
-    "generated/rans_oneshot_SA.csv": "dbc68367f2a232b2aa11502b0208d84c76b3baaa33b293faa6da68d017aa9ff9",
-    "generated/rans_oneshot_SST.csv": "a1f371c00714172a0949d73995acc13da9e534d17f11277c7c68bf2d6ff36002",
+    "generated/rans_oneshot_SA.csv": "df9faa38c5553bc7be1993f2703e89287c275ebc8186b75a092f13e4e67f5196",
+    "generated/rans_oneshot_SST.csv": "e58865a686c1f86d579031f9011a6d23661d4ca425649c7e08f7165a1a638b0d",
     "generated/rans_oneshot_summary.csv": "7074ee761d3e718ef081e62b50c04d56446705ef4b4b64704c15ce7fd50496c8",
-    "generated/rans_pair_summary.csv": "c6ee76719728a944bc984bc6640ec4d8b7e1f21022c976644aec06be342d8984",
+    "generated/rans_pair_summary.csv": "a7b80c25cedba203dfede50d4aeeaa09cc4dad507c8d10d09a628fc7b963b3ca",
     "generated/rans_pressure_probe_audit.csv": "ce76ee22a6cf82b21bdcce8d956ae394a5360eccfe483675802f32948c2eeef7",
-    "generated/rans_surface_endpoint.csv": "085e464652a06a75b100feaed3fc48ee38a5641697f9f0c686a9d9a704d1f4b2",
-    "generated/rans_turbulence_SA.csv": "6ab6b587b502f353b324ff8b0f8346785742f847b36ec954a285cd300c92c272",
-    "generated/rans_turbulence_SST.csv": "0f7b348dc961a0550c15d08c6a34d94246a10c23259366ea48ff84731f3cb5df",
-    "generated/rans_turbulence_endpoint.csv": "1b3c8a39239f6cf9faf95dc529cceb49bde4417500f76a47637b393d7e56808a",
-    "generated/reassessed_rans_controls.csv": "5cfadca5524b6d4f7d6df7dc4ba99eef7ca1cf3a6c4b758d0934ce410475abfa",
-    "generated/reassessed_rans_controls_compact.csv": "b1b91954a6afce3c9653f4ad570ebd2693236e216d40f2dee0d876ce7fafbac0",
+    "generated/rans_surface_endpoint.csv": "941951a52a2272fa988c86d8cdbca3873be5d0e9fa6129c91a9533ce356b5ea1",
+    "generated/rans_turbulence_SA.csv": "4150f2d1ab367d6e118415161e82416662132f92dfdfe62317c25f46bbc8aeee",
+    "generated/rans_turbulence_SST.csv": "5e5f29cce1b9368101e481af90ef5b6fdf93a220c2af9d7885692f1e3f11d5ba",
+    "generated/rans_turbulence_endpoint.csv": "b182ed1276c93b2035d92920159b7a573ef3312f2aecf1a09e86c836b3e3f57e",
+    "generated/reassessed_rans_controls.csv": "f288559e8640899ec68af2effdd58bf56cd7f0ba8f9644e09c438d7c91538298",
+    "generated/reassessed_rans_controls_compact.csv": "5b29c7768935385f2df6133d09ffdc80051d84acf16d553fd658e93f964ec517",
     "generated/reassessed_rans_finemesh.csv": "44fb46437ae67d56bba3b967252b31df7f1015cb6866ebfbfc973f9557256b5f",
-    "generated/reassessed_rans_inner.csv": "4a83c2796119865990ab2b63aaf8b270bb14f100154668a863b93c98f21472a1",
-    "generated/reassessed_rans_integrals.csv": "26f38f7e545694a6b6be347113a8d01e3529a091c41842c1abc155b622bfe03a",
+    "generated/reassessed_rans_inner.csv": "2b44e6dbc51e28bd4a4ca3aff43afa4dc9ea959340a3458dc2a58a4e1b1b9c8b",
+    "generated/reassessed_rans_integrals.csv": "af799dc70874d9396e33c97fbbbd8b7f87ed3e6c4f160f561b1b00f5f001bac6",
     "generated/reassessed_rans_meshlevels.csv": "911e89a581641d7c915c3a8a061837b664d4904027a5826c88afb099f20ee127",
     "generated/reassessed_rans_meshorders.csv": "1d1152fafad40d79aa17c25bf3e9871ba809430da647c599fbdec0e448695bd7",
-    "RANS_PostProcessing/rans_code_provenance.csv": "0f6de4b6eb34a259e948833d53809c4b3557167e1ef6fc806687daa42da5094a",
-    "RANS_PostProcessing/rans_control_inner.csv": "abfa4a6017294015f5c90c548d107be1aa191bf9a826422291370e104848aec3",
-    "RANS_PostProcessing/rans_control_replay.csv": "8d3bfeaa140947ee8dc16dabd3ec088129deae271d1292e1b65c1d42f7605b6a",
-    "RANS_PostProcessing/rans_control_sensitivity.csv": "6afa067b0d5d0324759013ff4b2d64898a338797ea907b30aa8196f87236ddec",
-    "RANS_PostProcessing/rans_control_series.csv": "241fa93bd4388e6d98f3995b08e9a723795c01e56bba6a28437da68fca4c103a",
-    "RANS_PostProcessing/rans_deformed_reference.csv": "77bac485e606ee402cfe341bb90710289634f70accb1fbd625201b48c7a138e2",
+    "RANS_PostProcessing/rans_code_provenance.csv": "f779f8d85ea6445e367faf3d726c066f2f5e42cd338e46414bceedd932f27546",
+    "RANS_PostProcessing/rans_control_inner.csv": "facbea573be0a3eb18bab2dfb5977ec578374252a44168ed31023c03ec259ef1",
+    "RANS_PostProcessing/rans_control_replay.csv": "31ffdca5c7085c08c50e0ad3f7d9db7e437f9308e5153ee77f24fa7ad2cc5e2a",
+    "RANS_PostProcessing/rans_control_sensitivity.csv": "39ec5822db6bbad6c5e857e7634a90d885a8f267f33e8ccb3691ccda2df5a62d",
+    "RANS_PostProcessing/rans_control_series.csv": "74bf35a1f9680e78f549fe552578fd7806b8b741300ea26bbfecc0e3c9ff4da3",
+    "RANS_PostProcessing/rans_deformed_reference.csv": "b42c8ca814e6bcf7658b3fbc330c02c7be7100011d0a61b93a8eab3b3dea1691",
     "RANS_PostProcessing/rans_deformed_surface.csv": "634e97d339475caba23b655d422afd3b4e46d4fcfa8a52d8d10e2a5d0a2ec864",
-    "RANS_PostProcessing/rans_drift_series.csv": "066bb4f8dae315f67e2e371fd5349cec0797a8dfd6bfa4cfc8f26647e47e97f6",
-    "RANS_PostProcessing/rans_drift_trends.csv": "6188b7885171920789801896b2ef0dbc3e948bccf93a07c60b0852a3d989ddce",
+    "RANS_PostProcessing/rans_drift_series.csv": "a3ed7c7310c4e2f88d700e6d02accf5761d5f441fe9710a1a54544a08992c226",
+    "RANS_PostProcessing/rans_drift_trends.csv": "ed57f7fac70a009a30ea6811eb03a86bd1ac85b39d805f8b8837ec90fa3b58a9",
     "RANS_PostProcessing/rans_fine_mesh.csv": "87a6eacbbc83695f7116a05215eac060f1a6ff720156535890997be889fc0ec4",
     "RANS_PostProcessing/rans_fine_surface.csv": "1eb7e72e94bcd0b4ec0521f1764c0d5fe24515b7b14c16975f80cf8d91c219b7",
-    "RANS_PostProcessing/rans_inner_convergence.csv": "e18c57a2a712eb0014209e94b55041f38089a269fe17290da6f365d24f904b4b",
+    "RANS_PostProcessing/rans_inner_convergence.csv": "de19ce50663b2b7ee87a03cd2a8f4f9c43c6237b6faf2ec504a2825cff5ecc57",
     "RANS_PostProcessing/rans_mesh_levels.csv": "9074e835c2ac28b4b29ff0b2ea611400dfa8b04fcddb3ee69866727bfe221567",
-    "RANS_PostProcessing/rans_mesh_quality.csv": "c0dce953c2fe2727bcb32668a0c3ebb6b08ff205688c7bb5814b5e6c540e1ebb",
-    "RANS_PostProcessing/rans_mesh_replay.csv": "531be30eca16a022859050df99a9469ed5b75fe22c67c6087a8bb03a6684af5c",
+    "RANS_PostProcessing/rans_mesh_quality.csv": "bc3bfc97e9062b6aaeb00acca929d8015e4c301c42f1cdbbfbe00cba77a63757",
+    "RANS_PostProcessing/rans_mesh_replay.csv": "514c86cdc5f67232ea86a726819241189fbb99ad41cbff134bfe0072e30e2dc0",
     "RANS_PostProcessing/rans_oneshot_fit.csv": "f89cb601cd4ed875fd7941ba599314cd2060eada7072349d3ea94cd8b8a4fd6e",
     "RANS_PostProcessing/rans_oneshot_lags.csv": "063d97e66de86e5e016e8e892c635d4a48488fa51e4dbca210fd7c265bdc9112",
-    "RANS_PostProcessing/rans_oneshot_series.csv": "676ac3d08d2356c259363ea59562a4ab50e8a7645ed9361172c83c2137772529",
+    "RANS_PostProcessing/rans_oneshot_series.csv": "cdfd81149b60f8efee7e23957f67a683e3f3f9a2ce1430483cace1afd3483597",
     "RANS_PostProcessing/rans_pressure_probe.csv": "eb73701ef38b44a906fabfed49394d68ba0410e7b5b5cced64854ef2b12bbf32",
     "RANS_PostProcessing/rans_protected_region.csv": "b2335a4bdc0390e4b2338ab43bd130a327443d762d48bb286e77cc26df63702a",
     "RANS_PostProcessing/rans_protected_summary.csv": "169758aff6b0280657e620c3f1a657f779febc15cd556eaf9fcf606e9754861a",
     "RANS_PostProcessing/rans_runtime_units.csv": "dd71b72697b70e57d43e6131cd0f61bdb1f60bfb4367f864282f8909cc688032",
-    "RANS_PostProcessing/rans_surface_forces.csv": "db37796686dd933aae05d1579d7cad58df5aac7bcbf9aacbdef8684bf0231e76",
-    "RANS_PostProcessing/rans_surface_norms.csv": "3178b8799d31b9360be28d5f1a6f97310f4f6e00e0b43e3dd24bf0f3df8e08c3",
-    "RANS_PostProcessing/rans_surface_profiles.csv": "9371b7a7203f19af1e40a7b77f19e98938e91cf55a87ab3a9b29401bd018b03b",
-    "RANS_PostProcessing/rans_timing.csv": "89c2a4addab68615a2d54cec89071991ec27534ef45c5bd2e739205c70cad1c7",
-    "RANS_PostProcessing/rans_transfer_integrals.csv": "222194a44b4a6d82373bb6db170d75cb49368b42dd270b176ad84cc81971f681",
-    "RANS_PostProcessing/rans_turb_state_norms_SA.csv": "0c5cfe31343b8d4be5d27a3789c46ed5be9ed969dcbf8612c08aa02f8953e127",
-    "RANS_PostProcessing/rans_turb_state_norms_SST.csv": "8c44a1a9073a064a102c29745913d0e0c053daf742cff3f85812f14aa28b117d"
+    "RANS_PostProcessing/rans_surface_forces.csv": "9435ff8207f377b24424f7b596842f668f279a6d86c36f1861d2431c23bba39f",
+    "RANS_PostProcessing/rans_surface_norms.csv": "f2c3e9a258de5b1b2bd43d0ea339bf2fb80629d96b43e2a396464c04b8fe74de",
+    "RANS_PostProcessing/rans_surface_profiles.csv": "b99ad29c1070847d6e501ab07a86d166d78ff045f5658bb576fe6f9e6c47dec9",
+    "RANS_PostProcessing/rans_transfer_integrals.csv": "7ae0ecf20088ee331886dcf972f9b31fea349604caf0fdf56ef32aea14d0a23f",
+    "RANS_PostProcessing/rans_turb_state_norms_SA.csv": "97a1591106c7aaa3a7b2f9ee168cbfbdb49b5c11953db3c63dfc36432ec97bef",
+    "RANS_PostProcessing/rans_turb_state_norms_SST.csv": "02898c4cf2f621ac5eef1590973b71737a46fa9c30c2294a4d6cc417684cfa0c"
   },
   "changed_or_missing_original_csvs": [],
   "naca_gc_relative_changes_percent": {
     "NN1": {
-      "epsilon_norm": -0.01153324287653152,
-      "delta_full_norm": -0.008214676889371431,
-      "delta_CL_full": 0.08846942707406291
+      "epsilon_norm": -0.008819538670291406,
+      "delta_full_norm": -0.005476451259580954,
+      "delta_CL_full": 0.1525752033328023
     },
     "BAR2": {
       "epsilon_norm": -0.0002843372808870599,
       "delta_full_norm": 0.0,
-      "delta_CL_full": -0.002745291824528454
+      "delta_CL_full": -0.004117937736780776
+    },
+    "CV2": {
+      "epsilon_norm": -0.000841443917760925,
+      "delta_full_norm": -0.0008424871906823797,
+      "delta_CL_full": 0.0558272051746068
     }
   },
   "force_onset_fits": {
     "onset_1": {
-      "slope": 519.4444444444443,
-      "intercept": -12.527777777777771,
-      "R_squared": 0.9322083599914694
+      "slope": 521.132075471698,
+      "intercept": -12.660377358490557,
+      "R_squared": 0.9443424697892863
     },
     "onset_5": {
-      "slope": 575.5555555555554,
-      "intercept": -12.222222222222207,
-      "R_squared": 0.9553860724789393
+      "slope": 620.7547169811321,
+      "intercept": -15.773584905660371,
+      "R_squared": 0.9468866577344284
     },
     "onset_25": {
-      "slope": 655.0,
-      "intercept": 2.25,
-      "R_squared": 0.9368267177795031
+      "slope": 672.8301886792452,
+      "intercept": 0.8490566037736045,
+      "R_squared": 0.9477005564715643
     },
     "onset_50": {
-      "slope": 762.7777777777777,
-      "intercept": -0.36111111111111427,
-      "R_squared": 0.9171663299899191
+      "slope": 783.3962264150944,
+      "intercept": -1.9811320754716917,
+      "R_squared": 0.9321014248267628
     }
   },
   "pressure_threshold_sensitivity": {
-    "mean_slope": 794.6111111111111,
-    "slope_sample_sd": 225.4499414518197,
-    "mean_speed": 1.197534176913794,
-    "speed_sample_sd": 0.7188592422351643,
+    "mean_slope": 786.4848484848485,
+    "slope_sample_sd": 210.99290855194033,
+    "mean_speed": 1.230390258403471,
+    "speed_sample_sd": 0.6640571703220581,
     "speed_min": -3.4965034965034962,
     "speed_max": 2.3640661938534278,
     "interpretation": "Six thresholds of one event, not six independent repetitions."
   },
   "drag_trend_means": {
     "NN2": 3.894e-05,
-    "GP2": 6.611499999999999e-06
+    "GP2": 6.1005e-06,
+    "CV2": 5.8725e-06
   },
-  "drag_trend_ratio_NN2_GP2": 5.889737578461772,
+  "drag_trend_ratio_NN2_GP2": 6.383083353823458,
+  "drag_trend_ratio_NN2_CV2": 6.630906768837804,
   "invalid_cosine_rows": [],
   "naca_epsilon_values": {
     "BAR2": 0.0007034,
     "BAR3": 0.0007111,
+    "CV2": 0.0007131,
     "GP2": 0.0007132,
-    "GP3": 0.000712,
+    "GP3": 0.0007119,
     "NN1": 0.001474,
     "NN2": 0.0007237,
     "NN3": 0.0007151
@@ -180,11 +184,15 @@
     },
     "GP2": {
       "peak_over_first": 1.0,
-      "last_abs_over_first_abs": 0.25386138613861386
+      "last_abs_over_first_abs": 0.26589200273410796
     },
     "GP3": {
       "peak_over_first": 1.0,
-      "last_abs_over_first_abs": 0.334458984100183
+      "last_abs_over_first_abs": 0.3328203693340795
+    },
+    "CV2": {
+      "peak_over_first": 1.0,
+      "last_abs_over_first_abs": 0.26650165016501653
     }
   },
   "first_step_ratios": {
@@ -224,18 +232,28 @@
         "older": 0.3339884879966306
       },
       "delta_CL": {
-        "latest": 1.332013201320132,
-        "older": -0.3351815181518152
+        "latest": 1.332194121667806,
+        "older": -0.3353383458646616
       }
     },
     "GP3": {
       "delta_norm": {
-        "latest": 1.3331926863572432,
+        "latest": 1.3330520393811534,
         "older": 0.33403656821378336
       },
       "delta_CL": {
-        "latest": 1.3326298016040525,
-        "older": -0.3358660475587449
+        "latest": 1.3326804700615558,
+        "older": -0.3357582540570789
+      }
+    },
+    "CV2": {
+      "delta_norm": {
+        "latest": 1.3329121033417581,
+        "older": 0.3340353833192924
+      },
+      "delta_CL": {
+        "latest": 1.3323707370737075,
+        "older": -0.3353960396039604
       }
     }
   },
@@ -266,9 +284,9 @@
       "R_squared": 0.9996734973838095
     },
     "GP2": {
-      "slope": 2.2267499456850657,
-      "intercept": 0.2170660691273394,
-      "R_squared": 0.9991893264932835
+      "slope": 2.2268488915219367,
+      "intercept": 0.2174765690551972,
+      "R_squared": 0.9991873797459516
     },
     "GP3": {
       "slope": 2.888021882646654,
@@ -277,13 +295,13 @@
     }
   },
   "riemann_gc_error_changes_percent": {
-    "NN1": 0.00047463026302541067,
-    "NN2": -0.37021898248674745,
-    "NN3": 0.010851568940140055,
-    "BAR2": 0.10301563279222492,
-    "BAR3": 0.8054913409680786,
-    "GP2": -0.009822058541275602,
-    "GP3": 0.10672187316949078
+    "NN1": 0.0005995329638075475,
+    "NN2": -0.3705005535217243,
+    "NN3": 0.010280433732767769,
+    "BAR2": 0.1030465313023532,
+    "BAR3": 0.8127162633001506,
+    "GP2": -0.009461419933864956,
+    "GP3": 0.11134014735987297
   },
   "static_orders": {
     "asymmetric": [
@@ -292,56 +310,64 @@
         "nominal": "1",
         "Struct_fit": "1.013342776856612",
         "Struct_fine": "1.009013831570277",
-        "Mixed_fit": "1.010218491553154",
-        "Mixed_fine": "1.016199900676861"
+        "Mixed_fit": "1.010218498273288",
+        "Mixed_fine": "1.016196671387422"
       },
       {
         "scheme": "NN2",
         "nominal": "2",
         "Struct_fit": "2.026709367665921",
-        "Struct_fine": "2.016977422690085",
-        "Mixed_fit": "2.027562074762218",
-        "Mixed_fine": "2.025989226494904"
+        "Struct_fine": "2.016977422690086",
+        "Mixed_fit": "2.02313058330413",
+        "Mixed_fine": "2.024797183149646"
       },
       {
         "scheme": "NN3",
         "nominal": "3",
-        "Struct_fit": "3.003478611454044",
-        "Struct_fine": "3.003366508278016",
-        "Mixed_fit": "3.004886124210116",
-        "Mixed_fine": "3.040482930186861"
+        "Struct_fit": "3.003469872436888",
+        "Struct_fine": "3.003360687044053",
+        "Mixed_fit": "3.004739092332531",
+        "Mixed_fine": "3.040426800759897"
       },
       {
         "scheme": "BAR2",
         "nominal": "2",
-        "Struct_fit": "2.023911694592665",
-        "Struct_fine": "2.016365901460039",
+        "Struct_fit": "2.023911694592663",
+        "Struct_fine": "2.016365901460038",
         "Mixed_fit": "2.015932605305787",
         "Mixed_fine": "2.05019118751482"
       },
       {
         "scheme": "BAR3",
         "nominal": "3",
-        "Struct_fit": "3.364428275188685",
-        "Struct_fine": "3.239173179756204",
-        "Mixed_fit": "3.274529551401256",
-        "Mixed_fine": "3.220925795930051"
+        "Struct_fit": "3.364414377353388",
+        "Struct_fine": "3.239166912233221",
+        "Mixed_fit": "3.274133422506599",
+        "Mixed_fine": "3.220786359618935"
       },
       {
         "scheme": "GP2",
         "nominal": "2",
-        "Struct_fit": "2.038578432970224",
-        "Struct_fine": "2.025782045406277",
-        "Mixed_fit": "2.016516639044588",
-        "Mixed_fine": "2.063359787972088"
+        "Struct_fit": "2.035467075419962",
+        "Struct_fine": "2.023504407735092",
+        "Mixed_fit": "2.013623037253425",
+        "Mixed_fine": "2.061192579349613"
       },
       {
         "scheme": "GP3",
         "nominal": "3",
-        "Struct_fit": "3.337696742325014",
-        "Struct_fine": "3.211767169944252",
-        "Mixed_fit": "3.239120782744676",
-        "Mixed_fine": "3.203329165485542"
+        "Struct_fit": "3.33730120298215",
+        "Struct_fine": "3.211093285771347",
+        "Mixed_fit": "3.232542223525162",
+        "Mixed_fine": "3.198328814956755"
+      },
+      {
+        "scheme": "CV2",
+        "nominal": "2",
+        "Struct_fit": "2.031501321207605",
+        "Struct_fine": "2.021091056450733",
+        "Mixed_fit": "1.488818933566527",
+        "Mixed_fine": "1.345421627815305"
       }
     ],
     "discontinuous": [
@@ -356,18 +382,18 @@
       {
         "scheme": "NN2",
         "nominal": "0.5",
-        "Struct_fit": "0.5096880050788076",
-        "Struct_fine": "0.4072379041404714",
-        "Mixed_fit": "0.4407136242599706",
-        "Mixed_fine": "0.4300462039251521"
+        "Struct_fit": "",
+        "Struct_fine": "",
+        "Mixed_fit": "",
+        "Mixed_fine": ""
       },
       {
         "scheme": "NN3",
         "nominal": "0.5",
         "Struct_fit": "0.5166942026063603",
         "Struct_fine": "0.3790515541713179",
-        "Mixed_fit": "0.4307145492903389",
-        "Mixed_fine": "0.4366177580840909"
+        "Mixed_fit": "",
+        "Mixed_fine": ""
       },
       {
         "scheme": "BAR2",
@@ -388,18 +414,26 @@
       {
         "scheme": "GP2",
         "nominal": "0.5",
-        "Struct_fit": "0.5151679384862472",
-        "Struct_fine": "0.4795317589939042",
-        "Mixed_fit": "0.4482486105894181",
-        "Mixed_fine": "0.4512376122768689"
+        "Struct_fit": "0.5151679384936461",
+        "Struct_fine": "0.4795317590099901",
+        "Mixed_fit": "0.4482486105893903",
+        "Mixed_fine": "0.4512376122786173"
       },
       {
         "scheme": "GP3",
         "nominal": "0.5",
-        "Struct_fit": "0.514753208398289",
-        "Struct_fine": "0.4817377140287131",
-        "Mixed_fit": "0.4497946755275606",
-        "Mixed_fine": "0.452673712710801"
+        "Struct_fit": "0.5147532084113942",
+        "Struct_fine": "0.4817377141935059",
+        "Mixed_fit": "0.4497946758087801",
+        "Mixed_fine": "0.4526737128143982"
+      },
+      {
+        "scheme": "CV2",
+        "nominal": "0.5",
+        "Struct_fit": "0.5135975013286639",
+        "Struct_fine": "0.4789322460235563",
+        "Mixed_fit": "0.4511725390375866",
+        "Mixed_fine": "0.453337692480469"
       }
     ]
   },
@@ -430,8 +464,8 @@
     }
   ],
   "source_checks": {
-    "bibliography_entries": 46,
-    "cited_keys": 20,
+    "bibliography_entries": 49,
+    "cited_keys": 25,
     "duplicate_bibliography_keys": [],
     "missing_citation_keys": [],
     "duplicate_labels": [],

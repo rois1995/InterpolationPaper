@@ -2,7 +2,7 @@
 """Manuscript views of the RANS records (generated/reassessed_*.csv), derived from RANS_PostProcessing/*.csv.
 
     reassessed_rans_integrals.csv  maximum |source-to-target integral defect| at a transfer event of the
-                                   repeated-remeshing runs, per closure and inventory, NN2 against GP2
+                                   repeated-remeshing runs, per closure and inventory, for NN2, GP2 and CV2
     reassessed_rans_inner.csv      inner-iteration record of the repeated-remeshing runs
     reassessed_rans_controls.csv   change of the case-minus-reference response and of the paired
                                    NN2-GP2 difference between the production setting and each control
@@ -37,7 +37,7 @@ def integrals():
     for x in rows('rans_transfer_integrals.csv'):
         if 'Drift' not in x['case']:
             continue
-        m = 'GP2' if 'ConsGalerkinProj' in x['case'] else 'NN2'
+        m = 'GP2' if 'ConsGalerkinProj' in x['case'] else 'CV2' if 'Conservative' in x['case'] else 'NN2'
         try:
             v = abs(float(x['rel_defect_(tgt-src)/src']))
         except ValueError:
@@ -47,10 +47,10 @@ def integrals():
     out = []
     for model in ('SA', 'SST'):
         for f in ('Density', 'Momentum_x', 'Momentum_y', 'Energy', 'Nu_Tilde', 'Turb_Kin_Energy', 'Omega'):
-            a, b = mx.get((model, f, 'NN2')), mx.get((model, f, 'GP2'))
+            a, b, c = mx.get((model, f, 'NN2')), mx.get((model, f, 'GP2')), mx.get((model, f, 'CV2'))
             if a is not None and b:
-                out.append([model, label[f], f'{a:.3e}', f'{b:.3e}', f'{a / b:.1f}'])
-    write('reassessed_rans_integrals.csv', ['closure', 'quantity', 'NN2_max', 'GP2_max', 'ratio'], out)
+                out.append([model, label[f], f'{a:.3e}', f'{b:.3e}', 'nan' if c is None else f'{c:.3e}', f'{a / b:.2f}'])
+    write('reassessed_rans_integrals.csv', ['closure', 'quantity', 'NN2_max', 'GP2_max', 'CV2_max', 'ratio'], out)
 
 
 def inner():
@@ -58,7 +58,7 @@ def inner():
     for x in rows('rans_inner_convergence.csv'):
         if 'Drift' not in x['run']:
             continue
-        out.append([x['run'].split('_')[1], 'GP2' if 'ConsGalerkinProj' in x['run'] else 'NN2', 2 if 'Seed2' in x['run'] else 1,
+        out.append([x['run'].split('_')[1], 'GP2' if 'ConsGalerkinProj' in x['run'] else 'CV2' if 'Conservative' in x['run'] else 'NN2', 2 if 'Seed2' in x['run'] else 1,
                     x['physical_steps'], x['steps_at_inner_cap'], x['end_median'], x['end_max'], x['INNER_ITER'], x['CONV_RESIDUAL_MINVAL']])
     write('reassessed_rans_inner.csv', ['closure', 'method', 'seed', 'steps', 'steps_at_cap', 'end_residual_median', 'end_residual_worst', 'inner_cap', 'target_log10_rms_rho'], out)
 

@@ -36,14 +36,15 @@ def get_dependencies(main: str) -> dict[str, str]:
     for match in re.finditer(r'\{((?:\\DataDir/|\\GeneratedDir/|data/|generated/|RANS_PostProcessing/)[^{}]+\.csv)\}', main):
         value = match.group(1).replace('\\DataDir/', 'data/').replace('\\GeneratedDir/', 'generated/')
         paths.add(value)
-    paths.update(('References.bib', 'paper.bbl', 'submission/author_details.tex',
+    # cas-sc.cls and cas-common.sty travel with the source: the Elsevier system compiles a flat folder.
+    paths.update(('References.bib', 'paper.bbl', 'cas-sc.cls', 'cas-common.sty', 'submission/author_details.tex',
                   'submission/author_declarations.tex', 'submission/figures/Figure_1.pdf',
                   'submission/figures/Figure_2.pdf', 'submission/figures/figure_captions.txt'))
     mapping: dict[str, str] = {}
     reverse: dict[str, str] = {}
     for rel in sorted(paths):
         src = (ROOT / rel).resolve()
-        if not src.is_relative_to(ROOT) or not src.is_file():
+        if ROOT not in src.parents or not src.is_file():  # Python 3.8: no Path.is_relative_to
             raise FileNotFoundError(f'Missing or unsafe manuscript input: {rel}')
         name = src.name
         if name in reverse and reverse[name] != rel:
@@ -73,8 +74,8 @@ def run_build(directory: Path) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--output-dir', type=Path, default=ROOT/'dist'/'computers_fluids')
-    parser.add_argument('--zip', dest='zip_path', type=Path, default=ROOT/'dist'/'ComputersFluids_submission_sources.zip')
+    parser.add_argument('--output-dir', type=Path, default=ROOT/'dist'/'jcam')
+    parser.add_argument('--zip', dest='zip_path', type=Path, default=ROOT/'dist'/'JCAM_submission_sources.zip')
     parser.add_argument('--allow-incomplete', action='store_true')
     parser.add_argument('--check-only', action='store_true')
     parser.add_argument('--no-build', action='store_true', help='Copy source only; do not claim a tested submission build.')
