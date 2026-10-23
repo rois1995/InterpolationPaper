@@ -1,5 +1,5 @@
 - Interpolation order, bounds and integral conservation require separate tests.
 - Global correction preserves mass but does not recover a diffused profile.
 - An older-history error perturbs the next step even when the latest is exact.
-- Control-volume transfer preserves both the mass integral and the profile.
+- Control-volume transfer retains mass with little Euler transition broadening.
 - A load ranking remains unresolved despite better integral preservation.

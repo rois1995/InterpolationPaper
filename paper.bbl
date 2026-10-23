@@ -76,6 +76,21 @@ T.~Lev{\'y}, G.~May, Conservative solution transfer between anisotropic meshes
 \newblock \href {https://doi.org/10.1002/fld.5278}
   {\path{doi:10.1002/fld.5278}}.
 
+\bibitem{MaddisonCotterFarrell2011}
+J.~R. Maddison, C.~J. Cotter, P.~E. Farrell, Geostrophic balance preserving
+  interpolation in mesh adaptive linearised shallow-water ocean modelling,
+  Ocean Model. 37~(1--2) (2011) 35--48.
+\newblock \href {https://doi.org/10.1016/j.ocemod.2010.12.007}
+  {\path{doi:10.1016/j.ocemod.2010.12.007}}.
+
+\bibitem{MaddisonCotterFarrell2013}
+J.~R. Maddison, C.~J. Cotter, P.~E. Farrell, Corrigendum to ``geostrophic
+  balance preserving interpolation in mesh adaptive linearised shallow-water
+  ocean modelling'' [{Ocean Model.} 37 (2011) 35--48], Ocean Model. 68 (2013)
+  106.
+\newblock \href {https://doi.org/10.1016/j.ocemod.2013.04.007}
+  {\path{doi:10.1016/j.ocemod.2013.04.007}}.
+
 \bibitem{BarthFrederickson1990}
 T.~J. Barth, P.~O. Frederickson, Higher order solution of the {Euler} equations
   on unstructured grids using quadratic reconstruction, in: 28th Aerospace
