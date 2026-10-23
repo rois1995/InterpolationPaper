@@ -60,9 +60,10 @@
     "main text:AI": "defined at first use",
     "main text:CRediT": "defined at first use"
   },
-  "source_labels": 87,
+  "source_labels": 81,
   "bibliography_entries": 49,
   "cited_keys": 27,
+  "supplementary_source_labels": 6,
   "bibtex_notices": [
     "Warning--empty pages in BarthFrederickson1990",
     "Warning--empty pages in Barth1993",

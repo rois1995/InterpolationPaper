@@ -12,7 +12,7 @@ the Elsevier CAS class files `cas-sc.cls` and `cas-common.sty` are included in t
 
     make distclean      # removes generated/*.csv, generated/rans_numbers.tex and the PDF
     make data           # rebuilds generated/ from data/ and RANS_PostProcessing/ (byte-identical to the released files)
-    make                # builds paper.pdf
+    make                # builds paper.pdf and supplementary.pdf
     make audit          # scripts/audit_results.py: table checks, citation and label consistency
     make rans-audit     # scripts/build_rans_data.py: duplicate policy and input digests (audit/rans_data_audit.json)
     python3 scripts/audit_results.py --check-preservation   # every CSV matches audit/original_csv_sha256.json

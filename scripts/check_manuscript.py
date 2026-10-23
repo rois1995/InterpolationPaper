@@ -118,9 +118,19 @@ def main() -> int:
     pending=[x for x in author_files if re.search(r'to be supplied|\[Authors:',uncomment((ROOT/x).read_text()))]
     # Do not mistake the absence of author facts for a completed submission.
     if args.submission and pending: errors.append('Author confirmation fields remain: '+', '.join(pending))
-    log=(ROOT/'paper.log').read_text(errors='replace') if (ROOT/'paper.log').exists() else ''
-    layout_warnings=re.findall(r'Overfull \\[hv]box[^\n]*|undefined references[^\n]*|undefined citations[^\n]*|! LaTeX Error[^\n]*|destination with the same identifier[^\n]*',log)
-    errors.extend(layout_warnings)
+    supplement=uncomment((ROOT/'supplementary.tex').read_text())
+    supplement_labels=re.findall(r'\\label\{([^}]+)\}',supplement)
+    supplement_refs=set(re.findall(r'\\(?:eqref|ref)\*?\{([^}]+)\}',supplement))
+    errors.extend('Undefined supplementary reference: '+x for x in supplement_refs-set(supplement_labels))
+    errors.extend('Duplicate supplementary label: '+x for x,n in Counter(supplement_labels).items() if n>1)
+    for document in ('paper','supplementary'):
+        log_path=ROOT/(document+'.log')
+        if not log_path.exists():
+            errors.append('Build required: '+document+'.tex')
+            continue
+        log=log_path.read_text(errors='replace')
+        layout_warnings=re.findall(r'Overfull \\[hv]box[^\n]*|undefined references[^\n]*|undefined citations[^\n]*|! LaTeX Error[^\n]*|destination with the same identifier[^\n]*',log)
+        errors.extend(document+': '+warning for warning in layout_warnings)
     csvs={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(ROOT.rglob('*.csv')) if 'dist' not in p.parts}
     blg=(ROOT/'paper.blg').read_text(errors='replace') if (ROOT/'paper.blg').exists() else ''
     report={'mechanical_errors':errors,'author_confirmations_pending':pending,
@@ -128,6 +138,7 @@ def main() -> int:
       'abstract_words':abstract_words,'keyword_count':len(keywords),'highlight_characters':[len(x) for x in hl],
       'defined_acronyms_at_first_source_use':acronym_checks,
       'source_labels':len(labels),'bibliography_entries':len(keys),'cited_keys':len(citekeys),
+      'supplementary_source_labels':len(supplement_labels),
       'bibtex_notices':[x for x in blg.splitlines() if x.startswith('Warning--')],
       'csv_sha256':csvs,
       'scope':'Mechanical source checks; does not establish scientific validity, detect every undefined symbol, or verify every cited paper.'}

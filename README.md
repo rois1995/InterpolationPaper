@@ -1,6 +1,6 @@
 # Mesh-to-mesh transfer paper: static, Euler, BDF2-history and fixed-body RANS evidence
 
-`paper.tex` and `paper.pdf` are the manuscript. It compares four transfer families on fixed physical
+`paper.tex` and `paper.pdf` are the manuscript; `supplementary.tex` and `supplementary.pdf` contain the full Euler comparisons and extended history and convergence diagnostics. Both documents are built by `make`. It compares four transfer families on fixed physical
 domains: nearest-neighbor Taylor interpolation (NN1-NN3), barycentric interpolation (BAR2, BAR3),
 continuous Galerkin projection (GP2, GP3) and the conservative control-volume transfer CV2 (median-dual
 control volumes, P1 hat-function field, MeshAdaptation method `Conservative`). The evidence covers static

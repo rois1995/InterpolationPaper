@@ -46,7 +46,7 @@ RANS_STAMP := generated/.rans_stamp
 
 .PHONY: all data audit rans-audit clean distclean cf-author-check cf-package cf-draft-package
 
-all: $(PDF)
+all: $(PDF) supplementary.pdf
 
 data: $(GENERATED_STAMP) $(RANS_STAMP)
 
@@ -62,12 +62,16 @@ $(RANS_STAMP): scripts/build_rans_data.py scripts/build_views.py $(RANS_DATA) MD
 $(PDF): $(MAIN) $(CLASS_FILES) $(SUBMISSION_TEX) References.bib $(GENERATED_STAMP) $(RANS_STAMP)
 	$(LATEXMK) -pdf -interaction=nonstopmode -halt-on-error $(MAIN)
 
+supplementary.pdf: supplementary.tex $(GENERATED_STAMP) $(RANS_STAMP)
+	$(LATEXMK) -pdf -interaction=nonstopmode -halt-on-error supplementary.tex
+
 clean:
 	$(LATEXMK) -c $(MAIN)
+	$(LATEXMK) -c supplementary.tex
 
 # Also removes generated tables; the raw CSV files are never deleted.
 distclean: clean
-	rm -f generated/*.csv generated/*.txt generated/.stamp generated/.rans_stamp generated/rans_numbers.tex $(PDF)
+	rm -f generated/*.csv generated/*.txt generated/.stamp generated/.rans_stamp generated/rans_numbers.tex $(PDF) supplementary.pdf
 
 # Recompute manuscript-table checks without altering the numerical data.
 audit:
@@ -81,10 +85,10 @@ rans-audit:
 cf-author-check:
 	$(PYTHON) scripts/prepare_cf_submission.py --check-only
 
-cf-package: $(PDF) cf-figures
+cf-package: all cf-figures
 	$(PYTHON) scripts/prepare_cf_submission.py
 
-cf-draft-package: $(PDF) cf-figures
+cf-draft-package: all cf-figures
 	$(PYTHON) scripts/prepare_cf_submission.py --allow-incomplete
 
 # Mechanical preflight reports author fields separately from manuscript checks.

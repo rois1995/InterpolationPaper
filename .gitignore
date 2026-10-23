@@ -9,3 +9,8 @@ paper.run.xml
 build.log
 __pycache__/
 paper.abs
+supplementary.aux
+supplementary.fdb_latexmk
+supplementary.fls
+supplementary.log
+supplementary.out

@@ -148,8 +148,7 @@
 }
 \newcommand{\Inner}[4]{\csname In@#1@#2@#3@#4\endcsname}
 \newcommand{\InnerRow}[4]{#1 & #3 & #4 & \Inner{#1}{#2}{GP2}{steps} &
- \Inner{#1}{#2}{GP2}{cap}/\Inner{#1}{#2}{NN2}{cap}/\Inner{#1}{#2}{CV2}{cap} &
- \Inner{#1}{#2}{GP2}{res}/\Inner{#1}{#2}{NN2}{res}/\Inner{#1}{#2}{CV2}{res}\\}
+ \Inner{#1}{#2}{GP2}{cap} & \Inner{#1}{#2}{NN2}{cap} & \Inner{#1}{#2}{CV2}{cap}\\}
 \pgfplotstableset{publication table/.style={
  col sep=comma,
  every head row/.style={before row=\toprule,after row=\midrule},
@@ -303,7 +302,7 @@ A target element can cross several source elements. Although a target basis func
 \end{equation}
 Here $K_A$ and $K_B$ are source and target simplices, and $|K_A\cap K_B|$ is their intersection measure. On each intersection, both expressions are fixed polynomials. These intersections form the common refinement and permit polynomial-exact quadrature: degree two for $P^1$/$P^1$ transfer and degree four for $P^2$/$P^2$ transfer on affine simplices~\cite{Dunavant1985,Keast1986}. Complete, nonoverlapping coverage is required. The intersection geometry and coupled solve distinguish projection from the point searches used by NN and BAR.
 
-GP2 uses $P^1$ source and target spaces. GP3 constructs a $P^2$ source representation, including internally reconstructed edge values, and solves for a complete quadratic target field. Only original-vertex values are then supplied to the flow solver; the edge construction and the consequence of this restriction are detailed in \ref{app:quadrature-mismatch}. On mixed-element meshes the spaces are $P^p$ on conforming simplicial subdivisions, not $Q^p$ on the original elements. Nominal approximation orders are two and three under smoothness and mesh-stability assumptions; accuracy after vertex restriction is assessed separately.
+GP2 uses $P^1$ source and target spaces. GP3 constructs a $P^2$ source representation, including internally reconstructed edge values, and solves for a complete quadratic target field. Only original-vertex values are then supplied to the flow solver; the consequence of this restriction for the solver integral is illustrated in \ref{app:quadrature-mismatch}. On mixed-element meshes the spaces are $P^p$ on conforming simplicial subdivisions, not $Q^p$ on the original elements. Nominal approximation orders are two and three under smoothness and mesh-stability assumptions; accuracy after vertex restriction is assessed separately.
 
 \subsection{Conservative control-volume transfer}
 \label{sec:cv-transfer}
@@ -696,7 +695,7 @@ Condition & \multicolumn{5}{c}{Width increase} & max. \\
 
 The NN1, BAR2, and GP2 width ordering repeats in each deformation realization. At $s=4$, excess widths range from 21.41 to 22.89 cells for NN1, 3.12 to 3.24 for BAR2, and 0 to 0.01 for GP2. At $s=2$ the respective ranges are 24.98--27.14, 22.90--22.98, and 0.03--0.06 cells. CV2 width changes lie between $-0.01$ and 0.01 cell at $s=4$ and between 0.05 and 0.07 cell at $s=2$. Position errors remain below 0.5 cell for these uncorrected comparisons, confirming broadening as the dominant degradation.
 
-For corrected NN1, the absolute value of the signed cumulative density-integral defect is at most $1.0\times10^{-13}$ across all realizations, yet excess width remains 18.43--21.28 cells at $s=4$ and 23.80--26.33 cells at $s=2$. Integral correction leaves the broadened profile in place. CV2 holds the cumulative defect to at most $7.9\times10^{-14}$ in magnitude, whereas the GP2 values are of order $10^{-6}$--$10^{-5}$. Integral and profile preservation are therefore separate properties: NN1+GC attains the first without the second, GP2 the second with a small but finite integral defect, and CV2 both. At $s=4$, NN2, NN3, BAR3, GP2, GP3, and CV2 all retain the transition much more closely than NN1 (\ref{app:riemann-support}). At the stronger deformation, GP2 and CV2 have the smallest excess widths among the tested NN1, NN1+GC, BAR2, GP2, and CV2 variants.
+For corrected NN1, the absolute value of the signed cumulative density-integral defect is at most $1.0\times10^{-13}$ across all realizations, yet excess width remains 18.43--21.28 cells at $s=4$ and 23.80--26.33 cells at $s=2$. Integral correction leaves the broadened profile in place. CV2 holds the cumulative defect to at most $7.9\times10^{-14}$ in magnitude, whereas the GP2 values are of order $10^{-6}$--$10^{-5}$. Integral and profile preservation are therefore separate properties: NN1+GC attains the first without the second, GP2 the second with a small but finite integral defect, and CV2 both. At $s=4$, NN2, NN3, BAR3, GP2, GP3, and CV2 all retain the transition much more closely than NN1 (Supplementary Section S1). At the stronger deformation, GP2 and CV2 have the smallest excess widths among the tested NN1, NN1+GC, BAR2, GP2, and CV2 variants.
 
 \subsection{Response to the two BDF2 histories}
 \label{sec:results-bdf2-new}
@@ -726,13 +725,13 @@ An older-history error alone produces a finite next-step lift response while the
 \label{fig:naca-history-new}
 \end{figure}
 
-At a common trial state, the measured residual differences agree with the exact BDF2 history-forcing identity to relative errors of approximately $10^{-7}$ for all tested transfers. Agreement also holds at the 370 slip-wall vertices, where the coincident source and target boundaries make the transferred histories compatible with the receiving slip condition. The separate wall-normal and tangential comparisons are reported in \ref{app:history-checks}.
+At a common trial state, the measured residual differences agree with the exact BDF2 history-forcing identity to relative errors of approximately $10^{-7}$ for all tested transfers. Agreement also holds at the 370 slip-wall vertices, where the coincident source and target boundaries make the transferred histories compatible with the receiving slip condition. Supplementary Section S2 reports the separate wall-normal and tangential comparisons.
 
 Global correction barely changes the first-step lift in the NN1, BAR2, and CV2 controlled restarts. The NN1 both-histories response changes from $5.7873\times10^{-3}$ to $5.7961\times10^{-3}$, BAR2 from $-7.2852\times10^{-3}$ to $-7.2849\times10^{-3}$, and CV2, which already returns the source density integral, from $-7.2724\times10^{-3}$ to $-7.2765\times10^{-3}$. These small changes are consistent with the spatial weighting of the load response in Eq.~\eqref{eq:force-response}.
 
 The target-referenced state norms combine transfer discrepancies with differences between native discrete equilibria. The tested second- and third-order transfers cluster near $7.0\times10^{-4}$, with less than 3\% spread, whereas NN1 gives $1.47\times10^{-3}$. The small spread consequently describes restart discrepancies, not a ranking of the higher-order interpolation errors.
 
-Across all eight transfer variants, the latest/full state-norm ratio is 1.3330--1.3333 and the older/full magnitude is 0.3335--0.3341. Volume-weighted state superposition defects of 1.8--3.5\% and lift defects of 0.28--1.49\% bound this directional check, with norm-dependent cancellation and amplitude results detailed in \ref{app:history-checks}. The ratios therefore support the predicted signed, directional response (Eq.~\eqref{eq:naca-history-ratios}). They do not establish uniform linearity of the complete state response: the cancellation and amplitude tests in \ref{app:history-checks} retain unexplained volume-weighted discrepancies.
+Across all eight transfer variants, the latest/full state-norm ratio is 1.3330--1.3333 and the older/full magnitude is 0.3335--0.3341. Volume-weighted state superposition defects of 1.8--3.5\% and lift defects of 0.28--1.49\% bound this directional check, with the interpretation of the cancellation and amplitude results given in \ref{app:history-checks}. The ratios therefore support the predicted signed, directional response (Eq.~\eqref{eq:naca-history-ratios}). They do not establish uniform linearity of the complete state response: the cancellation and amplitude tests in \ref{app:history-checks} retain unexplained volume-weighted discrepancies.
 
 \subsection{Accumulation and delayed Euler load response}
 \label{sec:results-euler-airfoil-new}
@@ -816,14 +815,7 @@ The study shows that a faithful restart depends on the spatial distribution and 
 \section{Representation and reference-state identities}
 \label{app:quadrature-mismatch}
 
-GP3 reconstructs the source value at the midpoint of edge $(i,j)$ as
-\begin{equation}
- \phi_{ij}=\tfrac12(\phi_i+\phi_j)
-       -\tfrac18d_{ij}^T\overline H_{ij}d_{ij},
- \qquad d_{ij}=x_i-x_j,\qquad \overline H_{ij}=\tfrac12(H_i+H_j).
- \label{eq:gp3-edge-value}
-\end{equation}
-For a quadratic field, the curvature term equals the difference between the endpoint average and midpoint value. The complete quadratic projection can thus be exact while vertex restriction changes the solver integral. For example, $f(x)=x^2$ on a uniform partition of $[0,1]$ belongs to the quadratic finite-element space, but integrating only its vertex values with linear nodal weights gives
+Conservation of a complete finite-element field need not survive restriction to the solver vertices. For GP3, even an exact quadratic projection is integrated differently when the solver uses only vertex values. To illustrate this, $f(x)=x^2$ on a uniform partition of $[0,1]$ belongs to the quadratic finite-element space, but integrating only its vertex values with linear nodal weights gives
 \begin{equation}
  Q_h(f)=\frac13+\frac{h^2}{6}.
  \label{eq:vertex-restriction-counterexample}
@@ -833,7 +825,7 @@ This second-order discrepancy comes entirely from vertex restriction; the comple
 \subsection{Discrepancy relative to a native target state}
 \label{app:reference-decomposition}
 
-Let $\Pi_Mu^k$ represent a common exact field in the solver representation, with native error $e_M^k=U_M^k-\Pi_Mu^k$. For the complete, possibly nonlinear, transfer map,
+A discrepancy from a native target-mesh solution contains both transfer error and the difference between the native discretizations. To distinguish these contributions, let $\Pi_Mu^k$ represent a common exact field in the solver representation, with native error $e_M^k=U_M^k-\Pi_Mu^k$. For the complete, possibly nonlinear, transfer map,
 \begin{align}
  \eps^k={}&\underbrace{\calI_{AB}(\Pi_Au^k)-\Pi_Bu^k}_{\text{transfer consistency}}\notag\\
  &+\underbrace{\calI_{AB}(U_A^k)-\calI_{AB}(\Pi_Au^k)-e_B^k}_{\text{source and target discretization contributions}}.
@@ -848,48 +840,12 @@ Only a linear map permits the second line to be written $\calI_{AB}e_A^k-e_B^k$.
 \end{align}
 The first difference is native mesh sensitivity; the second is the target-referenced restart response. Neither alone is an independently known continuum error.
 
-\section{Repeated Euler transfer comparisons}
-\label{app:riemann-support}
-
-Table~\ref{tab:riemann-frequency-app} includes the higher-order alternatives to the main-text comparison, and Table~\ref{tab:riemann-seeds-app} reports all three realizations, including globally corrected NN1. Cancellation of signed transfer-integral changes leaves local distortion unconstrained, so the tables report integral and profile errors separately.
-
-\begin{table}[pos=htbp]
-\centering\footnotesize
-\caption{Frequency comparison at safety factor $s=4$ for all transfer variants. $\Delta n$ is the number of physical steps between mesh changes; $\Delta x/h$ and $\Delta w/h$ are signed position and width changes relative to the fixed-mesh reference.}
-\label{tab:riemann-frequency-app}
-\pgfplotstabletypeset[publication table,
- columns={scheme,dIters,position_error_cells,width_change_cells,cumulative_density_change},
- columns/scheme/.style={string type,column name={Transfer}},
- columns/dIters/.style={fixed,precision=0,column name={$\Delta n$}},
- columns/position_error_cells/.style={fixed,precision=2,column name={$\Delta x/h$}},
- columns/width_change_cells/.style={fixed,precision=2,column name={$\Delta w/h$}},
- columns/cumulative_density_change/.style={sci,precision=2,column name={$\sum\Delta I_\rho$}}
-]{\DataDir/riemann_frequency_full.csv}
-\end{table}
-
-\begin{table}[pos=htbp]
-\centering\footnotesize
-\caption{High-frequency Euler comparison across three random deformation realizations. GC indicates whether the global correction is applied; $s=2$ permits twice the displacement amplitude of $s=4$. Position and width changes are in cells of the $h=0.01$ reference mesh. The final column is the signed sum of target-minus-source density-integral changes at transfer.}
-\label{tab:riemann-seeds-app}
-\pgfplotstabletypeset[publication table,
- columns={scheme,global_correction,safe_factor,seed,position_error_cells,width_change_cells,cumulative_density_change},
- columns/scheme/.style={string type,column name={Transfer}},
- columns/global_correction/.style={string type,column name={GC},string replace*={off}{No},string replace*={Global}{Yes}},
- columns/safe_factor/.style={fixed,precision=0,column name={$s$}},
- columns/seed/.style={fixed,precision=0,column name={Realization}},
- columns/position_error_cells/.style={fixed,precision=2,column name={$\Delta x/h$}},
- columns/width_change_cells/.style={fixed,precision=2,column name={$\Delta w/h$}},
- columns/cumulative_density_change/.style={sci,precision=1,column name={$\sum\Delta I_\rho$}}
-]{\DataDir/riemann_amplitude_seeds.csv}
-\end{table}
-\FloatBarrier
-
 \section{Controlled-history diagnostics}
 \label{app:history-checks}
 
-\subsection{Directional response and boundary enforcement}
+\subsection{Signed response to the two histories}
 
-Table~\ref{tab:naca-superposition-app} reports all response ratios and superposition defects. State ratios use the volume-weighted norm, while the older-only force ratio retains its sign. The defects quantify the departure from directional superposition alongside the coefficient comparison.
+The controlled restarts assign the same spatial discrepancy to both BDF2 histories or to one history alone. Local linearity predicts latest-only and older-only responses of $4/3$ and $-1/3$ times the both-histories response. Table~\ref{tab:naca-superposition-app} compares these signed predictions with the computed lift ratios and nonnegative state-norm ratios. The superposition defects quantify the remaining departure from linear response.
 
 \begin{table}[pos=htbp]
 \centering\footnotesize
@@ -907,11 +863,13 @@ Table~\ref{tab:naca-superposition-app} reports all response ratios and superposi
 ]{\DataDir/naca_superposition.csv}
 \end{table}
 
-At a common trial state and the 370 slip-wall vertices, the wall-normal momentum mismatch is $3.4\times10^{-12}$ for GP2, $4.1\times10^{-12}$ for GP3 and CV2, and $4.5\times10^{-12}$ for NN1. The tangential mismatch is $(1.4$--$1.7)\times10^{-11}$, a fraction $(1.1$--$1.3)\times10^{-7}$ of the tangential history forcing of $1.25\times10^{-4}$. All four transfers return the same wall state, that of the source solution; its wall-normal momentum discrepancy from the native target state is $1.1\times10^{-14}$, so the normal history forcing is negligible and the slip-wall operation of the receiving equations does not alter it. Comparing the measured residual with its predicted history forcing still requires the same boundary operation on both.
+The common-trial residual comparison also includes the slip-wall rows. Because source and target wall vertices coincide, the transferred histories retain the source wall state and the normal history forcing is negligible. Supplementary Section S2 gives the component-wise residual comparisons.
 
 \subsection{Cancellation of the initial history forcing}
 
-For an imposed target-history discrepancy $e$, setting $\eps^n=e/4$ and $\eps^{n-1}=e$ makes $\eta^n$ zero. At a common trial state, the two BDF2 equations are identical; an exact solve on the same local solution branch should return the same next state. The measurements distinguish force agreement from state agreement (Table~\ref{tab:naca-cancellation-app}). First-step lift differences are of order $10^{-9}$, whereas relative state differences are approximately $2\times10^{-4}$ in the Euclidean norm and 0.043--0.090 in the volume-weighted norm. Neither norm has an independently measured iterative floor, and the small lift difference leaves a finite state discrepancy.
+For an imposed spatial discrepancy $e$, setting $\eps^n=e/4$ and $\eps^{n-1}=e$ cancels the initial forcing, $\eta^n=0$. Under the same boundary treatment, the native and perturbed BDF2 equations are then identical. An exact solve on the same local solution branch would return the same next state.
+
+The computed lift differences are of order $10^{-9}$, but the volume-weighted state differences remain 4.3--9.0\% of the imposed discrepancy (Table~\ref{tab:naca-cancellation-app}). Small load differences therefore do not establish state agreement. No independently measured iterative floor explains the remaining discrepancy, so this experiment does not verify cancellation of the computed state response. The exact residual identity and its separate common-trial test are unaffected by this limitation.
 
 \begin{table}[pos=htbp]
 \centering\small
@@ -927,33 +885,11 @@ For an imposed target-history discrepancy $e$, setting $\eps^n=e/4$ and $\eps^{n
 ]{\DataDir/naca_cancellation.csv}
 \end{table}
 
-The initial residual probes in this additional test use different trial states. For a trial displacement $q$, their difference has the form
-\begin{equation}
- \Delta\Phi=\frac{3M_Bq}{2\Delta t}
-       +F_B(Y+q)-F_B(Y)-\frac{M_B\eta^n}{\Delta t}.
- \label{eq:unequal-trial-residual}
-\end{equation}
-With $q=e/4$ and $\eta^n=0$, the temporal part is three quarters of the older-only forcing magnitude. The measured ratio near 0.75 also includes a spatial-residual difference and therefore is not a common-trial check of Eq.~\eqref{eq:history-residual-identity}. Cancellation is temporary even for an exact first step: after $\delta^{n+1}=0$, the older level retains $e/4$, producing the subsequent history combination $-e/8$.
+The initial residual probes in this cancellation experiment use different trial states and consequently include a spatial-residual difference. Their interpretation is given in Supplementary Section S2. Cancellation also concerns only the first step: even if its state difference vanishes, the retained older history can force subsequent evolution.
 
-\subsection{Perturbation-amplitude dependence}
+\subsection{Limits of the directional approximation}
 
-Scaling the discrepancy by $\lambda=1,1/2,1/4$ reduces the Euclidean-state and lift superposition remainders for BAR2, GP2, and CV2 (Table~\ref{tab:naca-amplitude-app}). The Euclidean absolute state remainder decreases by factors of about 3.2--3.5 per halving, faster than linearly over this range. The volume-weighted absolute remainder falls more slowly, from approximately $2.4\times10^{-5}$ to $1.5$--$1.7\times10^{-5}$, while its normalized value rises from about 3.4\% to 8.7--9.2\%. The directional response is diagnostic- and norm-dependent; these tests establish neither a uniform quadratic remainder nor a verified numerical floor in all norms.
-
-\begin{table}[pos=htbp]
-\centering\footnotesize
-\caption{Amplitude dependence of first-step superposition. $\mathcal E=\delta_f-\delta_n-\delta_{n-1}$ is the state remainder and $\mathcal E_L$ its lift counterpart. Relative remainders use the corresponding both-histories response. The Euclidean and volume-weighted state metrics have different amplitude dependence.}
-\label{tab:naca-amplitude-app}
-\pgfplotstabletypeset[publication table,
- columns={method,lambda,state_remainder_abs_euclid,state_superposition_defect_euclid,state_remainder_abs_M,state_superposition_defect_M,CL_remainder_abs},
- columns/method/.style={string type,column name={Transfer}},
- columns/lambda/.style={fixed,precision=2,column name={$\lambda$}},
- columns/state_remainder_abs_euclid/.style={sci,precision=2,column name={$\|\mathcal E\|_2$}},
- columns/state_superposition_defect_euclid/.style={sci,precision=2,column name={$\|\mathcal E\|_2/\|\delta_f\|_2$}},
- columns/state_remainder_abs_M/.style={sci,precision=2,column name={$\|\mathcal E\|_M$}},
- columns/state_superposition_defect_M/.style={sci,precision=2,column name={$\|\mathcal E\|_M/\|\delta_f\|_M$}},
- columns/CL_remainder_abs/.style={sci,precision=2,column name={$|\mathcal E_L|$}}
-]{\DataDir/naca_amplitude_sequence.csv}
-\end{table}
+Reducing the imposed discrepancy strengthens superposition in lift and in the Euclidean state norm for BAR2, GP2, and CV2. The volume-weighted norm behaves differently: its absolute remainder decreases slowly while the relative remainder increases from about 3.4\% to 8.7--9.2\%. Thus the observed coefficient ratios support a directional approximation, but not a uniform quadratic remainder in every norm. Supplementary Section S3 contains the full amplitude comparison.
 \FloatBarrier
 
 \section{RANS numerical sensitivity}
@@ -965,11 +901,13 @@ Table~\ref{tab:rans-inner-app} separates achieved residual criteria from iterati
 
 \begin{table}[pos=htbp]
 \centering\footnotesize
-\caption{Inner-iteration behavior for the paired calculations of the first deformation realization. Entries separated by slashes are GP2/NN2/CV2. $N_{\max}$ is the iteration limit; residuals are median terminal $\log_{10}\operatorname{rms}(r_\rho)$. Nominal-setting rows cover the full interval; the remaining rows cover the short numerical-sensitivity window.}
+\caption{Inner convergence for the first deformation realization. $N_{\max}$ is the iteration limit. Separate columns give the number of steps reaching that limit for each method. Nominal rows cover the full interval; other rows cover the short sensitivity window. Supplementary Section S4 gives the method-wise median terminal density residuals.}
 \label{tab:rans-inner-app}
-\begin{tabular}{lrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
-Closure & $N_{\max}$ & $\Delta t/\Delta t_0$ & Physical steps & Steps at limit & Residual\\
+ & & & & \multicolumn{3}{c}{Steps at limit}\\
+\cmidrule(lr){5-7}
+Closure & $N_{\max}$ & $\Delta t/\Delta t_0$ & Steps & GP2 & NN2 & CV2\\
 \midrule
 \InnerRow{SA}{production}{800}{1}
 \InnerRow{SA}{cap1600}{1600}{1}
@@ -1004,7 +942,7 @@ Closure & Iteration limit & $C_L$ & $C_D$ & $C_L$ & $C_D$\\
 
 In the SA step-refinement sequence, the paired lift RMS is approximately $1.21\times10^{-5}$, $1.60\times10^{-5}$, and $2.08\times10^{-5}$; the drag values are $2.19\times10^{-6}$, $3.77\times10^{-6}$, and $4.55\times10^{-6}$. Although individual RMS amplitudes remain closer across the same samples, the detailed paired histories are unresolved. Friction drag is more sensitive than total drag: the SA quarter-step history differences are approximately 76--92\% of the nominal-setting friction-response RMS. The smaller total-drag sensitivity consequently leaves componentwise convergence unestablished.
 
-\subsection{Steady mesh sensitivity and cross-mesh robustness}
+\subsection{Steady mesh sensitivity}
 
 The steady meshes in Table~\ref{tab:rans-meshlevels-app} preserve the first off-wall spacing while changing the remaining resolution. Lift, total drag, and pressure drag decrease monotonically; friction drag varies nonmonotonically. For this anisotropic family, the count-based spacing describes mesh density without establishing a common asymptotic error expansion. The comparison reports absolute-load sensitivity, with no extrapolated loads or discretization-uncertainty estimate; it does not quantify the error in the paired transfer difference on a common mesh.
 
@@ -1025,13 +963,15 @@ The steady meshes in Table~\ref{tab:rans-meshlevels-app} preserve the first off-
 ]{\GeneratedDir/reassessed_rans_meshlevels.csv}
 \end{table}
 
-On the medium mesh, the short SA remeshing interval gives individual lift RMS responses near $1.07\times10^{-4}$ and drag responses near $5.39\times10^{-5}$; the paired differences are $8.77\times10^{-6}$ and $9.94\times10^{-7}$. The methods remain relatively close, but the new node positions also change the random displacement field. Resolution alone cannot explain the smaller response. Five to seven of the 38 physical steps reach the nominal inner-iteration limit.
+\subsection{Remeshing response on a different mesh}
+
+A separate comparison changes both mesh resolution and the imposed disturbance. On the medium mesh, the short SA remeshing interval gives individual lift RMS responses near $1.07\times10^{-4}$ and drag responses near $5.39\times10^{-5}$; the paired differences are $8.77\times10^{-6}$ and $9.94\times10^{-7}$. The methods remain relatively close, but the new node positions also change the random displacement field. Resolution alone cannot explain the smaller response. Five to seven of the 38 physical steps reach the nominal inner-iteration limit.
 
 \FloatBarrier
 \section*{Data availability}
 % TODO(author): The journal's research-data policy (Option C) asks for deposit in a data repository with a persistent identifier (e.g. a DOI-registered archive of the tagged repository release), a citation of that dataset here, and a matching [dataset] entry in the reference list.
 % TODO(author): Decide which agent plans and prompts belong in the public package on reproducibility grounds, and retain a record of research and manuscript provenance.
-The numerical tables supporting the figures and comparisons, together with the post-processing routines needed to reproduce the reported reductions, are available in the \href{https://github.com/rois1995/InterpolationPaper}{public data repository}. The archive does not include every flow-field output from the simulations.
+Supplementary material contains the full Euler comparisons and extended history and convergence diagnostics. The numerical tables supporting the figures and comparisons, together with the post-processing routines needed to reproduce the reported reductions, are available in the \href{https://github.com/rois1995/InterpolationPaper}{public data repository}. The archive does not include every flow-field output from the simulations.
 
 \section*{Funding}
 \FundingStatement

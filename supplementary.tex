@@ -1,0 +1,155 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb,bm,booktabs}
+\usepackage{pgfplotstable}
+\usepackage{placeins}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\textfraction}{0.05}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue]{hyperref}
+\pgfplotsset{compat=1.18}
+\newcommand{\DataDir}{data}
+\newcommand{\eps}{\varepsilon}
+\pgfplotstableset{publication table/.style={
+ col sep=comma,
+ every head row/.style={before row=\toprule,after row=\midrule},
+ every last row/.style={after row=\bottomrule}}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theequation}{S\arabic{equation}}
+\title{Supplementary material\\[0.4em]\large Mesh-to-Mesh Transfer Errors in Multistep Unsteady Flow Simulations}
+\author{}
+\date{}
+\pgfplotstableread[col sep=comma]{RANS_PostProcessing/rans_control_inner.csv}\InnerData
+\pgfplotstableforeachcolumnelement{model}\of\InnerData\as\ThisModel{%
+  \edef\SavedModel{\ThisModel}%
+  \pgfplotstablegetelem{\pgfplotstablerow}{setting}\of\InnerData\edef\ThisSetting{\pgfplotsretval}%
+  \pgfplotstablegetelem{\pgfplotstablerow}{method}\of\InnerData\edef\ThisMethod{\pgfplotsretval}%
+  \pgfplotstablegetelem{\pgfplotstablerow}{steps}\of\InnerData
+  \expandafter\xdef\csname In@\SavedModel @\ThisSetting @\ThisMethod @steps\endcsname{\pgfplotsretval}%
+  \pgfplotstablegetelem{\pgfplotstablerow}{steps_at_cap}\of\InnerData
+  \expandafter\xdef\csname In@\SavedModel @\ThisSetting @\ThisMethod @cap\endcsname{\pgfplotsretval}%
+  \pgfplotstablegetelem{\pgfplotstablerow}{log10_rms_rho_end_median}\of\InnerData
+  \expandafter\xdef\csname In@\SavedModel @\ThisSetting @\ThisMethod @res\endcsname{\pgfplotsretval}%
+}
+\newcommand{\Inner}[4]{\csname In@#1@#2@#3@#4\endcsname}
+\newcommand{\InnerDetailRow}[5]{#1 & #3 & #4 & #5 & \Inner{#1}{#2}{#3}{steps} & \Inner{#1}{#2}{#3}{cap} & \Inner{#1}{#2}{#3}{res}\\}
+\begin{document}
+\maketitle
+This supplement contains the complete repeated-Euler comparisons and extended history-response diagnostics supporting the article. All tables read the same archived numerical data as the manuscript. NN, BAR, GP, and CV denote nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer; suffixes give nominal smooth-field order. GC denotes bounded global correction. BDF2 denotes the second-order backward differentiation formula.
+
+\section{Repeated Euler transfer comparisons}
+\label{supp:euler}
+
+Table~\ref{tab:riemann-frequency-app} includes the higher-order alternatives to the main-text comparison, and Table~\ref{tab:riemann-seeds-app} reports all three realizations, including globally corrected NN1. The mesh-replacement interval is given in physical steps. The deformation parameter $s$ bounds streamwise displacement by the smallest incident corner-triangle altitude divided by $s$; $s=2$ permits twice the displacement of $s=4$. The 50\% transition-position and 10--90\% transition-width differences are measured against the fixed-mesh calculation in cells of spacing $h=0.01$. With $Q_M(\rho)=\sum_i w_i^M\rho_i$, where $w_i^M$ is the median-dual volume, $\sum\Delta I_\rho$ is the signed sum of target-minus-source density-integral changes immediately across transfer, excluding physical evolution. Integral cancellation leaves local distortion unconstrained, so the tables report both integral and profile errors.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Frequency comparison at safety factor $s=4$ for all transfer variants. $\Delta n$ is the number of physical steps between mesh changes; $\Delta x/h$ and $\Delta w/h$ are signed position and width changes relative to the fixed-mesh reference.}
+\label{tab:riemann-frequency-app}
+\pgfplotstabletypeset[publication table,
+ columns={scheme,dIters,position_error_cells,width_change_cells,cumulative_density_change},
+ columns/scheme/.style={string type,column name={Transfer}},
+ columns/dIters/.style={fixed,precision=0,column name={$\Delta n$}},
+ columns/position_error_cells/.style={fixed,precision=2,column name={$\Delta x/h$}},
+ columns/width_change_cells/.style={fixed,precision=2,column name={$\Delta w/h$}},
+ columns/cumulative_density_change/.style={sci,precision=2,column name={$\sum\Delta I_\rho$}}
+]{\DataDir/riemann_frequency_full.csv}
+\end{table}
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{High-frequency Euler comparison across three random deformation realizations. GC indicates whether the global correction is applied; $s=2$ permits twice the displacement amplitude of $s=4$. Position and width changes are in cells of the $h=0.01$ reference mesh. The final column is the signed sum of target-minus-source density-integral changes at transfer.}
+\label{tab:riemann-seeds-app}
+\pgfplotstabletypeset[publication table,
+ columns={scheme,global_correction,safe_factor,seed,position_error_cells,width_change_cells,cumulative_density_change},
+ columns/scheme/.style={string type,column name={Transfer}},
+ columns/global_correction/.style={string type,column name={GC},string replace*={off}{No},string replace*={Global}{Yes}},
+ columns/safe_factor/.style={fixed,precision=0,column name={$s$}},
+ columns/seed/.style={fixed,precision=0,column name={Realization}},
+ columns/position_error_cells/.style={fixed,precision=2,column name={$\Delta x/h$}},
+ columns/width_change_cells/.style={fixed,precision=2,column name={$\Delta w/h$}},
+ columns/cumulative_density_change/.style={sci,precision=1,column name={$\sum\Delta I_\rho$}}
+]{\DataDir/riemann_amplitude_seeds.csv}
+\end{table}
+\FloatBarrier
+
+\section{Boundary forcing and unequal-trial residuals}
+\subsection{Slip-wall comparison}
+In the common-trial residual test, the predicted forcing is $-M_B\eta^n/\Delta t$, with $\eta^n=2\eps^n-\eps^{n-1}/2$ formed from the latest and older target-referenced history discrepancies. Here $M_B$ is the receiving finite-volume mass matrix and $\Delta t$ the physical time step. The solver reports the negative of this residual. The wall-normal and tangential comparisons below concern the residual mismatch, not the transferred state error.
+
+At a common trial state and the 370 slip-wall vertices, the wall-normal momentum mismatch is $3.4\times10^{-12}$ for GP2, $4.1\times10^{-12}$ for GP3 and CV2, and $4.5\times10^{-12}$ for NN1. The tangential mismatch is $(1.4$--$1.7)\times10^{-11}$, a fraction $(1.1$--$1.3)\times10^{-7}$ of the tangential history forcing of $1.25\times10^{-4}$. All four transfers return the same wall state, that of the source solution; its wall-normal momentum discrepancy from the native target state is $1.1\times10^{-14}$, so the normal history forcing is negligible and the slip-wall operation of the receiving equations does not alter it. These comparisons include the receiving slip-wall operation in both the predicted and measured forcing.
+
+\subsection{Residual probes in the cancellation experiment}
+
+In the cancellation experiment, the history discrepancies are $\eps^n=e/4$ and $\eps^{n-1}=e$, giving $\eta^n=2\eps^n-\eps^{n-1}/2=0$. The initial residual probes nevertheless use different trial states. Let $M_B$ be the receiving finite-volume mass matrix and $F_B$ its spatial residual. For a trial state $Y$ and displacement $q$, their difference has the form
+\begin{equation}
+ \Delta\Phi=\frac{3M_Bq}{2\Delta t}
+       +F_B(Y+q)-F_B(Y)-\frac{M_B\eta^n}{\Delta t}.
+ \label{eq:unequal-trial-residual}
+\end{equation}
+With $q=e/4$ and $\eta^n=0$, the temporal part is three quarters of the older-only forcing magnitude. The measured ratio near 0.75 also includes a spatial-residual difference and therefore does not verify the common-trial history-forcing identity. In contrast, at an identical trial state the history contribution to the residual difference is exactly $-M_B\eta^n/\Delta t$. Cancellation is temporary even for an exact first step: if the first-step state difference vanishes, the older level retains $e/4$, producing the subsequent history combination $-e/8$.
+
+\section{Perturbation-amplitude dependence}
+
+For the target-referenced state difference $\delta$, subscripts $f$, $n$, and $n-1$ denote equal spatial discrepancies imposed in both BDF2 histories, the latest only, and the older only. The superposition remainder is $\mathcal E=\delta_f-\delta_n-\delta_{n-1}$; its lift counterpart is $\mathcal E_L=\Delta C_{L,f}-\Delta C_{L,n}-\Delta C_{L,n-1}$. State norms are Euclidean or volume-weighted, $\|v\|_M=(v^TM_Bv)^{1/2}$. Scaling the discrepancy by $\lambda=1,1/2,1/4$ reduces the Euclidean-state and lift superposition remainders for BAR2, GP2, and CV2 (Table~\ref{tab:naca-amplitude-app}). The Euclidean absolute state remainder decreases by factors of about 3.2--3.5 per halving, faster than linearly over this range. The volume-weighted absolute remainder falls more slowly, from approximately $2.4\times10^{-5}$ to $1.5$--$1.7\times10^{-5}$, while its normalized value rises from about 3.4\% to 8.7--9.2\%. The directional response is diagnostic- and norm-dependent; these tests establish neither a uniform quadratic remainder nor a verified numerical floor in all norms.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Amplitude dependence of first-step superposition. $\mathcal E=\delta_f-\delta_n-\delta_{n-1}$ is the state remainder and $\mathcal E_L$ its lift counterpart. Relative remainders use the corresponding both-histories response. The Euclidean and volume-weighted state metrics have different amplitude dependence.}
+\label{tab:naca-amplitude-app}
+\pgfplotstabletypeset[publication table,
+ columns={method,lambda,state_remainder_abs_euclid,state_superposition_defect_euclid,state_remainder_abs_M,state_superposition_defect_M,CL_remainder_abs},
+ columns/method/.style={string type,column name={Transfer}},
+ columns/lambda/.style={fixed,precision=2,column name={$\lambda$}},
+ columns/state_remainder_abs_euclid/.style={sci,precision=2,column name={$\|\mathcal E\|_2$}},
+ columns/state_superposition_defect_euclid/.style={sci,precision=2,column name={$\|\mathcal E\|_2/\|\delta_f\|_2$}},
+ columns/state_remainder_abs_M/.style={sci,precision=2,column name={$\|\mathcal E\|_M$}},
+ columns/state_superposition_defect_M/.style={sci,precision=2,column name={$\|\mathcal E\|_M/\|\delta_f\|_M$}},
+ columns/CL_remainder_abs/.style={sci,precision=2,column name={$|\mathcal E_L|$}}
+]{\DataDir/naca_amplitude_sequence.csv}
+\end{table}
+\FloatBarrier
+
+\section{Method-wise RANS inner convergence}
+The Spalart--Allmaras (SA) and shear-stress-transport (SST) calculations use BDF2 physical steps solved by inner iteration. The stopping target is $\log_{10}\operatorname{rms}(r_\rho)\leq-12$ in the solver density-residual normalization. Reaching the iteration limit alone does not establish convergence. Table~\ref{tab:inner-supp} gives the full records behind the compact main-article comparison; terminal residuals are medians over physical steps, not residuals of averaged solutions. The nominal rows cover the full remeshing interval and other rows the shorter sensitivity interval; $\Delta t_0$ denotes the nominal physical time step.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Inner convergence by method for the first deformation realization. Residuals are median terminal $\log_{10}\operatorname{rms}(r_\rho)$; $N_{\max}$ is the iteration limit.}
+\label{tab:inner-supp}
+\renewcommand{\arraystretch}{0.9}
+\begin{tabular}{llrrrrr}
+\toprule
+Closure & Transfer & $N_{\max}$ & $\Delta t/\Delta t_0$ & Physical steps & Steps at limit & Residual\\
+\midrule
+\InnerDetailRow{SA}{production}{GP2}{800}{1}
+\InnerDetailRow{SA}{production}{NN2}{800}{1}
+\InnerDetailRow{SA}{production}{CV2}{800}{1}
+\InnerDetailRow{SA}{cap1600}{GP2}{1600}{1}
+\InnerDetailRow{SA}{cap1600}{NN2}{1600}{1}
+\InnerDetailRow{SA}{cap1600}{CV2}{1600}{1}
+\InnerDetailRow{SA}{halfstep}{GP2}{800}{$1/2$}
+\InnerDetailRow{SA}{halfstep}{NN2}{800}{$1/2$}
+\InnerDetailRow{SA}{halfstep}{CV2}{800}{$1/2$}
+\InnerDetailRow{SA}{quarterstep}{GP2}{800}{$1/4$}
+\InnerDetailRow{SA}{quarterstep}{NN2}{800}{$1/4$}
+\InnerDetailRow{SA}{quarterstep}{CV2}{800}{$1/4$}
+\InnerDetailRow{SST}{production}{GP2}{800}{1}
+\InnerDetailRow{SST}{production}{NN2}{800}{1}
+\InnerDetailRow{SST}{production}{CV2}{800}{1}
+\InnerDetailRow{SST}{cap1600}{GP2}{1600}{1}
+\InnerDetailRow{SST}{cap1600}{NN2}{1600}{1}
+\InnerDetailRow{SST}{cap1600}{CV2}{1600}{1}
+\InnerDetailRow{SST}{cap6400}{GP2}{6400}{1}
+\InnerDetailRow{SST}{cap6400}{NN2}{6400}{1}
+\InnerDetailRow{SST}{cap6400}{CV2}{6400}{1}
+\InnerDetailRow{SST}{halfstep}{GP2}{800}{$1/2$}
+\InnerDetailRow{SST}{halfstep}{NN2}{800}{$1/2$}
+\InnerDetailRow{SST}{halfstep}{CV2}{800}{$1/2$}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

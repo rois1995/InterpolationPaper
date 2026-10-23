@@ -53,7 +53,7 @@ def get_dependencies(main: str) -> dict[str, str]:
         mapping[rel] = name
     return mapping
 
-def run_build(directory: Path) -> None:
+def run_build(directory: Path, main: str = 'paper') -> None:
     exe = shutil.which('latexmk')
     if exe is None:
         raise RuntimeError('latexmk is required; install a current TeX distribution.')
@@ -63,12 +63,12 @@ def run_build(directory: Path) -> None:
         if fallback is None:
             raise RuntimeError('BibTeX is required.')
         command += ['-e', '$bibtex = "' + fallback.replace('\\', '/') + ' %O %B";']
-    command.append('paper.tex')
+    command.append(main + '.tex')
     result = subprocess.run(command, cwd=directory, text=True, capture_output=True)
-    (directory / 'export_build.log').write_text(result.stdout + result.stderr, encoding='utf-8')
+    (directory / (main + '_export_build.log')).write_text(result.stdout + result.stderr, encoding='utf-8')
     if result.returncode:
-        raise RuntimeError('Submission build failed; inspect export_build.log in the temporary export.')
-    log = (directory / 'paper.log').read_text(errors='replace')
+        raise RuntimeError(f'Submission build failed; inspect {main}_export_build.log in the temporary export.')
+    log = (directory / (main + '.log')).read_text(errors='replace')
     if re.search(r'undefined (?:references|citations)|Overfull \\[hv]box|! LaTeX Error', log):
         raise RuntimeError('Submission build has unresolved references/citations or overflowing content.')
 
@@ -90,9 +90,11 @@ def main() -> int:
         print('Author-information preflight passed.' if not pending else 'Review draft: author fields pending.')
         return 0
     main_tex = (ROOT/'paper.tex').read_text(encoding='utf-8')
-    mapping = get_dependencies(main_tex)
+    supplement_tex = (ROOT/'supplementary.tex').read_text(encoding='utf-8')
+    mapping = get_dependencies(main_tex + '\n' + supplement_tex)
     hashes = {rel: sha256(ROOT/rel) for rel in mapping}
     hashes['paper.tex'] = sha256(ROOT/'paper.tex')
+    hashes['supplementary.tex'] = sha256(ROOT/'supplementary.tex')
     out = args.output_dir.resolve()
     if out == ROOT or out in (ROOT/'data', ROOT/'generated', ROOT/'RANS_PostProcessing', ROOT/'submission'):
         raise ValueError('Output must be a separate export directory, not a source directory.')
@@ -110,8 +112,13 @@ def main() -> int:
     for rel, name in mapping.items():
         flat = flat.replace('{'+rel+'}', '{'+name+'}')
     (out/'paper.tex').write_text(flat, encoding='utf-8')
+    supplement_flat = supplement_tex.replace(r'\newcommand{\DataDir}{data}', r'\newcommand{\DataDir}{.}')
+    for rel, name in mapping.items():
+        supplement_flat = supplement_flat.replace('{'+rel+'}', '{'+name+'}')
+    (out/'supplementary.tex').write_text(supplement_flat, encoding='utf-8')
     if not args.no_build:
         run_build(out)
+        run_build(out, 'supplementary')
     for rel, expected in hashes.items():
         if sha256(ROOT/rel) != expected:
             raise RuntimeError(f'Source changed during export: {rel}')
@@ -121,9 +128,10 @@ def main() -> int:
     report_path = out.parent / (out.name+'_manifest.json')
     report_path.write_text(json.dumps(report, indent=2)+'\n', encoding='utf-8')
     zp = args.zip_path.resolve(); zp.parent.mkdir(parents=True, exist_ok=True)
-    names = {'paper.tex', *mapping.values()}
+    names = {'paper.tex', 'supplementary.tex', *mapping.values()}
     if not args.no_build:
         names.add('paper.pdf')
+        names.add('supplementary.pdf')
     with zipfile.ZipFile(zp, 'w', zipfile.ZIP_DEFLATED) as archive:
         for name in sorted(names):
             archive.write(out/name, arcname=name)
