@@ -44,3 +44,11 @@ digests are in `provenance/checkpoints_sha256.txt`.
 
 Limits: the case trees (about 150 GB with the per-step volume fields) and the Pointwise mesh
 projects are not part of this repository; the transfer runs take about two weeks on 4 ranks.
+
+## Riemann flux-correction comparison
+
+The matched standard and locally conservative (LC) Riemann calculations use transfer revisions b3054414 and 0ac1b13, respectively, with SU2 dcee051d. The latter revision also changes the CV recovery solve to conjugate gradients and batches GP recovery; real-gas support is inactive for this ideal-gas problem. The comparison uses identical final meshes and prescribed mesh trajectories. These implementation differences are recorded rather than represented as a single-code-revision toggle.
+
+`data/riemann_lc/` preserves the reduced outputs from `TestInterp/CV_Campaign/LC_Comparison`: 72 per-case records, 36 paired comparisons, final-step mass budgets, per-field extrema, sampled time histories, and final flux-correction diagnostics. `provenance/riemann_lc_inputs.json` records input SHA-256 digests. `scripts/build_riemann_lc_data.py` validates pairing, recomputes relative density-error changes, and builds the tables read by both PDFs. `make data` and `make audit` include this check. Existing CSV snapshots remain unchanged.
+
+The wide-window width uses W1 = [2.40, 3.00] with 16 lines and 800 probes and can include the contact tail. The shock-only width uses the stored eight-line mean profile restricted to [2.55, 2.85] with the same streamwise resolution. Both are crossing-based widths relative to their corresponding fixed-mesh reference at step 399. Direct final mass and energy drifts are normalized by 2.375 and 5.75 and measured from double-precision restarts. The cumulative transfer metric excludes all intervening CFD-step changes. Sampled volume outputs have a different precision and must not be used to claim the same roundoff bound at every stored time.

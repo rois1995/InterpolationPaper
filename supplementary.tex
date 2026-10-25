@@ -37,16 +37,16 @@
 \newcommand{\InnerDetailRow}[5]{#1 & #3 & #4 & #5 & \Inner{#1}{#2}{#3}{steps} & \Inner{#1}{#2}{#3}{cap} & \Inner{#1}{#2}{#3}{res}\\}
 \begin{document}
 \maketitle
-This supplement contains the full Euler remeshing comparisons and additional tests of the transferred history states supporting the article. The tables use the archived numerical data supplied with the article. NN, BAR, GP, and CV denote nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer; suffixes give nominal order of accuracy for smooth fields. GC denotes bounded global correction. BDF2 denotes the second-order backward differentiation formula.
+This supplement contains the full Euler remeshing comparisons and additional tests of the transferred history states supporting the article. The tables use the archived numerical data supplied with the article. NN, BAR, GP, and CV denote nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer; suffixes give nominal order of accuracy for smooth fields. GC denotes bounded global correction; LC denotes locally conservative flux correction. BDF2 denotes the second-order backward differentiation formula.
 
 \section{Repeated remeshing in Euler simulations}
 \label{supp:euler}
 
-Table~\ref{tab:riemann-frequency-app} includes the higher-order alternatives to the main-text comparison, and Table~\ref{tab:riemann-seeds-app} reports all three realizations, including globally corrected NN1. The remeshing interval is given in physical time steps. The deformation parameter $s$ bounds streamwise displacement by the smallest incident corner-triangle altitude divided by $s$; $s=2$ permits twice the displacement of $s=4$. Transition position is the 50\% crossing, and width is the distance between the 10\% and 90\% crossings. Differences from the fixed-mesh calculation are expressed in cells of spacing $h=0.01$. With $Q_M(\rho)=\sum_i w_i^M\rho_i$, where $w_i^M$ is the median-dual volume, $\sum\Delta I_\rho$ is the signed sum of target-minus-source density-integral changes immediately across transfer, excluding physical evolution. Integral cancellation leaves local distortion unconstrained, so the tables report both integral and profile errors.
+Table~\ref{tab:riemann-frequency-app} includes the higher-order alternatives to the main-text comparison, and Table~\ref{tab:riemann-seeds-app} reports all three realizations, including globally corrected NN1. The remeshing interval is given in physical time steps. The deformation parameter $s$ bounds streamwise displacement by the smallest incident corner-triangle altitude divided by $s$; $s=2$ permits twice the displacement of $s=4$. The wide-window position is the 50\% crossing, and apparent width is the distance between the 10\% and 90\% crossings using plateaus in $W_1=[2.40,3.00]$. At 398 transfers, contact smearing contaminates the left plateau for NN1 and BAR2, so these widths are not shock-only measures. Differences from the fixed-mesh calculation are expressed in cells of spacing $h=0.01$. With $Q_M(\rho)=\sum_i w_i^M\rho_i$, where $w_i^M$ is the median-dual volume, $\sum\Delta I_\rho/I_{\rho,0}$ is the signed sum of target-minus-source density-integral changes immediately across transfer, normalized by initial mass and excluding physical evolution. Integral cancellation leaves local distortion unconstrained, so the tables report both integral and profile errors.
 
 \begin{table}[!htbp]
 \centering\footnotesize
-\caption{Frequency comparison at safety factor $s=4$ for all transfer variants. $\Delta n$ is the number of physical time steps between mesh changes; $\Delta x/h$ and $\Delta w/h$ are signed position and width changes relative to the fixed-mesh reference.}
+\caption{Frequency comparison at safety factor $s=4$ for all transfer variants. $\Delta n$ is the number of physical time steps between mesh changes; $\Delta x/h$ and $\Delta w/h$ are signed wide-window position and apparent-width changes relative to the fixed-mesh reference. Widths can include contact smearing and must not be read as shock thickness.}
 \label{tab:riemann-frequency-app}
 \pgfplotstabletypeset[publication table,
  columns={scheme,dIters,position_error_cells,width_change_cells,cumulative_density_change},
@@ -54,13 +54,13 @@ Table~\ref{tab:riemann-frequency-app} includes the higher-order alternatives to 
  columns/dIters/.style={fixed,precision=0,column name={$\Delta n$}},
  columns/position_error_cells/.style={fixed,precision=2,column name={$\Delta x/h$}},
  columns/width_change_cells/.style={fixed,precision=2,column name={$\Delta w/h$}},
- columns/cumulative_density_change/.style={sci,precision=2,column name={$\sum\Delta I_\rho$}}
+ columns/cumulative_density_change/.style={sci,precision=2,column name={$\sum\Delta I_\rho/I_{\rho,0}$}}
 ]{\DataDir/riemann_frequency_full.csv}
 \end{table}
 
 \begin{table}[!htbp]
 \centering\footnotesize
-\caption{High-frequency Euler comparison across three random deformation realizations. GC indicates whether the global correction is applied; $s=2$ permits twice the displacement amplitude of $s=4$. Position and width changes are in cells of the $h=0.01$ reference mesh. The final column is the signed sum of target-minus-source density-integral changes at transfer.}
+\caption{High-frequency Euler comparison across three random deformation realizations. GC indicates whether the global correction is applied; $s=2$ permits twice the displacement amplitude of $s=4$. Position and width changes are in cells of the $h=0.01$ reference mesh. Widths use $W_1$ and include contact smearing for strongly diffused cases. The final column is the signed sum of transfer mass changes divided by initial mass; it excludes all CFD-step changes.}
 \label{tab:riemann-seeds-app}
 \pgfplotstabletypeset[publication table,
  columns={scheme,global_correction,safe_factor,seed,position_error_cells,width_change_cells,cumulative_density_change},
@@ -70,7 +70,7 @@ Table~\ref{tab:riemann-frequency-app} includes the higher-order alternatives to 
  columns/seed/.style={fixed,precision=0,column name={Realization}},
  columns/position_error_cells/.style={fixed,precision=2,column name={$\Delta x/h$}},
  columns/width_change_cells/.style={fixed,precision=2,column name={$\Delta w/h$}},
- columns/cumulative_density_change/.style={sci,precision=1,column name={$\sum\Delta I_\rho$}}
+ columns/cumulative_density_change/.style={sci,precision=1,column name={$\sum\Delta I_\rho/I_{\rho,0}$}}
 ]{\DataDir/riemann_amplitude_seeds.csv}
 \end{table}
 \FloatBarrier
@@ -151,5 +151,50 @@ Closure & Transfer & $N_{\max}$ & $\Delta t/\Delta t_0$ & Physical steps & Steps
 \bottomrule
 \end{tabular}
 \end{table}
+
+\FloatBarrier
+\section{Flux correction in repeated Euler transfers}
+\label{supp:flux-correction}
+
+Table~\ref{tab:lc-pairs-supp} reports all 36 matched comparisons. Standard and LC cases use the same mesh trajectories. $E_1$ is the volume-weighted mean absolute density error against the exact Sod solution at step 399, and its paired percentage change is $100(E_{1,\mathrm{LC}}/E_{1,0}-1)$. Position differences use the wide-window 50\% crossing; widths in this table instead use the shock-only interval $[2.55,2.85]$. Both are measured relative to the corresponding fixed-mesh reference in cells of spacing 0.01. The shock-only diagnostic uses the stored eight-line mean profile at 800 streamwise probes. At this time, the exact contact and shock are at approximately 2.370 and 2.699. For heavily smeared NN1/BAR2 profiles, contact diffusion can raise the wide-window left plateau from approximately 0.266 to 0.287 and shift the 10\% crossing into the contact tail. A large wide-window width therefore does not imply equally large shock broadening.
+
+\begin{table}[!htbp]
+\centering\scriptsize
+\caption{Matched standard and LC transfers. $\Delta n$ is the remeshing interval, $s$ the deformation parameter, and $r$ the realization. Subscript 0 denotes the standard treatment. $\Delta E_1$ is a paired percentage change; positions and shock-only widths are in reference cells.}
+\label{tab:lc-pairs-supp}
+\pgfplotstabletypeset[publication table,
+ columns={scheme,interval,s,seed,L1_change,position_standard,position_lc,width_standard,width_lc},
+ columns/scheme/.style={string type,column name={Transfer}},
+ columns/interval/.style={fixed,precision=0,column name={$\Delta n$}},
+ columns/s/.style={fixed,precision=0,column name={$s$}},
+ columns/seed/.style={fixed,precision=0,column name={$r$}},
+ columns/L1_change/.style={fixed,precision=2,column name={$\Delta E_1$ (\%)}},
+ columns/position_standard/.style={fixed,precision=2,column name={$\Delta x_0/h$}},
+ columns/position_lc/.style={fixed,precision=2,column name={$\Delta x_{\mathrm{LC}}/h$}},
+ columns/width_standard/.style={fixed,precision=2,column name={$\Delta w_0/h$}},
+ columns/width_lc/.style={fixed,precision=2,column name={$\Delta w_{\mathrm{LC}}/h$}}
+]{generated/riemann_lc_pairs.csv}
+\end{table}
+\FloatBarrier
+
+The direct final drifts are normalized by the exact mass 2.375 and energy 5.75. Across all matched LC cases their absolute values are below $5\times10^{-13}$ and $7\times10^{-13}$, respectively, in the double-precision restart after the final transfer. This is distinct from summing instantaneous transfer defects. Table~\ref{tab:lc-budget-supp} separates the final CFD-step and transfer changes for representative cases. A BDF2 calculation also retains a difference between its two history levels; the complete archived budget includes that quantity. The table entries describe stage changes and final drift, not an additive sum of the entire multistep history.
+
+\begin{table}[!htbp]
+\centering\footnotesize
+\caption{Relative mass changes in the final CFD step and transfer, and final drift, for realization 1 with remeshing every two steps. Standard is the usual transfer treatment; LC is the locally conservative flux correction. All values are normalized by initial mass.}
+\label{tab:lc-budget-supp}
+\pgfplotstabletypeset[publication table,
+ columns={scheme,s,treatment,cfd_step,transfer,drift},
+ columns/scheme/.style={string type,column name={Transfer}},
+ columns/s/.style={fixed,precision=0,column name={$s$}},
+ columns/treatment/.style={string type,column name={Treatment}},
+ columns/cfd_step/.style={sci,precision=1,column name={CFD step}},
+ columns/transfer/.style={sci,precision=1,column name={Transfer}},
+ columns/drift/.style={sci,precision=1,column name={Final drift}}
+]{generated/riemann_lc_budget.csv}
+\end{table}
+\FloatBarrier
+
+The density extrema permitted by LC are measured relative to the source range at each transfer. NN1 and BAR2 lose strict monotonicity, while excursions remain within the $2\times10^{-3}$ bound relaxation. BAR2 reaches approximately $5.6\times10^{-5}$; the NN2, NN3, and BAR3 excursions are capped at $2\times10^{-3}$. The final flux-correction diagnostics reach the 12-pass limit in 23 of 36 cases. Remaining flux can therefore separate the returned state from the unlimited target even when conservation and the relaxed bounds are satisfied. No admissibility repair is activated. Wall-normal momentum at slip-wall vertices can reach $1.3\times10^{-4}$ immediately after LC transfer and is removed by the next flow step. These results concern the specified Riemann configurations and do not establish an LC result for the RANS airfoil cases.
 
 \end{document}

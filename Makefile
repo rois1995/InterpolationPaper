@@ -43,12 +43,14 @@ DATA := \
 GENERATED_STAMP := generated/.stamp
 RANS_DATA := $(wildcard RANS_PostProcessing/*.csv)
 RANS_STAMP := generated/.rans_stamp
+LC_DATA := $(wildcard data/riemann_lc/*)
+LC_STAMP := generated/.lc_stamp
 
 .PHONY: all data audit rans-audit clean distclean cf-author-check cf-package cf-draft-package
 
 all: $(PDF) supplementary.pdf
 
-data: $(GENERATED_STAMP) $(RANS_STAMP)
+data: $(GENERATED_STAMP) $(RANS_STAMP) $(LC_STAMP)
 
 $(GENERATED_STAMP): scripts/build_plot_data.py $(DATA)
 	$(PYTHON) scripts/build_plot_data.py --data-dir data --out-dir generated
@@ -59,10 +61,14 @@ $(RANS_STAMP): scripts/build_rans_data.py scripts/build_views.py $(RANS_DATA) MD
 	$(PYTHON) scripts/build_views.py
 	@touch $(RANS_STAMP)
 
-$(PDF): $(MAIN) $(CLASS_FILES) $(SUBMISSION_TEX) References.bib $(GENERATED_STAMP) $(RANS_STAMP)
+$(LC_STAMP): scripts/build_riemann_lc_data.py provenance/riemann_lc_inputs.json $(LC_DATA)
+	$(PYTHON) scripts/build_riemann_lc_data.py
+	@touch $(LC_STAMP)
+
+$(PDF): $(MAIN) $(CLASS_FILES) $(SUBMISSION_TEX) References.bib $(GENERATED_STAMP) $(RANS_STAMP) $(LC_STAMP)
 	$(LATEXMK) -pdf -interaction=nonstopmode -halt-on-error $(MAIN)
 
-supplementary.pdf: supplementary.tex $(GENERATED_STAMP) $(RANS_STAMP)
+supplementary.pdf: supplementary.tex $(GENERATED_STAMP) $(RANS_STAMP) $(LC_STAMP)
 	$(LATEXMK) -pdf -interaction=nonstopmode -halt-on-error supplementary.tex
 
 clean:
@@ -71,12 +77,13 @@ clean:
 
 # Also removes generated tables; the raw CSV files are never deleted.
 distclean: clean
-	rm -f generated/*.csv generated/*.txt generated/.stamp generated/.rans_stamp generated/rans_numbers.tex $(PDF) supplementary.pdf
+	rm -f generated/*.csv generated/*.txt generated/.stamp generated/.rans_stamp generated/.lc_stamp generated/rans_numbers.tex $(PDF) supplementary.pdf
 
 # Recompute manuscript-table checks without altering the numerical data.
-audit:
+audit: $(LC_STAMP)
 	$(PYTHON) scripts/audit_results.py
 	$(PYTHON) scripts/check_typed_tables.py
+	$(PYTHON) -m unittest discover -s tests -p test_riemann_lc_data.py
 
 rans-audit:
 	$(PYTHON) scripts/build_rans_data.py

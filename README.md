@@ -8,7 +8,7 @@ smooth and discontinuous fields, repeated Euler remeshing of a Riemann problem, 
 and remeshing transients on the NACA 0012 airfoil, and fixed-body SA/SST RANS calculations with their
 numerical-sensitivity controls. No moving-body/ALE calculation is part of the study.
 
-All transfer calculations ran with MeshAdaptation `Scripts/` at commit b3054414 and SU2 v8 commit
+Standard transfers use MeshAdaptation `Scripts/` at b3054414; the flux-corrected Riemann cases use 0ac1b13. Both use SU2 v8 commit
 dcee051d (see `REPRODUCE.md` and `provenance/`).
 
 ## Build
@@ -30,10 +30,11 @@ No shell escape is needed. Run from the project root. `make clean && make` rebui
 
 - `data/`: 34 summary CSVs of the static, Euler, BDF2 and Riemann analyses; `data/bdf2_raw/` holds the
   six per-pair tables of the BDF2 study from which the BDF2 summaries are formed.
+- `data/riemann_lc/`: archived results of 36 matched Riemann pairs, exact-Sod errors, direct mass budgets, and limiter diagnostics; input digests are in `provenance/riemann_lc_inputs.json`.
 - `RANS_PostProcessing/`: the 28 CSV exports of the RANS analysis (time series, surface profiles, transfer
   integrals, controls, provenance), its data-section report and its log.
 - `generated/`: views derived from the two folders above by `scripts/build_plot_data.py`,
-  `scripts/build_rans_data.py` and `scripts/build_views.py`; `generated/rans_numbers.tex` holds text
+  `scripts/build_rans_data.py`, `scripts/build_views.py`, and `scripts/build_riemann_lc_data.py`; `generated/rans_numbers.tex` holds text
   numerals computed from the RANS exports.
 - `MDFiles/`: the NACA 0012 study report (also the source of the SST floor table) and the writing prompt.
 - `audit/`, `closure/`: digests of the released CSV set and the audit reports; `provenance/`: code

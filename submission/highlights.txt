@@ -1,5 +1,5 @@
-- Accuracy, boundedness and conservation describe different transfer properties.
-- Global mass correction does not restore a broadened density profile.
-- An error in the older BDF2 state can change lift without changing the latest state.
-- Control-volume transfer conserves mass with little broadening of the profile.
-- RANS load differences remain unresolved under time-step refinement.
+- Global mass correction does not restore a smeared wave profile.
+- Shock-width diagnostics must exclude a smeared contact.
+- Small transfer defects do not establish conservation during flow evolution.
+- Local flux correction preserves mass but permits small relaxed-bound extrema.
+- An error in an older BDF2 state changes the next-step lift.

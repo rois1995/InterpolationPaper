@@ -1,16 +1,16 @@
 {
-  "source_tex_sha256": "239ee42ada2b41eea1ab6b68b0c4a69aa0ca3c5f69b2e455a21f00664086acd2",
+  "source_tex_sha256": "9d15e354f0945f8a7a611986ca621eaa62516d3bdf9930d84d43ace51529e497",
   "csv_inputs_unchanged": true,
   "figures": [
     {
       "figure": 1,
       "file": "Figure_1.pdf",
-      "sha256": "ec909fdccf77de9504a6c8a6bd5372af21c360f25417edd0a88cdaac2b30527d"
+      "sha256": "daac028a709a8a7f82366c13c4b7d45c9c2faa5d76a414b3e517ce708bb88485"
     },
     {
       "figure": 2,
       "file": "Figure_2.pdf",
-      "sha256": "fcc57d72d3d44a675e11ae8b43e2afcaa04fa5377363f7db56c52d1bc4f17cbd"
+      "sha256": "7c6ae67fcd1f79202f72fb64ea9e46cd5f847b02bc2f4ad2025c28e074e97f26"
     }
   ]
 }

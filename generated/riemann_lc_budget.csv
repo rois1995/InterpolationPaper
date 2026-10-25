@@ -1,0 +1,7 @@
+scheme,s,treatment,cfd_step,transfer,drift
+NN1,4,Standard,-3.526e-07,-1.355e-05,1.401e-04
+NN1,4,LC,1.683e-15,1.870e-16,2.633e-13
+GP2,2,Standard,1.066e-08,4.627e-07,-3.881e-06
+GP2,2,LC,1.683e-15,-1.870e-16,4.198e-13
+CV2,2,Standard,2.714e-08,0.000e+00,5.490e-06
+CV2,2,LC,0.000e+00,0.000e+00,-8.040e-15

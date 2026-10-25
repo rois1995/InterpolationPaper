@@ -137,6 +137,10 @@ M.~Kucharik, M.~Shashkov, B.~Wendroff, An efficient
   linearity-and-bound-preserving remapping method, J. Comput. Phys. 188~(2)
   (2003) 462--471.
 
+\bibitem{Zalesak1979}
+S.~T. Zalesak, Fully multidimensional flux-corrected transport algorithms for
+  fluids, J. Comput. Phys. 31~(3) (1979) 335--362.
+
 \bibitem{KoobusFarhat1999}
 B.~Koobus, C.~Farhat, Second-order time-accurate and geometrically conservative
   implicit schemes for flow computations on unstructured dynamic meshes,
@@ -150,6 +154,12 @@ P.~Geuzaine, C.~Grandmont, C.~Farhat, Design and analysis of {ALE} schemes with
   simulations, J. Comput. Phys. 191~(1) (2003) 206--227.
 \newblock \href {https://doi.org/10.1016/S0021-9991(03)00311-5}
   {\path{doi:10.1016/S0021-9991(03)00311-5}}.
+
+\bibitem{LeVeque2002}
+R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts
+  in Applied Mathematics, Cambridge University Press, Cambridge, 2002.
+\newblock \href {https://doi.org/10.1017/CBO9780511791253}
+  {\path{doi:10.1017/CBO9780511791253}}.
 
 \bibitem{SpalartAllmaras1994}
 P.~R. Spalart, S.~R. Allmaras, A one-equation turbulence model for aerodynamic

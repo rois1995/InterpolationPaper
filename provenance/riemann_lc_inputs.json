@@ -1,0 +1,15 @@
+{
+  "source": "TestInterp/CV_Campaign/LC_Comparison",
+  "standard_transfer_revision": "b3054414",
+  "flux_corrected_revision": "0ac1b13",
+  "solver_revision": "dcee051d",
+  "scope": "Reduced outputs for 36 matched Riemann cases and their flux-corrected counterparts; exact Sod comparison at step 399. The CV recovery solver and GP batching also differ between transfer revisions.",
+  "sha256": {
+    "per_case_metrics.csv": "49e702342de64a3e969f7c756db2e19753264bd09b531b245b7f920162d97136",
+    "paired_lc_vs_off.csv": "801a085ff0dff6a01aa63052a9a13414f803fd6736767428fa274a5dc1bd89c7",
+    "mass_budget_step399.csv": "0e7ed2d4e3c9f98c45e537a9ec2707454905123b939c216275ef741263d92fe9",
+    "overshoot_by_field.csv": "ad9876a71a9be78f8781dacdef00c7716b81b328f594223e846e99e19eb06ed9",
+    "timeseries.csv": "055194542d9980c97116bb417e8978475e85a19c750434940ea8194a039d9c66",
+    "lc_last_transfer_diagnostics.txt": "cae9df3637764fa10152698c3cc19032dc55e8e85c61af31bd63b2bafd583992"
+  }
+}
