@@ -45,12 +45,14 @@ RANS_DATA := $(wildcard RANS_PostProcessing/*.csv)
 RANS_STAMP := generated/.rans_stamp
 LC_DATA := $(wildcard data/riemann_lc/*)
 LC_STAMP := generated/.lc_stamp
+FIGURE_STAMP := generated/.figures_stamp
+FIGURE_DATA := data/euler_pressure_shells.csv data/riemann_lc/density_profiles.csv data/riemann_lc/exact_profile.csv data/riemann_lc/timeseries.csv data/riemann_lc/per_case_metrics.csv data/naca_pressure_propagation.csv RANS_PostProcessing/rans_control_series.csv
 
 .PHONY: all data audit rans-audit clean distclean cf-author-check cf-package cf-draft-package
 
 all: $(PDF) supplementary.pdf
 
-data: $(GENERATED_STAMP) $(RANS_STAMP) $(LC_STAMP)
+data: $(GENERATED_STAMP) $(RANS_STAMP) $(LC_STAMP) $(FIGURE_STAMP)
 
 $(GENERATED_STAMP): scripts/build_plot_data.py $(DATA)
 	$(PYTHON) scripts/build_plot_data.py --data-dir data --out-dir generated
@@ -65,7 +67,11 @@ $(LC_STAMP): scripts/build_riemann_lc_data.py provenance/riemann_lc_inputs.json 
 	$(PYTHON) scripts/build_riemann_lc_data.py
 	@touch $(LC_STAMP)
 
-$(PDF): $(MAIN) $(CLASS_FILES) $(SUBMISSION_TEX) References.bib $(GENERATED_STAMP) $(RANS_STAMP) $(LC_STAMP)
+$(FIGURE_STAMP): scripts/build_manuscript_plot_data.py provenance/figure_inputs.json $(FIGURE_DATA)
+	$(PYTHON) scripts/build_manuscript_plot_data.py
+	@touch $(FIGURE_STAMP)
+
+$(PDF): $(MAIN) $(CLASS_FILES) $(SUBMISSION_TEX) References.bib $(GENERATED_STAMP) $(RANS_STAMP) $(LC_STAMP) $(FIGURE_STAMP)
 	$(LATEXMK) -pdf -interaction=nonstopmode -halt-on-error $(MAIN)
 
 supplementary.pdf: supplementary.tex $(GENERATED_STAMP) $(RANS_STAMP) $(LC_STAMP)
@@ -77,13 +83,14 @@ clean:
 
 # Also removes generated tables; the raw CSV files are never deleted.
 distclean: clean
-	rm -f generated/*.csv generated/*.txt generated/.stamp generated/.rans_stamp generated/.lc_stamp generated/rans_numbers.tex $(PDF) supplementary.pdf
+	rm -f generated/*.csv generated/*.txt generated/.stamp generated/.rans_stamp generated/.lc_stamp generated/.figures_stamp generated/rans_numbers.tex $(PDF) supplementary.pdf
 
 # Recompute manuscript-table checks without altering the numerical data.
-audit: $(LC_STAMP)
+audit: $(LC_STAMP) $(FIGURE_STAMP)
 	$(PYTHON) scripts/audit_results.py
 	$(PYTHON) scripts/check_typed_tables.py
 	$(PYTHON) -m unittest discover -s tests -p test_riemann_lc_data.py
+	$(PYTHON) -m unittest discover -s tests -p test_manuscript_plot_data.py
 
 rans-audit:
 	$(PYTHON) scripts/build_rans_data.py

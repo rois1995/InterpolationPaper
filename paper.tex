@@ -12,7 +12,7 @@
 \usepackage{siunitx}
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
-\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{groupplots,fillbetween}
 \usetikzlibrary{patterns}
 \pgfplotsset{compat=1.18}
 \usepackage{placeins}
@@ -83,6 +83,11 @@
         legend style={font=\scriptsize,draw=none},
         line width=0.8pt,
         mark size=2.0pt,
+    },
+    evidence axis/.style={
+        tick label style={font=\scriptsize}, label style={font=\small},
+        title style={font=\small}, legend style={font=\scriptsize,draw=none},
+        grid=major, grid style={gray!15}, line width=0.9pt, cycle list name=color list,
     },
     transfer bar axis/.style={
         grid=major,
@@ -614,7 +619,7 @@ The sensitivity assessment uses a common 38-sample window containing three remes
 The smooth-field tests recover the nominal orders of the NN, BAR, and GP transfers, while CV2 depends on element geometry (Figure~\ref{fig:asym-l2-convergence}). NN1 is first order; NN2, BAR2, and GP2 are consistent with second order; NN3 is consistent with third order. BAR3 and GP3 slopes slightly exceed three over this range, approaching approximately 3.2 on the finest pair, consistent with their nominal third-order construction. On the finest mixed grid, the relative errors are approximately $2.6\times10^{-7}$ for BAR3, $3.4\times10^{-7}$ for GP3, and $2.6\times10^{-6}$ for NN3. CV2 is second order on the structured grid, with a fitted slope of 2.03, but reaches only 1.49 on the mixed grid and 1.35 on its finest pair, consistent with the reduced attainable order on quadrilaterals that remain distorted under refinement (Sec.~\ref{sec:cv-transfer}). It returns the discrete mass to within $4\times10^{-15}$ on both grids, whereas the GP2 defect on the finest grids is $4.3\times10^{-12}$ (structured) and $2.5\times10^{-7}$ (mixed).
 
 \begin{figure}[htbp]
-    \centering
+    \centering\color{black}
     \begin{tikzpicture}
         \begin{groupplot}[
             group style={group size=2 by 1,horizontal sep=1.2cm},
@@ -694,53 +699,101 @@ For a separate smooth transfer, global correction reduces the density-integral d
 \subsection{Accumulated broadening under repeated remeshing in Euler simulations}
 \label{sec:results-riemann}
 
-Frequent remeshing degrades the wave profile much more than it shifts the wide-window transition position (Table~\ref{tab:riemann-stress-new}). At 80 transfers and $s=4$, the apparent width increases by 0.57 cell for NN1 and 0.25 for BAR2, with changes of at most 0.01 cell for the remaining listed methods. At 398 transfers, the NN1 values reach 21.41 cells at $s=4$ and 26.36 at $s=2$; BAR2 reaches 3.24 and 22.91 cells. These are wide-window measures of wave smearing, not shock-width increases. The smeared contact at $x\simeq2.370$ enters the left plateau interval: its estimated density can rise from approximately 0.266 to 0.287, moving the 10\% crossing into the contact tail. The shock-only diagnostic separates this effect from broadening of the shock itself.
+Frequent remeshing smears both the contact and the shock, and a crossing-based width can combine the two effects (Figure~\ref{fig:riemann-profiles}). After 398 transfers, the smeared contact at $x\simeq2.370$ enters the wide-window left plateau interval for NN1 and BAR2. Its estimated density can rise from approximately 0.266 to 0.287, moving the 10\% crossing into the contact tail. The resulting apparent broadening, exceeding 20 cells in the most diffused cases, therefore includes contact smearing and cannot be interpreted as shock broadening alone. The shock-only diagnostic uses plateaus closer to the shock to separate these effects; Supplementary Section S1 gives the full wide-window comparisons.
 
-\begin{table}[pos=htbp]
-\centering\footnotesize
-\caption{Wide-window apparent transition width and position relative to the fixed-mesh reference, in cells of spacing $h=0.01$. The 10--90\% width uses plateaus within $W_1=[2.40,3.00]$ and includes contact smearing for NN1 and BAR2 at 398 transfers; it is not a shock-only width. GC is global correction; $s=2$ permits twice the displacement of $s=4$.}
-\label{tab:riemann-stress-new}
-\begin{tabular}{lrrrrrr}
-\toprule
-Condition & \multicolumn{5}{c}{Width increase} & max. \\
-\cmidrule(lr){2-6}
- & NN1 & NN1+GC & BAR2 & GP2 & CV2 & $|\Delta x|/h$ \\
-\midrule
-80 transfers, $s=4$  & 0.57 & --    & 0.25 & 0.00 & 0.00 & 0.14 \\
-398 transfers, $s=4$ & 21.41 & 18.43 & 3.24 & 0.00 & 0.01 & 0.15 \\
-398 transfers, $s=2$ & 26.36 & 25.65 & 22.91 & 0.06 & 0.06 & 0.91 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\begin{figure}[htbp]
+\centering\color{black}
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 2,horizontal sep=1.1cm,vertical sep=1.05cm},
+ evidence axis,width=0.43\textwidth,height=0.27\textwidth,
+ xmin=2.30,xmax=3.00,ymin=0.10,ymax=0.45,xtick={2.3,2.5,2.7,2.9},
+ xlabel={$x$},ylabel={Density $\rho$}]
+\nextgroupplot[xlabel={},title={NN1},legend to name=legend:riemann-profiles,legend columns=4]
+\addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
+\addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
+\addlegendentry{Exact}
+\addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
+\addlegendentry{Fixed mesh}
+\addplot[BrickRed,dashed] table[col sep=comma,x=x,y=NN1_standard]{\DataDir/riemann_lc/density_profiles.csv};
+\addlegendentry{Standard}
+\addplot[NavyBlue,solid] table[col sep=comma,x=x,y=NN1_lc]{\DataDir/riemann_lc/density_profiles.csv};
+\addlegendentry{LC}
+\nextgroupplot[xlabel={},title={BAR2}]
+\addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
+\addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
+\addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
+\addplot[BrickRed,dashed] table[col sep=comma,x=x,y=BAR2_standard]{\DataDir/riemann_lc/density_profiles.csv};
+\addplot[NavyBlue,solid] table[col sep=comma,x=x,y=BAR2_lc]{\DataDir/riemann_lc/density_profiles.csv};
+\nextgroupplot[title={GP2}]
+\addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
+\addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
+\addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
+\addplot[BrickRed,dashed] table[col sep=comma,x=x,y=GP2_standard]{\DataDir/riemann_lc/density_profiles.csv};
+\addplot[NavyBlue,solid] table[col sep=comma,x=x,y=GP2_lc]{\DataDir/riemann_lc/density_profiles.csv};
+\nextgroupplot[title={CV2}]
+\addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
+\addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
+\addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
+\addplot[BrickRed,dashed] table[col sep=comma,x=x,y=CV2_standard]{\DataDir/riemann_lc/density_profiles.csv};
+\addplot[NavyBlue,solid] table[col sep=comma,x=x,y=CV2_lc]{\DataDir/riemann_lc/density_profiles.csv};
+\end{groupplot}
+\end{tikzpicture}
+\par\smallskip\ref*{legend:riemann-profiles}
+\caption{Density profiles after 398 transfers at $t=0.399$, with remeshing every two steps, $s=2$, and deformation realization 1. Each numerical curve is an eight-line mean. The exact Sod solution identifies the contact at $x\simeq2.370$ and shock at $x\simeq2.699$. Shading marks the left plateau interval $[2.40,2.46]$ used by the wide-window diagnostic: contact diffusion raises this plateau for NN1 and BAR2. Shock-only widths instead use $[2.55,2.85]$. Locally conservative flux correction (LC) has little effect on the visible broadening; several standard and LC curves overlap.}
+\label{fig:riemann-profiles}
+\end{figure}
 
-Across the three realizations, mean shock-only broadening at 398 transfers is 1.43 cells for NN1 at $s=4$ and 8.35 at $s=2$, compared with 1.07 and 2.21 cells for BAR2. The GP2 and CV2 means remain within 0.02 cell of the fixed-mesh shock width (Table~\ref{tab:riemann-lc-main}). Their wide-window width changes are also small, at most 0.07 cell in magnitude. These results support better preservation of the wave profile by GP2 and CV2 than by NN1 and BAR2 under frequent remeshing, while distinguishing contact diffusion from shock broadening.
+Across the three realizations, mean shock-only broadening at 398 transfers is 1.43 cells for NN1 at $s=4$ and 8.35 at $s=2$, compared with 1.07 and 2.21 cells for BAR2. The GP2 and CV2 means remain within 0.02 cell of the fixed-mesh shock width (Supplementary Section S5). Their wide-window width changes are also small, at most 0.07 cell in magnitude. These results support better preservation of the wave profile by GP2 and CV2 than by NN1 and BAR2 under frequent remeshing, while distinguishing contact diffusion from shock broadening.
 
 NN1+GC keeps the normalized signed sum of transfer mass changes below $1.0\times10^{-13}$ across all realizations, yet its wide-window profile remains strongly smeared. CV2 also keeps this transfer-only defect near roundoff, whereas GP2 gives values of order $10^{-6}$--$10^{-5}$. These diagnostics distinguish integral preservation during transfer from preservation of spatial structure. They do not establish conservation over the complete simulation, because mass can change during the intervening CFD steps.
 
 \subsection{Flux correction, mass balance, and wave accuracy}
 \label{sec:results-local-conservation}
 
-Direct mass integrals expose a limit of the transfer-only diagnostic. With the standard treatment, the final relative mass drift of CV2 is approximately $3.0\times10^{-7}$--$4.1\times10^{-7}$ at $s=4$ and $5.5\times10^{-6}$--$6.4\times10^{-6}$ at $s=2$, despite its near-roundoff transfer defect. GP2 also has finite final drift, reaching about $2\times10^{-6}$ at $s=4$. The final-step budgets locate the CV2 change in the CFD step rather than the transfer: for $s=2$, realization 1, the step-399 mass change is $2.7\times10^{-8}$ of the initial mass, while the subsequent transfer change is negligible. Supplementary Section S5 gives representative budgets.
+Direct mass integrals expose a limit of the transfer-only diagnostic (Figure~\ref{fig:riemann-mass-error}a). With the standard treatment, the final relative mass drift of CV2 is approximately $3.0\times10^{-7}$--$4.1\times10^{-7}$ at $s=4$ and $5.5\times10^{-6}$--$6.4\times10^{-6}$ at $s=2$, despite its near-roundoff transfer defect. GP2 also has finite final drift, reaching about $2\times10^{-6}$ at $s=4$. The final-step budgets locate the CV2 change in the CFD step rather than the transfer: for $s=2$, realization 1, the step-399 mass change is $2.7\times10^{-8}$ of the initial mass, while the subsequent transfer change is negligible. Supplementary Section S5 gives representative budgets.
 
 The GP/CV limiter clips the field and redistributes the integral defect globally in proportion to the remaining capacity within its bounds. With tolerance $2\times10^{-3}$, nominally constant far-field states can participate. The measured density disturbance reaches $1.4\times10^{-4}$ for $x<1$, and momentum density at the open boundaries reaches approximately $2\times10^{-4}$. NN and BAR retain those constant states to roundoff. These measurements connect non-local redistribution, far-field disturbance, and mass exchange through the open boundaries during the CFD steps. They do not isolate the limiter through a limiter-off experiment.
 
-LC keeps the final relative mass drift below $5\times10^{-13}$ and energy drift below $7\times10^{-13}$ across the 36 matched cases. The mean density-error changes relative to the standard treatment are $-3.3\%$ for GP and $-2.9\%$ for CV; the corresponding NN and BAR means are $+0.2\%$ and $-0.3\%$. At 398 transfers and $s=2$, GP2 errors decrease by 7.0--7.9\% and CV2 errors by 5.1--5.4\% across the three realizations. Their wide-window position errors fall from $+0.17$--$+0.20$ cell to $0.00$--$+0.02$ cell. Shock-only broadening changes little (Table~\ref{tab:riemann-lc-main}): conservative flux correction improves the mass balance and some solution errors but does not remove diffusion already introduced by the underlying transfer.
+Figure~\ref{fig:riemann-mass-error}b shows how LC affects density error during the run. LC keeps the final relative mass drift below $5\times10^{-13}$ and energy drift below $7\times10^{-13}$ across the 36 matched cases. The mean density-error changes relative to the standard treatment are $-3.3\%$ for GP and $-2.9\%$ for CV; the corresponding NN and BAR means are $+0.2\%$ and $-0.3\%$. At 398 transfers and $s=2$, GP2 errors decrease by 7.0--7.9\% and CV2 errors by 5.1--5.4\% across the three realizations. Their wide-window position errors fall from $+0.17$--$+0.20$ cell to $0.00$--$+0.02$ cell. Shock-only broadening changes little (Supplementary Section S5): conservative flux correction improves the mass balance and some solution errors but does not remove diffusion already introduced by the underlying transfer.
 
-\begin{table}[pos=htbp]
-\centering\footnotesize
-\caption{Standard and locally conservative (LC) transfers at 398 transfers. Shock-only width increases $\Delta w_0/h$ and $\Delta w_{\mathrm{LC}}/h$ use $[2.55,2.85]$ and are means over three realizations. $D_0$ and $D_{\mathrm{LC}}$ are maximum absolute final relative mass drifts. $\Delta E_1$ is the mean paired percentage change in density error against the exact Sod solution.}
-\label{tab:riemann-lc-main}
-\pgfplotstabletypeset[publication table,
- columns={scheme,s,width_standard,width_lc,mass_standard,mass_lc,L1_change},
- columns/scheme/.style={string type,column name={Transfer}},
- columns/s/.style={fixed,precision=0,column name={$s$}},
- columns/width_standard/.style={fixed,precision=2,fixed zerofill,column name={$\Delta w_0/h$}},
- columns/width_lc/.style={fixed,precision=2,fixed zerofill,column name={$\Delta w_{\mathrm{LC}}/h$}},
- columns/mass_standard/.style={sci,precision=1,column name={$D_0$}},
- columns/mass_lc/.style={sci,precision=1,column name={$D_{\mathrm{LC}}$}},
- columns/L1_change/.style={fixed,precision=1,column name={$\Delta E_1$ (\%)}}
-]{\GeneratedDir/riemann_lc_summary.csv}
-\end{table}
+\begin{figure}[htbp]
+\centering\color{black}
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1,horizontal sep=1.55cm},
+ evidence axis,width=0.42\textwidth,height=0.34\textwidth]
+\nextgroupplot[title={(a) Mass diagnostics},ymode=log,
+ ylabel={Absolute normalized mass change},xmin=0.5,xmax=4.5,
+ xtick={1,2,3,4},xticklabels={NN1,BAR2,GP2,CV2},ymin=1e-15,ymax=1e-2,
+ ytick={1e-14,1e-12,1e-10,1e-8,1e-6,1e-4,1e-2},
+ legend style={font=\scriptsize,draw=none,at={(0.5,-0.18)},anchor=north,legend columns=1}]
+\addplot[only marks,mark=triangle,black,mark size=2pt] table[col sep=comma,x=x,y=transfer]{\GeneratedDir/riemann_mass_plot.csv};\addlegendentry{Standard: transfer sum}
+\addplot[only marks,mark=*,BrickRed,mark size=1.8pt] table[col sep=comma,x=x,y=standard]{\GeneratedDir/riemann_mass_plot.csv};\addlegendentry{Standard: final drift}
+\addplot[only marks,mark=square*,NavyBlue,mark size=1.8pt] table[col sep=comma,x=x,y=lc]{\GeneratedDir/riemann_mass_plot.csv};\addlegendentry{LC: final drift}
+\nextgroupplot[title={(b) Effect of LC on density error},
+ xlabel={Time $t$},ylabel={Paired $L_1$ error change (\%)},
+ xmin=0,xmax=0.4,ymin=-9,ymax=3,ytick={-8,-6,-4,-2,0,2},xtick={0,0.1,0.2,0.3,0.4},
+ legend style={font=\scriptsize,draw=none,at={(0.5,-0.18)},anchor=north,legend columns=2}]
+\addplot[draw=none,name path=NN1min,forget plot] table[col sep=comma,x=t,y=NN1_min]{\GeneratedDir/riemann_error_plot.csv};
+\addplot[draw=none,name path=NN1max,forget plot] table[col sep=comma,x=t,y=NN1_max]{\GeneratedDir/riemann_error_plot.csv};
+\addplot[black!15,forget plot] fill between[of=NN1min and NN1max];
+\addplot[black,solid] table[col sep=comma,x=t,y=NN1_mean]{\GeneratedDir/riemann_error_plot.csv};\addlegendentry{NN1}
+\addplot[draw=none,name path=BAR2min,forget plot] table[col sep=comma,x=t,y=BAR2_min]{\GeneratedDir/riemann_error_plot.csv};
+\addplot[draw=none,name path=BAR2max,forget plot] table[col sep=comma,x=t,y=BAR2_max]{\GeneratedDir/riemann_error_plot.csv};
+\addplot[BrickRed!15,forget plot] fill between[of=BAR2min and BAR2max];
+\addplot[BrickRed,dashed] table[col sep=comma,x=t,y=BAR2_mean]{\GeneratedDir/riemann_error_plot.csv};\addlegendentry{BAR2}
+\addplot[draw=none,name path=GP2min,forget plot] table[col sep=comma,x=t,y=GP2_min]{\GeneratedDir/riemann_error_plot.csv};
+\addplot[draw=none,name path=GP2max,forget plot] table[col sep=comma,x=t,y=GP2_max]{\GeneratedDir/riemann_error_plot.csv};
+\addplot[Purple!15,forget plot] fill between[of=GP2min and GP2max];
+\addplot[Purple,densely dotted] table[col sep=comma,x=t,y=GP2_mean]{\GeneratedDir/riemann_error_plot.csv};\addlegendentry{GP2}
+\addplot[draw=none,name path=CV2min,forget plot] table[col sep=comma,x=t,y=CV2_min]{\GeneratedDir/riemann_error_plot.csv};
+\addplot[draw=none,name path=CV2max,forget plot] table[col sep=comma,x=t,y=CV2_max]{\GeneratedDir/riemann_error_plot.csv};
+\addplot[teal!15,forget plot] fill between[of=CV2min and CV2max];
+\addplot[teal,dashdotted] table[col sep=comma,x=t,y=CV2_mean]{\GeneratedDir/riemann_error_plot.csv};\addlegendentry{CV2}
+\end{groupplot}
+\end{tikzpicture}
+\caption{Mass balance and density accuracy for remeshing every two steps with $s=2$. (a) Each symbol is one of three deformation realizations, offset horizontally for visibility. The absolute signed sum of standard transfer mass changes excludes CFD evolution; final drift uses the direct mass integral after the last transfer. Both are normalized by initial mass. (b) Paired changes $100(E_{1,\mathrm{LC}}/E_{1,0}-1)$, with density $L_1$ error measured against the exact Sod solution. Lines are means and shaded bands span the three realizations, not confidence intervals. Samples precede transfer, except the final sample at $t=0.399$, which follows the last transfer. Negative values indicate lower error with LC.}
+\label{fig:riemann-mass-error}
+\end{figure}
 \FloatBarrier
 
 The relaxed bounds have a cost. LC introduces new density extrema for NN1 and BAR2, which are strictly monotone in the standard Riemann transfers. The extrema remain within the $2\times10^{-3}$ relaxation; BAR2 excursions reach approximately $5.6\times10^{-5}$ of the source range. NN2, NN3, and BAR3 excursions are limited to $2\times10^{-3}$. The flux correction also reaches its 12-pass limit in 23 of the 36 final transfers, leaving part of the unlimited correction unapplied. The resulting fields remain conservative within the stated tolerance and satisfy the relaxed bounds, but full recovery of the unlimited result is not established. No admissibility repairs are activated in these cases. At slip-wall vertices, LC can introduce wall-normal momentum up to $1.3\times10^{-4}$, which the flow solver removes in the next step; thus conservation and the bounds do not imply exact satisfaction of the wall condition immediately after transfer.
@@ -751,7 +804,7 @@ The relaxed bounds have a cost. LC introduces new density extrema for NN1 and BA
 An error in the older BDF2 state produces a nonzero next-step lift response even when the latest state matches the reference. For every method in Figure~\ref{fig:naca-history-new}, perturbing only the older state gives a response opposite in sign to perturbing both states. For GP2, the lift differences are $+2.453\times10^{-3}$ and $-7.315\times10^{-3}$, respectively; for CV2, they are $+2.439\times10^{-3}$ and $-7.272\times10^{-3}$.
 
 \begin{figure}[htbp]
-\centering
+\centering\color{black}
 \begin{tikzpicture}
 \begin{axis}[
  ybar,
@@ -786,7 +839,33 @@ Across all eight variants, the state-norm ratio for latest-only to both-states p
 
 Drag initially grows more slowly with GP2 and CV2 than with NN2 in both Euler realizations. The fitted slopes are $6.31\times10^{-6}$ and $5.89\times10^{-6}$ per 100 physical time steps for GP2, and $5.92\times10^{-6}$ and $5.82\times10^{-6}$ for CV2, compared with $3.95\times10^{-5}$ and $3.84\times10^{-5}$ for NN2. The mean NN2 slope is approximately 6.4 times the GP2 mean and 6.6 times the CV2 mean. The 400-step fitting interval spans only about 0.047 convective and 0.47 acoustic chord times, so these slopes describe initial growth. Lift trends vary more between realizations.
 
-Remeshing in a narrow band away from the airfoil produces a delayed pressure response beyond the region affected immediately by transfer. For the longer calculation with the band beginning at $0.20c$, propagation speeds estimated from 10--75\% amplitude thresholds range from 1.09 to 1.27 with GP2 and from 1.10 to 1.30 with CV2. Both ranges include the sound speed $a_\infty=1.183$; their spread reflects the choice of detection threshold for a single event. In a separate restart test, the NN1 lift difference peaks three steps after the first post-transfer sample at 4.66 times its initial value. The sampled second- and third-order responses peak at the first step and then decay.
+Remeshing in a narrow band away from the airfoil produces a delayed pressure response beyond the region affected immediately by transfer (Figure~\ref{fig:euler-pressure}). For the longer calculation with the band beginning at $0.20c$, propagation speeds estimated from 10--75\% amplitude thresholds range from 1.09 to 1.27 with GP2 and from 1.10 to 1.30 with CV2. Both ranges include the sound speed $a_\infty=1.183$; their spread reflects the choice of detection threshold for a single event. In a separate restart test, the NN1 lift difference peaks three steps after the first post-transfer sample at 4.66 times its initial value. The sampled second- and third-order responses peak at the first step and then decay.
+
+\begin{figure}[htbp]
+\centering\color{black}
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1,horizontal sep=1.25cm},
+ evidence axis,width=0.43\textwidth,height=0.33\textwidth]
+\nextgroupplot[title={(a) Pressure disturbance (GP2)},
+ xlabel={Steps after remeshing},ylabel={Normalized pressure RMS},xmin=0,xmax=400,ymin=0,ymax=1.05,
+ legend style={font=\scriptsize,draw=none,at={(0.5,-0.23)},anchor=north,legend columns=2}]
+\addplot[black,solid] table[col sep=comma,x=lag,y=r0p1]{\GeneratedDir/euler_pressure_plot.csv};\addlegendentry{$r/c=0.10$}
+\addplot[teal,dashed] table[col sep=comma,x=lag,y=r0p08]{\GeneratedDir/euler_pressure_plot.csv};\addlegendentry{$r/c=0.08$}
+\addplot[BrickRed,dashdotted] table[col sep=comma,x=lag,y=r0p04]{\GeneratedDir/euler_pressure_plot.csv};\addlegendentry{$r/c=0.04$}
+\addplot[NavyBlue,densely dotted] table[col sep=comma,x=lag,y=r0p005]{\GeneratedDir/euler_pressure_plot.csv};\addlegendentry{$r/c=0.005$}
+\nextgroupplot[title={(b) Propagation toward the wall},
+ xlabel={Travel distance $(0.20c-r)/c$},ylabel={50\% arrival (steps)},
+ xmin=0.08,xmax=0.20,ymin=50,ymax=190,xtick={0.08,0.12,0.16,0.20},
+ xticklabel style={/pgf/number format/fixed,/pgf/number format/precision=2},
+ legend style={font=\scriptsize,draw=none,at={(0.5,-0.23)},anchor=north,legend columns=3}]
+\addplot[Purple,solid,mark=*,mark size=1.8pt] table[col sep=comma,x=travel,y=lag]{\GeneratedDir/euler_arrival_GP2.csv};\addlegendentry{GP2}
+\addplot[teal,dashed,mark=triangle*,mark size=1.8pt] table[col sep=comma,x=travel,y=lag]{\GeneratedDir/euler_arrival_CV2.csv};\addlegendentry{CV2}
+\addplot[gray,densely dotted,domain=0.08:0.2,samples=2]{x/(1.18322*0.001)};\addlegendentry{$a_\infty$ guide}
+\end{groupplot}
+\end{tikzpicture}
+\caption{Pressure response to a single Euler remeshing event in the annulus $0.20c\le r\le0.25c$, where $r$ is distance from the airfoil wall and $c$ is chord. (a) Shell RMS pressure differences from the fixed-mesh reference, normalized separately by each shell's maximum over the 400 post-event samples; shell half-width is $0.004c$. Disturbances reach shells closer to the wall later. (b) First crossings of 50\% of each shell's maximum for GP2 and CV2, restricted to travel distances of at least $0.08c$. Connecting lines guide the eye; the dotted line gives travel time at the freestream sound speed. The points describe one event per method, not independent realizations.}
+\label{fig:euler-pressure}
+\end{figure}
 
 \subsection{RANS integral defects and load sensitivity}
 \label{sec:results-rans-new}
@@ -810,24 +889,37 @@ The RANS comparisons first quantify changes in the transferred integrals, then e
 
 Over the repeated-remeshing interval, the RMS drag differences from the fixed-mesh references range from $6.09\times10^{-5}$ to $6.79\times10^{-5}$ for the three methods. The RMS differences between NN2 and GP2 are $0.77\times10^{-5}$ to $1.11\times10^{-5}$; the NN2--CV2 and GP2--CV2 values are $0.66$--$1.15\times10^{-5}$ and $0.52$--$0.75\times10^{-5}$. The ordering changes with turbulence model and realization. The overall responses are therefore similar, while the smaller differences between methods require closer examination of temporal accuracy.
 
-Halving the time step changes the differences between methods substantially (Table~\ref{tab:rans-temporal-main}). At common physical times, the RMS change in each lift response is 15.1--16.5\% of its nominal RMS for SA and 18.8--20.5\% for SST. The corresponding drag changes are 8.0--10.2\% and 9.6--10.8\%. Changes in RMS amplitude alone are much smaller. For the NN2--GP2 difference, however, the changes reach 75.2\% in lift and 128.7\% in drag for SA, and 146.1\% and 110.3\% for SST. The SA quarter-step comparison changes still more. Similar overall amplitudes therefore do not establish convergence of the transient response or a ranking of the methods.
+Halving the time step changes the differences between methods substantially (Figure~\ref{fig:rans-drag-sensitivity}). At common physical times, the RMS change in each lift response is 15.1--16.5\% of its nominal RMS for SA and 18.8--20.5\% for SST. The corresponding drag changes are 8.0--10.2\% and 9.6--10.8\%. Changes in RMS amplitude alone are much smaller. For the NN2--GP2 difference, however, the changes reach 75.2\% in lift and 128.7\% in drag for SA, and 146.1\% and 110.3\% for SST. The SA quarter-step comparison changes still more. Similar overall amplitudes therefore do not establish convergence of the transient response or a ranking of the methods.
 
-\begin{table}[pos=htbp]
-\centering\small
-\caption{Time-step sensitivity at common physical times over the RANS interval containing three remeshing events. Values are $100S$ from Eq.~\eqref{eq:control-sensitivity}, measuring RMS differences between time histories. Individual columns give the largest NN2, GP2, or CV2 sensitivity; difference columns refer to the NN2--GP2 difference.}
-\label{tab:rans-temporal-main}
-\begin{tabular}{llrrrr}
-\toprule
- & & \multicolumn{2}{c}{Individual responses (\%)} & \multicolumn{2}{c}{NN2--GP2 difference (\%)}\\
-\cmidrule(lr){3-4}\cmidrule(lr){5-6}
-Closure & Step & $C_L$ & $C_D$ & $C_L$ & $C_D$\\
-\midrule
-\ControlRow{SA}{halfstep}{$\Delta t_0/2$}
-\ControlRow{SA}{quarterstep}{$\Delta t_0/4$}
-\ControlRow{SST}{halfstep}{$\Delta t_0/2$}
-\bottomrule
-\end{tabular}
-\end{table}
+\begin{figure}[htbp]
+\centering\color{black}
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 2,horizontal sep=1.2cm,vertical sep=1.2cm},
+ evidence axis,width=0.43\textwidth,height=0.28\textwidth,
+ xmin=2,xmax=39,xtick={5,15,25,35},xlabel={Nominal physical-step index}]
+\nextgroupplot[xlabel={},title={SA: GP2 response},ylabel={$10^5\Delta C_D$},legend to name=legend:rans-drag,legend columns=3]
+\addplot[black,solid] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_GP2_production}]{\GeneratedDir/rans_drag_plot.csv};
+\addlegendentry{$\Delta t_0$}
+\addplot[NavyBlue,dashed] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_GP2_halfstep}]{\GeneratedDir/rans_drag_plot.csv};
+\addlegendentry{$\Delta t_0/2$}
+\addplot[BrickRed,dashdotted] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_GP2_quarterstep}]{\GeneratedDir/rans_drag_plot.csv};
+\addlegendentry{$\Delta t_0/4$}
+\nextgroupplot[xlabel={},title={SST: GP2 response},ylabel={$10^5\Delta C_D$}]
+\addplot[black,solid] table[col sep=comma,x=step,y expr=1e5*\thisrow{SST_GP2_production}]{\GeneratedDir/rans_drag_plot.csv};
+\addplot[NavyBlue,dashed] table[col sep=comma,x=step,y expr=1e5*\thisrow{SST_GP2_halfstep}]{\GeneratedDir/rans_drag_plot.csv};
+\nextgroupplot[title={SA: NN2--GP2 difference},ylabel={$10^5P_D$}]
+\addplot[black,solid] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_P_production}]{\GeneratedDir/rans_drag_plot.csv};
+\addplot[NavyBlue,dashed] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_P_halfstep}]{\GeneratedDir/rans_drag_plot.csv};
+\addplot[BrickRed,dashdotted] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_P_quarterstep}]{\GeneratedDir/rans_drag_plot.csv};
+\nextgroupplot[title={SST: NN2--GP2 difference},ylabel={$10^5P_D$}]
+\addplot[black,solid] table[col sep=comma,x=step,y expr=1e5*\thisrow{SST_P_production}]{\GeneratedDir/rans_drag_plot.csv};
+\addplot[NavyBlue,dashed] table[col sep=comma,x=step,y expr=1e5*\thisrow{SST_P_halfstep}]{\GeneratedDir/rans_drag_plot.csv};
+\end{groupplot}
+\end{tikzpicture}
+\par\smallskip\ref*{legend:rans-drag}
+\caption{Time-step sensitivity of RANS drag over three remeshing events for deformation realization 1. Columns show the Spalart--Allmaras (SA) and shear-stress-transport (SST) closures. Top: representative GP2 drag differences $\Delta C_D$ from the fixed-mesh reference computed at the same time step. Bottom: the smaller NN2--GP2 drag difference, $P_D=C_{D,\mathrm{NN2}}-C_{D,\mathrm{GP2}}$. All curves are sampled at common physical times; the horizontal coordinate is time divided by the nominal step $\Delta t_0$. Perturbations are replayed at matching physical times. The smaller difference between methods remains sensitive to the time step; SST also retains inner-iteration error. No SST quarter-step calculation is available.}
+\label{fig:rans-drag-sensitivity}
+\end{figure}
 
 SA reaches the density-residual target at every physical time step with the reduced time step. Increasing the inner-iteration limit at the nominal step has a smaller, nonzero effect on the difference between methods. For SST, most physical time steps on the perturbed meshes still reach the increased iteration limit, and the $\Delta t_0/2$ calculation is not fully converged. Its time-step sensitivity may therefore include iterative error. \ref{app:rans-controls} reports these checks and the more sensitive friction contribution.
 
@@ -975,7 +1067,7 @@ Increasing the iteration limit changes the SA lift and total-drag time histories
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Effect of increasing the inner-iteration limit, relative to the nominal setting. Columns have the same definition as Table~\ref{tab:rans-temporal-main}: individual values are the largest NN2, GP2, or CV2 sensitivity, and difference values refer to the NN2--GP2 difference. All entries are percentages.}
+\caption{Effect of increasing the inner-iteration limit, relative to the nominal setting. Values are $100S$ from Eq.~\eqref{eq:control-sensitivity}; individual columns give the largest NN2, GP2, or CV2 sensitivity, and difference columns refer to the NN2--GP2 difference. All entries are percentages.}
 \label{tab:rans-controls-app}
 \begin{tabular}{llrrrr}
 \toprule

@@ -1,0 +1,29 @@
+{
+  "inputs": [
+    {
+      "source": "/media/rausa/4TB/Validation/MeshAdaptationScript_LatestValidations/TestInterp/CV_Campaign/LC_Comparison/Shock/riemann_transition_profiles.npz",
+      "sha256": "00e991ca1bcb369fa9d73c99de0200ad04293c64f7184eb2389e13aaa1b8584a",
+      "extraction": "W2 profiles, 8-line mean on 800 probes, step 399, interval 2, s=2, realization 1, fixed-mesh and four paired methods; no resampling."
+    },
+    {
+      "source": "/media/rausa/4TB/Validation/MeshAdaptationScript_LatestValidations/TestInterp/CV_Campaign/LC_Comparison/sod_exact.py",
+      "sha256": "b65a1b570d3a8133ed28e04550bf02480a3a659fb11909a6d965f493573ff031",
+      "extraction": "Exact Sod contact and shock at t=0.399; density plateaus and duplicated discontinuity coordinates over [2.30,3.00]."
+    },
+    {
+      "source": "/media/rausa/Elements2/TestInterp_CV/SteadyNACA/WD_0.20-0.25_ConsGalerkinProj_OneShot_Long_Second/.probe_cache_Pressure_0.004_400_Unsteady_Ref_0.005_0.01_0.02_0.04_0.06_0.08_0.1_0.13_0.16_0.18.npz",
+      "sha256": "3515f9bfef41bbb4a0983a6fa619c8450f90d98f2439c026706f04c30d8a04bf",
+      "extraction": "Unmodified pressure RMS differences from fixed-mesh reference for all cached wall-distance shells, event step 400, tolerance 0.004c; 400 unique time samples per shell; repeated identical endpoint snapshots are preserved."
+    },
+    {
+      "source": "/media/rausa/Elements2/TestInterp_CV/SteadyNACA/WD_0.20-0.25_Conservative_OneShot_Long_Second/.probe_cache_Pressure_0.004_400_Unsteady_Ref_0.005_0.01_0.02_0.04_0.06_0.08_0.1_0.13_0.16_0.18.npz",
+      "sha256": "ddd961d545f951bfd98ced3c0b96a9b8a3c5f1c8a4b6885d8e26e946c2309680",
+      "extraction": "Unmodified pressure RMS differences from fixed-mesh reference for all cached wall-distance shells, event step 400, tolerance 0.004c; 400 unique time samples per shell; repeated identical endpoint snapshots are preserved."
+    }
+  ],
+  "archived_sha256": {
+    "data/riemann_lc/density_profiles.csv": "36dbab1b0b0604639261fd7bf5761facbd424a1cc4ece6810d045358c109e170",
+    "data/riemann_lc/exact_profile.csv": "da5216e6da8ed4d0aa45e4215de364ac8fc1f7277cfc2552f59f2800aa9830c4",
+    "data/euler_pressure_shells.csv": "d945094a6e59dcba04f709863afc417447859f406782683b641808b805b4ee10"
+  }
+}

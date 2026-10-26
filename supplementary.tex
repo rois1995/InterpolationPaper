@@ -60,17 +60,16 @@ Table~\ref{tab:riemann-frequency-app} includes the higher-order alternatives to 
 
 \begin{table}[!htbp]
 \centering\footnotesize
-\caption{High-frequency Euler comparison across three random deformation realizations. GC indicates whether the global correction is applied; $s=2$ permits twice the displacement amplitude of $s=4$. Position and width changes are in cells of the $h=0.01$ reference mesh. Widths use $W_1$ and include contact smearing for strongly diffused cases. The final column is the signed sum of transfer mass changes divided by initial mass; it excludes all CFD-step changes.}
+\caption{High-frequency Euler comparison across three random deformation realizations. GC indicates whether the global correction is applied; $s=2$ permits twice the displacement amplitude of $s=4$. Position and width changes are in cells of the $h=0.01$ reference mesh. Widths use $W_1$ and include contact smearing for strongly diffused cases. Transfer-integral diagnostics are available in the archived data.}
 \label{tab:riemann-seeds-app}
 \pgfplotstabletypeset[publication table,
- columns={scheme,global_correction,safe_factor,seed,position_error_cells,width_change_cells,cumulative_density_change},
+ columns={scheme,global_correction,safe_factor,seed,position_error_cells,width_change_cells},
  columns/scheme/.style={string type,column name={Transfer}},
  columns/global_correction/.style={string type,column name={GC},string replace*={off}{No},string replace*={Global}{Yes}},
  columns/safe_factor/.style={fixed,precision=0,column name={$s$}},
  columns/seed/.style={fixed,precision=0,column name={Realization}},
  columns/position_error_cells/.style={fixed,precision=2,column name={$\Delta x/h$}},
- columns/width_change_cells/.style={fixed,precision=2,column name={$\Delta w/h$}},
- columns/cumulative_density_change/.style={sci,precision=1,column name={$\sum\Delta I_\rho/I_{\rho,0}$}}
+ columns/width_change_cells/.style={fixed,precision=2,column name={$\Delta w/h$}}
 ]{\DataDir/riemann_amplitude_seeds.csv}
 \end{table}
 \FloatBarrier
@@ -156,19 +155,18 @@ Closure & Transfer & $N_{\max}$ & $\Delta t/\Delta t_0$ & Physical steps & Steps
 \section{Flux correction in repeated Euler transfers}
 \label{supp:flux-correction}
 
-Table~\ref{tab:lc-pairs-supp} reports all 36 matched comparisons. Standard and LC cases use the same mesh trajectories. $E_1$ is the volume-weighted mean absolute density error against the exact Sod solution at step 399, and its paired percentage change is $100(E_{1,\mathrm{LC}}/E_{1,0}-1)$. Position differences use the wide-window 50\% crossing; widths in this table instead use the shock-only interval $[2.55,2.85]$. Both are measured relative to the corresponding fixed-mesh reference in cells of spacing 0.01. The shock-only diagnostic uses the stored eight-line mean profile at 800 streamwise probes. At this time, the exact contact and shock are at approximately 2.370 and 2.699. For heavily smeared NN1/BAR2 profiles, contact diffusion can raise the wide-window left plateau from approximately 0.266 to 0.287 and shift the 10\% crossing into the contact tail. A large wide-window width therefore does not imply equally large shock broadening.
+Table~\ref{tab:lc-pairs-supp} reports all 36 matched comparisons. Standard and LC cases use the same mesh trajectories. Position differences use the wide-window 50\% crossing; widths in this table instead use the shock-only interval $[2.55,2.85]$. Both are measured relative to the corresponding fixed-mesh reference in cells of spacing 0.01. The shock-only diagnostic uses the stored eight-line mean profile at 800 streamwise probes. At this time, the exact contact and shock are at approximately 2.370 and 2.699. For heavily smeared NN1/BAR2 profiles, contact diffusion can raise the wide-window left plateau from approximately 0.266 to 0.287 and shift the 10\% crossing into the contact tail. A large wide-window width therefore does not imply equally large shock broadening.
 
 \begin{table}[!htbp]
 \centering\scriptsize
-\caption{Matched standard and LC transfers. $\Delta n$ is the remeshing interval, $s$ the deformation parameter, and $r$ the realization. Subscript 0 denotes the standard treatment. $\Delta E_1$ is a paired percentage change; positions and shock-only widths are in reference cells.}
+\caption{Matched standard and LC transfers. $\Delta n$ is the remeshing interval, $s$ the deformation parameter, and $r$ the realization. Subscript 0 denotes the standard treatment. Positions and shock-only widths are in reference cells.}
 \label{tab:lc-pairs-supp}
 \pgfplotstabletypeset[publication table,
- columns={scheme,interval,s,seed,L1_change,position_standard,position_lc,width_standard,width_lc},
+ columns={scheme,interval,s,seed,position_standard,position_lc,width_standard,width_lc},
  columns/scheme/.style={string type,column name={Transfer}},
  columns/interval/.style={fixed,precision=0,column name={$\Delta n$}},
  columns/s/.style={fixed,precision=0,column name={$s$}},
  columns/seed/.style={fixed,precision=0,column name={$r$}},
- columns/L1_change/.style={fixed,precision=2,column name={$\Delta E_1$ (\%)}},
  columns/position_standard/.style={fixed,precision=2,column name={$\Delta x_0/h$}},
  columns/position_lc/.style={fixed,precision=2,column name={$\Delta x_{\mathrm{LC}}/h$}},
  columns/width_standard/.style={fixed,precision=2,column name={$\Delta w_0/h$}},
@@ -177,20 +175,19 @@ Table~\ref{tab:lc-pairs-supp} reports all 36 matched comparisons. Standard and L
 \end{table}
 \FloatBarrier
 
-The direct final drifts are normalized by the exact mass 2.375 and energy 5.75. Across all matched LC cases their absolute values are below $5\times10^{-13}$ and $7\times10^{-13}$, respectively, in the double-precision restart after the final transfer. This is distinct from summing instantaneous transfer defects. Table~\ref{tab:lc-budget-supp} separates the final CFD-step and transfer changes for representative cases. A BDF2 calculation also retains a difference between its two history levels; the complete archived budget includes that quantity. The table entries describe stage changes and final drift, not an additive sum of the entire multistep history.
+The direct final drifts are normalized by the exact mass 2.375 and energy 5.75. Across all matched LC cases their absolute values are below $5\times10^{-13}$ and $7\times10^{-13}$, respectively, in the double-precision restart after the final transfer. This is distinct from summing instantaneous transfer defects. Table~\ref{tab:lc-budget-supp} separates the final CFD-step and transfer changes for representative cases. A BDF2 calculation also retains a difference between its two history levels; the complete archived budget includes that quantity. The table entries describe individual stage changes, not an additive sum of the entire multistep history.
 
 \begin{table}[!htbp]
 \centering\footnotesize
-\caption{Relative mass changes in the final CFD step and transfer, and final drift, for realization 1 with remeshing every two steps. Standard is the usual transfer treatment; LC is the locally conservative flux correction. All values are normalized by initial mass.}
+\caption{Relative mass changes in the final CFD step and transfer, for realization 1 with remeshing every two steps. Standard is the usual transfer treatment; LC is the locally conservative flux correction. All values are normalized by initial mass.}
 \label{tab:lc-budget-supp}
 \pgfplotstabletypeset[publication table,
- columns={scheme,s,treatment,cfd_step,transfer,drift},
+ columns={scheme,s,treatment,cfd_step,transfer},
  columns/scheme/.style={string type,column name={Transfer}},
  columns/s/.style={fixed,precision=0,column name={$s$}},
  columns/treatment/.style={string type,column name={Treatment}},
  columns/cfd_step/.style={sci,precision=1,column name={CFD step}},
- columns/transfer/.style={sci,precision=1,column name={Transfer}},
- columns/drift/.style={sci,precision=1,column name={Final drift}}
+ columns/transfer/.style={sci,precision=1,column name={Transfer}}
 ]{generated/riemann_lc_budget.csv}
 \end{table}
 \FloatBarrier

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export the manuscript's two data-driven figures as separate vector PDFs.
+"""Export the manuscript's data-driven figures as separate vector PDFs.
 
 Run from any directory with a current TeX distribution. Figures are extracted from
 paper.tex so their plotted values, labels, and styles cannot diverge from the paper.
@@ -40,8 +40,8 @@ def main() -> None:
     # The manuscript class (cas-sc) is kept so text width and fonts match the paper.
     preamble+='\n'+r'\usepackage[active,tightpage]{preview}'+'\n'+r'\PreviewEnvironment{preview}'+'\n'+r'\setlength\PreviewBorder{3pt}'+'\n'
     figs=re.findall(r'\\begin\{figure\}(?:\[[^]]*\])?.*?\\end\{figure\}',source,re.S)
-    if len(figs)!=2:
-        raise ValueError(f'Expected two manuscript figures; found {len(figs)}. Review export before proceeding.')
+    if not figs:
+        raise ValueError('No manuscript figures found.')
     initial={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in ROOT.rglob('*.csv')}
     captions=[]; manifest=[]
     with tempfile.TemporaryDirectory(prefix='cf-figure-') as tmp:

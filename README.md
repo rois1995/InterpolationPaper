@@ -48,7 +48,7 @@ the input exports, and it fails on an unrecognized schema rather than silently d
 
 After replacing the contents of an input CSV, run `make`: the dependencies regenerate the affected views
 and LaTeX plots/tables. Most text numerals are typed in `paper.tex`; `scripts/check_typed_tables.py`
-checks the two typed tables against their CSVs, and the scientific interpretation must be reviewed
+checks the typed discontinuous-field table against their CSVs, and the scientific interpretation must be reviewed
 whenever the data change.
 
 ```bash
@@ -72,3 +72,5 @@ The ordinary OLS standard errors are not treated as autocorrelation-robust signi
 onsets do not establish an acoustic speed.
 
 `scripts/update_paper.py` belongs to a different manuscript layout and is not a build dependency.
+
+The six vector figures show smooth convergence, Riemann contact/shock profiles, transfer versus final mass balance and paired density-error evolution, BDF2 lift response, delayed Euler pressure propagation, and RANS drag sensitivity. `scripts/build_manuscript_plot_data.py` checks paired histories and common physical times before producing the additional plot views. Main-text tables retain the boundedness and RANS integral diagnostics; detailed crossing metrics remain in the supplement.
