@@ -28,19 +28,6 @@
 \renewcommand{\floatpagefraction}{0.8}
 \setcounter{topnumber}{3}
 \setcounter{totalnumber}{4}
-% Elsevier appendix numbering: Appendix A, Appendix A.1, Eq. (A.1), Table A.1, Fig. A.1.
-\makeatletter
-\let\els@appendix\appendix
-\renewcommand\appendix{\els@appendix
-  \setcounter{section}{0}\setcounter{subsection}{0}\setcounter{equation}{0}%
-  \gdef\thesection{\appendixname~\@Alph\c@section}%
-  \gdef\theHsection{\@Alph\c@section}%
-  \gdef\thefigure{\@Alph\c@section.\arabic{figure}}%
-  \gdef\thetable{\@Alph\c@section.\arabic{table}}%
-  \@addtoreset{equation}{section}%
-  \gdef\theequation{\@Alph\c@section.\arabic{equation}}%
-  \gdef\theHequation{appendix.\@Alph\c@section.\arabic{equation}}}
-\makeatother
 % Author declarations are defined separately from the scientific narrative.
 % TODO(author): Complete and confirm authors, affiliations, ORCIDs, funding, CRediT, competing interests, AI tool versions, and both assistance statements.
 \input{submission/author_declarations.tex}
@@ -76,7 +63,7 @@
         grid=both,
         minor grid style={gray!15},
         major grid style={gray!30},
-        xlabel={Effective spacing $h$},
+        xlabel={Effective spacing $h_{\mathrm{eff}}$},
         tick label style={font=\scriptsize},
         label style={font=\small},
         title style={font=\small},
@@ -115,30 +102,6 @@
 
 
 
-% Keyed access to the existing control data. No numerical data are duplicated.
-\pgfplotstableread[col sep=comma]{generated/reassessed_rans_controls_compact.csv}\ControlData
-\pgfplotstableforeachcolumnelement{closure}\of\ControlData\as\ThisClosure{%
-  \edef\SavedClosure{\ThisClosure}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{control}\of\ControlData\edef\ThisControl{\pgfplotsretval}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{quantity}\of\ControlData\edef\ThisQuantity{\pgfplotsretval}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{coeff}\of\ControlData\edef\ThisCoeff{\pgfplotsretval}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{production_rms}\of\ControlData
-  \expandafter\xdef\csname Ctrl@\SavedClosure @\ThisControl @\ThisQuantity @\ThisCoeff @base\endcsname{\pgfplotsretval}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{change_rms}\of\ControlData
-  \expandafter\xdef\csname Ctrl@\SavedClosure @\ThisControl @\ThisQuantity @\ThisCoeff @change\endcsname{\pgfplotsretval}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{change_over_production}\of\ControlData
-  \expandafter\xdef\csname Ctrl@\SavedClosure @\ThisControl @\ThisQuantity @\ThisCoeff @ratio\endcsname{\pgfplotsretval}%
-}
-\newcommand{\Control}[5]{\csname Ctrl@#1@#2@#3@#4@#5\endcsname}
-\newcommand{\ControlPercent}[4]{%
-  \pgfmathparse{100*\Control{#1}{#2}{#3}{#4}{ratio}}%
-  \pgfmathprintnumber[fixed,precision=1,fixed zerofill]{\pgfmathresult}}
-\newcommand{\MaxControlPercent}[3]{%
-  \pgfmathparse{100*max(\Control{#1}{#2}{NN2}{#3}{ratio},\Control{#1}{#2}{GP2}{#3}{ratio},\Control{#1}{#2}{CV2}{#3}{ratio})}%
-  \pgfmathprintnumber[fixed,precision=1,fixed zerofill]{\pgfmathresult}}
-\newcommand{\ControlRow}[3]{#1 & #3 &
-  \MaxControlPercent{#1}{#2}{CL} & \MaxControlPercent{#1}{#2}{CD} &
-  \ControlPercent{#1}{#2}{P}{CL} & \ControlPercent{#1}{#2}{P}{CD}\\}
 \pgfplotstableread[col sep=comma]{RANS_PostProcessing/rans_control_inner.csv}\InnerData
 \pgfplotstableforeachcolumnelement{model}\of\InnerData\as\ThisModel{%
   \edef\SavedModel{\ThisModel}%
@@ -168,12 +131,6 @@
 \expandafter\def\csname Inventory@rho k\endcsname{$\rho k$}
 \expandafter\def\csname Inventory@rho omega\endcsname{$\rho\omega$}
 \newcommand{\InventorySymbol}[1]{\csname Inventory@#1\endcsname}
-
-% Scientific display names for mesh levels; raw data labels are left unchanged.
-\expandafter\def\csname MeshLevel@coarse\endcsname{Coarse}
-\expandafter\def\csname MeshLevel@fine\endcsname{Medium}
-\expandafter\def\csname MeshLevel@finer\endcsname{Fine}
-\newcommand{\MeshLevelName}[1]{\csname MeshLevel@#1\endcsname}
 
 \begin{document}
 \let\WriteBookmarks\relax
@@ -233,37 +190,50 @@ The transfer methods differ in how they compute values on the target mesh. NN an
 \subsection{Stored variables and reconstructed derivatives}
 \label{sec:derivative-reconstruction}
 
-The source mesh $A$ and target mesh $B$ cover the same discretized domain $\Omega$. On mesh $M$, the solver stores a state vector $U_M$ at the vertices. Each vertex $i$ has a surrounding median-dual control volume $C_i^M$ of positive measure $w_i^M=|C_i^M|$. The finite-volume mass matrix is $M_M=\operatorname{diag}(w_i^M)\otimes I$, where $I$ acts on the state components and $\otimes$ is the Kronecker product. For one scalar component $\phi$, the solver's discrete integral is
+The source mesh $A$ and target mesh $B$ cover the same discretized domain $\Omega$ in spatial dimension $d$. A mesh $M$ has $n_M$ solver vertices. Vertex $i$ has position $\boldsymbol x_i^M$ and a surrounding median-dual control volume $C_i^M$ of positive measure $w_i^M=|C_i^M|$. The symbol $|C|$ denotes area or volume, and $\dd x$ the corresponding integration measure. Vertex indices run over the mesh named in the expression unless a different range is stated.
+
+The solver state $U_M$ is stacked vertex by vertex, with $n_U$ transported variables per vertex. Its finite-volume mass matrix is $M_M=\operatorname{diag}(w_i^M)\otimes I_{n_U}$, where $I_{n_U}$ is the identity on the state components and $\otimes$ denotes the Kronecker product. A superscript $T$ means transpose. For a scalar component $\phi$, the nodal vector is $\phi_M=(\phi_{M,i})_{i=1}^{n_M}$, and its discrete integral is
 \begin{equation}
- Q_M(\phi_M)=\sum_i w_i^M\phi_{M,i}.
+ Q_M(\phi_M)=\sum_{i=1}^{n_M}w_i^M\phi_{M,i}.
  \label{eq:fv-discrete-integral}
 \end{equation}
-The transferred variables are density, momentum density, and total energy per unit volume. With $E$ denoting specific total energy, the energy variable is $\rho E$. All methods return values at the solver vertices, not control-volume averages. This distinction matters when comparing the integral of a reconstructed field with Eq.~\eqref{eq:fv-discrete-integral}.
+For a full state, $Q_M(U_M)$ means the vector of these integrals, one per transported component. Thus $Q_M(U_M)=(\bm1_{n_M}^{T}\otimes I_{n_U})M_MU_M$, where $\bm1_{n_M}$ is the vector of $n_M$ ones.
 
-Higher-order methods also need local slopes and curvature. These are reconstructed from neighboring source values by weighted least squares:
+For a nonzero source integral, define the signed relative integral change as $e_Q(\phi_A,\phi_B)=[Q_B(\phi_B)-Q_A(\phi_A)]/Q_A(\phi_A)$. Static and RANS transfer diagnostics use this normalization.
+
+Mean-flow transfer acts on density $\rho$, momentum density $\rho\boldsymbol u$, and total-energy density $\rho E$. Here $\boldsymbol u$ is velocity, with Cartesian components $(u,v)$ in two dimensions, and $E$ is specific total energy. Pressure $p$ and temperature $T$ are primitive variables; $R_{\mathrm g}$ is the gas constant and $\gamma$ the heat-capacity ratio. All methods supply values at the solver vertices, not control-volume averages.
+
+Higher-order methods also need local slopes and curvature. Weighted least squares reconstructs them from neighboring source values:
 \begin{equation}
- \phi_j-\phi_i\simeq g_i\cdot r_{ij}+\tfrac12r_{ij}^{T}H_i r_{ij},
- \qquad r_{ij}=x_j-x_i.
+ \phi_j-\phi_i\simeq \boldsymbol g_i\cdot\boldsymbol r_{ij}
+              +\tfrac12\boldsymbol r_{ij}^{T}\mathcal H_i\boldsymbol r_{ij},
+ \qquad \boldsymbol r_{ij}=\boldsymbol x_j-\boldsymbol x_i.
  \label{eq:wls-polynomial}
 \end{equation}
-Here $g_i$ and $H_i$ approximate the gradient and Hessian at source vertex $i$. A linear fit omits the Hessian. For smooth data on a well-conditioned, full-rank scaled stencil with controlled mesh geometry, the linear fit has an $O(h)$ gradient error; the quadratic fit has $O(h^2)$ gradient and $O(h)$ Hessian errors. Anisotropy, weighting, and poor stencil conditioning can reduce this accuracy~\cite{BarthFrederickson1990,Barth1993,Mavriplis2003,DiskinThomas2008}. The third-order methods use quadratic reconstruction, and their achieved order is checked numerically.
+The vector $\boldsymbol r_{ij}$ joins source vertices $i$ and $j$; $\boldsymbol g_i$ and $\mathcal H_i$ approximate the gradient and Hessian of $\phi$ at $i$. A linear fit omits the Hessian. For smooth data on a well-conditioned, full-rank scaled stencil, with controlled geometry and characteristic local mesh spacing $h$, the linear fit has an $O(h)$ gradient error. A quadratic fit has $O(h^2)$ gradient and $O(h)$ Hessian errors. Anisotropy, weighting, and poor conditioning can reduce this accuracy~\cite{BarthFrederickson1990,Barth1993,Mavriplis2003,DiskinThomas2008}. Third-order methods use the quadratic reconstruction, and their achieved order is checked numerically.
 
 \subsection{Nearest-neighbor and barycentric interpolation}
 \label{sec:point-transfer}
 \label{sec:barycentric-transfer}
 
-Let $n(j)$ be the source vertex closest to target point $x_j^B$, and $r_j=x_j^B-x_{n(j)}^A$. Nearest-neighbor Taylor transfer gives
+The superscript on $\calI_{AB}^{m}$ identifies a raw interpolation formula for method $m$, before limiting and state corrections. Let $i_{\mathrm{NN}}(j)$ be the nearest source vertex to target point $\boldsymbol x_j^B$, and let $\boldsymbol r_j=\boldsymbol x_j^B-\boldsymbol x_{i_{\mathrm{NN}}(j)}^A$ be their displacement. Nearest-neighbor Taylor transfer gives
 \begin{align}
- (\calI^{\mathrm{NN1}}_{AB}\phi_A)_j&=\phi_{A,n(j)},\label{eq:nn1}\\
- (\calI^{\mathrm{NN2}}_{AB}\phi_A)_j&=\phi_{A,n(j)}+g_{n(j)}\cdot r_j,\label{eq:nn2}\\
- (\calI^{\mathrm{NN3}}_{AB}\phi_A)_j&=\phi_{A,n(j)}+g_{n(j)}\cdot r_j
-              +\tfrac12r_j^TH_{n(j)}r_j.\label{eq:nn3}
+ (\calI^{\mathrm{NN1}}_{AB}\phi_A)_j
+ &=\phi_{A,i_{\mathrm{NN}}(j)},\label{eq:nn1}\\
+ (\calI^{\mathrm{NN2}}_{AB}\phi_A)_j
+ &=\phi_{A,i_{\mathrm{NN}}(j)}
+       +\boldsymbol g_{i_{\mathrm{NN}}(j)}\cdot\boldsymbol r_j,\label{eq:nn2}\\
+ (\calI^{\mathrm{NN3}}_{AB}\phi_A)_j
+ &=\phi_{A,i_{\mathrm{NN}}(j)}
+       +\boldsymbol g_{i_{\mathrm{NN}}(j)}\cdot\boldsymbol r_j
+       +\tfrac12\boldsymbol r_j^T\mathcal H_{i_{\mathrm{NN}}(j)}\boldsymbol r_j.
+ \label{eq:nn3}
 \end{align}
-NN1 copies the nearest source value, NN2 adds its local slope, and NN3 also includes curvature. For $|r_j|=O(h)$ and sufficiently accurate derivatives, the smooth-field errors are $O(h)$, $O(h^2)$, and $O(h^3)$. As the target point moves, its nearest source vertex can change. The interpolated value can therefore be discontinuous as a function of target position.
+NN1 copies the nearest source value, NN2 adds its local slope, and NN3 also includes curvature. For $\|\boldsymbol r_j\|_2=O(h)$, where $\|\cdot\|_2$ is the Euclidean norm, and sufficiently accurate derivatives, the smooth-field errors are $O(h)$, $O(h^2)$, and $O(h^3)$. Changing the nearest source vertex can make the interpolated value discontinuous as a function of target position.
 
-Barycentric interpolation uses the source triangle or tetrahedron containing the target point. A conforming simplicial subdivision supplies this search geometry on other element types without adding control-volume vertices. In dimension $d$, the containing simplex has vertices $x_{i_r}^A$, $r=1,\ldots,d+1$. Its barycentric coordinates are nonnegative weights that express the target position:
+Barycentric interpolation uses the source triangle or tetrahedron containing the target point. A conforming simplicial subdivision supplies this search geometry on other element types without adding control-volume vertices. In dimension $d$, the containing simplex has vertices $\boldsymbol x_{i_r}^A$, $r=1,\ldots,d+1$. Its barycentric coordinates are nonnegative weights that express the target position:
 \begin{equation}
- x_j^B=\sum_{r=1}^{d+1}\lambda_r x_{i_r}^A,
+ \boldsymbol x_j^B=\sum_{r=1}^{d+1}\lambda_r \boldsymbol x_{i_r}^A,
  \qquad \sum_r\lambda_r=1,
  \qquad \lambda_r\geq0.
  \label{eq:barycentric-coordinates}
@@ -274,30 +244,30 @@ The same weights define BAR2 and its gradient-corrected extension:
  &=\sum_r\lambda_r\phi_{A,i_r},\label{eq:bar2}\\
  (\calI^{\mathrm{BAR3}}_{AB}\phi_A)_j
  &=\sum_r\lambda_r\left[\phi_{A,i_r}
-       +\tfrac12g_{i_r}\cdot(x_j^B-x_{i_r}^A)\right].\label{eq:bar3}
+       +\tfrac12\boldsymbol g_{i_r}\cdot(\boldsymbol x_j^B-\boldsymbol x_{i_r}^A)\right].\label{eq:bar3}
 \end{align}
 BAR2 reproduces affine fields, meaning a linear function plus a constant, and stays within the values at the containing-simplex vertices. For a quadratic field with exact vertex gradients, the half-gradient term cancels the interpolation remainder, giving BAR3 third-order consistency. Shared values and gradients make the interpolant continuous across conforming simplex interfaces. Neither method constrains the source-to-target integral.
 
-Limiting reduces reconstructed slopes or curvature to control new extrema. Multiplying the Taylor corrections by $0\leq\Phi_i\leq1$ reduces NN2 or NN3 to NN1 when $\Phi_i=0$, but reduces BAR3 to BAR2. Smooth-field verification uses no limiter. Discontinuous-field tests also use Barth--Jespersen (BJ) limiting~\cite{BarthJespersen1989}. A limiter based on linear increments need not bound a quadratic reconstruction everywhere, so bounds are checked on the final transferred values.
+Limiting reduces reconstructed slopes or curvature to control new extrema. The limiter factor $\theta_i$ multiplies the Taylor correction. Choosing $0\leq\theta_i\leq1$ reduces NN2 or NN3 to NN1 when $\theta_i=0$, but reduces BAR3 to BAR2. Smooth-field verification uses no limiter. Discontinuous-field tests also use Barth--Jespersen (BJ) limiting~\cite{BarthJespersen1989}. A limiter based on linear increments need not bound a quadratic reconstruction everywhere, so bounds are checked on the final transferred values.
 
 \subsection{Galerkin projection and cross-mesh integration}
 \label{sec:galerkin-projection}
 \label{sec:simplicial-representation}
 
-Galerkin projection chooses the target field that best matches the reconstructed source field in the $L_2$ norm. It solves for the target values together rather than interpolating each vertex independently. Let $\phi_A^h$ be the piecewise-polynomial source field and $V_B^p$ the space of continuous degree-$p$ Lagrange functions on the target simplicial mesh. The target field $\phi_B^h\in V_B^p$ satisfies
+Galerkin projection chooses the target field that best matches the reconstructed source field in the $L_2$ norm. It solves for the target values together rather than interpolating each vertex independently. Let $\phi_A^h$ be the piecewise-polynomial source field and $V_B^\ell$ the space of continuous Lagrange functions of polynomial degree $\ell$ on the target simplicial mesh. The superscript $h$ denotes a reconstructed field. For scalar fields $f_1,f_2$, the inner product is $(f_1,f_2)_{L_2(\Omega)}=\int_\Omega f_1f_2\dd x$; the associated norm is $\|f_1\|_{L_2(\Omega)}=(f_1,f_1)_{L_2(\Omega)}^{1/2}$. The target field $\phi_B^h\in V_B^\ell$ satisfies
 \begin{equation}
- (\phi_B^h-\phi_A^h,v_B)_{L_2(\Omega)}=0
- \quad\text{for every }v_B\in V_B^p.
+ (\phi_B^h-\phi_A^h,\xi_B)_{L_2(\Omega)}=0
+ \quad\text{for every }\xi_B\in V_B^\ell.
  \label{eq:galerkin-orthogonality}
 \end{equation}
-Thus the transfer error has zero integral when weighted by any target test function. This condition gives the best $L_2$ approximation of $\phi_A^h$ in $V_B^p$~\cite{FarrellMaddison2011,JiaoHeath2004}. Expanding the target field as $\phi_B^h=\sum_jv_jN_j^B$, with nodal basis functions $N_j^B$ and coefficients $v_j$, gives
+Thus the transfer error has zero integral when weighted by any target test function. This condition gives the best $L_2$ approximation of $\phi_A^h$ in $V_B^\ell$~\cite{FarrellMaddison2011,JiaoHeath2004}. The test function $\xi_B$ is arbitrary in that target space. Let $N_j^B$ be its nodal basis functions and $N_B^{\mathrm{FE}}$ their number. The target coefficient vector $z_B=(z_{B,j})_{j=1}^{N_B^{\mathrm{FE}}}$ defines $\phi_B^h=\sum_{j=1}^{N_B^{\mathrm{FE}}}z_{B,j}N_j^B$. The projection equations are
 \begin{equation}
- H_Bv=b,\qquad
+ H_Bz_B=b,\qquad
  (H_B)_{ij}=\int_\Omega N_i^BN_j^B\dd x,
  \qquad b_i=\int_\Omega N_i^B\phi_A^h\dd x.
  \label{eq:galerkin-system}
 \end{equation}
-The sparse positive-definite matrix $H_B$ couples basis functions that share target elements. It is different from the diagonal finite-volume matrix $M_B$ used in time integration.
+The consistent Galerkin mass matrix $H_B$ is sparse and positive definite, and $b$ is the cross-mesh load vector. The matrix couples basis functions that share target elements. It is different from the diagonal finite-volume matrix $M_B$ used in time integration.
 
 The two meshes generally do not share element boundaries. A target element can overlap several source elements, across which the source polynomial changes. Integration must account for these intersections:
 \begin{equation}
@@ -307,12 +277,12 @@ The two meshes generally do not share element boundaries. A target element can o
 \end{equation}
 Here $K_A$ and $K_B$ are source and target simplices, and $|K_A\cap K_B|$ is their intersection measure. Their intersections form a common refinement. Both fields have one polynomial expression on each intersection, allowing exact polynomial quadrature: degree two for $P^1$/$P^1$ transfer and degree four for $P^2$/$P^2$ transfer on affine simplices~\cite{Dunavant1985,Keast1986}. The intersections must cover the domain without gaps or overlap. This geometric integration and the coupled solve distinguish GP from point interpolation.
 
-GP2 uses piecewise-linear ($P^1$) source and target fields. GP3 reconstructs a quadratic ($P^2$) source field, including internal edge values, and solves for a complete quadratic target field. The solver receives only the original-vertex values. Restricting the quadratic field in this way can change its finite-volume integral, as illustrated in \ref{app:quadrature-mismatch}. Mixed-element meshes use $P^p$ fields on conforming simplicial subdivisions, rather than $Q^p$ fields on the original elements. Under smoothness and mesh-stability assumptions, the nominal orders are two and three; the accuracy of the vertex values is tested separately.
+GP2 uses piecewise-linear ($P^1$) source and target fields. GP3 reconstructs a quadratic ($P^2$) source field, including internal edge values, and solves for a complete quadratic target field. The solver receives only the original-vertex values. Restricting the quadratic field in this way can change its finite-volume integral, as illustrated in Eq.~\eqref{eq:vertex-restriction-counterexample}. Here $P^\ell$ means polynomials of total degree at most $\ell$, while $Q^\ell$ permits degree at most $\ell$ in each coordinate. Mixed-element meshes use $P^\ell$ on simplicial subdivisions. The coefficient vector $z_B$ contains every finite-element degree of freedom; the solver vector $\phi_B$ retains only its original-vertex entries. Under smoothness and mesh-stability assumptions, the nominal orders are two and three; the accuracy of the vertex values is tested separately.
 
 \subsection{Conservative control-volume transfer}
 \label{sec:cv-transfer}
 
-The CV method matches source and target field integrals over each target control volume. Let $C_i^M$ surround vertex $i$ on mesh $M$, with $w_i^M=|C_i^M|$, and let $C_i^M\cap K$ be its part in element $K$. Both meshes represent the field as $\phi_M^h=\sum_k\phi_{M,k}\psi_k^M$. On triangles and tetrahedra, $\psi_k^M=N_k^M$ is the usual $P^1$ hat function. A quadrilateral is divided by joining its edges to the vertex-average center. The value at that center is a weighted combination of the original nodal values, rather than an independent unknown. Nonsimplicial three-dimensional elements use analogous centered subdivisions. These dependent values are chosen so that
+The CV method matches source and target field integrals over each target control volume. For an element $K$ of mesh $M$, the portion of vertex $i$'s control volume inside it is $C_i^M\cap K$. Both meshes represent the field as $\phi_M^h=\sum_k\phi_{M,k}\psi_k^M$. On triangles and tetrahedra, $\psi_k^M=N_k^M$ is the usual $P^1$ hat function. A quadrilateral is divided by joining its edges to the vertex-average center. The value at that center is a weighted combination of the original nodal values, rather than an independent unknown. Nonsimplicial three-dimensional elements use analogous centered subdivisions. These dependent values are chosen so that
 \begin{equation}
  \int_K\psi_k^M\dd x=|C_k^M\cap K|
  \qquad\text{for every element $K$ and vertex $k$ of $M$.}
@@ -339,7 +309,7 @@ Equation~\eqref{eq:cv-condition} determines the target nodal values by matching 
 \end{equation}
 The functions $\psi_k^B$ sum to one, giving row sums $w_j^B$; Eq.~\eqref{eq:cv-lumped-exact} gives column sums $w_k^B$. The entries are nonnegative and couple the same elements as $H_B$. They depend only on the target geometry and are evaluated in closed form. The matrix is symmetric on triangles, strictly convex quadrilaterals, and tetrahedra. Vertex permutations exchange the median-dual pieces of a simplex; on a quadrilateral, each center weight is proportional to the corresponding median-dual piece.
 
-The right-hand side integrates the piecewise-linear source field over each target control volume. It is assembled from intersections of source subelements and target median-dual pieces:
+The right-hand-side vector $\tilde b$ contains integrals of the piecewise-linear source field over target control volumes. It is assembled from intersections of source subelements and target median-dual pieces:
 \begin{equation}
  \tilde b_j=\sum_{K_B\ni j}\ \sum_{K_A:\,|K_A\cap K_B|>0}
       \int_{K_A\cap K_B\cap C_j^B}\phi_A^h\dd x,
@@ -349,7 +319,7 @@ Here $K_B$ ranges over target elements incident to $j$, and $K_A$ over source su
 
 Summing Eq.~\eqref{eq:cv-condition} over the target control volumes, which tile $\Omega$, and using the column sums of $\widetilde H_B$ gives
 \begin{equation}
- Q_B(\phi_B)=\bm1^T\widetilde H_B\phi_B=\bm1^T\tilde b
+ Q_B(\phi_B)=\bm1_{n_B}^{T}\widetilde H_B\phi_B=\bm1_{n_B}^{T}\tilde b
    =\int_\Omega\phi_A^h\dd x=Q_A(\phi_A),
  \label{eq:cv-global}
 \end{equation}
@@ -368,15 +338,22 @@ CV2 denotes the limited transfer, and CV2-u the unlimited construction. Flow com
 
 Galerkin projection preserves the integral of the complete finite-element field if the unconstrained target space contains constants. It also preserves coordinate moments represented in the test space. These statements follow from Eq.~\eqref{eq:galerkin-orthogonality}, but do not imply conservation over arbitrary finite-volume cells: a function that is one in a cell and zero elsewhere generally lies outside a continuous finite-element space. CV2 uses precisely these cell indicators in Eq.~\eqref{eq:cv-condition} and preserves the finite-volume total through Eq.~\eqref{eq:cv-global}. Neither the Galerkin mass-matrix inverse nor $\widetilde H_B^{-1}$ is local. Unchanged mesh geometry in one region does not guarantee unchanged transferred values there.
 
-For GP2, the field integral and the finite-volume integral agree when $w_i^M=\int_\Omega N_i^M\dd x$ on both meshes. This holds on simplicial meshes. It generally fails when a quadrilateral mesh is triangulated, because the hat-function integrals differ from the median-dual measures. CV2 enforces the corresponding equality through Eq.~\eqref{eq:cv-lumped-exact} on every supported element type. GP3 adds another difference: reconstructing a quadratic source field and then retaining only target vertices changes the representation. Even an exact quadratic projection can then have a second-order finite-volume integral error (\ref{app:quadrature-mismatch}). Third-order point-value accuracy does not imply third-order accuracy of the solver's integral.
+For GP2, the field integral and the finite-volume integral agree when $w_i^M=\int_\Omega N_i^M\dd x$ on both meshes. This holds on simplicial meshes. It generally fails when a quadrilateral mesh is triangulated, because the hat-function integrals differ from the median-dual measures. CV2 enforces the corresponding equality through Eq.~\eqref{eq:cv-lumped-exact} on every supported element type. GP3 adds another difference: reconstructing a quadratic source field and then retaining only target vertices changes the representation. Even an exact quadratic projection can then have a second-order finite-volume integral error (Eq.~\eqref{eq:vertex-restriction-counterexample}). Third-order point-value accuracy does not imply third-order accuracy of the solver's integral.
 
-The bounded global correction can enforce Eq.~\eqref{eq:fv-discrete-integral} for any base transfer. For an uncorrected target field $\phi_B^r$, the correction $c$ satisfies
+A simple example shows why the two integrals differ. On a uniform partition of $[0,1]$ into $N_{\mathrm{seg}}$ segments of length $h=1/N_{\mathrm{seg}}$, let $f(x)=x^2$ and $f_M$ be its vertex values. The median-dual weights are $h/2$ at the endpoints and $h$ at interior vertices. Equation~\eqref{eq:fv-discrete-integral} then gives
 \begin{equation}
- \sum_jw_j^Bc_j=Q_A(\phi_A)-Q_B(\phi_B^r),
- \qquad \ell_j\leq\phi_{B,j}^r+c_j\leq u_j.
+ Q_M(f_M)=\frac13+\frac{h^2}{6}.
+ \label{eq:vertex-restriction-counterexample}
+\end{equation}
+The complete quadratic projection is exact, but using only its vertex values introduces a second-order integral error.
+
+The bounded global correction can enforce Eq.~\eqref{eq:fv-discrete-integral} for any base transfer. For an uncorrected target field $\phi_B^{\mathrm{pre}}$, the nodal correction vector $\chi=(\chi_j)_{j=1}^{n_B}$ satisfies
+\begin{equation}
+ \sum_jw_j^B\chi_j=Q_A(\phi_A)-Q_B(\phi_B^{\mathrm{pre}}),
+ \qquad \phi_j^{\min}\leq\phi_{B,j}^{\mathrm{pre}}+\chi_j\leq \phi_j^{\max}.
  \label{eq:global-correction-constraint}
 \end{equation}
-Here $\ell_j$ and $u_j$ are nodal bounds. The correction is distributed among vertices that can change without exceeding those bounds; vertices already at a bound remain fixed~\cite{ShashkovWendroff2004,KucharikShashkovWendroff2003}. The requested integral must be feasible within the weighted bounds. A small total integral error does not require every nodal correction to be small, and separate bounds on conserved components do not guarantee positive pressure.
+Here $\phi_j^{\min}$ and $\phi_j^{\max}$ are the lower and upper bounds at target vertex $j$. The input to global correction is $\phi_B^{\mathrm{pre}}$, and its corrected output is $\phi_B^{\mathrm{GC}}=\phi_B^{\mathrm{pre}}+\chi$. The correction is distributed among vertices that can change without exceeding those bounds; vertices already at a bound remain fixed~\cite{ShashkovWendroff2004,KucharikShashkovWendroff2003}. The requested integral must be feasible within the weighted bounds. A small total integral error does not require every nodal correction to be small, and separate bounds on conserved components do not guarantee positive pressure.
 
 GP and CV limiters use the extrema of overlapping source vertices as target bounds. Hard limiting uses these extrema directly; soft limiting widens the range by $\tau$ times the source range. Values outside the bounds are clipped, then the resulting integral change is redistributed to preserve a selected total: the simplicial lumped total for GP and $Q_B$ for CV. This operation can remove Galerkin orthogonality and the best-approximation property. For CV, it changes individual target-volume integrals while preserving their sum.
 
@@ -389,11 +366,11 @@ For GP, CV, and globally corrected transfers, changes from boundary treatment an
 
 The Riemann tests include an alternative that redistributes corrections only between neighboring target volumes. This locally conservative (LC) flux correction replaces each method's usual limiting, global correction, and boundary-state recovery. Let $\tilde b_j$ be the source field integral over target control volume $j$, as in Eq.~\eqref{eq:cv-system}. The corrected nodal content is
 \begin{equation}
- w_j^B\phi_j^{\mathrm{LC}}=\tilde b_j+\sum_k\alpha_{jk}F_{jk},
- \qquad F_{jk}=-F_{kj},\quad \alpha_{jk}=\alpha_{kj}\in[0,1].
+ w_j^B\phi_j^{\mathrm{LC}}=\tilde b_j+\sum_k\theta_{jk}\mathcal F_{jk},
+ \qquad \mathcal F_{jk}=-\mathcal F_{kj},\quad \theta_{jk}=\theta_{kj}\in[0,1].
  \label{eq:local-flux-correction}
 \end{equation}
-The fluxes connect vertices sharing a target element. Applied in full, they recover the integral-corrected unlimited transfer. Each exchange adds to one volume what it removes from its neighbor, so the domain sum is unchanged even when limiting permits only part of a flux. Local conservation here allows neighboring volumes to exchange content; it does not require each nodal content to remain equal to $\tilde b_j$.
+The pair flux $\mathcal F_{jk}$ is a correction to the content of volume $j$ exchanged with neighboring volume $k$; the sum is over vertices sharing a target element. The symmetric factor $\theta_{jk}$ is the fraction of this exchange allowed by the limiter, and $\phi_j^{\mathrm{LC}}$ is the corrected nodal value. Applied in full, they recover the integral-corrected unlimited transfer. Each exchange adds to one volume what it removes from its neighbor, so the domain sum is unchanged even when limiting permits only part of a flux. Local conservation here allows neighboring volumes to exchange content; it does not require each nodal content to remain equal to $\tilde b_j$.
 
 The starting low-order state, $\tilde b_j/w_j^B$, is bounded. Iterative flux-corrected transport~\cite{Zalesak1979} adds as much of the correction as the bounds allow, with a relaxation of $2\times10^{-3}$ of the source range. At most 12 limiting passes are used. Paired fluxes ensure conservation, but the pass limit can leave part of the unlimited correction unapplied. Only the Riemann calculations use LC; the airfoil calculations use the standard treatment above.
 
@@ -411,21 +388,21 @@ Between remeshing events, the semi-discrete equations are
  M_M\dot U_M+F_M(U_M,t)=0.
  \label{eq:semidiscrete}
 \end{equation}
-Here $t$ is physical time and $F_M$ is the assembled spatial residual, including fluxes, source terms, and boundary treatment. The state contains every variable used by the time integrator, including RANS turbulence variables. Boundary constraints must be applied consistently to the stored states and the equations. At constant time step, BDF2 on the target mesh is
+Here $t$ is physical time, $\dot U_M=\mathrm dU_M/\mathrm dt$, and $F_M$ is the assembled spatial residual, including fluxes, source terms, and boundary treatment. The state contains every variable used by the time integrator, including RANS turbulence variables. Boundary constraints must be applied consistently to the stored states and the equations. At constant time step, BDF2 on the target mesh is
 \begin{equation}
  \Phi_B(Y;V,W)=\frac{M_B}{\Delta t}
         \left(\tfrac32Y-2V+\tfrac12W\right)+F_B(Y,t^{n+1})=0.
  \label{eq:bdf2}
 \end{equation}
-The unknown is the next state $Y$; $V$ and $W$ are the stored states at $t^n$ and $t^{n-1}$. Each mesh is stationary during a time step. Continuously moving meshes would require compatible geometric histories and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; Eq.~\eqref{eq:bdf2} does not cover that case.
+Here $n$ is the physical time-step index, $t^n$ the corresponding time, and $\Delta t=t^n-t^{n-1}>0$ the constant step size. The unknown is the next state $Y$; $V$ and $W$ are placeholders for the latest and older stored states at $t^n$ and $t^{n-1}$. The function $\Phi_B(Y;V,W)$ is the algebraic BDF2 residual. Each mesh is stationary during a time step. Continuously moving meshes would require compatible geometric histories and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; Eq.~\eqref{eq:bdf2} does not cover that case.
 
 Let $U_A^k$ and $U_B^k$ be independently computed reference solutions for the same problem on meshes $A$ and $B$. Transfer produces the target states
 \begin{equation}
- \widehat U_B^k=\calI_{AB}(U_A^k),\qquad
+ \widehat U_B^k=\mathcal T_{AB}(U_A^k),\qquad
  \eps^k=\widehat U_B^k-U_B^k,\qquad k=n,n-1.
  \label{eq:history-defects}
 \end{equation}
-The map $\calI_{AB}$ includes corrections for physical admissibility. The difference $\eps^k$ therefore includes both transfer error and the difference between the solutions computed on the two meshes. The target reference $U_B^k$ fixes the discretization for the comparison; it is not an exact continuum solution. \ref{app:reference-decomposition} separates these contributions.
+The complete map $\mathcal T_{AB}$ includes the chosen raw transfer, limiting, boundary treatment, and admissibility corrections. It is therefore distinct from the raw operators $\calI_{AB}^{m}$ in Sec.~\ref{sec:point-transfer}. The difference $\eps^k$ therefore includes both transfer error and the difference between the solutions computed on the two meshes. The target reference $U_B^k$ fixes the discretization for the comparison; it is not an exact continuum solution. Supplementary Section S6 separates these contributions.
 
 \subsection{How errors in the stored states change the next step}
 
@@ -448,47 +425,52 @@ Let $\Phi_B$ be the constant-step BDF2 residual of Eq.~\eqref{eq:bdf2}, and let 
 At the common trial state and time, the spatial residual and the term $3M_BY/(2\Delta t)$ cancel. The remaining difference is $(M_B/\Delta t)(-2\eps^n+\eps^{n-1}/2)$.\qed
 \end{proof}
 
-The latest and older errors enter with different weights and opposite signs. Equation~\eqref{eq:history-residual-identity} is exact for finite errors and nonlinear $F_B$, because BDF2 depends linearly on the stored states. If boundary conditions modify a residual equation, they must also modify its predicted perturbation. This identity describes a change in the equation, not yet the change in its computed solution.
+The vector $\eta^n$ combines the latest and older state errors with different BDF2 weights and opposite signs. Equation~\eqref{eq:history-residual-identity} is exact for finite errors and nonlinear $F_B$, because BDF2 depends linearly on the stored states. If boundary conditions modify a residual equation, they must also modify its predicted perturbation. This identity describes a change in the equation, not yet the change in its computed solution.
 
-To relate that residual change to the solution, define $\delta^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$. Let $r$ and $\widehat r$ be the algebraic residuals left by the reference and perturbed solves. Subtracting their equations and expanding about the reference next state gives
+Define the next-state difference $\delta^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$. The remaining algebraic residuals are $\mathfrak r_B^{n+1}=\Phi_B(U_B^{n+1};U_B^n,U_B^{n-1})$ and $\widehat{\mathfrak r}_B^{n+1}=\Phi_B(\widehat U_B^{n+1};\widehat U_B^n,\widehat U_B^{n-1})$. These definitions use the sign of $\Phi_B$; the solver's printed residual has the opposite sign. Subtracting the equations gives
 \begin{equation}
  \begin{aligned}
- A_B\delta^{n+1}&=M_B\eta^n+\Delta t(\widehat r-r)
-                 -\Delta t\,\mathcal N_B(\delta^{n+1})\\
+ A_B\delta^{n+1}
+ &=M_B\eta^n+\Delta t\bigl(\widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1}\bigr)
+                 -\Delta t\,\mathcal N_B(\delta^{n+1}),\\
  A_B&=\tfrac32M_B+\Delta t J_B,
- \qquad J_B=\frac{\partial F_B}{\partial U}.
+ \qquad J_B=\left.\frac{\partial F_B}{\partial U}\right|_{U_B^{n+1},\,t^{n+1}} .
  \end{aligned}
  \label{eq:linearized-bdf2-response}
 \end{equation}
-Here $J_B$ is evaluated at the reference solution at $t^{n+1}$, and $\mathcal N_B$ contains the nonlinear Taylor remainder. A locally Lipschitz Jacobian gives $\mathcal N_B(\delta)=O(\|\delta\|^2)$. If the step is locally invertible, the errors are small, and the solves are sufficiently converged, then
+The matrix $A_B$ is the time-step Jacobian multiplied by $\Delta t$, and $J_B$ is the spatial Jacobian. For an arbitrary state increment $\delta$, the nonlinear remainder is
+$\mathcal N_B(\delta)=F_B(U_B^{n+1}+\delta,t^{n+1})-F_B(U_B^{n+1},t^{n+1})-J_B\delta$.
+For a locally Lipschitz Jacobian, $\mathcal N_B(\delta)=O(\|\delta\|^2)$ in any fixed state-vector norm. If $A_B$ is invertible, the perturbation is small, and the algebraic residual difference is negligible at that scale, then
 \begin{equation}
  \delta^{n+1}=R_B\eta^n+O(\Delta t\|\eta^n\|^2),
  \qquad R_B=A_B^{-1}M_B.
  \label{eq:state-response}
 \end{equation}
-The response matrix $R_B$ describes how the target time step converts stored-state errors into a solution change. The approximation applies locally at the chosen mesh, state, time step, and norm. Limiter switching or incomplete convergence can invalidate it while leaving the exact residual identity valid.
+The response matrix $R_B$ converts stored-state errors into a next-state change. This approximation is local to the chosen mesh, state, step, and norm. Limiter switching or insufficient iterative convergence can invalidate it without invalidating the exact residual identity.
 
-A superscript $\star$ denotes a computed steady reference state. Table~\ref{tab:naca-history-decomposition} assigns the same spatial discrepancy $\eps^\star=\calI_{AB}U_A^\star-U_B^\star$ to the two stored states independently.
+A superscript $\mathrm{st}$ denotes a computed steady reference state. Table~\ref{tab:naca-history-decomposition} assigns the same spatial discrepancy $\eps^{\mathrm{st}}=\mathcal T_{AB}U_A^{\mathrm{st}}-U_B^{\mathrm{st}}$ to the two stored states independently.
+
 \begin{table}[pos=htbp]
 \centering\small
-\caption{History perturbations used to separate the BDF2 contributions. The spatial discrepancy $\eps^\star$ is the same within each method; the reference case supplies the target-mesh reference.}
+\caption{History perturbations used to separate the BDF2 contributions. The spatial discrepancy $\eps^{\mathrm{st}}$ is the same within each method; the reference case supplies the target-mesh reference.}
 \label{tab:naca-history-decomposition}
 \begin{tabular}{lccc}
 \toprule
 Configuration & $\eps^n$ & $\eps^{n-1}$ & $\eta^n$\\
 \midrule
 Reference & $0$ & $0$ & $0$\\
-Both states & $\eps^\star$ & $\eps^\star$ & $3\eps^\star/2$\\
-Latest only & $\eps^\star$ & $0$ & $2\eps^\star$\\
-Older only & $0$ & $\eps^\star$ & $-\eps^\star/2$\\
+Both states & $\eps^{\mathrm{st}}$ & $\eps^{\mathrm{st}}$ & $3\eps^{\mathrm{st}}/2$\\
+Latest only & $\eps^{\mathrm{st}}$ & $0$ & $2\eps^{\mathrm{st}}$\\
+Older only & $0$ & $\eps^{\mathrm{st}}$ & $-\eps^{\mathrm{st}}/2$\\
 \bottomrule
 \end{tabular}
 \end{table}
-Writing the corresponding responses as $\delta_f$, $\delta_n$, and $\delta_{n-1}$, local linearity predicts
+
+Write $\delta_{\mathrm{case}}$ for $\delta^{n+1}$ in the indicated history configuration. All three responses occur at $t^{n+1}$; the labels $\mathrm{both}$, $\mathrm{latest}$, and $\mathrm{older}$ identify which histories were perturbed. Local linearity predicts
 \begin{equation}
- \delta_n\simeq\tfrac43\delta_f,\qquad
- \delta_{n-1}\simeq-\tfrac13\delta_f,\qquad
- \delta_f\simeq\delta_n+\delta_{n-1}.
+ \delta_{\mathrm{latest}}\simeq\tfrac43\delta_{\mathrm{both}},\qquad
+ \delta_{\mathrm{older}}\simeq-\tfrac13\delta_{\mathrm{both}},\qquad
+ \delta_{\mathrm{both}}\simeq\delta_{\mathrm{latest}}+\delta_{\mathrm{older}}.
  \label{eq:naca-history-ratios}
 \end{equation}
 The older-only case reveals an error that checking the latest state alone would miss. All imposed errors are multiples of the same field, so these ratios test the linear response to that field. They do not characterize the action of $R_B$ on arbitrary errors.
@@ -496,17 +478,18 @@ The older-only case reveals an error that checking the latest state alone would 
 \subsection{Aerodynamic response}
 \label{sec:delayed-response}
 
-For a differentiable target-mesh output $G_B$, define $\Delta G^{n+1}=G_B(\widehat U_B^{n+1})-G_B(U_B^{n+1})$. With $g_B^{n+1}$ the gradient of $G_B$ with respect to the state at the target-mesh reference solution, Eq.~\eqref{eq:state-response} yields
+For a scalar output $G_B$ with locally Lipschitz state gradient, let $\Delta G^{n+1}=G_B(\widehat U_B^{n+1})-G_B(U_B^{n+1})$. The gradient $\nabla_U G_B$ is evaluated at $U_B^{n+1}$. Under the small-error and converged-solve assumptions of Eq.~\eqref{eq:state-response},
 \begin{equation}
- \Delta G^{n+1}=(g_B^{n+1})^TR_B\eta^n+O(\|\eta^n\|^2).
+ \Delta G^{n+1}=(\nabla_U G_B)^TR_B\eta^n+O(\|\eta^n\|^2).
  \label{eq:force-response}
 \end{equation}
-The load response therefore depends on where the error occurs and how the target dynamics carry it into the output. A domain integral alone cannot describe this weighting. Preserving the source integral imposes, componentwise,
+Thus the output depends on the location of the error and on the target dynamics. A domain integral cannot describe that weighting. Preserving every source component integral implies
 \begin{equation}
- \bm1^TM_B\eps^k=Q_A(U_A^k)-Q_B(U_B^k).
+ (\bm1_{n_B}^{T}\otimes I_{n_U})M_B\eps^k
+       =Q_A(U_A^k)-Q_B(U_B^k).
  \label{eq:gc-native-mismatch}
 \end{equation}
-The right-hand side need not be zero: the independently computed reference solutions can have different integrals. Matching the source integral need not bring the transferred solution, or its loads, closer to the target-mesh reference.
+Both sides are vectors with one entry per transported variable. The right-hand side need not be zero because independently computed mesh references can have different integrals. Preserving a source integral therefore need not bring the transferred state or its loads closer to the target-mesh reference.
 
 Later steps use both the newly computed state and a retained older state. Their errors can continue to influence the flow, so the first load difference need not be the largest. A disturbance away from the airfoil can produce a delayed acoustic or convective response. Projection and implicit time integration can also introduce small immediate changes outside the perturbed region. Arrival times are therefore measured with finite-amplitude thresholds.
 
@@ -525,23 +508,27 @@ The methods included in each test follow its purpose. NN3, BAR3, and GP3 test th
 
 A static test measures transfer alone, without evolving the flow. We first transfer the smooth asymmetric field
 \begin{equation}
- \phi=\rho_\infty\left[2+0.3e^{0.8x/L_x+0.5y/L_y}
+ \phi(x,y)=\rho_\infty\left[2+0.3e^{0.8x/L_x+0.5y/L_y}
               \sin(2\pi x/L_x)\sin(2\pi y/L_y)\right].
  \label{eq:asymmetric-manufactured-field}
 \end{equation}
-Here $\rho_\infty$ is reference density, and $L_x$ and $L_y$ are coordinate length scales. Target meshes are either structured quadrilaterals or independently generated mixed triangles and quadrilaterals, with nominal resolutions 64, 128, and 256. Source resolution is half the target resolution.
+Here $x,y$ are Cartesian coordinates, $\rho_\infty$ is reference density, and $L_x,L_y$ are coordinate length scales. Target meshes are either structured quadrilaterals or independently generated mixed triangles and quadrilaterals, with nominal resolutions 64, 128, and 256. Source resolution is half the target resolution.
 
-We measure the relative nodal density error as $E_2=[\sum_j(\rho_{B,j}-\rho(x_j^B))^2/\sum_j\rho(x_j^B)^2]^{1/2}$. Equal vertex weights make this a point-value measure, rather than a volume-weighted field error. Refinement ratios use the effective spacing $h_{\mathrm{eff}}=N_{\mathrm{nodes}}^{-1/2}$ on the fixed domain. The order between successive levels is
+In this test, the analytic density is the manufactured field $\rho(x,y)=\phi(x,y)$. At target refinement level $k$, the relative nodal error is
+$e_{\rho,2,k}^{\mathrm{node}}=[\sum_j(\rho_{B,j}-\rho(\boldsymbol x_j^B))^2/\sum_j\rho(\boldsymbol x_j^B)^2]^{1/2}$.
+Equal vertex weights make this a point-value measure, rather than a volume-weighted field error. The dimensionless effective spacing is $h_{\mathrm{eff},k}=n_{B,k}^{-1/2}$, where $n_{B,k}$ is that level's target vertex count. The observed order between successive levels is
 \begin{equation}
- p_{k,k+1}=\frac{\log(E_k/E_{k+1})}{\log(h_k/h_{k+1})}.
+ p_{k,k+1}^{\mathrm{obs}}=
+ \frac{\log(e_{\rho,2,k}^{\mathrm{node}}/e_{\rho,2,k+1}^{\mathrm{node}})}
+      {\log(h_{\mathrm{eff},k}/h_{\mathrm{eff},k+1})}.
  \label{eq:pairwise-observed-order}
 \end{equation}
-Here $E_k$ and $h_k$ are the error and effective spacing at level $k$. A least-squares fit of $\log E$ against $\log h$ also gives an order over all three levels.
+The level index $k$ is omitted when the mesh is clear from context. A least-squares fit of $\log e_{\rho,2}^{\mathrm{node}}$ against $\log h_{\mathrm{eff}}$ also gives an order over all three levels.
 \label{sec:results-asymmetric}
 
 The NN, BAR, and GP methods recover their nominal smooth-field orders (Figure~\ref{fig:asym-l2-convergence}). NN1 is first order; NN2, BAR2, and GP2 are consistent with second order; NN3 is consistent with third order. BAR3 and GP3 have slopes slightly above three, approaching approximately 3.2 on the finest pair. On the finest mixed mesh, the relative errors are approximately $2.6\times10^{-7}$ for BAR3, $3.4\times10^{-7}$ for GP3, and $2.6\times10^{-6}$ for NN3.
 
-CV2 depends more strongly on element geometry. Its fitted order is 2.03 on the structured mesh, but 1.49 on the mixed mesh and 1.35 on its finest pair. This agrees with the loss of affine reproduction on quadrilaterals that remain distorted under refinement (Sec.~\ref{sec:cv-transfer}). CV2 preserves discrete mass to within $4\times10^{-15}$ on both mesh families. The finest-mesh GP2 mass errors are $4.3\times10^{-12}$ (structured) and $2.5\times10^{-7}$ (mixed).
+CV2 depends more strongly on element geometry. Its fitted order is 2.03 on the structured mesh, but 1.49 on the mixed mesh and 1.35 on its finest pair. This agrees with the loss of affine reproduction on quadrilaterals that remain distorted under refinement (Sec.~\ref{sec:cv-transfer}). The relative mass-change magnitude $|e_Q|$ for CV2 is below $4\times10^{-15}$ on both mesh families. The finest-mesh GP2 values of $|e_Q|$ are $4.3\times10^{-12}$ (structured) and $2.5\times10^{-7}$ (mixed).
 
 \begin{figure}[pos=!htbp]
     \centering\color{black}
@@ -554,7 +541,7 @@ CV2 depends more strongly on element geometry. Its fitted order is 2.03 on the s
         ]
         \nextgroupplot[
             title={Structured quadrilateral grid},
-            ylabel={Relative $L_2$ error},
+            ylabel={$e_{\rho,2}^{\mathrm{node}}$},
             legend to name=legend:asym-l2,
             legend columns=4,
         ]
@@ -566,9 +553,9 @@ CV2 depends more strongly on element geometry. Its fitted order is 2.03 on the s
         \addplot[scheme GP2] table[col sep=comma,x=h_Struct,y=Struct_GP2]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{GP2}
         \addplot[scheme GP3] table[col sep=comma,x=h_Struct,y=Struct_GP3]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{GP3}
         \addplot[scheme CV2] table[col sep=comma,x=h_Struct,y=Struct_CV2]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{CV2}
-        \addplot[reference slope] coordinates {(0.014,8.0e-3) (0.007,4.0e-3)} node[pos=0.55,above,sloped]{\scriptsize $h$};
-        \addplot[reference slope] coordinates {(0.014,1.2e-3) (0.007,3.0e-4)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
-        \addplot[reference slope] coordinates {(0.014,1.2e-4) (0.007,1.5e-5)} node[pos=0.55,above,sloped]{\scriptsize $h^3$};
+        \addplot[reference slope] coordinates {(0.014,8.0e-3) (0.007,4.0e-3)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}$};
+        \addplot[reference slope] coordinates {(0.014,1.2e-3) (0.007,3.0e-4)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}^2$};
+        \addplot[reference slope] coordinates {(0.014,1.2e-4) (0.007,1.5e-5)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}^3$};
 
         \nextgroupplot[title={Unstructured mixed grid}]
         \addplot[scheme NN1] table[col sep=comma,x=h_Mixed,y=Mixed_NN1]{\GeneratedDir/asymmetric_convergence_L2.csv};
@@ -579,34 +566,34 @@ CV2 depends more strongly on element geometry. Its fitted order is 2.03 on the s
         \addplot[scheme GP2] table[col sep=comma,x=h_Mixed,y=Mixed_GP2]{\GeneratedDir/asymmetric_convergence_L2.csv};
         \addplot[scheme GP3] table[col sep=comma,x=h_Mixed,y=Mixed_GP3]{\GeneratedDir/asymmetric_convergence_L2.csv};
         \addplot[scheme CV2] table[col sep=comma,x=h_Mixed,y=Mixed_CV2]{\GeneratedDir/asymmetric_convergence_L2.csv};
-        \addplot[reference slope] coordinates {(0.012,8.0e-3) (0.006,4.0e-3)} node[pos=0.55,above,sloped]{\scriptsize $h$};
-        \addplot[reference slope] coordinates {(0.012,1.2e-3) (0.006,3.0e-4)} node[pos=0.55,above,sloped]{\scriptsize $h^2$};
-        \addplot[reference slope] coordinates {(0.012,1.2e-4) (0.006,1.5e-5)} node[pos=0.55,above,sloped]{\scriptsize $h^3$};
+        \addplot[reference slope] coordinates {(0.012,8.0e-3) (0.006,4.0e-3)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}$};
+        \addplot[reference slope] coordinates {(0.012,1.2e-3) (0.006,3.0e-4)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}^2$};
+        \addplot[reference slope] coordinates {(0.012,1.2e-4) (0.006,1.5e-5)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}^3$};
         \end{groupplot}
     \end{tikzpicture}
     \vspace{0.5em}
     \ref*{legend:asym-l2}
-    \caption{Smooth-field transfer accuracy on structured quadrilateral (left) and unstructured mixed (right) target meshes. The vertical axis shows relative nodal density $L_2$ error; $h$ is effective spacing derived from vertex count. NN, BAR, GP, and CV denote nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer, with suffixes giving nominal accuracy order. Gray lines show first-, second-, and third-order slopes for comparison; they are not fits to the data.}
+    \caption{Smooth-field transfer accuracy on structured quadrilateral (left) and unstructured mixed (right) target meshes. The vertical axis shows the relative nodal density error $e_{\rho,2}^{\mathrm{node}}$; $h_{\mathrm{eff}}$ is effective spacing derived from vertex count. NN, BAR, GP, and CV denote nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer, with suffixes giving nominal accuracy order. Gray lines show first-, second-, and third-order slopes for comparison; they are not fits to the data.}
     \label{fig:asym-l2-convergence}
 \end{figure}
 
 \subsubsection{Bounds and integral preservation at a discontinuity}
 
-The second field has a circular inclusion of radius $0.25\min(L_x,L_y)$, whose boundary crosses the mesh. Density is 1.2 outside and 3.6 inside. The full state is $T=273(2+\sigma)$~K, $\rho=1.2(2+\sigma)$, and $(u,v)=(100,50)\sigma$~m/s, with $\sigma=1$ inside and $-1$ outside. Momentum and total energy follow from these primitive variables using $R=287.05$ and $\gamma=1.4$. Each conserved field is transferred independently. We compare unlimited and limited transfers by their density excursions beyond the source range and by changes in the discrete integral. A physically admissible state must have positive density and internal energy.
+The second field has a circular inclusion of radius $0.25\min(L_x,L_y)$, whose boundary crosses the mesh. Density is 1.2 outside and 3.6 inside. The full state is $T=273(2+\sigma)$~K, $\rho=1.2(2+\sigma)$, and $(u,v)=(100,50)\sigma$~m/s, with $\sigma=1$ inside and $-1$ outside. Momentum and total energy follow from these primitive variables using $R_{\mathrm g}=287.05$~J/(kg\,K) and $\gamma=1.4$. Density, temperature, and velocity in this static state are in kg/m$^3$, K, and m/s. Each conserved field is transferred independently. We compare unlimited and limited transfers by their density excursions beyond the source range and by the relative density-integral change $e_Q(\rho_A,\rho_B)$. A physically admissible state must have positive density and internal energy.
 
 \label{sec:results-boundedness}
 
 Preserving mass does not guarantee a bounded or physically admissible solution (Table~\ref{tab:disc-selected}, structured transfer $64\to128$). Unlimited CV2 preserves the density integral to roundoff but produces values outside the source range. Unlimited NN2 gives nonpositive internal energy or pressure near the interface and is rejected.
 
-Limiting removes the measured new extrema, but can change the integral. Where Barth--Jespersen limiting suppresses the NN2 reconstruction, the mass error rises to the NN1 value. Global correction restores the integral without introducing density extrema. Hard-limited GP2 and CV2 satisfy both density bounds and near-roundoff integral preservation in this test. GP3 remains bounded after restriction to the solver vertices, but its finite-volume integral has a nonzero error, consistent with the representation difference in \ref{app:quadrature-mismatch}.
+Limiting removes the measured new extrema, but can change the integral. Where Barth--Jespersen limiting suppresses the NN2 reconstruction, the relative mass change becomes the NN1 value. Global correction restores the integral without introducing density extrema. Hard-limited GP2 and CV2 satisfy both density bounds and near-roundoff integral preservation in this test. GP3 remains bounded after restriction to the solver vertices, but its finite-volume integral has a nonzero error, consistent with the representation difference in Eq.~\eqref{eq:vertex-restriction-counterexample}.
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Representative discontinuous-field transfers. Overshoot and undershoot measure excursions beyond the exact density range $[1.2,3.6]$; the last column gives the source-to-target change in the solver's discrete mass. BJ denotes Barth--Jespersen limiting and GC the bounded global conservation correction. Unlimited NN2 is omitted because it produces a physically inadmissible state.}
+\caption{Representative discontinuous-field transfers. Overshoot and undershoot measure excursions beyond the exact density range $[1.2,3.6]$; the last column gives the signed relative mass change $e_Q(\rho_A,\rho_B)$. BJ denotes Barth--Jespersen limiting and GC the bounded global conservation correction. Unlimited NN2 is omitted because it produces a physically inadmissible state.}
 \label{tab:disc-selected}
 \begin{tabular}{lrrr}
 \toprule
-Transfer & Overshoot & Undershoot & Integral defect \\
+Transfer & Overshoot & Undershoot & Relative mass change \\
 \midrule
 NN3, unlimited & 0.4259 & 0.2251 & $-5.52\times10^{-7}$ \\
 NN2, BJ & 0 & 0 & $-4.46\times10^{-3}$ \\
@@ -622,7 +609,7 @@ CV2, hard limited & 0 & 0 & $6.62\times10^{-15}$ \\
 \end{tabular}
 \end{table}
 
-In a separate smooth transfer, global correction reduces the density-integral error to order $10^{-15}$ and changes the density $L_1$ error by at most 0.8\%. Restoring the integral has little effect on point-value accuracy in that single transfer.
+In a separate smooth transfer, global correction reduces the relative density-integral change to order $10^{-15}$ and changes the density $L_1$ error by at most 0.8\%. Restoring the integral has little effect on point-value accuracy in that single transfer.
 
 \FloatBarrier
 \subsection{Repeated remeshing of a Riemann problem}
@@ -630,7 +617,7 @@ In a separate smooth transfer, global correction reduces the density-integral er
 \subsubsection{Setup and error measures}
 \label{sec:riemann-methodology}
 
-The Riemann problem tests whether the behavior of one transfer predicts what happens after many transfers. We solve the two-dimensional Euler equations on $[0,5]\times[0,1]$, starting from a uniform reference mesh with $501\times101$ vertices and spacing $h=0.01$. The ideal gas has heat-capacity ratio $\gamma=1.4$ and unit gas constant. Density, pressure, and temperature are $\rho$, $p$, and $T$; the Cartesian velocities are $u$ and $v$. Initially,
+The Riemann problem tests whether the behavior of one transfer predicts what happens after many transfers. We solve the two-dimensional Euler equations on $[0,5]\times[0,1]$, starting from a uniform reference mesh with $501\times101$ vertices and spacing $h=0.01$. The nondimensional gas parameters are $\gamma=1.4$ and $R_{\mathrm g}=1$. Initially,
 \begin{equation}
  (\rho,u,v,p)=
  \begin{cases}
@@ -645,9 +632,9 @@ The calculation runs for 400 physical steps with $\Delta t=10^{-3}$. At each rem
 
 Remeshing every ten or two physical steps compares less and more frequent transfer. Both BDF2 states are transferred at every mesh change. The lower-frequency comparison has 80 transfer evaluations; the higher-frequency integral record has 398. A fixed-mesh calculation with the same initial and boundary conditions supplies a numerical reference. Differences from it include both transfer error and the changed spatial discretization.
 
-The density profile is averaged in $y$. A first width measure uses the window $W_1=[2.40,3.00]$ and estimates plateau densities at its ends. Position is the 50\% crossing; width is the distance between the 10\% and 90\% crossings. Their differences from the fixed-mesh reference, $\Delta x$ and $\Delta w$, are expressed in cells of spacing $h=0.01$. After many transfers, the smeared contact can enter the left plateau interval $[2.40,2.46]$. The measured width then combines contact and shock distortion. A second, shock-only measure uses $[2.55,2.85]$ to exclude the contact tail. The wide-window tables use 16 sampling lines and 800 probes; the shock-only measure uses the stored eight-line mean profile at the same streamwise resolution. Both are evaluated at step 399 against their corresponding fixed-mesh references.
+The density profile is averaged in $y$. A first width measure uses the window $W_1=[2.40,3.00]$ and estimates plateau densities at its ends. Position is the 50\% crossing; width is the distance between the 10\% and 90\% crossings. Their differences from the fixed-mesh reference, $\Delta x$ and $\Delta w^{\mathrm{wide}}$, are expressed in cells of spacing $h=0.01$. After many transfers, the smeared contact can enter the left plateau interval $[2.40,2.46]$. The measured width then combines contact and shock distortion. A second, shock-only measure uses $[2.55,2.85]$ to exclude the contact tail; its width change is $\Delta w^{\mathrm{shock}}$. The wide-window tables use 16 sampling lines and 800 probes; the shock-only measure uses the stored eight-line mean profile at the same streamwise resolution. Both are evaluated at step 399 against their corresponding fixed-mesh references.
 
-We measure mass changes in two ways. First, the change immediately across a transfer is $\Delta I_\rho$, target minus source, with $I_\rho=Q_M(\rho_M)$. The normalized signed sum $\sum\Delta I_\rho/I_{\rho,0}$ includes transfer alone. Second, final mass drift is $[I_\rho(t)-I_{\rho,0}]/I_{\rho,0}$, which also includes changes during flow evolution. Here $I_{\rho,0}$ is initial mass. The exact mass and energy for this Sod problem are 2.375 and 5.75, since no physical wave reaches an open boundary by $t=0.399$. Density accuracy is measured by the median-dual-volume-weighted mean absolute error against the exact Sod solution~\cite{LeVeque2002} at that time.
+We measure mass changes in two ways. First, the change immediately across a transfer is $\Delta I_\rho$, target minus source, with $I_\rho=Q_M(\rho_M)$. The normalized signed sum $\sum\Delta I_\rho/I_{\rho,0}$ includes transfer alone. Its common denominator is the initial mass, so it is distinct from a sum of the per-transfer changes $e_Q$. Second, final mass drift is $[I_\rho(t)-I_{\rho,0}]/I_{\rho,0}$, which also includes changes during flow evolution. Here $I_{\rho,0}$ is initial mass. The exact mass and energy for this Sod problem are 2.375 and 5.75, since no physical wave reaches an open boundary by $t=0.399$. Let $e_{\rho,1}^{\mathrm{FV}}$ denote the median-dual-volume-weighted integral of the absolute density error against the exact Sod solution~\cite{LeVeque2002}, divided by the domain volume. In the LC comparison, subscripts $\mathrm{std}$ and $\mathrm{LC}$ identify this same error with standard transfer and local flux correction.
 
 The LC comparison contains 36 matched pairs covering NN1--NN3, BAR2--BAR3, GP2--GP3, and CV2. All methods use intervals of ten and two steps at $s=4$. With the shorter interval, NN1, BAR2, GP2, and CV2 also use three realizations at both $s=4$ and $s=2$. Each standard/LC pair follows the same mesh sequence and ends on the same mesh. NN1+GC has no LC counterpart. Percentage changes in density error are computed within each pair before averaging. Final mass and energy drift are measured from the double-precision restart after the last transfer.
 
@@ -746,7 +733,7 @@ LC keeps final relative mass drift below $5\times10^{-13}$ and energy drift belo
 \addplot[teal,dashdotted] table[col sep=comma,x=t,y=CV2_mean]{\GeneratedDir/riemann_error_plot.csv};\addlegendentry{CV2}
 \end{groupplot}
 \end{tikzpicture}
-\caption{Mass balance and density accuracy for remeshing every two steps with $s=2$. (a) Each symbol is one of three deformation realizations, offset horizontally for visibility. The absolute signed sum of standard transfer mass changes excludes CFD evolution; final drift uses the direct mass integral after the last transfer. Both are normalized by initial mass. (b) Paired changes $100(E_{1,\mathrm{LC}}/E_{1,0}-1)$, with density $L_1$ error measured against the exact Sod solution. Lines are means and shaded bands span the three realizations, not confidence intervals. Samples precede transfer, except the final sample at $t=0.399$, which follows the last transfer. Negative values indicate lower error with LC.}
+\caption{Mass balance and density accuracy for remeshing every two steps with $s=2$. (a) Each symbol is one of three deformation realizations, offset horizontally for visibility. The absolute signed sum of standard transfer mass changes excludes CFD evolution; final drift uses the direct mass integral after the last transfer. Both are normalized by initial mass. (b) Paired changes $100(e_{\rho,1,\mathrm{LC}}^{\mathrm{FV}}/e_{\rho,1,\mathrm{std}}^{\mathrm{FV}}-1)$, with density $L_1$ error measured against the exact Sod solution. Lines are means and shaded bands span the three realizations, not confidence intervals. Samples precede transfer, except the final sample at $t=0.399$, which follows the last transfer. Negative values indicate lower error with LC.}
 \label{fig:riemann-mass-error}
 \end{figure}
 \FloatBarrier
@@ -758,22 +745,27 @@ The relaxed bounds allow small new extrema. Standard NN1 and BAR2 transfers are 
 \subsubsection{Setup and error measures}
 \label{sec:naca-fixed-methodology}
 
-Controlled airfoil restarts separate the effects of the latest and older stored BDF2 states. The Euler flow is over the National Advisory Committee for Aeronautics (NACA) 0012 airfoil at freestream Mach number $M_\infty=0.1$ and angle of attack $\alpha=6^\circ$, with $p_\infty=\rho_\infty=T_\infty=1$, $a_\infty=\sqrt{1.4}$, $U_\infty=0.118322$, and $\Delta t=10^{-3}$. The subscript $\infty$ denotes freestream values, $a_\infty$ is sound speed, $U_\infty$ is flow speed, and $c$ is airfoil chord.
+Controlled airfoil restarts separate the effects of the latest and older stored BDF2 states. The Euler flow is over the National Advisory Committee for Aeronautics (NACA) 0012 airfoil at freestream Mach number $M_\infty=U_\infty/a_\infty=0.1$ and angle of attack $\alpha=6^\circ$, with $p_\infty=\rho_\infty=T_\infty=1$, $a_\infty=\sqrt{1.4}$, $U_\infty\simeq0.118322$, and $\Delta t=10^{-3}$. The subscript $\infty$ denotes freestream values, $a_\infty$ is sound speed, $U_\infty$ is flow speed, and $c$ is airfoil chord. These Euler quantities are nondimensional, with unit reference chord $c=1$.
 
 The source and independent target meshes have 16,255 and 22,508 vertices, with 32,077 and 44,583 triangles. They share 370 airfoil vertices and a 63-vertex farfield polygon at $100c$, keeping the discretized boundary unchanged. Forces use pressure only, unit reference chord and area, and a moment reference at $x/c=0.25$. Lift and drag coefficients are $C_L$ and $C_D$. Any nonzero steady drag is numerical, rather than skin friction or shock drag.
 
-Each steady reference is continued with equal initial BDF2 states. We form the combinations in Table~\ref{tab:naca-history-decomposition} on the target mesh, then compare each restart with the reference continuation at the same physical step. State differences use the nondimensional volume-weighted norm $\|v\|_{M_B}=(v^TM_Bv)^{1/2}$ over stored mean-flow components. Supplementary tests also use the unweighted Euclidean norm $\|v\|_2$; the two norms give different weight to small near-body cells and large far-field cells. To measure departure from the linear superposition in Eq.~\eqref{eq:naca-history-ratios}, we define
+Each steady reference is continued with equal initial BDF2 states. We form the combinations in Table~\ref{tab:naca-history-decomposition} on the target mesh and compare each restart with its reference continuation at the same physical step. The state differences contain the stored mean-flow components. Their nondimensional volume-weighted norm is $\|\delta\|_{M_B}=(\delta^TM_B\delta)^{1/2}$; the Euclidean norm is $\|\delta\|_2=(\delta^T\delta)^{1/2}$. These norms weight small near-body cells and large far-field cells differently.
+
+For each history configuration, $\Delta C_{L,\mathrm{case}}$ is its first-step lift coefficient minus the target-reference lift. To assess linear superposition, define the state and lift remainders and their relative errors by
 \begin{equation}
- e_{\mathrm{sup}}^U=
- \frac{\|\delta_f-\delta_n-\delta_{n-1}\|_{M_B}}{\|\delta_f\|_{M_B}},
+ \begin{aligned}
+ \mathcal E_U&=\delta_{\mathrm{both}}-\delta_{\mathrm{latest}}-\delta_{\mathrm{older}},\\
+ \mathcal E_{C_L}&=\Delta C_{L,\mathrm{both}}
+                -\Delta C_{L,\mathrm{latest}}-\Delta C_{L,\mathrm{older}},\\
+ e_{\mathrm{sup}}^U&=\frac{\|\mathcal E_U\|_{M_B}}{\|\delta_{\mathrm{both}}\|_{M_B}},
  \qquad
- e_{\mathrm{sup}}^{C_L}=
- \frac{|\Delta C_{L,f}-\Delta C_{L,n}-\Delta C_{L,n-1}|}{|\Delta C_{L,f}|}.
+ e_{\mathrm{sup}}^{C_L}=\frac{|\mathcal E_{C_L}|}{|\Delta C_{L,\mathrm{both}}|}.
+ \end{aligned}
  \label{eq:history-superposition-error}
 \end{equation}
-State-norm ratios are nonnegative; force ratios retain their sign.
+All reported denominators are nonzero. State-norm ratios are nonnegative; lift ratios retain their signs.
 
-The solver reports $-\Phi_B$. We compare residuals before any update, using the same trial state within each pair. Older-only and reference cases use $U_B^\star$; latest-only and both-states cases use $\widehat U_B^\star$. The corresponding differences in $\eta$ are $-\eps^\star/2$ and $+\eps^\star/2$. Double-precision residuals are split into wall-normal and tangential components to distinguish the temporal terms from slip-wall enforcement. \ref{app:history-checks} gives additional cancellation and amplitude tests.
+The solver reports $-\Phi_B$, so its printed residual differences have the opposite sign to Eq.~\eqref{eq:history-residual-identity}. We compare residuals before an update, at a common trial state within each pair. The older-only minus reference pair uses $U_B^{\mathrm{st}}$ and has $\Delta\eta=-\eps^{\mathrm{st}}/2$; the latest-only minus both-states pair uses $\widehat U_B^{\mathrm{st}}$ and has $\Delta\eta=+\eps^{\mathrm{st}}/2$. Here $\Delta\eta$ is the difference of the two configurations' history combinations. The predicted printed difference is $+M_B\Delta\eta/\Delta t$. Double-precision residuals are split into wall-normal and tangential components. Supplementary Sections S2--S3 give the detailed residual, cancellation, and amplitude checks.
 
 \subsubsection{Effects of the latest and older stored states}
 \label{sec:results-bdf2-new}
@@ -809,7 +801,13 @@ Restoring the global integral barely changes first-step lift. With both states p
 
 The second- and third-order methods give state-error norms near $7.0\times10^{-4}$, with less than 3\% spread; NN1 gives $1.47\times10^{-3}$. These are differences from the independently computed target-mesh reference. They include both transfer error and mesh-dependent steady-solution differences, so they do not rank interpolation accuracy alone.
 
-Across all eight variants, the latest-only/both-states state-norm ratio is 1.3330--1.3333, and the older-only/both-states ratio is 0.3335--0.3341. The relative superposition errors are 1.8--3.5\% in the volume-weighted state norm and 0.28--1.49\% in lift. The ratios support the linearized prediction in Eq.~\eqref{eq:naca-history-ratios} for this imposed error field. The remaining departures are examined through cancellation and amplitude tests in \ref{app:history-checks}; their dependence on the state norm is not fully explained.
+Across all eight variants, the latest-only/both-states state-norm ratio is 1.3330--1.3333, and the older-only/both-states ratio is 0.3335--0.3341. The relative superposition errors are 1.8--3.5\% in the volume-weighted state norm and 0.28--1.49\% in lift. The ratios support the linearized prediction in Eq.~\eqref{eq:naca-history-ratios} for this imposed error field. Additional cancellation and amplitude tests show where this approximation remains unverified.
+
+\subsubsection{Limits of the linear-response approximation}
+
+Setting $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$ gives $\eta^n=0$, so the reference and perturbed BDF2 equations are identical when evaluated with the same boundary treatment. An exact solve on the same local solution branch would give the same next state. In the computed cancellation test, lift differences are of order $10^{-9}$, but volume-weighted state differences remain 4.3--9.0\% of the imposed discrepancy. Iterative error has not been independently quantified, so the small lift difference does not verify cancellation of the state response. This limitation does not affect the exact residual identity or its separate common-trial check.
+
+Reducing the imposed error also gives different behavior in different norms. Lift and Euclidean state-norm responses approach superposition more closely for BAR2, GP2, and CV2. In the volume-weighted norm, however, the absolute remainder decreases slowly and the relative remainder grows from about 3.4\% to 8.7--9.2\%. These tests do not establish a uniform quadratic remainder in every norm. Supplementary Sections S2--S3 give the complete response, cancellation, and amplitude tables. Cancellation concerns the first step only; a retained older history can still perturb later steps.
 
 \FloatBarrier
 \subsection{Airfoil loads after remeshing}
@@ -825,9 +823,9 @@ GP2 and CV2 give slower initial drag growth than NN2 in both realizations. GP2 s
 
 \subsubsection{Delayed response to a disturbance away from the wall}
 
-A separate experiment isolates one transfer in a narrow band away from the wall. The bands begin at wall distances $0.05c$, $0.10c$, and $0.20c$. GP2 is used in all three, and CV2 repeats the longer $0.20c$-band calculation. Fixed sampling shells measure the root-mean-square (RMS) pressure difference from a common fixed-mesh reference. Force onset is defined by a fraction of the response maximum. For a shell at wall distance $r$ inside a band beginning at $d$, the low-Mach acoustic travel time is approximately $(d-r)/(a_\infty\Delta t)\simeq845(d-r)$ steps. Transfer already produces immediate changes up to approximately $0.08c$ inward of the displaced band. These shells are excluded when fitting propagation times from amplitude thresholds.
+A separate experiment isolates one transfer in a narrow band away from the wall. The bands begin at distances $0.05c$, $0.10c$, and $0.20c$. GP2 is used in all three, and CV2 repeats the longer $0.20c$-band calculation. Fixed shells measure the root-mean-square (RMS) pressure difference from a common fixed-mesh reference. Force onset is a fraction of the response maximum. For a shell at wall distance $r$ inside a band beginning at $r_b$, the low-Mach acoustic travel estimate is $(r_b-r)/(a_\infty\Delta t)\simeq845(r_b-r)/c$ physical steps in these nondimensional Euler calculations. Transfer already produces immediate changes up to approximately $0.08c$ inward of the displaced band; these shells are excluded from propagation fits.
 
-Beyond the region changed immediately by transfer, the pressure response is delayed (Figure~\ref{fig:euler-pressure}). For the longer calculation with the band beginning at $0.20c$, estimated propagation speeds are 1.09--1.27 with GP2 and 1.10--1.30 with CV2, using 10--75\% amplitude thresholds. Both ranges include the sound speed $a_\infty=1.183$. Their spread shows the threshold sensitivity of a single event, rather than variability across independent events.
+Beyond the region changed immediately by transfer, the pressure response is delayed (Figure~\ref{fig:euler-pressure}). For the longer calculation with the band beginning at $0.20c$, estimated propagation speeds are 1.09--1.27 with GP2 and 1.10--1.30 with CV2, using 10--75\% amplitude thresholds. Both ranges include the sound speed $a_\infty\simeq1.183$. Their spread shows the threshold sensitivity of a single event, rather than variability across independent events.
 
 A separate restart test also shows why the first load difference is insufficient. The NN1 lift difference peaks three steps after the first post-transfer sample, at 4.66 times its initial value. The sampled second- and third-order responses peak at the first step and then decay.
 
@@ -863,32 +861,35 @@ A separate restart test also shows why the first load difference is insufficient
 \subsubsection{Setup and numerical sensitivity tests}
 \label{sec:rans-methodology}
 
-The RANS tests ask whether the transfer differences persist with turbulence transport and viscous loads. Prescribed remeshing disturbs a nominally steady solution; we compare load changes between methods and check their sensitivity to numerical settings. The conditions are $M_\infty=0.1$, $\alpha=6^\circ$, and chord Reynolds number $Re_c=6\times10^6$, using Spalart--Allmaras (SA) and shear-stress-transport (SST) models~\cite{SpalartAllmaras1994,Menter1994}.
+The RANS tests ask whether the transfer differences persist with turbulence transport and viscous loads. Prescribed remeshing disturbs a nominally steady solution; we compare load changes between methods and check their sensitivity to numerical settings. The conditions are $M_\infty=0.1$, $\alpha=6^\circ$, and chord Reynolds number $Re_c=\rho_\infty U_\infty c/\mu_\infty=6\times10^6$, where $\mu_\infty$ is freestream dynamic viscosity, using Spalart--Allmaras (SA) and shear-stress-transport (SST) models~\cite{SpalartAllmaras1994,Menter1994}.
 
 The coarse mesh has 23,271 vertices, 9,686 boundary-layer and wake quadrilaterals, 26,851 triangles, and 256 airfoil vertices. Medium and fine meshes have 32,102 and 48,228 vertices. All retain a first off-wall spacing of approximately $5\times10^{-6}c$. The farfield is at $100c$, and the quadrilateral region extends to about $0.11c$.
 
-We use the Stanford University Unstructured (SU2) solver~\cite{EconomonEtAl2016SU2}. Mean-flow convection uses the Harten--Lax--van Leer contact (HLLC) approximate Riemann solver with a monotonic upstream-centered scheme for conservation laws (MUSCL) reconstruction. Turbulence transport uses scalar upwinding without MUSCL. BDF2 is solved by dual-time stepping at a pseudo-time Courant--Friedrichs--Lewy (CFL) number of 6. The nominal limit is 800 pseudo-time iterations per physical step. After ten iterations, the solver stops if $\log_{10}\operatorname{rms}(r_\rho)\leq-12$, with $r_\rho$ the nodal density-equation residual in solver normalization.
+We use the Stanford University Unstructured (SU2) solver~\cite{EconomonEtAl2016SU2}. Mean-flow convection uses the Harten--Lax--van Leer contact (HLLC) approximate Riemann solver with a monotonic upstream-centered scheme for conservation laws (MUSCL) reconstruction. Turbulence transport uses scalar upwinding without MUSCL. BDF2 is solved by dual-time stepping at a pseudo-time Courant--Friedrichs--Lewy (CFL) number of 6. The nominal limit is 800 pseudo-time iterations per physical step. After ten iterations, the solver stops if $\log_{10}\operatorname{rms}(r_\rho)\leq-12$, with $r_\rho$ the nodal density-equation residual in solver normalization and $\operatorname{rms}$ its root-mean-square over solver vertices.
 
-The dimensional physical step $\Delta t_0=10^{-3}$~s corresponds to $\Delta t_0^*=0.347224$. A superscript $*$ denotes normalization by solver reference scales. With $U_\infty^*=0.1$, the 400-step window spans approximately 13.9 chord flow-through times, measured by $tU_\infty/c$. Startup uses a first-order step ten times smaller. Each turbulence model has a fixed-mesh reference continued for 800 steps from matching stored states.
+The dimensional physical step $\Delta t_0=10^{-3}$~s corresponds to $\Delta t_0^*\simeq0.347224$. A superscript $*$ denotes normalization by solver reference scales. With $U_\infty^*=0.1$, the 400-step window spans approximately 13.9 chord flow-through times, measured by $tU_\infty/c$. Startup uses a first-order step ten times smaller. Each turbulence model has a fixed-mesh reference continued for 800 steps from matching stored states.
 
 The coarse steady SST solution reaches the density-residual target. SA instead reaches its 20,000-iteration limit at $-11.2$, with lift and drag stationary to $10^{-7}$ over the last 2,000 iterations. The medium-mesh steady SST solution stops at approximately $-11.1$. These are steady-solution checks; convergence during the remeshed physical steps is assessed separately.
 
 NN2, limited GP2, and limited CV2 follow the same prescribed mesh sequences. At each event, 12,602 vertices may move and 10,669 remain fixed. No vertex with solver wall distance below $0.01c$ moves. The geometric mask uses distance to the nearest airfoil vertex, allowing part of the outer quadrilateral region to move. The deformation parameter is $s=4$; a minimum corner-area ratio of 0.2 maintains valid cells. Boundary vertices remain fixed. Remeshing occurs every ten physical steps, independently of the solution.
 
-Both stored states of the mean flow and turbulence variables are transferred. SA transports the working variable $\widetilde\nu$. SST transports turbulent kinetic energy $k$ and specific dissipation rate $\omega$; their density-weighted values are transferred before lower bounds are applied to the primitive variables. Wall distance and eddy viscosity are recomputed. The relative integral change for a scalar $\phi$ is $[Q_B(\phi_B)-Q_A(\phi_A)]/Q_A(\phi_A)$; all monitored source integrals are nonzero. These are transfer diagnostics. Turbulence-variable integrals need not be conserved during flow evolution because their equations have source terms. SST integrals are measured before the final lower bounds, so they do not describe the fully corrected state.
+Both stored states of the mean flow and turbulence variables are transferred. SA transports the working variable $\widetilde\nu$. SST transports turbulent kinetic energy $k$ and specific dissipation rate $\omega$; their density-weighted values are transferred before lower bounds are applied to the primitive variables. Wall distance and eddy viscosity are recomputed. Integral changes use $e_Q$ from Sec.~\ref{sec:derivative-reconstruction}; all monitored source integrals are nonzero. These are transfer diagnostics. Turbulence-variable integrals need not be conserved during flow evolution because their equations have source terms. SST integrals are measured before the final lower bounds, so they do not describe the fully corrected state.
 
-Pressure and viscous drag contributions are $C_{D,p}$ and $C_{D,v}$. For coefficient $C_Q$ and method $m$, the remeshing response is its difference from the fixed-mesh reference. We also compare NN2 directly with GP2:
+Pressure and viscous drag contributions are $C_{D,p}$ and $C_{D,v}$, with $C_D=C_{D,p}+C_{D,v}$. The label $Q$ selects a monitored coefficient $C_Q$: lift, total drag, pressure drag, or viscous drag. For transfer method $m$, the remeshing response is the coefficient minus its fixed-mesh reference at the same numerical setting:
 \begin{equation}
- D_{m,Q}(t)=C_{Q,m}(t)-C_{Q,\mathrm{ref}}(t),
- \qquad P_Q(t)=D_{\mathrm{NN2},Q}(t)-D_{\mathrm{GP2},Q}(t).
+ \Delta C_{Q,m}(t)=C_{Q,m}(t)-C_{Q,\mathrm{ref}}(t),
+ \qquad
+ P_Q(t)=\Delta C_{Q,\mathrm{NN2}}(t)-\Delta C_{Q,\mathrm{GP2}}(t).
  \label{eq:rans-comparisons}
 \end{equation}
-Remeshed and reference calculations use identical surface quadrature. At $N$ common physical times $t_i$, a scalar history $q$ has RMS $\mathcal R(q)=(N^{-1}\sum_i q(t_i)^2)^{1/2}$. We compare a modified numerical setting $c$ with the nominal setting, subscript $0$, through
+The function $P_Q$ measures the difference between methods. Remeshed and reference calculations use identical surface quadrature. For any scalar history $q(t)$ sampled at $N_s$ common physical times $t_i$, define $\mathcal R(q)=(N_s^{-1}\sum_{i=1}^{N_s}q(t_i)^2)^{1/2}$. Write $q_{\mathrm{nom}}$ and $q_{\mathrm{test}}$ for this history at the nominal and modified numerical settings. The sensitivity is
 \begin{equation}
- S(q;c)=\frac{\mathcal R(q_c-q_0)}{\mathcal R(q_0)}.
+ S_{\mathrm{test}}(q)=
+ \frac{\mathcal R(q_{\mathrm{test}}-q_{\mathrm{nom}})}
+      {\mathcal R(q_{\mathrm{nom}})}.
  \label{eq:control-sensitivity}
 \end{equation}
-This measures the RMS difference between the histories relative to the nominal RMS. It differs from the fractional change in RMS amplitude, $[\mathcal R(q_c)-\mathcal R(q_0)]/\mathcal R(q_0)$: two curves can have similar amplitudes but differ in timing or shape.
+All nominal RMS values reported here are nonzero. This measures the difference between histories relative to the nominal RMS. It is different from the fractional change of RMS amplitude, $[\mathcal R(q_{\mathrm{test}})-\mathcal R(q_{\mathrm{nom}})]/\mathcal R(q_{\mathrm{nom}})$: two curves can have similar amplitudes but differ in timing or shape.
 
 Sensitivity tests share a 38-sample window containing three remeshing events. Inner-iteration limits are raised to 1600 for both models and to 6400 for SST. Time-step tests use $\Delta t_0/2$ for both models and $\Delta t_0/4$ for SA. The same displacement fields are applied at matching physical times, and each step size has its own fixed-mesh reference. Medium and fine steady meshes assess absolute-load sensitivity. A short medium-mesh SA transient uses the same displacement statistics and amplitude limit, but a different nodal deformation field; its differences therefore combine mesh-resolution and disturbance changes.
 
@@ -946,123 +947,9 @@ Halving the time step changes the histories even when their RMS amplitudes remai
 \label{fig:rans-drag-sensitivity}
 \end{figure}
 
-SA meets the density-residual target at every physical step with the reduced time step. Raising the inner-iteration limit at the nominal step has a smaller but nonzero effect on the differences between methods. SST still reaches the raised iteration limit at most perturbed-mesh steps, and its $\Delta t_0/2$ calculation remains incompletely converged. Its measured time-step sensitivity can therefore include iterative error. \ref{app:rans-controls} gives these convergence checks and the more sensitive friction-drag results.
+\subsubsection{Numerical convergence and limits of the comparison}
 
-Steady RANS mesh comparisons show sensitivity of the absolute loads, but do not establish an asymptotic refinement sequence or bound errors in the NN2--GP2 difference. The medium-mesh transient also changes the nodal disturbance, preventing a refinement-only interpretation. GP2 and CV2 thus have smaller measured transfer-integral errors, but these calculations establish no aerodynamic advantage over NN2. The load differences remain too sensitive to the time step and, for SST, iterative convergence.
-
-\subsection{Interpreting the comparisons}
-\label{sec:discussion}
-
-Spatial profiles, integrals, state norms, and loads measure different aspects of transfer error. Differences from a target-mesh reference also include differences between the independently computed mesh solutions. These distinctions agree with studies that separate integral preservation from other discrete properties~\cite{MaddisonHiester2017}, and preserve discrete equilibria to suppress transfer-induced disturbances~\cite{MaddisonCotterFarrell2011,MaddisonCotterFarrell2013}.
-
-CV2 preserves the global finite-volume integral but loses affine reproduction on persistently distorted quadrilaterals. Limiting and boundary treatment can then change its local constraints. LC replaces global redistribution with exchanges between neighboring volumes. This treatment is tested only in the Riemann problem; the standard-transfer airfoil tests establish no LC aerodynamic benefit.
-
-\paragraph{Computational assistance}
-\ResearchAssistanceStatement
-
-\FloatBarrier
-\section{Conclusions}
-\label{sec:conclusions}
-
-Transfer in an unsteady calculation must supply every state used by the time integrator. In the controlled BDF2 restarts, an error in the older state changes next-step lift even when the latest state matches the target-mesh reference. The opposite signs of the latest-only and older-only responses follow from the BDF2 coefficients. The residual change is exact; converting it into a state or load prediction also requires assumptions about the spatial operator and solve convergence.
-
-The Riemann results distinguish preservation of mass, wave shape, and mass balance during later flow evolution. Global mass correction does not restore a smeared profile. At high transfer counts, a wide-window 10--90\% width also includes contact smearing, so it must be separated from shock-only broadening. GP2 and CV2 preserve the tested profiles more closely than NN1 and BAR2, but standard global limiting can disturb the far field and allow mass changes during subsequent flow steps.
-
-Local flux correction keeps final mass and energy drift near roundoff and modestly reduces GP/CV density error without materially changing shock broadening. It allows small extrema within relaxed bounds and can leave part of the unlimited correction unapplied. Exact wall compatibility immediately after transfer is not guaranteed either.
-
-In fixed-body RANS, smaller transfer-integral errors do not establish smaller aerodynamic errors. The differences between methods remain sensitive to time-step refinement, with additional iterative uncertainty for SST. The slower initial Euler drag growth of GP2 and CV2 therefore cannot be extended to a RANS ranking. Transfer accuracy must be assessed through both the transferred fields and the flow evolution that follows, including all stored time levels.
-
-\appendix
-\makeatletter
-\@addtoreset{table}{section}
-\renewcommand{\thetable}{\Alph{section}.\arabic{table}}
-\renewcommand{\theHtable}{appendix.\Alph{section}.\arabic{table}}
-\makeatother
-\section{Field integrals and reference solutions}
-\label{app:quadrature-mismatch}
-
-A projection can preserve a field exactly and still give a different integral when only its vertex values are used. For example, $f(x)=x^2$ belongs to the quadratic finite-element space on a uniform partition of $[0,1]$. Integrating its vertex values with linear nodal weights gives
-\begin{equation}
- Q_h(f)=\frac13+\frac{h^2}{6}.
- \label{eq:vertex-restriction-counterexample}
-\end{equation}
-The complete quadratic projection is exact. The second-order integral error comes solely from discarding its nonvertex values, as occurs when GP3 supplies only solver vertices.
-
-\subsection{Separating transfer error from mesh dependence}
-\label{app:reference-decomposition}
-
-A discrepancy from a target-mesh reference solution contains both transfer error and the difference between the mesh discretizations. To distinguish these contributions, let $\Pi_Mu^k$ represent a common exact field in the solver representation, with discretization error $e_M^k=U_M^k-\Pi_Mu^k$. For a possibly nonlinear transfer map,
-\begin{align}
- \eps^k={}&\underbrace{\calI_{AB}(\Pi_Au^k)-\Pi_Bu^k}_{\text{transfer consistency}}\notag\\
- &+\underbrace{\calI_{AB}(U_A^k)-\calI_{AB}(\Pi_Au^k)-e_B^k}_{\text{source and target discretization contributions}}.
- \label{eq:defect-decomposition}
-\end{align}
-Only a linear map permits the second line to be written $\calI_{AB}e_A^k-e_B^k$. A load difference likewise separates as
-\begin{align}
- G_B(\widehat U_B^k)-G_A(U_A^k)
- ={}&G_B(U_B^k)-G_A(U_A^k)\notag\\
- &+G_B(\widehat U_B^k)-G_B(U_B^k).
- \label{eq:observable-decomposition}
-\end{align}
-The first difference is dependence of the reference solution on the mesh; the second is the restart response relative to the target-mesh reference. Neither term alone measures the error relative to the exact continuum solution.
-
-\section{Additional BDF2 restart checks}
-\label{app:history-checks}
-
-\subsection{Signs and magnitudes of the two stored-state responses}
-
-The controlled restarts impose the same error in both BDF2 states or in one state alone. A linear response predicts latest-only and older-only values of $4/3$ and $-1/3$ times the both-states response. Table~\ref{tab:naca-superposition-app} compares the computed signed lift ratios and nonnegative state-norm ratios with these predictions. The superposition errors measure the remaining departure from linearity.
-
-\begin{table}[pos=htbp]
-\centering\footnotesize
-\caption{Euler BDF2 response ratios and relative superposition errors. Subscripts $f$, $n$, and $n-1$ denote perturbations of both states, the latest state only, and the older state only. Linear response to the imposed error field predicts ratios of $4/3$ and $-1/3$; state columns show nonnegative norm ratios.}
-\label{tab:naca-superposition-app}
-\pgfplotstabletypeset[publication table,
- columns={method,state_superposition_defect,state_latest_full,state_older_full,CL_superposition_defect,CL_latest_full,CL_older_full},
- columns/method/.style={string type,column name={Transfer}},
- columns/state_superposition_defect/.style={sci,precision=1,column name={$e_{\mathrm{sup}}^U$}},
- columns/state_latest_full/.style={fixed,precision=4,column name={$\|\delta_n\|_M/\|\delta_f\|_M$}},
- columns/state_older_full/.style={fixed,precision=4,column name={$\|\delta_{n-1}\|_M/\|\delta_f\|_M$}},
- columns/CL_superposition_defect/.style={sci,precision=1,column name={$e_{\mathrm{sup}}^{C_L}$}},
- columns/CL_latest_full/.style={fixed,precision=4,column name={$\Delta C_{L,n}/\Delta C_{L,f}$}},
- columns/CL_older_full/.style={fixed,precision=4,column name={$\Delta C_{L,n-1}/\Delta C_{L,f}$}}
-]{\DataDir/naca_superposition.csv}
-\end{table}
-
-The residual comparison at a common trial state also includes the slip-wall equations. Because source and target wall vertices coincide, the transferred histories retain the source wall state and the normal residual perturbation is negligible. Supplementary Section S2 gives the component-wise residual comparisons.
-
-\subsection{Cancellation of the initial residual perturbation}
-
-For an imposed spatial discrepancy $e$, setting $\eps^n=e/4$ and $\eps^{n-1}=e$ cancels the initial residual perturbation, $\eta^n=0$. Under the same boundary treatment, the reference and perturbed BDF2 equations are then identical. An exact solve on the same local solution branch would return the same next state.
-
-Computed lift differences are of order $10^{-9}$, but volume-weighted state differences remain 4.3--9.0\% of the imposed error (Table~\ref{tab:naca-cancellation-app}). Agreement in lift therefore does not imply agreement of the states. Iterative error has not been independently measured, so this test does not verify cancellation of the computed state response. It does not affect the exact residual identity or its separate test at a common trial state.
-
-\begin{table}[pos=htbp]
-\centering\small
-\caption{Cancellation of the initial residual perturbation. Both history states are perturbed but $2\eps^n-\eps^{n-1}/2=0$. First-step force differences and state differences use the same reference continuation; both state norms are shown to avoid interpreting a small load difference as complete state agreement.}
-\label{tab:naca-cancellation-app}
-\pgfplotstabletypeset[publication table,
- columns={method,dCL_step2,dCD_step2,state_diff_step2_over_eps,state_diff_step2_over_eps_volume_weighted},
- columns/method/.style={string type,column name={Transfer}},
- columns/dCL_step2/.style={sci,precision=2,column name={$\Delta C_L$}},
- columns/dCD_step2/.style={sci,precision=2,column name={$\Delta C_D$}},
- columns/state_diff_step2_over_eps/.style={sci,precision=2,column name={$\|\delta\|_2/\|e\|_2$}},
- columns/state_diff_step2_over_eps_volume_weighted/.style={sci,precision=2,column name={$\|\delta\|_M/\|e\|_M$}}
-]{\DataDir/naca_cancellation.csv}
-\end{table}
-
-The initial residual probes in this cancellation experiment use different trial states and consequently include a difference in the spatial residual. Their interpretation is given in Supplementary Section S2. Cancellation also concerns only the first step: even if its state difference vanishes, the retained older history can force subsequent evolution.
-
-\subsection{Response as the imposed error decreases}
-
-As the imposed error decreases, lift and Euclidean state-norm responses approach superposition more closely for BAR2, GP2, and CV2. The volume-weighted norm behaves differently: its absolute remainder decreases slowly, while the relative remainder grows from about 3.4\% to 8.7--9.2\%. The coefficient ratios therefore support a linear approximation for the tested error field, but not a uniform quadratic remainder in every norm. Supplementary Section S3 gives the full amplitude comparison.
-
-\section{RANS numerical sensitivity}
-\label{app:rans-controls}
-
-\subsection{Inner iterations and time-step refinement}
-
-Table~\ref{tab:rans-inner-app} distinguishes steps that meet the residual criterion from those that stop at the iteration limit. Nominal rows cover the full remeshing histories; the other rows cover short sensitivity tests. SA meets the density criterion throughout the 1600-iteration test and at every half- and quarter-step point. SST reaches its limit on 28--30 of 38 steps even with 6400 inner iterations, and on 56--60 of 78 half-step points. Those SST calculations remain incompletely converged.
+Table~\ref{tab:rans-inner-app} distinguishes steps that meet the residual criterion from those that stop at an iteration limit. SA meets the density criterion throughout the 1600-iteration test and at every half- and quarter-step point. SST reaches its limit on 28--30 of 38 steps even with 6400 inner iterations, and on 56--60 of 78 half-step points. Its measured time-step sensitivity can therefore include iterative error.
 
 \begin{table}[pos=htbp]
 \centering\footnotesize
@@ -1086,57 +973,39 @@ Closure & $N_{\max}$ & $\Delta t/\Delta t_0$ & Steps & GP2 & NN2 & CV2\\
 \end{tabular}
 \end{table}
 
-Raising the iteration limit changes SA lift and total-drag histories by at most 0.3\% of their own RMS. Their smaller differences between methods change by 8.4--10.9\% (Table~\ref{tab:rans-controls-app}, Eq.~\eqref{eq:control-sensitivity}). For SST, raising the limit to 6400 changes the lift difference between methods by 67.7\% of its nominal RMS. Residual stagnation accompanies this sensitivity, but does not identify a unique cause in the turbulence equations.
+Raising the iteration limit changes SA lift and total-drag histories by at most 0.3\% of their own RMS, but changes the smaller differences between methods by 8.4--10.9\%. For SST, raising the limit to 6400 changes the lift difference between methods by 67.7\% of its nominal RMS. Residual stagnation accompanies this sensitivity without identifying a unique cause in the turbulence equations. Supplementary Section S4 gives the full residual records and iteration-sensitivity table.
 
-\begin{table}[pos=htbp]
-\centering\small
-\caption{Effect of increasing the inner-iteration limit, relative to the nominal setting. Values are $100S$ from Eq.~\eqref{eq:control-sensitivity}; individual columns give the largest NN2, GP2, or CV2 sensitivity, and difference columns refer to the NN2--GP2 difference. All entries are percentages.}
-\label{tab:rans-controls-app}
-\begin{tabular}{llrrrr}
-\toprule
- & & \multicolumn{2}{c}{Individual responses} & \multicolumn{2}{c}{NN2--GP2 difference}\\
-\cmidrule(lr){3-4}\cmidrule(lr){5-6}
-Closure & Iteration limit & $C_L$ & $C_D$ & $C_L$ & $C_D$\\
-\midrule
-\ControlRow{SA}{cap1600}{1600}
-\ControlRow{SST}{cap1600}{1600}
-\ControlRow{SST}{cap6400}{6400}
-\bottomrule
-\end{tabular}
-\end{table}
+The drag components also require care. In the SA quarter-step test, friction-drag history differences are approximately 76--92\% of the nominal RMS friction-drag response. The smaller sensitivity of total drag does not establish convergence of its separate components.
 
-For SA at successively smaller time steps, the RMS lift differences between methods are approximately $1.21\times10^{-5}$, $1.60\times10^{-5}$, and $2.08\times10^{-5}$. Drag values are $2.19\times10^{-6}$, $3.77\times10^{-6}$, and $4.55\times10^{-6}$. Individual RMS amplitudes are closer, but the differences between the time histories remain unresolved. Friction drag is more sensitive than total drag: SA quarter-step history differences are approximately 76--92\% of the nominal RMS friction-drag response. The smaller total-drag sensitivity does not establish convergence of its separate components.
+Steady RANS mesh comparisons show sensitivity of the absolute loads, but do not establish an asymptotic refinement sequence or bound errors in the NN2--GP2 difference. The medium-mesh transient also changes the nodal disturbance, preventing a refinement-only interpretation. Supplementary Section S7 contains the steady-mesh loads and the separate medium-mesh transient. GP2 and CV2 thus have smaller measured transfer-integral errors, but these calculations establish no aerodynamic advantage over NN2. The load differences remain too sensitive to the time step and, for SST, iterative convergence.
 
-\subsection{Steady mesh sensitivity}
+\subsection{Interpreting the comparisons}
+\label{sec:discussion}
 
-The steady meshes in Table~\ref{tab:rans-meshlevels-app} retain the first off-wall spacing while refining other regions. Lift, total drag, and pressure drag decrease monotonically; friction drag does not. A spacing based on vertex count describes the density of this anisotropic mesh family, but does not establish a common asymptotic error expansion. The table therefore reports absolute-load sensitivity without extrapolated loads or a discretization-uncertainty estimate. It does not quantify error in the load difference between transfer methods on a common mesh.
+Spatial profiles, integrals, state norms, and loads measure different aspects of transfer error. Differences from a target-mesh reference also include differences between the independently computed mesh solutions. These distinctions agree with studies that separate integral preservation from other discrete properties~\cite{MaddisonHiester2017}, and preserve discrete equilibria to suppress transfer-induced disturbances~\cite{MaddisonCotterFarrell2011,MaddisonCotterFarrell2013}.
 
-\begin{table}[pos=htbp]
-\centering\small
-\caption{Steady aerodynamic loads without remeshing on the coarse, medium, and fine viscous meshes. The vertex-count estimate $h/h_c=\sqrt{N_c/N}$ uses the coarse-mesh vertex count $N_c$ as reference; it is not a refinement ratio common to all directions. The same first off-wall spacing is used on all levels.}
-\label{tab:rans-meshlevels-app}
-\pgfplotstabletypeset[publication table,
- columns={closure,level,nodes,h_ratio,CL,CD,CDp,CDv},
- columns/closure/.style={string type,column name={Closure}},
- columns/level/.style={string type,column name={Mesh},assign cell content/.code={\pgfkeyssetvalue{/pgfplots/table/@cell content}{\MeshLevelName{##1}}}},
- columns/nodes/.style={fixed,precision=0,column name={Vertices}},
- columns/h_ratio/.style={fixed,precision=3,column name={$h/h_c$}},
- columns/CL/.style={fixed,precision=5,column name={$C_L$}},
- columns/CD/.style={fixed,precision=6,column name={$C_D$}},
- columns/CDp/.style={fixed,precision=6,column name={$C_{D,p}$}},
- columns/CDv/.style={fixed,precision=6,column name={$C_{D,v}$}}
-]{\GeneratedDir/reassessed_rans_meshlevels.csv}
-\end{table}
+CV2 preserves the global finite-volume integral but loses affine reproduction on persistently distorted quadrilaterals. Limiting and boundary treatment can then change its local constraints. LC replaces global redistribution with exchanges between neighboring volumes. This treatment is tested only in the Riemann problem; the standard-transfer airfoil tests establish no LC aerodynamic benefit.
 
-\subsection{Remeshing response on a different mesh}
+\paragraph{Computational assistance}
+\ResearchAssistanceStatement
 
-The medium-mesh SA test changes both resolution and the imposed nodal disturbance. Its short remeshing interval gives RMS lift responses near $1.07\times10^{-4}$ and drag responses near $5.39\times10^{-5}$ for individual methods. Differences between methods are $8.77\times10^{-6}$ and $9.94\times10^{-7}$. The methods remain close, but the changed random displacement field prevents attributing the smaller response to resolution alone. Five to seven of the 38 physical steps reach the nominal inner-iteration limit.
+\FloatBarrier
+\section{Conclusions}
+\label{sec:conclusions}
+
+Transfer in an unsteady calculation must supply every state used by the time integrator. In the controlled BDF2 restarts, an error in the older state changes next-step lift even when the latest state matches the target-mesh reference. The opposite signs of the latest-only and older-only responses follow from the BDF2 coefficients. The residual change is exact; converting it into a state or load prediction also requires assumptions about the spatial operator and solve convergence.
+
+The Riemann results distinguish preservation of mass, wave shape, and mass balance during later flow evolution. Global mass correction does not restore a smeared profile. At high transfer counts, a wide-window 10--90\% width also includes contact smearing, so it must be separated from shock-only broadening. GP2 and CV2 preserve the tested profiles more closely than NN1 and BAR2, but standard global limiting can disturb the far field and allow mass changes during subsequent flow steps.
+
+Local flux correction keeps final mass and energy drift near roundoff and modestly reduces GP/CV density error without materially changing shock broadening. It allows small extrema within relaxed bounds and can leave part of the unlimited correction unapplied. Exact wall compatibility immediately after transfer is not guaranteed either.
+
+In fixed-body RANS, smaller transfer-integral errors do not establish smaller aerodynamic errors. The differences between methods remain sensitive to time-step refinement, with additional iterative uncertainty for SST. The slower initial Euler drag growth of GP2 and CV2 therefore cannot be extended to a RANS ranking. Transfer accuracy must be assessed through both the transferred fields and the flow evolution that follows, including all stored time levels.
 
 \FloatBarrier
 \section*{Data availability}
 % TODO(author): The journal's research-data policy (Option C) asks for deposit in a data repository with a persistent identifier (e.g. a DOI-registered archive of the tagged repository release), a citation of that dataset here, and a matching [dataset] entry in the reference list.
 % TODO(author): Decide which agent plans and prompts belong in the public package on reproducibility grounds, and retain a record of research and manuscript provenance.
-Supplementary material contains the full Euler comparisons and extended history and convergence diagnostics. The numerical tables supporting the figures and comparisons, together with the post-processing routines needed to reproduce the reported reductions, are available in the \href{https://github.com/rois1995/InterpolationPaper}{public data repository}. The archive does not include every flow-field output from the simulations.
+Supplementary material contains detailed transfer and restart checks, reference-state decompositions, and numerical-convergence and mesh-sensitivity tables. The numerical tables supporting the figures and comparisons, together with the post-processing routines needed to reproduce the reported reductions, are available in the \href{https://github.com/rois1995/InterpolationPaper}{public data repository}. The archive does not include every flow-field output from the simulations.
 
 \section*{Funding}
 \FundingStatement
