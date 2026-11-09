@@ -102,7 +102,7 @@
 
 
 
-\pgfplotstableread[col sep=comma]{RANS_PostProcessing/rans_control_inner.csv}\InnerData
+\pgfplotstableread[col sep=comma]{data/rans_control_inner.csv}\InnerData
 \pgfplotstableforeachcolumnelement{model}\of\InnerData\as\ThisModel{%
   \edef\SavedModel{\ThisModel}%
   \pgfplotstablegetelem{\pgfplotstablerow}{setting}\of\InnerData\edef\ThisSetting{\pgfplotsretval}%

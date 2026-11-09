@@ -22,7 +22,7 @@
 \title{Supplementary material\\[0.4em]\large Mesh-to-Mesh Transfer Errors in Multistep Unsteady Flow Simulations}
 \author{}
 \date{}
-\pgfplotstableread[col sep=comma]{RANS_PostProcessing/rans_control_inner.csv}\InnerData
+\pgfplotstableread[col sep=comma]{data/rans_control_inner.csv}\InnerData
 \pgfplotstableforeachcolumnelement{model}\of\InnerData\as\ThisModel{%
   \edef\SavedModel{\ThisModel}%
   \pgfplotstablegetelem{\pgfplotstablerow}{setting}\of\InnerData\edef\ThisSetting{\pgfplotsretval}%

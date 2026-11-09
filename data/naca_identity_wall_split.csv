@@ -1,5 +1,0 @@
-method,wall_nodes,mismatch_normal,mismatch_tangential,predicted_normal,predicted_tangential,eps_normal,eps_tangential,ratio_normal,ratio_tangential
-GP2,370,3.417e-12,1.387e-11,1.019e-16,1.250e-04,1.098e-14,7.880e-02,33536.0321,1.11e-07
-GP3,370,4.090e-12,1.615e-11,1.019e-16,1.250e-04,1.098e-14,7.880e-02,40140.7467,1.29e-07
-CV2,370,4.111e-12,1.385e-11,1.019e-16,1.250e-04,1.098e-14,7.880e-02,40350.6137,1.11e-07
-NN1,370,4.502e-12,1.673e-11,1.019e-16,1.250e-04,1.098e-14,7.880e-02,44181.2285,1.34e-07
