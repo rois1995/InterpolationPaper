@@ -112,7 +112,7 @@ def main() -> int:
     hl_tex=[x.strip() for x in hl_env.group(1).split(r'\item')[1:]] if hl_env else []
     if hl_tex!=hl: errors.append('Highlights in paper.tex differ from submission/highlights.txt')
     ai=s.index(r'\section*{Declaration of generative AI')
-    if ai<s.index(r'\appendix'): errors.append('Writing assistance declaration precedes appendices')
+    if r'\appendix' in s and ai<s.index(r'\appendix'): errors.append('Writing assistance declaration precedes appendices')
     if r'\section' in s[ai+len(r'\section*'):s.index(r'\bibliographystyle')]: errors.append('Another section follows writing assistance declaration')
     author_files=['submission/author_details.tex','submission/author_declarations.tex']
     pending=[x for x in author_files if re.search(r'to be supplied|\[Authors:',uncomment((ROOT/x).read_text()))]
