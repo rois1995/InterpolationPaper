@@ -3,6 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[margin=25mm]{geometry}
 \usepackage{amsmath,amssymb,bm,booktabs}
+\usepackage[dvipsnames]{xcolor}
 \usepackage{pgfplotstable}
 \usepackage{placeins}
 \renewcommand{\topfraction}{0.95}
@@ -65,6 +66,18 @@
 \expandafter\def\csname MeshLevel@fine\endcsname{Medium}
 \expandafter\def\csname MeshLevel@finer\endcsname{Fine}
 \newcommand{\MeshLevelName}[1]{\csname MeshLevel@#1\endcsname}
+
+
+% Phrase-scoped review against commit 4758546 (first-round author comments).
+\newif\ifshowchanges
+\showchangestrue
+\definecolor{RevisionPurple}{RGB}{112,32,160}
+\definecolor{RevisionBrown}{RGB}{139,69,19}
+\long\def\revadd#1{{\ifshowchanges\color{RevisionPurple}\fi #1}}
+\long\def\revdel#1{\ifshowchanges{\color{RevisionBrown}#1}\ifhmode\hspace{.2em}\fi\fi}
+\long\def\authorcomment#1{\ifshowchanges{\color{red}#1}\fi}
+\long\def\reviewreply#1{\ifshowchanges\par\noindent{\color{RevisionPurple}\textit{Response: #1}}\par\fi}
+\pdfstringdefDisableCommands{\def\revadd#1{#1}\def\revdel#1{}\def\authorcomment#1{}\def\reviewreply#1{}}
 
 \begin{document}
 \maketitle
@@ -137,9 +150,9 @@ At a common trial state, the predicted residual perturbation is $-M_B\eta^n/\Del
 
 At the 370 slip-wall vertices, with both residuals evaluated at the same trial state, the wall-normal momentum mismatch is $3.4\times10^{-12}$ for GP2, $4.1\times10^{-12}$ for GP3 and CV2, and $4.5\times10^{-12}$ for NN1. The tangential mismatch is $(1.4$--$1.7)\times10^{-11}$, a fraction $(1.1$--$1.3)\times10^{-7}$ of the tangential residual perturbation of $1.25\times10^{-4}$. All four transfers return the same wall state, that of the source solution; the difference in wall-normal momentum from the target-mesh reference is $1.1\times10^{-14}$, so the normal residual perturbation is negligible and enforcement of the target slip-wall condition does not alter it. The predicted and measured perturbations both include enforcement of the target slip-wall condition.
 
-\subsection{Residual probes in the cancellation experiment}
+\subsection{Residual probes in the \revdel{cancellation experiment}\revadd{cancellation test}}
 
-In the cancellation experiment, the history discrepancies are $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$, giving $\eta^n=2\eps^n-\eps^{n-1}/2=0$. The initial probes use different trial states. Let $\Phi_B$ be the constant-step BDF2 residual, with latest and older states $V,W$ and spatial residual $F_B$. The time $t^{n+1}$ is the next physical time. Let $Y$ be the reference trial state and $\Delta Y$ the trial-state increment. If the two stored-state errors are $\eps^n,\eps^{n-1}$, then
+In the \revdel{cancellation experiment}\revadd{cancellation test}, the history discrepancies are $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$, giving $\eta^n=2\eps^n-\eps^{n-1}/2=0$. The initial probes use different trial states. Let $\Phi_B$ be the constant-step BDF2 residual, with latest and older states $V,W$ and spatial residual $F_B$. The time $t^{n+1}$ is the next physical time. Let $Y$ be the reference trial state and $\Delta Y$ the trial-state increment. If the two stored-state errors are $\eps^n,\eps^{n-1}$, then
 \begin{equation}
  \begin{aligned}
  \Phi_B(Y;V,W)
@@ -195,7 +208,7 @@ The state and lift remainders and both state norms are defined in Section~S2. Sc
 \FloatBarrier
 
 \section{RANS iterative convergence for each method}
-The Spalart--Allmaras (SA) and shear-stress-transport (SST) calculations use BDF2 equations solved by pseudo-time iteration at each physical time step. The stopping target is $\log_{10}\operatorname{rms}(r_\rho)\leq-12$ where $r_\rho$ is the nodal density-equation residual in solver normalization and $\operatorname{rms}$ averages it over the solver vertices. Reaching the iteration limit alone does not establish convergence. Table~\ref{tab:inner-supp} gives the full records behind the compact main-article comparison; final residuals are medians over physical time steps, not residuals of averaged solutions. The nominal rows cover the full remeshing interval and other rows the shorter sensitivity interval; $\Delta t_0$ denotes the nominal physical time step.
+The Spalart--Allmaras (SA) and shear-stress-transport (SST) calculations use BDF2 equations solved by pseudo-time iteration at each physical time step. The stopping target is $\log_{10}\operatorname{rms}(r_\rho)\leq-12$ \revdel{where $r_\rho$ is the nodal density-equation residual in solver normalization and $\operatorname{rms}$ averages it over the solver vertices.}\revadd{where $r_\rho$ is the nodal density-equation residual in solver normalization and $\operatorname{rms}$ denotes its root-mean-square over the solver vertices.} Reaching the iteration limit alone does not establish convergence. Table~\ref{tab:inner-supp} gives the full records behind the compact main-article comparison; final residuals are medians over physical time steps, not residuals of averaged solutions. The nominal rows cover the full remeshing interval and other rows the shorter sensitivity interval; $\Delta t_0$ denotes the nominal physical time step.
 
 \begin{table}[!htbp]
 \centering\footnotesize
@@ -281,7 +294,7 @@ Table~\ref{tab:lc-pairs-supp} reports all 36 matched comparisons. Standard and L
  columns/s/.style={fixed,precision=0,column name={$s$}},
  columns/seed/.style={fixed,precision=0,column name={Realization}},
  columns/position_standard/.style={fixed,precision=2,column name={$\Delta x_{\mathrm{std}}/h$}},
- columns/position_lc/.style={fixed,precision=2,column name={$\Delta \boldsymbol x_{\mathrm{LC}}/h$}},
+ columns/position_lc/.style={fixed,precision=2,column name={\revdel{$\Delta \boldsymbol x_{\mathrm{LC}}/h$}\revadd{$\Delta x_{\mathrm{LC}}/h$}}},
  columns/width_standard/.style={fixed,precision=2,column name={$\Delta w_{\mathrm{std}}^{\mathrm{shock}}/h$}},
  columns/width_lc/.style={fixed,precision=2,column name={$\Delta w_{\mathrm{LC}}^{\mathrm{shock}}/h$}}
 ]{generated/riemann_lc_pairs.csv}

@@ -133,15 +133,16 @@
 \newcommand{\InventorySymbol}[1]{\csname Inventory@#1\endcsname}
 
 
-% Review markup: author comments red, additions purple, proposed deletions brown.
+% Phrase-scoped review against commit 4758546 (first-round author comments).
 \newif\ifshowchanges
 \showchangestrue
 \definecolor{RevisionPurple}{RGB}{112,32,160}
 \definecolor{RevisionBrown}{RGB}{139,69,19}
 \long\def\revadd#1{{\ifshowchanges\color{RevisionPurple}\fi #1}}
-\long\def\revdel#1{\ifshowchanges{\color{RevisionBrown}#1}\fi}
+\long\def\revdel#1{\ifshowchanges{\color{RevisionBrown}#1}\ifhmode\hspace{.2em}\fi\fi}
 \long\def\authorcomment#1{\ifshowchanges{\color{red}#1}\fi}
-\pdfstringdefDisableCommands{\def\revadd#1{#1}\def\revdel#1{}\def\authorcomment#1{}}
+\long\def\reviewreply#1{\ifshowchanges\par\noindent{\color{RevisionPurple}\textit{Response: #1}}\par\fi}
+\pdfstringdefDisableCommands{\def\revadd#1{#1}\def\revdel#1{}\def\authorcomment#1{}\def\reviewreply#1{}}
 
 \begin{document}
 \let\WriteBookmarks\relax
@@ -156,7 +157,7 @@
 \begin{abstract}
 When an unsteady flow simulation changes its mesh, transferring the solution can introduce errors that affect later flow evolution and aerodynamic loads. Multistep time integrators also require solutions from earlier times, so remeshing must transfer several stored states. Transfer is often assessed by field accuracy, the absence of new extrema, and preservation of domain integrals. These measures do not, however, directly describe how the restarted calculation will respond. This study asks how errors in the latest and older stored states influence that response, and what must be checked to assess transfer reliably.
 
-We compare nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer using static tests, repeated remeshing, and airfoil calculations. Repeated remeshing shows that restoring total mass does not recover a smeared wave profile. It also shows that preserving mass at each transfer does not ensure negligible subsequent mass drift: corrections that redistribute mass across the domain can alter open-boundary fluxes. Controlled restarts with the second-order backward differentiation formula (BDF2) show that an error in an older stored state changes next-step lift even when the latest state matches the reference. In fixed-body Reynolds-averaged Navier--Stokes calculations, smaller transfer-integral errors do not establish better aerodynamic accuracy because load differences remain sensitive to the time step and iterative convergence. Transfer should therefore be assessed through both the transferred states and the flow computed after the restart.
+We compare nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer using static tests, repeated remeshing, and airfoil calculations. Repeated remeshing shows that restoring total mass does not recover a smeared wave profile. It also shows that preserving mass at each transfer does not ensure negligible subsequent mass drift: corrections that redistribute mass across the domain can alter open-boundary fluxes. Controlled restarts with the second-order backward differentiation formula (BDF2) show that an error in an older stored state changes next-step lift even when the latest state matches the reference. \revdel{In fixed-body Reynolds-averaged Navier--Stokes calculations}\revadd{In unsteady Reynolds-averaged Navier--Stokes calculations on a stationary airfoil}, smaller transfer-integral errors do not establish better aerodynamic accuracy because load differences remain sensitive to the time step and iterative convergence. Transfer should therefore be assessed through both the transferred states and the flow computed after the restart.
 \end{abstract}
 
 % Identical to submission/highlights.txt (3--5 bullets, at most 85 characters each).
@@ -180,10 +181,9 @@ Galerkin projection \sep Backward differentiation \sep Finite-volume methods
 \setlength{\hfuzz}{0.2pt}
 
 \authorcomment{[C1] A: I think I would like to remove the SST results if the SA ones achieve inner-iteration convergence.}
+\reviewreply{SA meets the density criterion in the short 1600-iteration and refined-time-step controls, but the nominal 398-step runs stop at their limit on 147--155 steps. SST is retained because full-window SA iteration convergence has not been established.}
 
-\ifshowchanges\revadd{Response to C1: SA meets the density-residual criterion in the 38-step 1600-iteration control and at the refined time steps, but the nominal 398-step runs reach the 800-iteration limit on 147--155 steps. The available evidence therefore does not establish iteration convergence throughout the nominal SA history. SST is retained in this revision; removing that comparison would be an editorial scope decision rather than a consequence of demonstrated full-window SA convergence.}\fi
-
-\ifshowchanges\noindent\authorcomment{Review colors: author comments red; }\revadd{additions purple; }\revdel{proposed deletions brown.}\par\medskip\fi
+\ifshowchanges\noindent\authorcomment{Author comments are red; }\revadd{additions are purple; }\revdel{proposed deletions are brown.}\par\medskip\fi
 
 \section{Introduction}
 \label{sec:introduction}
@@ -198,46 +198,31 @@ Multistep time integration makes this distinction particularly important. It use
 
 The central question of this paper is whether conventional transfer-quality measures are sufficient to assess the subsequent unsteady flow and aerodynamic loads. We ask how errors in the latest and older history states contribute to that response, and which additional checks are needed to interpret a comparison between transfer methods. To address these questions, we examine both the changes introduced during transfer and the flow computed after the restart. Controlled restarts separate the effects of errors in different history states; repeated remeshing shows how transfer and flow evolution interact over many events. Time-step and iterative-convergence checks assess whether observed load differences can support a ranking of the transfer methods.
 
-\revdel{We compare nearest-neighbor Taylor interpolation (NN), barycentric interpolation (BAR), continuous Galerkin projection (GP), and conservative control-volume transfer (CV) in a vertex-centered finite-volume solver using the second-order backward differentiation formula (BDF2)\authorcomment{[C2] (the "using the seonc order bla bla bla" looks like you compare the methods with that. I don't think it is the correct phrasing)}. An exact identity relates errors in the two stored BDF2 states to the change in the time-step residual. We distinguish this identity from the additional assumptions needed to predict the computed state and load response. Global integral correction and local flux correction are examined separately to establish what restoring an integral can, and cannot, resolve.}
+We compare nearest-neighbor Taylor interpolation (NN), barycentric interpolation (BAR), continuous Galerkin projection (GP), and conservative control-volume transfer (CV) \revdel{in a vertex-centered finite-volume solver using the second-order backward differentiation formula (BDF2)}\revadd{in a vertex-centered finite-volume solver. The unsteady calculations use the second-order backward differentiation formula (BDF2)}\authorcomment{[C2] (the "using the seonc order bla bla bla" looks like you compare the methods with that. I don't think it is the correct phrasing)}. An exact identity relates errors in the two stored BDF2 states to the change in the time-step residual. We distinguish this identity from the additional assumptions needed to predict the computed state and load response. Global integral correction and local flux correction are examined separately to establish what restoring an integral can, and cannot, resolve.
 
-\revadd{We compare nearest-neighbor Taylor interpolation (NN), barycentric interpolation (BAR), continuous Galerkin projection (GP), and conservative control-volume transfer (CV) in a vertex-centered finite-volume solver. The unsteady calculations advance in time with the second-order backward differentiation formula (BDF2). An exact identity relates errors in its two stored states to the change in the time-step residual. We distinguish this identity from the additional assumptions needed to predict the computed state and load response. Global integral correction and local flux correction are examined separately to establish what restoring an integral can, and cannot, resolve.}
-
-\revdel{The \authorcomment{[C3] (numerical)} \revdel{experiments}\revadd{numerical tests} progress from smooth and discontinuous static fields to repeated remeshing of a Riemann problem, controlled airfoil restarts, and repeated-remeshing airfoil calculations. Fixed-body \authorcomment{[C4] (maybe Steady instead of fixed body?)} Reynolds-averaged Navier--Stokes (RANS) calculations extend the assessment to turbulence transport and viscous loads. All tests use prescribed remeshing on fixed physical domains and independently computed reference solutions; they do not assess the choice of an adaptive mesh. Section~\ref{sec:numerical-framework} describes the transfer methods. The BDF2 analysis then connects history-state errors to the restart response, and each \authorcomment{[C5] (I don't think I like you naming the test cases as "experiments")} \revdel{experimental}\revadd{test-case} subsection presents its setup, results, and interpretation together.}
-
-\revadd{The numerical tests progress from smooth and discontinuous static fields to repeated remeshing of a Riemann problem, controlled airfoil restarts, and repeated-remeshing airfoil calculations. Time-dependent Reynolds-averaged Navier--Stokes (RANS) calculations on a stationary airfoil extend the assessment to turbulence transport and viscous loads. These calculations start from steady reference solutions, but their response after remeshing evolves in time. All tests use prescribed remeshing on fixed physical domains and independently computed reference solutions; they do not assess the choice of an adaptive mesh. Section~\ref{sec:numerical-framework} describes the transfer methods. The BDF2 analysis then connects history-state errors to the restart response, and each test-case subsection presents its setup, results, and interpretation together.}
+The \revdel{experiments}\revadd{numerical tests}\authorcomment{[C3] (numerical)} progress from smooth and discontinuous static fields to repeated remeshing of a Riemann problem, controlled airfoil restarts, and repeated-remeshing airfoil calculations. \revdel{Fixed-body}\revadd{Unsteady}\authorcomment{[C4] (maybe Steady instead of fixed body?)} Reynolds-averaged Navier--Stokes (RANS) calculations \revadd{on a stationary airfoil} extend the assessment to turbulence transport and viscous loads. All tests use prescribed remeshing on fixed physical domains and independently computed reference solutions; they do not assess the choice of an adaptive mesh. Section~\ref{sec:numerical-framework} describes the transfer methods. The BDF2 analysis then connects history-state errors to the restart response, and each \revdel{experimental}\revadd{test-case}\authorcomment{[C5] (I don't think I like you naming the test cases as "experiments")} subsection presents its setup, results, and interpretation together.
 
 
 \section{Transferring a solution between meshes}
 \label{sec:numerical-framework}
 
-\revdel{The transfer methods differ in how they compute values on the target mesh. NN and BAR interpolate from nearby source values; GP and CV solve coupled systems based on integrals. Each method can then apply limiting, boundary conditions, and corrections for positive density and internal energy. We distinguish the field before these operations from the field passed to the flow solver. Method suffixes give nominal accuracy order rather than polynomial degree: BAR2 is second order, and GP2 and CV2 use piecewise-linear fields. Global correction (GC) adjusts a domain integral after transfer \authorcomment{[C6] (Do we need to say this now?)}.}
-
-\revadd{The transfer methods differ in how they compute values on the target mesh. NN and BAR interpolate from nearby source values; GP and CV solve coupled systems based on integrals. The next four subsections define these base transfers. We then discuss how limiting, conservation corrections, boundary conditions, and positivity requirements modify their output in Secs.~\ref{sec:global-correction}--\ref{sec:local-flux-correction}. Method suffixes give nominal accuracy order rather than polynomial degree: BAR2 is second order, and GP2 and CV2 use piecewise-linear fields.}
+The transfer methods differ in how they compute values on the target mesh. NN and BAR interpolate from nearby source values; GP and CV solve coupled systems based on integrals. Each method can then apply limiting, boundary conditions, and corrections for positive density and internal energy. We distinguish the field before these operations from the field passed to the flow solver. Method suffixes give nominal accuracy order rather than polynomial degree: BAR2 is second order, and GP2 and CV2 use piecewise-linear fields. \revdel{Global correction (GC) adjusts a domain integral after transfer.}\authorcomment{[C6] (Do we need to say this now?)}
 
 \subsection{Stored variables and reconstructed derivatives}
 \label{sec:derivative-reconstruction}
 
-\revdel{The source mesh $A$ and target mesh $B$ cover the same discretized domain $\Omega$ in spatial dimension $d$. A mesh $M$ has $n_M$ solver vertices. Vertex $i$ has position $\boldsymbol x_i^M$ and a surrounding median-dual control volume $C_i^M$ of positive measure $w_i^M=|C_i^M|$. The symbol $|C|$ denotes area or volume, and $\dd x$ the corresponding integration measure. Vertex indices run over the mesh named in the expression unless a different range is stated \authorcomment{[C7] (what do you mean? Not clear)}.}
+The source mesh $A$ and target mesh $B$ cover the same discretized domain $\Omega$ in spatial dimension $d$. A mesh $M$ has $n_M$ solver vertices. Vertex $i$ has position $\boldsymbol x_i^M$ and a surrounding median-dual control volume $C_i^M$ of positive measure $w_i^M=|C_i^M|$. The symbol $|C|$ denotes area or volume, and $\dd x$ the corresponding integration measure. \revdel{Vertex indices run over the mesh named in the expression unless a different range is stated}\revadd{For mesh $M$, vertex indices range from $1$ to $n_M$.} \authorcomment{[C7] (what do you mean? Not clear)}
 
-\revadd{The source mesh $A$ and target mesh $B$ cover the same discretized domain $\Omega$ in spatial dimension $d$. A mesh $M$ has $n_M$ solver vertices. Vertex $i$ has position $\boldsymbol x_i^M$ and a surrounding median-dual control volume $C_i^M$ of positive measure $w_i^M=|C_i^M|$. The symbol $|C|$ denotes area or volume, and $\dd x$ the corresponding integration measure. An index on mesh $M$ runs from $1$ to $n_M$: for example, $i=1,\ldots,n_A$ on the source mesh and $j=1,\ldots,n_B$ on the target mesh.}
-
-\revdel{The solver state $U_M$ is stacked vertex by vertex, with $n_U$ transported variables per vertex. Its finite-volume mass matrix is $M_M=\operatorname{diag}(w_i^M)\otimes I_{n_U}$, where $I_{n_U}$ is the identity on the state components and $\otimes$ denotes the Kronecker product. A superscript $T$ means transpose. For a scalar component $\phi$, the nodal vector is $\phi_M=(\phi_{M,i})_{i=1}^{n_M}$ \authorcomment{[C8] (nodal vector of what? Not clear this notation, at least to me. Is it std notation for indicating a vector?)}, and its discrete integral is}
-
-\revadd{The solver stores $n_U$ transported variables at each vertex. The vector $U_M$ lists all components at vertex 1, followed by all components at vertex 2, and so on. Its finite-volume mass matrix is $M_M=\operatorname{diag}(w_i^M)\otimes I_{n_U}$, where $I_{n_U}$ is the identity on the state components and $\otimes$ denotes the Kronecker product. A superscript $T$ means transpose. For one scalar variable $\phi$, such as density, $\phi_{M,i}$ denotes its value at vertex $i$. The column vector $\phi_M=(\phi_{M,1},\ldots,\phi_{M,n_M})^T$ collects these values over the mesh\authorcomment{[C8-2] (Ok, now I think it is too much of an explanation.)}. Its discrete integral is}
+The solver state $U_M$ is stacked vertex by vertex, with $n_U$ transported variables per vertex. \revdel{Its finite-volume mass matrix is $M_M=\operatorname{diag}(w_i^M)\otimes I_{n_U}$, where $I_{n_U}$ is the identity on the state components and $\otimes$ denotes the Kronecker product.} A superscript $T$ means transpose. For a scalar component $\phi$, \revdel{the nodal vector is $\phi_M=(\phi_{M,i})_{i=1}^{n_M}$}\revadd{$\phi_M=(\phi_{M,1},\ldots,\phi_{M,n_M})^T$ collects its vertex values} \authorcomment{[C8] (nodal vector of what? Not clear this notation, at least to me. Is it std notation for indicating a vector?)} \authorcomment{[C8-2] (Ok, now I think it is too much of an explanation.)}, and its discrete integral is
 \begin{equation}
  Q_M(\phi_M)=\sum_{i=1}^{n_M}w_i^M\phi_{M,i}.
  \label{eq:fv-discrete-integral}
 \end{equation}
-\revdel{For a full state \authorcomment{[C9] ($U_M$)}, $Q_M(U_M)$ means the vector of these integrals, one per transported component. Thus $Q_M(U_M)=(\bm1_{n_M}^{T}\otimes I_{n_U})M_MU_M$, where $\bm1_{n_M}$ is the vector of $n_M$ ones \authorcomment{[C10] (the phrasing aroun the vector of ones is slightly confusing)}.}
-
-\revadd{For the full state vector $U_M$, $Q_M(U_M)$ contains one integral per transported variable: mass for density, each momentum integral for the corresponding momentum component, and total energy for total-energy density\authorcomment{[C10-2] (total-energy density?)}. In matrix form, $Q_M(U_M)=(\bm1_{n_M}^{T}\otimes I_{n_U})M_MU_M$, where $\bm1_{n_M}=(1,\ldots,1)^T\in\mathbb R^{n_M}$. Multiplication by this row-sum operator adds the weighted vertex values separately for each component.}
-\authorcomment{[C11-2] (Nah, I still don't understand why do we need the vector of ones. Maybe we should simply remove the definition of the matrix form of Q.)}
+\revdel{For a full state }\revadd{For the full state $U_M$ }\authorcomment{[C9] ($U_M$)}, $Q_M(U_M)$ means the vector of these integrals, one per transported component. \revdel{Thus $Q_M(U_M)=(\bm1_{n_M}^{T}\otimes I_{n_U})M_MU_M$, where $\bm1_{n_M}$ is the vector of $n_M$ ones.} \authorcomment{[C10] (the phrasing aroun the vector of ones is slightly confusing)} \authorcomment{[C11-2] (Nah, I still don't understand why do we need the vector of ones. Maybe we should simply remove the definition of the matrix form of Q.)}
 
 For a nonzero source integral, define the signed relative integral change as $e_Q(\phi_A,\phi_B)=[Q_B(\phi_B)-Q_A(\phi_A)]/Q_A(\phi_A)$. Static and RANS transfer diagnostics use this normalization.
 
-\revdel{Mean-flow transfer acts on density $\rho$, momentum density $\rho\boldsymbol u$, and total-energy density $\rho E$. Here $\boldsymbol u$ is velocity, with Cartesian components $(u,v)$ in two dimensions, and $E$ is specific total energy. Pressure $p$ and temperature $T$ are primitive variables; $R_{\mathrm g}$ is the gas constant and $\gamma$ the heat-capacity ratio \authorcomment{[C11] (All of these are not in these equations, so why are you defining them?)}. All methods supply values at the solver vertices, not control-volume averages.}
-
-\revadd{Mean-flow transfer acts on density $\rho$, momentum density $\rho\boldsymbol u$, and total-energy density $\rho E$. Here $\boldsymbol u$ is velocity, with Cartesian components $(u,v)$ in two dimensions, and $E$ is specific total energy. All methods supply values at the solver vertices, not control-volume averages.}
+Mean-flow transfer acts on density $\rho$, momentum density $\rho\boldsymbol u$, and \revdel{total-energy density $\rho E$}\revadd{total energy per unit volume $\rho E$\authorcomment{[C10-2] (total-energy density?)}}. Here $\boldsymbol u$ is velocity, with Cartesian components $(u,v)$ in two dimensions, and \revdel{$E$ is specific total energy}\revadd{$E$ is total energy per unit mass}. \revdel{Pressure $p$ and temperature $T$ are primitive variables; $R_{\mathrm g}$ is the gas constant and $\gamma$ the heat-capacity ratio.} \authorcomment{[C11] (All of these are not in these equations, so why are you defining them?)} All methods supply values at the solver vertices, not control-volume averages.
 
 Higher-order methods also need local slopes and curvature. Weighted least squares reconstructs them from neighboring source values:
 \begin{equation}
@@ -282,14 +267,14 @@ The same weights define BAR2 and its gradient-corrected extension:
  &=\sum_r\lambda_r\left[\phi_{A,i_r}
        +\tfrac12\boldsymbol g_{i_r}\cdot(\boldsymbol x_j^B-\boldsymbol x_{i_r}^A)\right].\label{eq:bar3}
 \end{align}
-\revdel{BAR2 reproduces affine fields, meaning a linear function plus a constant, and stays within the values at the containing-simplex vertices \authorcomment{[C12] (not really scientifical way of phrasing it. Maybe better saying that it creates no new maxima or minima?)}. For a quadratic field with exact vertex gradients, the half-gradient term cancels the interpolation remainder, giving BAR3 third-order consistency \authorcomment{[C13] (Is it something that is well-known? If yes, is there a reference to add here? Otherwise we have to demonstrate it.)}. Shared values and gradients make the interpolant continuous across conforming simplex interfaces. Neither method constrains the source-to-target integral.}
+BAR2 reproduces affine fields, meaning a linear function plus a constant, and \revdel{stays within the values at the containing-simplex vertices}\revadd{introduces no new maximum or minimum relative to the containing-simplex vertex values, because its nonnegative weights sum to one} \authorcomment{[C12] (not really scientifical way of phrasing it. Maybe better saying that it creates no new maxima or minima?)}. For a quadratic field with exact vertex gradients, the half-gradient term cancels the interpolation remainder, giving BAR3 third-order consistency \authorcomment{[C13] (Is it something that is well-known? If yes, is there a reference to add here? Otherwise we have to demonstrate it.)}. Shared values and gradients make the interpolant continuous across conforming simplex interfaces. Neither method constrains the source-to-target integral.
 
-\revadd{BAR2 reproduces affine fields (a linear function plus a constant). Because its barycentric weights are nonnegative and sum to one, its value lies between the smallest and largest containing-simplex vertex values; it therefore introduces no new maximum or minimum relative to those vertices. BAR3 also reproduces quadratic fields when the supplied vertex gradients are exact. To see this, let $q$ be a quadratic field, let $\boldsymbol x=\boldsymbol x_j^B$, and write $\boldsymbol d_r=\boldsymbol x-\boldsymbol x_{i_r}^A$. With constant Hessian $\mathcal H_q$, the exact Taylor identities are
+\revadd{For completeness, let $q$ be a quadratic field with constant Hessian $\mathcal H_q$, let $\boldsymbol x=\boldsymbol x_j^B$, and set $\boldsymbol d_r=\boldsymbol x-\boldsymbol x_{i_r}^A$. Exact Taylor expansion gives
 \begin{align*}
 q(\boldsymbol x_{i_r}^A)&=q(\boldsymbol x)-\nabla q(\boldsymbol x)\cdot\boldsymbol d_r+\tfrac12\boldsymbol d_r^T\mathcal H_q\boldsymbol d_r,\\
 \nabla q(\boldsymbol x_{i_r}^A)&=\nabla q(\boldsymbol x)-\mathcal H_q\boldsymbol d_r.
 \end{align*}
-Substitution in Eq.~\eqref{eq:bar3} gives $q(\boldsymbol x)-\tfrac12\nabla q(\boldsymbol x)\cdot\sum_r\lambda_r\boldsymbol d_r=q(\boldsymbol x)$, since the barycentric coordinate identity makes the sum vanish. For a smooth nonquadratic field, the Taylor remainder is $O(h^3)$ on a shape-regular simplex; an $O(h^2)$ vertex-gradient error also contributes only $O(h^3)$ because it is multiplied by an $O(h)$ displacement. This explains the nominal third-order consistency under the derivative and mesh assumptions stated above. Shared values and gradients make the interpolant continuous across conforming simplex interfaces. Neither BAR2 nor BAR3 constrains the source-to-target integral.}
+Substituting these expressions into Eq.~\eqref{eq:bar3} gives $q(\boldsymbol x)-\tfrac12\nabla q(\boldsymbol x)\cdot\sum_r\lambda_r\boldsymbol d_r=q(\boldsymbol x)$, because the barycentric coordinate identity makes the sum zero. For a smooth field on a shape-regular simplex, the Taylor remainder is $O(h^3)$; an $O(h^2)$ gradient error also contributes $O(h^3)$ when multiplied by the $O(h)$ displacement.}
 
 \revdel{\authorcomment{[C14] (Why is this introduced here? Maybe we need to have another subsection where we apply the corrections terms to the interpolated solution: limiting, total conservation, local conservation and what else?)} Limiting reduces reconstructed slopes or curvature to control new extrema. The limiter factor $\theta_i$ multiplies the Taylor correction. Choosing $0\leq\theta_i\leq1$ reduces NN2 or NN3 to NN1 when $\theta_i=0$, but reduces BAR3 to BAR2. Smooth-field verification uses no limiter. Discontinuous-field tests also use Barth--Jespersen (BJ) limiting~\cite{BarthJespersen1989}. A limiter based on linear increments need not bound a quadratic reconstruction everywhere, so bounds are checked on the final transferred values \authorcomment{[C15] (what?)}.}
 
@@ -297,24 +282,20 @@ Substitution in Eq.~\eqref{eq:bar3} gives $q(\boldsymbol x)-\tfrac12\nabla q(\bo
 \label{sec:galerkin-projection}
 \label{sec:simplicial-representation}
 
-\revdel{Galerkin projection chooses the target field that best matches the reconstructed source field in the $L_2$ norm\authorcomment{[C16] (No references on this? Should we say that it is a finite-element derived method and that can also be applied to FVM frameworks as done here? Is it true and worth saying?)}. It solves for the target values together rather than interpolating each vertex independently. Let $\phi_A^h$ be the piecewise-polynomial source field and $V_B^\ell$ the space of continuous Lagrange functions of polynomial degree $\ell$ on the target simplicial mesh. The superscript $h$ denotes a reconstructed field\authorcomment{[C17] (what do you mean by reconstructed?)}. For scalar fields $f_1,f_2$, the inner product is $(f_1,f_2)_{L_2(\Omega)}=\int_\Omega f_1f_2\dd x$; the associated norm is $\|f_1\|_{L_2(\Omega)}=(f_1,f_1)_{L_2(\Omega)}^{1/2}$. The target field $\phi_B^h\in V_B^\ell$ satisfies}
-
-\revadd{Galerkin projection is an $L_2$ projection formulated with finite-element basis and test functions~\cite{FarrellMaddison2011,JiaoHeath2004}. Here those functions provide an auxiliary field representation for transfer; the flow solver itself remains finite volume. The projection computes all target coefficients together by minimizing the integrated squared difference between source and target fields. Let $\phi_A^h$ denote a piecewise-polynomial field built from the source vertex values and, for quadratic reconstruction, their reconstructed derivatives. Thus reconstruction supplies values between the solver vertices; the superscript $h$ identifies this mesh-dependent field. Let $V_B^\ell$ be the space of continuous Lagrange functions of polynomial degree $\ell$ on the target simplicial mesh. For scalar fields $f_1,f_2$, define $(f_1,f_2)_{L_2(\Omega)}=\int_\Omega f_1f_2\dd x$ and $\|f_1\|_{L_2(\Omega)}=(f_1,f_1)_{L_2(\Omega)}^{1/2}$. Minimizing $\tfrac12\|\phi_B^h-\phi_A^h\|_{L_2(\Omega)}^2$ over $\phi_B^h\in V_B^\ell$ gives the stationarity condition}
+\revdel{Galerkin projection chooses the target field that best matches the reconstructed source field in the $L_2$ norm}\revadd{Galerkin projection chooses the target field that best matches the reconstructed source field in the $L_2$ norm~\cite{FarrellMaddison2011,JiaoHeath2004}}\authorcomment{[C16] (No references on this? Should we say that it is a finite-element derived method and that can also be applied to FVM frameworks as done here? Is it true and worth saying?)}. \revadd{This transfer uses finite-element basis functions, while the flow equations here remain finite volume.} It solves for the target values together rather than interpolating each vertex independently. Let $\phi_A^h$ be the piecewise-polynomial source field and $V_B^\ell$ the space of continuous Lagrange functions of polynomial degree $\ell$ on the target simplicial mesh. \revdel{The superscript $h$ denotes a reconstructed field}\revadd{The superscript $h$ denotes the piecewise-polynomial field built from the source vertex values; GP3 also uses their reconstructed derivatives}\authorcomment{[C17] (what do you mean by reconstructed?)}. For scalar fields $f_1,f_2$, the inner product is $(f_1,f_2)_{L_2(\Omega)}=\int_\Omega f_1f_2\dd x$; the associated norm is $\|f_1\|_{L_2(\Omega)}=(f_1,f_1)_{L_2(\Omega)}^{1/2}$. The target field $\phi_B^h\in V_B^\ell$ satisfies
 \begin{equation}
  (\phi_B^h-\phi_A^h,\xi_B)_{L_2(\Omega)}=0
  \quad\text{for every }\xi_B\in V_B^\ell.
  \label{eq:galerkin-orthogonality}
 \end{equation}
-\revdel{Thus the transfer error has zero integral when weighted by any target test function. This condition gives the best $L_2$ approximation of $\phi_A^h$ in $V_B^\ell$~\cite{FarrellMaddison2011,JiaoHeath2004}. The test function $\xi_B$ is arbitrary in that target space. Let $N_j^B$ be its nodal basis functions and $N_B^{\mathrm{FE}}$ their number. The target coefficient vector $z_B=(z_{B,j})_{j=1}^{N_B^{\mathrm{FE}}}$ defines $\phi_B^h=\sum_{j=1}^{N_B^{\mathrm{FE}}}z_{B,j}N_j^B$. The projection equations are \authorcomment{[C18] (coming from where?)}}
-
-\revadd{The derivative of this objective in any target direction $\xi_B$ is $(\phi_B^h-\phi_A^h,\xi_B)_{L_2(\Omega)}$, so Eq.~\eqref{eq:galerkin-orthogonality} is its zero-derivative condition. Let $N_j^B$, $j=1,\ldots,N_B^{\mathrm{FE}}$, be the nodal basis of the target space, and let $z_B=(z_{B,j})_{j=1}^{N_B^{\mathrm{FE}}}$ be its coefficient vector. Substitute $\phi_B^h=\sum_j z_{B,j}N_j^B$ into that condition and choose $\xi_B=N_i^B$ in turn. Then $\sum_j(\int_\Omega N_i^BN_j^B\dd x)z_{B,j}=\int_\Omega N_i^B\phi_A^h\dd x$, which gives}
+Thus the transfer error has zero integral when weighted by any target test function. This condition gives the best $L_2$ approximation of $\phi_A^h$ in $V_B^\ell$~\cite{FarrellMaddison2011,JiaoHeath2004}. The test function $\xi_B$ is arbitrary in that target space. Let $N_j^B$ be its nodal basis functions and $N_B^{\mathrm{FE}}$ their number. The target coefficient vector \revdel{$z_B=(z_{B,j})_{j=1}^{N_B^{\mathrm{FE}}}$}\revadd{$z_B=(z_{B,1},\ldots,z_{B,N_B^{\mathrm{FE}}})^T$} defines $\phi_B^h=\sum_{j=1}^{N_B^{\mathrm{FE}}}z_{B,j}N_j^B$. \revdel{The projection equations are}\revadd{Taking $\xi_B=N_i^B$ in Eq.~\eqref{eq:galerkin-orthogonality} and substituting the basis expansion gives $\sum_j(\int_\Omega N_i^BN_j^B\dd x)z_{B,j}=\int_\Omega N_i^B\phi_A^h\dd x$. In matrix form,} \authorcomment{[C18] (coming from where?)}
 \begin{equation}
  H_Bz_B=b,\qquad
  (H_B)_{ij}=\int_\Omega N_i^BN_j^B\dd x,
  \qquad b_i=\int_\Omega N_i^B\phi_A^h\dd x.
  \label{eq:galerkin-system}
 \end{equation}
-The consistent Galerkin mass matrix $H_B$ is sparse and positive definite, and $b$ is the cross-mesh load vector. The matrix couples basis functions that share target elements. It is different from the diagonal finite-volume matrix $M_B$ used in time integration.
+The consistent Galerkin mass matrix $H_B$ is sparse and positive definite, and $b$ is the cross-mesh load vector. The matrix couples basis functions that share target elements. \revdel{It is different from the diagonal finite-volume matrix $M_B$ used in time integration.}
 
 The two meshes generally do not share element boundaries. A target element can overlap several source elements, across which the source polynomial changes. Integration must account for these intersections:
 \begin{equation}
@@ -322,60 +303,55 @@ The two meshes generally do not share element boundaries. A target element can o
       \int_{K_A\cap K_B}N_i^B\phi_A^h\dd x.
  \label{eq:galerkin-load-intersections}
 \end{equation}
-Here $K_A$ and $K_B$ are source and target simplices, and $|K_A\cap K_B|$ is their intersection measure. Their intersections form a common refinement. Both fields have one polynomial expression on each intersection, allowing exact polynomial quadrature: degree two for $P^1$/$P^1$ transfer and degree four for $P^2$/$P^2$ transfer on affine simplices~\cite{Dunavant1985,Keast1986}. The intersections must cover the domain without gaps or overlap. This geometric integration and the coupled solve distinguish GP from point interpolation.
-
-\revdel{GP2 uses piecewise-linear ($P^1$) source and target fields. GP3 reconstructs a quadratic ($P^2$) source field, including internal edge values, and solves for a complete quadratic target field. The solver receives only the original-vertex values. Restricting the quadratic field in this way can change its finite-volume integral, as illustrated in Eq.~\eqref{eq:vertex-restriction-counterexample}\authorcomment{[C19] (using here an equation which is much later? Maybe we should hint to this now and leave the discussion to where the equation actually is?)}. Here $P^\ell$ means polynomials of total degree at most $\ell$, while $Q^\ell$ permits degree at most $\ell$ in each coordinate. Mixed-element meshes use $P^\ell$ on simplicial subdivisions. The coefficient vector $z_B$ contains every finite-element degree of freedom; the solver vector $\phi_B$ retains only its original-vertex entries. Under smoothness and mesh-stability assumptions, the nominal orders are two and three; the accuracy of the vertex values is tested separately.}
-
-\revadd{GP2 uses piecewise-linear ($P^1$) source and target fields. GP3 reconstructs a quadratic ($P^2$) source field, including internal edge values, and solves for a complete quadratic target field. The solver receives only its original-vertex values. This last restriction matters for conservation; Sec.~\ref{sec:global-correction} explains the distinction with a worked example. Here $P^\ell$ means polynomials of total degree at most $\ell$, while $Q^\ell$ permits degree at most $\ell$ in each coordinate. Mixed-element meshes use $P^\ell$ on simplicial subdivisions. The coefficient vector $z_B$ contains every finite-element degree of freedom; the solver vector $\phi_B$ retains only its original-vertex entries. Under smoothness and mesh-stability assumptions, the nominal orders are two and three; the accuracy of the vertex values is tested separately.}
+Here $K_A$ and $K_B$ are source and target simplices, and $|K_A\cap K_B|$ is their intersection measure. Their intersections form a common refinement\revadd{ (Figure~\ref{fig:transfer-geometry}a)}. Both fields have one polynomial expression on each intersection, allowing exact polynomial quadrature: degree two for $P^1$/$P^1$ transfer and degree four for $P^2$/$P^2$ transfer on affine simplices~\cite{Dunavant1985,Keast1986}. The intersections must cover the domain without gaps or overlap. This geometric integration and the coupled solve distinguish GP from point interpolation.
 
 
 \begin{figure}[pos=htbp]
 \centering
-\begin{tikzpicture}[scale=1.2,font=\small, every node/.style={text=RevisionPurple}]
+\revadd{\begin{tikzpicture}[scale=1.35,font=\small]
 \begin{scope}
-\fill[RevisionPurple!14] (0,0)--(2,0)--(1,1)--cycle;
-\draw[thick] (0,0) rectangle (2,2);
-\draw[orange!85!black,thick] (0,0)--(2,2);
-\draw[blue!70!black,dashed,thick] (0,2)--(2,0);
-\fill (1,1) circle (1.1pt);
-\node[align=center] at (1,2.45) {(a) GP: overlapping meshes};
-\node[align=center,text width=4.7cm] at (1,-.65) {Solid diagonal: source edge.\\Dashed diagonal: target edge.\\Shading: one integration piece.};
+\fill[RevisionPurple!15] (0,0)--(2.1,0)--(1.05,1.05)--cycle;
+\draw[thick] (0,0) rectangle (2.1,2.1);
+\draw[orange!85!black,thick] (0,0)--(2.1,2.1);
+\draw[blue!70!black,dashed,thick] (0,2.1)--(2.1,0);
+\fill (1.05,1.05) circle (1.2pt);
+\node[align=center] at (1.05,2.55) {(a) GP: intersecting meshes};
+\node[align=center,text width=4.3cm] at (1.05,-.65) {Solid diagonal: source edge.\\Dashed diagonal: target edge.\\Shading: one integration piece.};
 \end{scope}
-\begin{scope}[xshift=5cm]
-\coordinate (A) at (0,0);\coordinate (B) at (2,0);\coordinate (C) at (2.3,1.6);\coordinate (D) at (.2,2);\coordinate (O) at (1.125,.9);
-\fill[RevisionPurple!14] (A)--(1,0)--(O)--(.1,1)--cycle;
+\begin{scope}[xshift=5.2cm]
+\coordinate (A) at (0,0);\coordinate (B) at (2.1,0);
+\coordinate (C) at (2.4,1.7);\coordinate (D) at (.2,2.1);
+\coordinate (O) at (1.175,.95);
+\fill[RevisionPurple!15] (A)--(1.05,0)--(O)--(.1,1.05)--cycle;
 \draw[thick] (A)--(B)--(C)--(D)--cycle;
 \foreach \P in {A,B,C,D}{\draw[gray] (\P)--(O);\fill (\P) circle (1.5pt);}
-\foreach \P in {(1,0),(2.15,.8),(1.25,1.8),(.1,1)}{\draw[blue!70!black,dashed] \P--(O);}
-\fill[RevisionPurple] (O) circle (2pt);
-\node[right,font=\scriptsize] at (O) {dependent center};
-\node at (.45,.35) {$C_k^M\cap K$};
-\node[below left] at (A) {$k$};
-\node[align=center] at (1.1,2.45) {(b) CV: one quadrilateral};
-\node[align=center,text width=4.7cm] at (1.1,-.65) {Gray lines: linear subtriangles.\\Dashed lines: dual boundaries.\\Only black vertices are unknowns.};
+\draw[blue!70!black,dashed] (1.05,0)--(O)--(2.25,.85);
+\draw[blue!70!black,dashed] (1.3,1.9)--(O)--(.1,1.05);
+\fill (O) circle (2pt);
+\node[above right,fill=white,inner sep=1pt,font=\scriptsize] at (O) {dependent center};
+\node at (.45,.3) {$C_k^M\cap K$};\node[below left] at (A) {$k$};
+\node[align=center] at (1.15,2.55) {(b) CV: a quadrilateral};
+\node[align=center,text width=4.3cm] at (1.15,-.65) {Gray lines: linear subtriangles.\\Dashed lines: dual boundaries.\\Only outer vertices are unknowns.};
 \end{scope}
-\end{tikzpicture}
-\caption{\revadd{Two geometric constructions used by integral transfer. (a) Source and target edges subdivide the same square into a common refinement; each integration piece has one source and one target polynomial. (b) A quadrilateral is subdivided around its vertex-average center. The center field value is dependent on the original vertex values. The shaded median-dual piece belongs to vertex $k$ and differs from a subtriangle. These are schematic geometries, not meshes from the flow calculations.}}
+\end{tikzpicture}}
+\caption{\revadd{Geometry used to integrate the source field. (a) Source and target element intersections provide pieces on which both polynomials have one expression. (b) The shaded median-dual piece belongs to vertex $k$. It differs from a reconstruction subtriangle. The center field value depends on the original vertex values; no new solver unknown is added. These are explanatory geometries, not meshes from the flow cases.}}
 \label{fig:transfer-geometry}
 \end{figure}
+
+GP2 uses piecewise-linear ($P^1$) source and target fields. GP3 reconstructs a quadratic ($P^2$) source field, including internal edge values, and solves for a complete quadratic target field. The solver receives only the original-vertex values. Restricting the quadratic field in this way can change its finite-volume integral, \revdel{as illustrated in Eq.~\eqref{eq:vertex-restriction-counterexample}}\revadd{as discussed in Sec.~\ref{sec:galerkin-vertex-output}}\authorcomment{[C19] (using here an equation which is much later? Maybe we should hint to this now and leave the discussion to where the equation actually is?)}. Here $P^\ell$ means polynomials of total degree at most $\ell$, while $Q^\ell$ permits degree at most $\ell$ in each coordinate. Mixed-element meshes use $P^\ell$ on simplicial subdivisions. The coefficient vector $z_B$ contains every finite-element degree of freedom; the solver vector $\phi_B$ retains only its original-vertex entries. Under smoothness and mesh-stability assumptions, the nominal orders are two and three; the accuracy of the vertex values is tested separately.
 
 \subsection{Conservative control-volume transfer}
 \label{sec:cv-transfer}
 
-\revdel{The CV method matches source and target field integrals over each target control volume. For an element $K$ of mesh $M$, the portion of vertex $i$'s control volume inside it is $C_i^M\cap K$. Both meshes represent the field as $\phi_M^h=\sum_k\phi_{M,k}\psi_k^M$. On triangles and tetrahedra, $\psi_k^M=N_k^M$ is the usual $P^1$ hat function. A quadrilateral is divided by joining its edges to the vertex-average center. The value at that center is a weighted combination of the original nodal values, rather than an independent unknown. Nonsimplicial three-dimensional elements use analogous centered subdivisions. These dependent values are chosen so that}
-
-\revadd{The CV method matches source and target field integrals over each target control volume. Its field representation must first agree with the integral used by the finite-volume solver. Otherwise, conserving the reconstructed field integral need not conserve the weighted nodal total $Q_M$. For an element $K$ of mesh $M$, the part of vertex $k$'s control volume inside it is $C_k^M\cap K$. Write $\phi_M^h=\sum_k\phi_{M,k}\psi_k^M$ on mesh $M$. On triangles and tetrahedra, the usual linear hat functions already have the required integrals. For a quadrilateral, we instead join its vertices to the vertex-average center and use a linear field on each resulting triangle. The center value is a weighted combination of the four solver values, not an additional unknown (Figure~\ref{fig:transfer-geometry}). Nonsimplicial three-dimensional elements use analogous centered subdivisions. The dependent center values are chosen so that}
-
+The CV method matches source and target field integrals over each target control volume. \revadd{The representation below is chosen so that integrating the field between vertices gives the same domain total as the solver's weighted vertex sum. }For an element $K$ of mesh $M$, the portion of vertex $i$'s control volume inside it is $C_i^M\cap K$. Both meshes represent the field as $\phi_M^h=\sum_k\phi_{M,k}\psi_k^M$. On triangles and tetrahedra, $\psi_k^M=N_k^M$ is the usual $P^1$ hat function. \revdel{A quadrilateral is divided by joining its edges to the vertex-average center.}\revadd{A quadrilateral is divided into triangles by joining its vertices to their average center (Figure~\ref{fig:transfer-geometry}b).} The value at that center is a weighted combination of the original nodal values, rather than an independent unknown. Nonsimplicial three-dimensional elements use analogous centered subdivisions. These dependent values are chosen so that
 \begin{equation}
  \int_K\psi_k^M\dd x=|C_k^M\cap K|
  \qquad\text{for every element $K$ and vertex $k$ of $M$.}
  \label{eq:cv-lumped-exact}
 \end{equation}
-\revdel{For a quadrilateral, vertex $k$ has center weight $|C_k^M\cap K|/|K|$. Summing over the elements gives $\int_\Omega\psi_k^M\dd x=w_k^M$ and therefore $\int_\Omega\phi_M^h\dd x=Q_M(\phi_M)$. The reconstructed field and the solver thus have the same domain integral on every supported element type. \authorcomment{[C20] (I think this whole discussion on element subdivision is a bit convoluted and is not clear why it is proposed. Also, maybe, it would benefit of actual visual representation? Same for GP too (the visual).)}}
+For a quadrilateral, vertex $k$ has center weight $|C_k^M\cap K|/|K|$. Summing over the elements gives $\int_\Omega\psi_k^M\dd x=w_k^M$ and therefore $\int_\Omega\phi_M^h\dd x=Q_M(\phi_M)$. The reconstructed field and the solver thus have the same domain integral \revdel{on every supported element type}\revadd{whenever Eq.~\eqref{eq:cv-lumped-exact} holds}. \authorcomment{[C20] (I think this whole discussion on element subdivision is a bit convoluted and is not clear why it is proposed. Also, maybe, it would benefit of actual visual representation? Same for GP too (the visual).)}
 
-\revadd{For a quadrilateral, vertex $k$ contributes the center weight $|C_k^M\cap K|/|K|$, where $K$ is the element. Summing Eq.~\eqref{eq:cv-lumped-exact} over elements gives $\int_\Omega\psi_k^M\dd x=w_k^M$ and hence $\int_\Omega\phi_M^h\dd x=Q_M(\phi_M)$. The subdivision is therefore a way to represent the field between solver vertices while making its integral agree with the solver total.}
-
-The source field interpolates nodal solver values continuously; it is not reconstructed from source-cell averages. Its domain integral equals $Q_A$, but its integral over an individual source control volume need not equal $w_i^A\phi_{A,i}$. Before limiting and boundary treatment, CV preserves the source integral over the whole domain and matches the reconstructed field integral over each target control volume. It does not preserve each source nodal content.
+The source field interpolates nodal solver values continuously; it is not reconstructed from source-cell averages. Its domain integral equals \revdel{$Q_A$}\revadd{$Q_A(\phi_A)$}, but its integral over an individual source control volume need not equal $w_i^A\phi_{A,i}$. Before limiting and boundary treatment, CV preserves the source integral over the whole domain and matches the reconstructed field integral over each target control volume. It does not preserve each source nodal content.
 
 On parallelograms, the center weights give the arithmetic vertex average and reproduce affine fields. On quadrilaterals that remain distorted, they do not: the weights enforce Eq.~\eqref{eq:cv-lumped-exact} at the expense of exact affine reproduction.
 
@@ -402,103 +378,94 @@ The right-hand-side vector $\tilde b$ contains integrals of the piecewise-linear
 \end{equation}
 Here $K_B$ ranges over target elements incident to $j$, and $K_A$ over source subelements. In these calculations, the meshes cover the same polygonal domain and the uncovered measure is below $10^{-20}$ of the domain. Equation~\eqref{eq:cv-system} is solved to a relative residual tolerance of $10^{-15}$. Its unknowns are nodal values, not the control-volume averages $\tilde b_j/w_j^B$.
 
-Summing Eq.~\eqref{eq:cv-condition} over the target control volumes, which tile $\Omega$, and using the column sums of $\widetilde H_B$ gives
-\begin{equation}
- Q_B(\phi_B)=\bm1_{n_B}^{T}\widetilde H_B\phi_B=\bm1_{n_B}^{T}\tilde b
+Summing Eq.~\eqref{eq:cv-condition} over the target control volumes, which tile $\Omega$, \revdel{and using the column sums of $\widetilde H_B$ gives}\revadd{and using Eq.~\eqref{eq:cv-lumped-exact} gives}
+\revdel{\[
+Q_B(\phi_B)=\bm1_{n_B}^{T}\widetilde H_B\phi_B=\bm1_{n_B}^{T}\tilde b
    =\int_\Omega\phi_A^h\dd x=Q_A(\phi_A),
+\]}
+\revadd{\begin{equation}
+ \begin{aligned}
+ Q_B(\phi_B)&=\sum_{j=1}^{n_B}\int_{C_j^B}\phi_B^h\dd x
+ =\sum_{j=1}^{n_B}\tilde b_j\\
+ &=\int_\Omega\phi_A^h\dd x=Q_A(\phi_A).
+ \end{aligned}
  \label{eq:cv-global}
-\end{equation}
-\revdel{to within integration and solve tolerances. Locally, Eq.~\eqref{eq:cv-condition} matches $\int_{C_j^B}\phi_B^h\dd x$ to the source field integral over $C_j^B$\authorcomment{[C21] (not clear)}. This integral differs from the nodal content $w_j^B\phi_{B,j}$ by $(\widetilde H_B\phi_B)_j-w_j^B\phi_{B,j}$. These differences sum to zero but need not vanish individually. Transferring back to the same mesh, $B=A$, gives $\tilde b=\widetilde H_A\phi_A$ and recovers $\phi_A$. If both representations reproduce affine fields, uniqueness of Eq.~\eqref{eq:cv-system} also makes their transfer exact. CV2 is therefore nominally second order on simplicial meshes and quadrilaterals that remain parallelograms under refinement. Persistent quadrilateral distortion reduces the attainable order. No higher-order CV method is used.}
-
-\revadd{to within integration and solve tolerances. The local condition compares two integrals over the same target region $C_j^B$: one of the reconstructed source field and one of the reconstructed target field. It does not equate either integral to the single-vertex content $w_j^B\phi_{B,j}$. A linear target field inside $C_j^B$ also depends on neighboring vertex values; its integral is $(\widetilde H_B\phi_B)_j$. The difference $(\widetilde H_B\phi_B)_j-w_j^B\phi_{B,j}$ can be nonzero locally, although these differences sum to zero over the domain. Transfer back to the same mesh, $B=A$, gives $\tilde b=\widetilde H_A\phi_A$ and recovers $\phi_A$. If both representations reproduce affine fields, uniqueness of Eq.~\eqref{eq:cv-system} also makes their transfer exact. CV2 is therefore nominally second order on simplicial meshes and quadrilaterals that remain parallelograms under refinement. Persistent quadrilateral distortion reduces the attainable order. No higher-order CV method is used.}
+\end{equation}}
+to within integration and solve tolerances. Locally, Eq.~\eqref{eq:cv-condition} \revdel{matches $\int_{C_j^B}\phi_B^h\dd x$ to the source field integral over $C_j^B$}\revadd{equates $\int_{C_j^B}\phi_B^h\dd x$ and $\int_{C_j^B}\phi_A^h\dd x$, integrating the target and source reconstructed fields over the same target region}\authorcomment{[C21] (not clear)}. This integral differs from the nodal content $w_j^B\phi_{B,j}$ by $(\widetilde H_B\phi_B)_j-w_j^B\phi_{B,j}$. These differences sum to zero but need not vanish individually. Transferring back to the same mesh, $B=A$, gives $\tilde b=\widetilde H_A\phi_A$ and recovers $\phi_A$. If both representations reproduce affine fields, uniqueness of Eq.~\eqref{eq:cv-system} also makes their transfer exact. CV2 is therefore nominally second order on simplicial meshes and quadrilaterals that remain parallelograms under refinement. Persistent quadrilateral distortion reduces the attainable order. No higher-order CV method is used.
 
 On simplicial meshes, CV2 and GP2 use the same continuous $P^1$ source and target fields. Their test functions differ. GP2 weights the error by continuous hat functions, giving the best $L_2$ approximation and preserving the global field integral and coordinate moments. CV2 matches integrals over target control volumes and preserves the global finite-volume integral before limiting and boundary treatment. It generally preserves neither coordinate moments nor the minimum $L_2$ error. Both require a coupled solve: changing the mesh in one region can alter transferred values elsewhere. On quadrilaterals, their field representations also differ. GP2 triangulates without added vertices; CV2 uses a centered subdivision with dependent center values.
 
-\revdel{The CV recovery matrix is symmetric positive definite on triangular, strictly convex quadrilateral, and tetrahedral meshes\authorcomment{[C22] (said this already)}. Symmetry follows from the median-dual construction, and strict diagonal dominance gives positive definiteness on these element types. These properties do not generally extend to mixed three-dimensional cells. All numerical comparisons here are two-dimensional; persistent quadrilateral distortion is the main limitation on CV accuracy.}
+\revdel{The CV recovery matrix is symmetric positive definite on triangular, strictly convex quadrilateral, and tetrahedral meshes}\revadd{The symmetry established above and strict diagonal dominance make the CV recovery matrix positive definite on triangular, strictly convex quadrilateral, and tetrahedral meshes}\authorcomment{[C22] (said this already)}. \revdel{Symmetry follows from the median-dual construction, and strict diagonal dominance gives positive definiteness on these element types. }These properties do not generally extend to mixed three-dimensional cells. All numerical comparisons here are two-dimensional; persistent quadrilateral distortion is the main limitation on CV accuracy.
 
-\revadd{On triangular, strictly convex quadrilateral, and tetrahedral meshes, strict diagonal dominance, together with the symmetry established above, makes the CV recovery matrix positive definite. These properties do not generally extend to mixed three-dimensional cells. All numerical comparisons here are two-dimensional; persistent quadrilateral distortion is the main limitation on CV accuracy.}
+\revdel{CV2 denotes the limited transfer, and CV2-u the unlimited construction. Flow comparisons use the same bound-relaxation tolerance as GP2, $\tau=2\times10^{-3}$. Limiting, boundary conditions, and positivity corrections can change the unlimited field. Its conservation properties must therefore be checked again in the field actually used by the solver.}
 
-CV2 denotes the limited transfer, and CV2-u the unlimited construction. Flow comparisons use the same bound-relaxation tolerance as GP2, $\tau=2\times10^{-3}$. Limiting, boundary conditions, and positivity corrections can change the unlimited field. Its conservation properties must therefore be checked again in the field actually used by the solver.
-
-\subsection{\revdel{Conservation and bounds in the field used by the solver}\revadd{Corrections applied before restarting the solver}}
-\label{sec:global-correction}
+\subsection{\revdel{Conservation and bounds in the field used by the solver}\revadd{Field integrals and the solver integral}}
 \label{sec:galerkin-vertex-output}
-\label{sec:galerkin-limiter}
 
-\revdel{Galerkin projection preserves the integral of the complete finite-element field if the unconstrained target space contains constants. It also preserves coordinate moments represented in the test space. These statements follow from Eq.~\eqref{eq:galerkin-orthogonality}, but do not imply conservation over arbitrary finite-volume cells: a function that is one in a cell and zero elsewhere generally lies outside a continuous finite-element space. CV2 uses precisely these cell indicators in Eq.~\eqref{eq:cv-condition} and preserves the finite-volume total through Eq.~\eqref{eq:cv-global}. Neither the Galerkin mass-matrix inverse nor $\widetilde H_B^{-1}$ is local. Unchanged mesh geometry in one region does not guarantee unchanged transferred values there\authorcomment{[C23] (why are you re-stating all of this here?)}.}
+Galerkin projection preserves the integral of the complete finite-element field if the unconstrained target space contains constants. It also preserves coordinate moments represented in the test space. These statements follow from Eq.~\eqref{eq:galerkin-orthogonality}, but do not imply conservation over arbitrary finite-volume cells: a function that is one in a cell and zero elsewhere generally lies outside a continuous finite-element space. CV2 uses precisely these cell indicators in Eq.~\eqref{eq:cv-condition} and preserves the finite-volume total through Eq.~\eqref{eq:cv-global}. \revdel{Neither the Galerkin mass-matrix inverse nor $\widetilde H_B^{-1}$ is local. Unchanged mesh geometry in one region does not guarantee unchanged transferred values there.}\authorcomment{[C23] (why are you re-stating all of this here?)}
 
-\revadd{The base transfers do not automatically satisfy every requirement of a compressible-flow restart. Point interpolation may create new extrema or change a domain integral. Projection may preserve the integral of its complete field while the solver uses a different representation. Bound enforcement can itself change integrals, and boundary or thermodynamic constraints can require further changes. We first distinguish the two integrals, then describe limiting, global conservation correction, boundary treatment, and positivity repair. Section~\ref{sec:local-flux-correction} presents the alternative local correction.}
+For GP2, the field integral and the finite-volume integral agree when $w_i^M=\int_\Omega N_i^M\dd x$ on both meshes. This holds on simplicial meshes. It generally fails when a quadrilateral mesh is triangulated, because the hat-function integrals differ from the median-dual measures. CV2 enforces the corresponding equality through Eq.~\eqref{eq:cv-lumped-exact} \revdel{on every supported  element type}\revadd{for any subdivision satisfying that identity\authorcomment{[C24] (supported is just a matter of implementation, not of model.)}}. GP3 adds another difference: reconstructing a quadratic source field and then retaining only target vertices changes the representation. \revdel{Even an exact quadratic projection can then have a second-order finite-volume integral error (Eq.~\eqref{eq:vertex-restriction-counterexample})}\revadd{The next example shows that even an exact quadratic projection can then have a second-order finite-volume integral error}\authorcomment{[C25] (same as before, referencing before introducing, it feels out of place and not well connected to the text.)}. Third-order point-value accuracy does not imply third-order accuracy of the solver's integral.
 
-\revdel{For GP2, the field integral and the finite-volume integral agree when $w_i^M=\int_\Omega N_i^M\dd x$ on both meshes. This holds on simplicial meshes. It generally fails when a quadrilateral mesh is triangulated, because the hat-function integrals differ from the median-dual measures. CV2 enforces the corresponding equality through Eq.~\eqref{eq:cv-lumped-exact} on every supported \authorcomment{[C24] (supported is just a matter of implementation, not of model.)} element type. GP3 adds another difference: reconstructing a quadratic source field and then retaining only target vertices changes the representation. Even an exact quadratic projection can then have a second-order finite-volume integral error (Eq.~\eqref{eq:vertex-restriction-counterexample})\authorcomment{[C25] (same as before, referencing before introducing, it feels out of place and not well connected to the text.)}. Third-order point-value accuracy does not imply third-order accuracy of the solver's integral.}
-
-\subsubsection{\revadd{Field integrals and solver integrals}}
-
-\revadd{For GP, choosing the constant test function in Eq.~\eqref{eq:galerkin-orthogonality} preserves the complete field integral; coordinate test functions also preserve the represented coordinate moments. However, the solver evaluates $Q_M$ from vertex values. For GP2 these two integrals agree when $w_i^M=\int_\Omega N_i^M\dd x$ on both meshes, as on simplicial meshes. Triangulating a quadrilateral generally gives different basis-function integrals and median-dual weights. CV instead imposes their equality through Eq.~\eqref{eq:cv-lumped-exact}. GP3 has a separate issue: the quadratic field includes edge degrees of freedom that are discarded when only original-vertex values are passed to the solver. The following example isolates that representation change.}
-
-\revdel{A simple example shows why the two integrals differ\authorcomment{[C26] (Is this really needed? I feel like if yes, then a visual representation alongside could help.)}. On a uniform partition of $[0,1]$ into $N_{\mathrm{seg}}$ segments of length $h=1/N_{\mathrm{seg}}$, let $f(x)=x^2$ and $f_M$ be its vertex values. The median-dual weights are $h/2$ at the endpoints and $h$ at interior vertices. Equation~\eqref{eq:fv-discrete-integral} then gives}
-
-\revdel{Original compact result: $Q_M(f_M)=1/3+h^2/6$.}
-
-\revadd{Consider the exact field $f(x)=x^2$ on $[0,1]$ with a uniform mesh of $N_{\mathrm{seg}}$ segments and spacing $h=1/N_{\mathrm{seg}}$. A complete quadratic finite-element representation reproduces $f$ exactly, so its integral is $\int_0^1x^2\dd x=1/3$. If only the vertex samples $f(ih)=(ih)^2$ are retained, the solver uses median-dual weights $h/2$ at the two endpoints and $h$ at interior vertices. Thus its integral is the composite trapezoidal sum, not the exact integral of the quadratic field:}
-\revadd{\begin{equation}
- \begin{aligned}
+\revdel{A simple example shows why the two integrals differ}\revadd{The difference can arise even when every transferred vertex value is exact (Figure~\ref{fig:vertex-integral})}\authorcomment{[C26] (Is this really needed? I feel like if yes, then a visual representation alongside could help.)}. On a uniform partition of $[0,1]$ into $N_{\mathrm{seg}}$ segments of length $h=1/N_{\mathrm{seg}}$, let $f(x)=x^2$ and $f_M$ be its vertex values. The median-dual weights are $h/2$ at the endpoints and $h$ at interior vertices. Equation~\eqref{eq:fv-discrete-integral} then gives
+\begin{equation}
+ \ifshowchanges\color{RevisionPurple}\fi \begin{aligned}
  Q_M(f_M)&=h\left[\tfrac12 f(0)+\sum_{i=1}^{N_{\mathrm{seg}}-1}(ih)^2+\tfrac12 f(1)\right]\\
- &=h^3\frac{(N_{\mathrm{seg}}-1)N_{\mathrm{seg}}(2N_{\mathrm{seg}}-1)}{6}+\frac h2
+ &=\frac{h^3}{6}(N_{\mathrm{seg}}-1)N_{\mathrm{seg}}(2N_{\mathrm{seg}}-1)+\frac h2
  =\frac13+\frac{h^2}{6}.
  \end{aligned}
  \label{eq:vertex-restriction-counterexample}
-\end{equation}}
-\revdel{The complete quadratic projection is exact, but using only its vertex values introduces a second-order integral error. \authorcomment{[C27] (I don't feel like you have actually demonstrated your point. It feels a little bit rushed.)}}
-
-\revadd{Here we used $\sum_{i=1}^{N-1}i^2=(N-1)N(2N-1)/6$, with $N=N_{\mathrm{seg}}$. The vertex values have zero pointwise error, yet their weighted total differs from the continuum integral by $h^2/6$. This demonstrates that exact quadratic point values alone do not give an exact finite-volume integral. It does not assert that every mesh-to-mesh GP3 integral error equals $h^2/6$: if source and target use the same vertex-integral rule, the transfer change depends on the difference between their quadrature errors. For example, transfer of the same exact quadratic between two uniform vertex meshes with spacings $h_A$ and $h_B$ gives $Q_B(f_B)-Q_A(f_A)=(h_B^2-h_A^2)/6$, even though every transferred vertex value is exact. Here $f_A$ and $f_B$ collect the samples of $f$ on the two meshes. Figure~\ref{fig:vertex-integral} illustrates the distinction.}
+\end{equation}
+\revdel{The complete quadratic projection is exact, but using only its vertex values introduces a second-order integral error.}\revadd{Here $\int_0^1f(x)\dd x=1/3$, and $\sum_{i=1}^{N-1}i^2=(N-1)N(2N-1)/6$ with $N=N_{\mathrm{seg}}$ gives the displayed sum. Thus exact vertex values still give a finite-volume integral error of $h^2/6$. For transfer of the same quadratic between two uniform meshes of spacings $h_A$ and $h_B$, the integral change is $Q_B(f_B)-Q_A(f_A)=(h_B^2-h_A^2)/6$, where $f_A,f_B$ are the sampled fields. This separates a source-to-target integral change from either mesh's error relative to the continuum integral.} \authorcomment{[C27] (I don't feel like you have actually demonstrated your point. It feels a little bit rushed.)}
 
 
 \begin{figure}[pos=htbp]
 \centering
-\begin{tikzpicture}
-\begin{axis}[every axis label/.append style={text=RevisionPurple},legend style={text=RevisionPurple},width=.66\linewidth,height=5cm,xlabel={$x$},ylabel={Field value},xmin=0,xmax=1,ymin=0,ymax=1.05,legend style={at={(.03,.97)},anchor=north west,font=\footnotesize}]
-\addplot[RevisionPurple,thick,domain=0:1,samples=101]{x^2};\addlegendentry{Exact quadratic $x^2$}
-\addplot[black,dashed,mark=*] coordinates {(0,0)(.5,.25)(1,1)};\addlegendentry{Linear field through vertex samples}
-\addplot[draw=none,name path=qcurve,domain=0:1,samples=101,forget plot]{x^2};
-\addplot[draw=none,name path=qchord,forget plot] coordinates {(0,0)(.5,.25)(1,1)};
-\addplot[RevisionPurple!18,forget plot] fill between[of=qcurve and qchord];
+\revadd{\begin{tikzpicture}
+\begin{axis}[width=.64\linewidth,height=5cm,xlabel={$x$},ylabel={Field value},xmin=0,xmax=1,ymin=0,ymax=1.06,legend style={at={(.03,.97)},anchor=north west,font=\footnotesize}]
+\addplot[RevisionPurple,thick,domain=0:1,samples=101]{x^2};\addlegendentry{Exact field $x^2$}
+\addplot[black,dashed,mark=*] coordinates {(0,0)(.5,.25)(1,1)};\addlegendentry{Linear field through vertex values}
+\addplot[draw=none,name path=exactquad,domain=0:1,samples=101,forget plot]{x^2};
+\addplot[draw=none,name path=vertexline,forget plot] coordinates {(0,0)(.5,.25)(1,1)};
+\addplot[RevisionPurple!18,forget plot] fill between[of=exactquad and vertexline];
 \end{axis}
-\end{tikzpicture}
-\caption{\revadd{Exact vertex values do not determine the exact quadratic-field integral. For two segments ($h=1/2$), the black samples lie exactly on $x^2$. The finite-volume weighted sum is the integral under their piecewise-linear interpolant: $Q_M=3/8$. The quadratic integral is $1/3$; the shaded difference is $1/24=h^2/6$. An exact quadratic projection retains the curve, whereas the vertex-only quadrature retains only the samples.}}
+\end{tikzpicture}}
+\caption{\revadd{Exact vertex values can still give an inexact integral. With two segments ($h=1/2$), the vertex values lie on $x^2$. Their median-dual weighted sum equals the area under the dashed piecewise-linear field: $Q_M=3/8$, whereas the exact quadratic integral is $1/3$. The shaded difference is $1/24=h^2/6$.}}
 \label{fig:vertex-integral}
 \end{figure}
 
-\subsubsection{\revadd{Limiting new extrema}}
+\subsection{\revadd{Corrections applied to the transferred state}}
+\label{sec:global-correction}
+\revadd{The base transfer may create new extrema, change the solver's integral, or produce values incompatible with the boundary and gas-state constraints. The following steps address these different requirements; satisfying one does not guarantee the others.}
 
-\revadd{Limiting controls new extrema before the transferred field is used. For NN and BAR, a factor $0\leq\theta_i\leq1$ multiplies reconstructed slopes or curvature. Setting it to zero reduces NN2/NN3 to NN1 and BAR3 to BAR2. Smooth-field verification uses no limiter; discontinuous-field tests also use Barth--Jespersen (BJ) limiting~\cite{BarthJespersen1989}. Bounds derived using only the linear increment $\boldsymbol g_i\cdot\boldsymbol r$ do not also constrain the quadratic term $\tfrac12\boldsymbol r^T\mathcal H_i\boldsymbol r$. We therefore measure new extrema on the final target values rather than infer boundedness from the limiter name.}
+\subsubsection{\revadd{Limiting new extrema}}
+\label{sec:galerkin-limiter}
+\revadd{Limiting reduces reconstructed slopes or curvature to control new extrema. The limiter factor $\theta_i$ multiplies the Taylor correction. Choosing $0\leq\theta_i\leq1$ reduces NN2 or NN3 to NN1 when $\theta_i=0$, but reduces BAR3 to BAR2. Smooth-field verification uses no limiter. Discontinuous-field tests also use Barth--Jespersen (BJ) limiting~\cite{BarthJespersen1989}. A limiter computed from the linear increment $\boldsymbol g_i\cdot\boldsymbol r$ does not also constrain the quadratic term $\tfrac12\boldsymbol r^T\mathcal H_i\boldsymbol r$. We therefore check the bounds on the final transferred values.}
 
 \revadd{GP and CV limiters use the extrema of overlapping source vertices as target bounds. Hard limiting uses these extrema directly; soft limiting widens the range by $\tau$ times the source range. Values outside the bounds are clipped, then the resulting integral change is redistributed to preserve a selected total: the simplicial lumped total for GP and $Q_B$ for CV. This operation can remove Galerkin orthogonality and the best-approximation property. For CV, it changes individual target-volume integrals while preserving their sum.}
 
-\subsubsection{\revadd{Bounded global conservation correction}}
+\revadd{CV2 denotes the limited transfer, and CV2-u the unlimited construction. Flow comparisons use the same bound-relaxation tolerance as GP2, $\tau=2\times10^{-3}$. Limiting, boundary conditions, and positivity corrections can change the unlimited field. Its conservation properties must therefore be checked again in the field actually used by the solver.}
 
-The bounded global correction can enforce Eq.~\eqref{eq:fv-discrete-integral} for any base transfer. For an uncorrected target field $\phi_B^{\mathrm{pre}}$, the nodal correction vector $\chi=(\chi_j)_{j=1}^{n_B}$ satisfies
+\subsubsection{\revadd{Bounded global correction}}
+\revdel{The bounded global correction can enforce}\revadd{Bounded global correction (GC) can enforce} Eq.~\eqref{eq:fv-discrete-integral} for any base transfer. For an uncorrected target field $\phi_B^{\mathrm{pre}}$, the nodal correction vector \revdel{$\chi=(\chi_j)_{j=1}^{n_B}$}\revadd{$\chi=(\chi_1,\ldots,\chi_{n_B})^T$} satisfies
 \begin{equation}
  \sum_jw_j^B\chi_j=Q_A(\phi_A)-Q_B(\phi_B^{\mathrm{pre}}),
  \qquad \phi_j^{\min}\leq\phi_{B,j}^{\mathrm{pre}}+\chi_j\leq \phi_j^{\max}.
  \label{eq:global-correction-constraint}
 \end{equation}
-\revdel{Here $\phi_j^{\min}$ and $\phi_j^{\max}$ are the lower and upper bounds at target vertex $j$. The input to global correction is $\phi_B^{\mathrm{pre}}$, and its corrected output is $\phi_B^{\mathrm{GC}}=\phi_B^{\mathrm{pre}}+\chi$. The correction is distributed among vertices that can change without exceeding those bounds; vertices already at a bound remain fixed~\cite{ShashkovWendroff2004,KucharikShashkovWendroff2003}. The requested integral must be feasible within the weighted bounds. A small total integral error does not require every nodal correction to be small, and separate bounds on conserved components do not guarantee positive pressure\authorcomment{[C28] (this phrase here looks out of place and looks like it is coming out of nowhere as we have rarely mentioned the pressure. It could be put in a context of positivity preserving of the gas properties, but it was not introduced here)}.}
-
-\revadd{Here $\phi_j^{\min}$ and $\phi_j^{\max}$ are the lower and upper bounds at target vertex $j$. The input to bounded global correction (GC) is $\phi_B^{\mathrm{pre}}$, and its output is $\phi_B^{\mathrm{GC}}=\phi_B^{\mathrm{pre}}+\chi$. The correction is distributed among vertices that can change without exceeding those bounds; vertices already at a bound remain fixed~\cite{ShashkovWendroff2004,KucharikShashkovWendroff2003}. The requested integral must be feasible within the weighted bounds. A small total integral error does not require every nodal correction to be small. Thermodynamic admissibility is a separate requirement, discussed below.}
+Here $\phi_j^{\min}$ and $\phi_j^{\max}$ are the lower and upper bounds at target vertex $j$. The input to global correction is $\phi_B^{\mathrm{pre}}$, and its corrected output is $\phi_B^{\mathrm{GC}}=\phi_B^{\mathrm{pre}}+\chi$. The correction is distributed among vertices that can change without exceeding those bounds; vertices already at a bound remain fixed~\cite{ShashkovWendroff2004,KucharikShashkovWendroff2003}. The requested integral must be feasible within the weighted bounds. A small total integral error does not require every nodal correction to be small\revdel{, and separate bounds on conserved components do not guarantee positive pressure}\authorcomment{[C28] (this phrase here looks out of place and looks like it is coming out of nowhere as we have rarely mentioned the pressure. It could be put in a context of positivity preserving of the gas properties, but it was not introduced here)}.
 
 \revdel{GP and CV limiters use the extrema of overlapping source vertices as target bounds. Hard limiting uses these extrema directly; soft limiting widens the range by $\tau$ times the source range. Values outside the bounds are clipped, then the resulting integral change is redistributed to preserve a selected total: the simplicial lumped total for GP and $Q_B$ for CV. This operation can remove Galerkin orthogonality and the best-approximation property. For CV, it changes individual target-volume integrals while preserving their sum.}
 
-\subsubsection{\revadd{Boundary conditions and thermodynamic admissibility}}
+\subsubsection{\revadd{Boundary conditions}}
 
-\revdel{Boundary values are interpolated from the source solution on the matching physical boundary\authorcomment{[C29] (As before, this looks out of context. I feel like a better introduction atthe start of the subsection explaining the problems that we are solving (boundedness, global conservation) could improve this subsection a lot.)}. This replaces the unconstrained transfer at those vertices and can change the local GP or CV identities. Coincident source and target wall vertices retain the source wall condition. If the discretized surface changes, its new wall orientation can instead introduce a mismatch. The flow tests retain all boundary vertices, excluding this geometric effect.}
+\revadd{Boundary enforcement supplies the values required on the physical boundary after transfer. }Boundary values are interpolated from the source solution on the matching physical boundary\authorcomment{[C29] (As before, this looks out of context. I feel like a better introduction atthe start of the subsection explaining the problems that we are solving (boundedness, global conservation) could improve this subsection a lot.)}. This replaces the unconstrained transfer at those vertices and can change the local GP or CV identities. Coincident source and target wall vertices retain the source wall condition. If the discretized surface changes, its new wall orientation can instead introduce a mismatch. The flow tests retain all boundary vertices, excluding this geometric effect.
 
-\revadd{Boundary treatment enforces the values required on the physical boundary after the base transfer. Here boundary values are interpolated from the source solution on the matching physical boundary. Replacing the unconstrained transfer at those vertices can change the local GP or CV identities. Coincident source and target wall vertices retain the source wall condition. If the discretized surface changes, its new wall orientation can instead introduce a mismatch. The flow tests retain all boundary vertices, excluding this geometric effect.}
-
-\revadd{Positivity repair ensures that the transferred conserved variables define an admissible gas state. For the calorically perfect gas used here, the internal-energy density is $\rho e=\rho E-|\rho\boldsymbol u|^2/(2\rho)$, pressure is $p=(\gamma-1)\rho e$, and temperature is $T=p/(\rho R_{\mathrm g})$. Here $e$ is specific internal energy, $\gamma>1$ is the heat-capacity ratio, and $R_{\mathrm g}>0$ is the gas constant. Positive density and internal energy give positive pressure and temperature. Separate bounds on density, momentum, and total energy do not guarantee these coupled inequalities.}
+\subsubsection{\revadd{Positive density and pressure}}
+\revadd{For the ideal-gas states used here, pressure is $p=(\gamma-1)[\rho E-|\rho\boldsymbol u|^2/(2\rho)]$, with heat-capacity ratio $\gamma>1$. Positive density and internal energy are therefore coupled requirements: separate bounds on the conserved components do not guarantee positive pressure.}
 
 For GP, CV, and globally corrected transfers, changes from boundary treatment and scalar lower bounds are followed by integral-preserving redistribution. Any remaining states with nonpositive density or internal energy are repaired while preserving the affected patch totals. These steps preserve the selected global integral but can change local constraints. Global redistribution can also alter a uniform far-field region: any vertex with room within its relaxed bounds can receive part of the correction. A transfer can therefore preserve the domain integral while changing the fluxes through open boundaries during the next flow step.
 
-\subsection{Locally conservative flux correction}
+\subsubsection{Locally conservative flux correction}
 \label{sec:local-flux-correction}
 
 The Riemann tests include an alternative that redistributes corrections only between neighboring target volumes. This locally conservative (LC) flux correction replaces each method's usual limiting, global correction, and boundary-state recovery. Let $\tilde b_j$ be the source field integral over target control volume $j$, as in Eq.~\eqref{eq:cv-system}. The corrected nodal content is
@@ -520,7 +487,7 @@ BDF2 uses two stored solutions. If either changes during transfer, the next time
 \label{sec:unsteady-discretization}
 \label{sec:native-transfer-decomposition}
 
-Between remeshing events, the semi-discrete equations are
+\revadd{The finite-volume mass matrix is $M_M=\operatorname{diag}(w_i^M)\otimes I_{n_U}$, where $I_{n_U}$ is the identity on the state components and $\otimes$ denotes the Kronecker product. Each vertex weight is repeated for its $n_U$ components. This diagonal matrix differs from the coupled Galerkin mass matrix $H_B$. }Between remeshing events, the semi-discrete equations are
 \begin{equation}
  M_M\dot U_M+F_M(U_M,t)=0.
  \label{eq:semidiscrete}
@@ -621,17 +588,22 @@ For a scalar output $G_B$ with locally Lipschitz state gradient, let $\Delta G^{
  \label{eq:force-response}
 \end{equation}
 Thus the output depends on the location of the error and on the target dynamics. A domain integral cannot describe that weighting. Preserving every source component integral implies
-\begin{equation}
- (\bm1_{n_B}^{T}\otimes I_{n_U})M_B\eps^k
+\revdel{\[
+(\bm1_{n_B}^{T}\otimes I_{n_U})M_B\eps^k
        =Q_A(U_A^k)-Q_B(U_B^k).
+\]}
+\revadd{\begin{equation}
+ \sum_{j=1}^{n_B}w_j^B\eps_{j,a}^k
+   =\big[Q_A(U_A^k)-Q_B(U_B^k)\big]_a,
+ \qquad a=1,\ldots,n_U.
  \label{eq:gc-native-mismatch}
-\end{equation}
-Both sides are vectors with one entry per transported variable. The right-hand side need not be zero because independently computed mesh references can have different integrals. Preserving a source integral therefore need not bring the transferred state or its loads closer to the target-mesh reference.
+\end{equation}}
+\revdel{Both sides are vectors with one entry per transported variable.} \revadd{Here $a$ selects a transported component and $\eps_{j,a}^k$ is its error at target vertex $j$. }The right-hand side need not be zero because independently computed mesh references can have different integrals. Preserving a source integral therefore need not bring the transferred state or its loads closer to the target-mesh reference.
 
 Later steps use both the newly computed state and a retained older state. Their errors can continue to influence the flow, so the first load difference need not be the largest. A disturbance away from the airfoil can produce a delayed acoustic or convective response. Projection and implicit time integration can also introduce small immediate changes outside the perturbed region. Arrival times are therefore measured with finite-amplitude thresholds.
 
 
-\section{\revdel{Numerical experiments}\revadd{Numerical tests} and results}
+\section{\revdel{Numerical experiments and results}\revadd{Numerical tests and results}}
 \label{sec:methodology}
 \label{sec:results}
 
@@ -716,7 +688,7 @@ CV2 depends more strongly on element geometry. Its fitted order is 2.03 on the s
 
 \subsubsection{Bounds and integral preservation at a discontinuity}
 
-The second field has a circular inclusion of radius $0.25\min(L_x,L_y)$, whose boundary crosses the mesh. Density is 1.2 outside and 3.6 inside. The full state is $T=273(2+\sigma)$~K, $\rho=1.2(2+\sigma)$, and $(u,v)=(100,50)\sigma$~m/s, with $\sigma=1$ inside and $-1$ outside. Momentum and total energy follow from these primitive variables using $R_{\mathrm g}=287.05$~J/(kg\,K) and $\gamma=1.4$. Density, temperature, and velocity in this static state are in kg/m$^3$, K, and m/s. Each conserved field is transferred independently. We compare unlimited and limited transfers by their density excursions beyond the source range and by the relative density-integral change $e_Q(\rho_A,\rho_B)$. A physically admissible state must have positive density and internal energy.
+The second field has a circular inclusion of radius $0.25\min(L_x,L_y)$, whose boundary crosses the mesh. Density is 1.2 outside and 3.6 inside. \revdel{The full state is $T=273(2+\sigma)$~K}\revadd{With temperature $T$, the full state is $T=273(2+\sigma)$~K}, $\rho=1.2(2+\sigma)$, and $(u,v)=(100,50)\sigma$~m/s, with $\sigma=1$ inside and $-1$ outside. Momentum and total energy follow from these primitive variables \revdel{using $R_{\mathrm g}=287.05$~J/(kg\,K) and $\gamma=1.4$}\revadd{using the gas constant $R_{\mathrm g}=287.05$~J/(kg\,K) and $\gamma=1.4$}. Density, temperature, and velocity in this static state are in kg/m$^3$, K, and m/s. Each conserved field is transferred independently. We compare unlimited and limited transfers by their density excursions beyond the source range and by the relative density-integral change $e_Q(\rho_A,\rho_B)$. \revdel{A physically admissible state must have positive density and internal energy.}
 
 \label{sec:results-boundedness}
 
@@ -831,7 +803,7 @@ The mass integral tells a different part of the story. NN1+GC keeps the normaliz
 
 Final mass drift reveals changes that the transfer-only sum misses (Figure~\ref{fig:riemann-mass-error}a). Standard CV2 gives final relative mass drift of approximately $3.0\times10^{-7}$--$4.1\times10^{-7}$ at $s=4$ and $5.5\times10^{-6}$--$6.4\times10^{-6}$ at $s=2$, despite preserving mass during transfer to near roundoff. GP2 also has finite final drift, reaching about $2\times10^{-6}$ at $s=4$. The final-step budgets place the CV2 change in the flow step: at $s=2$, realization 1, step 399 changes mass by $2.7\times10^{-8}$ of the initial mass, and the following transfer change is negligible. Supplementary Section S5 gives representative budgets.
 
-The standard GP/CV limiter clips values to its bounds and redistributes the integral change globally, according to the remaining capacity at each vertex. With bound relaxation $2\times10^{-3}$, even a constant far-field region can receive a correction. Measured density disturbances reach $1.4\times10^{-4}$ for $x<1$, and momentum density at the open boundaries reaches approximately $2\times10^{-4}$. NN and BAR retain the constant far-field states to roundoff. The measurements connect global redistribution with far-field disturbances and later boundary mass exchange. A separate \revdel{experiment}\revadd{test} with the limiter disabled was not performed, so its effect has not been isolated in that way.
+The standard GP/CV limiter clips values to its bounds and redistributes the integral change globally, according to the remaining capacity at each vertex. With bound relaxation $2\times10^{-3}$, even a constant far-field region can receive a correction. Measured density disturbances reach $1.4\times10^{-4}$ for $x<1$, and momentum density at the open boundaries reaches approximately $2\times10^{-4}$. NN and BAR retain the constant far-field states to roundoff. The measurements connect global redistribution with far-field disturbances and later boundary mass exchange. \revdel{A separate experiment}\revadd{A separate test} with the limiter disabled was not performed, so its effect has not been isolated in that way.
 
 LC keeps final relative mass drift below $5\times10^{-13}$ and energy drift below $7\times10^{-13}$ in all 36 matched cases. Its effect on density error is smaller (Figure~\ref{fig:riemann-mass-error}b). Mean changes relative to standard transfer are $-3.3\%$ for GP and $-2.9\%$ for CV, compared with $+0.2\%$ for NN and $-0.3\%$ for BAR. At 398 transfers and $s=2$, GP2 errors decrease by 7.0--7.9\% and CV2 errors by 5.1--5.4\% across the three realizations. Their wide-window position errors fall from $+0.17$--$+0.20$ cell to $0.00$--$+0.02$ cell. Shock-only broadening changes little (Supplementary Section S5). Local flux correction therefore improves mass balance and some solution errors without removing the diffusion of the underlying transfer.
 
@@ -960,7 +932,7 @@ GP2 and CV2 give slower initial drag growth than NN2 in both realizations. GP2 s
 
 \subsubsection{Delayed response to a disturbance away from the wall}
 
-A separate \revdel{experiment}\revadd{test} isolates one transfer in a narrow band away from the wall. The bands begin at distances $0.05c$, $0.10c$, and $0.20c$. GP2 is used in all three, and CV2 repeats the longer $0.20c$-band calculation. Fixed shells measure the root-mean-square (RMS) pressure difference from a common fixed-mesh reference. Force onset is a fraction of the response maximum. For a shell at wall distance $r$ inside a band beginning at $r_b$, the low-Mach acoustic travel estimate is $(r_b-r)/(a_\infty\Delta t)\simeq845(r_b-r)/c$ physical steps in these nondimensional Euler calculations. Transfer already produces immediate changes up to approximately $0.08c$ inward of the displaced band; these shells are excluded from propagation fits.
+\revdel{A separate experiment}\revadd{A separate test} isolates one transfer in a narrow band away from the wall. The bands begin at distances $0.05c$, $0.10c$, and $0.20c$. GP2 is used in all three, and CV2 repeats the longer $0.20c$-band calculation. Fixed shells measure the root-mean-square (RMS) pressure difference from a common fixed-mesh reference. Force onset is a fraction of the response maximum. For a shell at wall distance $r$ inside a band beginning at $r_b$, the low-Mach acoustic travel estimate is $(r_b-r)/(a_\infty\Delta t)\simeq845(r_b-r)/c$ physical steps in these nondimensional Euler calculations. Transfer already produces immediate changes up to approximately $0.08c$ inward of the displaced band; these shells are excluded from propagation fits.
 
 Beyond the region changed immediately by transfer, the pressure response is delayed (Figure~\ref{fig:euler-pressure}). For the longer calculation with the band beginning at $0.20c$, estimated propagation speeds are 1.09--1.27 with GP2 and 1.10--1.30 with CV2, using 10--75\% amplitude thresholds. Both ranges include the sound speed $a_\infty\simeq1.183$. Their spread shows the threshold sensitivity of a single event, rather than variability across independent events.
 
@@ -993,7 +965,7 @@ A separate restart test also shows why the first load difference is insufficient
 \end{figure}
 
 \FloatBarrier
-\subsection{Fixed-body RANS calculations}
+\subsection{\revdel{Fixed-body RANS calculations}\revadd{Unsteady RANS on a stationary airfoil}}
 
 \subsubsection{Setup and numerical sensitivity tests}
 \label{sec:rans-methodology}
@@ -1033,7 +1005,7 @@ Sensitivity tests share a 38-sample window containing three remeshing events. In
 \subsubsection{Transferred integrals and aerodynamic loads}
 \label{sec:results-rans-new}
 
-GP2 and CV2 change the transferred integrals less than NN2 (Table~\ref{tab:rans-integrals-new}). GP2's maximum density and total-energy errors are roughly two orders of magnitude smaller. Ratios of the separately maximized turbulence-variable errors are approximately 247 for SA, and 52 and 37 for SST $k$ and $\omega$. CV2 keeps mean-flow errors below $1.5\times10^{-14}$ and turbulence-variable errors below $4.6\times10^{-12}$. These measurements are made across transfer, with SST values taken before the final lower bounds (Sec.~\ref{sec:rans-methodology}).
+GP2 and CV2 change the transferred integrals less than NN2 (Table~\ref{tab:rans-integrals-new}). GP2's maximum \revdel{density and total-energy errors}\revadd{errors in the density and total-energy integrals} are roughly two orders of magnitude smaller. Ratios of the separately maximized turbulence-variable errors are approximately 247 for SA, and 52 and 37 for SST $k$ and $\omega$. CV2 keeps mean-flow errors below $1.5\times10^{-14}$ and turbulence-variable errors below $4.6\times10^{-12}$. These measurements are made across transfer, with SST values taken before the final lower bounds (Sec.~\ref{sec:rans-methodology}).
 
 \begin{table}[pos=htbp]
 \centering\small
@@ -1136,13 +1108,13 @@ The Riemann results distinguish preservation of mass, wave shape, and mass balan
 
 Local flux correction keeps final mass and energy drift near roundoff and modestly reduces GP/CV density error without materially changing shock broadening. It allows small extrema within relaxed bounds and can leave part of the unlimited correction unapplied. Exact wall compatibility immediately after transfer is not guaranteed either.
 
-In fixed-body RANS, smaller transfer-integral errors do not establish smaller aerodynamic errors. The differences between methods remain sensitive to time-step refinement, with additional iterative uncertainty for SST. The slower initial Euler drag growth of GP2 and CV2 therefore cannot be extended to a RANS ranking. Transfer accuracy must be assessed through both the transferred fields and the flow evolution that follows, including all stored time levels.
+\revdel{In fixed-body RANS,}\revadd{In RANS restarts on a stationary airfoil,} smaller transfer-integral errors do not establish smaller aerodynamic errors. The differences between methods remain sensitive to time-step refinement, with additional iterative uncertainty for SST. The slower initial Euler drag growth of GP2 and CV2 therefore cannot be extended to a RANS ranking. Transfer accuracy must be assessed through both the transferred fields and the flow evolution that follows, including all stored time levels.
 
 \FloatBarrier
 \section*{Data availability}
 % TODO(author): The journal's research-data policy (Option C) asks for deposit in a data repository with a persistent identifier (e.g. a DOI-registered archive of the tagged repository release), a citation of that dataset here, and a matching [dataset] entry in the reference list.
 % TODO(author): Decide which agent plans and prompts belong in the public package on reproducibility grounds, and retain a record of research and manuscript provenance.
-Supplementary material contains detailed transfer and restart checks, reference-state decompositions, and numerical-convergence and mesh-sensitivity tables. \revdel{The numerical tables supporting the figures and comparisons, together with the post-processing routines needed to reproduce the reported reductions, are available in the }\revadd{The numerical inputs used to compile the figures and tables are available in the }\href{https://github.com/rois1995/InterpolationPaper}{public data repository}. The archive does not include every flow-field output from the simulations.
+Supplementary material contains detailed transfer and restart checks, reference-state decompositions, and numerical-convergence and mesh-sensitivity tables. \revdel{The numerical tables supporting the figures and comparisons, }\revadd{The numerical inputs used to compile the figures and tables }\revdel{together with the post-processing routines needed to reproduce the reported reductions, }are available in the \href{https://github.com/rois1995/InterpolationPaper}{public data repository}. The archive does not include every flow-field output from the simulations.
 
 \section*{Funding}
 \FundingStatement
