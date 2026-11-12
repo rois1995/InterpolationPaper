@@ -127,7 +127,7 @@ States are stacked vertex by vertex. The mass matrix is $M_B=\operatorname{diag}
 
 The superposition remainders are $\mathcal E_U=\delta_{\mathrm{both}}-\delta_{\mathrm{latest}}-\delta_{\mathrm{older}}$ and $\mathcal E_{C_L}=\Delta C_{L,\mathrm{both}}-\Delta C_{L,\mathrm{latest}}-\Delta C_{L,\mathrm{older}}$. The relative errors are $e_{\mathrm{sup}}^U=\|\mathcal E_U\|_{M_B}/\|\delta_{\mathrm{both}}\|_{M_B}$ and $e_{\mathrm{sup}}^{C_L}=|\mathcal E_{C_L}|/|\Delta C_{L,\mathrm{both}}|$. All reported denominators are nonzero.
 
-Local linearity predicts latest-only and older-only responses of $4/3$ and $-1/3$ times the both-states response. The state-norm ratios are nonnegative, whereas lift ratios retain their signs.
+\revdel{Local linearity predicts latest-only and older-only responses of $4/3$ and $-1/3$ times the both-states response.}\revadd{For the same imposed error field, the BDF2 residual coefficients have exact ratios of $4/3$ and $-1/3$ relative to perturbing both histories. The first-step state and lift inherit these ratios to first order under the smoothness and solve assumptions in the article.} The state-norm ratios are nonnegative, whereas lift ratios retain their signs.
 
 \begin{table}[!htbp]
 \centering\scriptsize\setlength{\tabcolsep}{3pt}
@@ -146,14 +146,14 @@ Local linearity predicts latest-only and older-only responses of $4/3$ and $-1/3
 \end{table}
 
 \subsection{Slip-wall comparison}
-At a common trial state, the predicted residual perturbation is $-M_B\eta^n/\Delta t$, with $\eta^n=2\eps^n-\eps^{n-1}/2$ formed from the errors in the latest and older states relative to the target-mesh reference. Here $n$ labels physical time steps, $\eps^k$ is transferred state minus target-mesh reference at level $k$, and $\Delta t$ is the physical step size. The solver reports the negative of this residual. The following comparisons measure the difference between the predicted and computed residual perturbations.
+At a common trial state, the predicted residual perturbation is $-M_B\eta^n/\Delta t$, with $\eta^n=2\eps^n-\eps^{n-1}/2$ formed from the errors in the latest and older states relative to the target-mesh reference. Here $n$ labels physical time steps, $\eps^k$ is transferred state minus target-mesh reference at level $k$, and $\Delta t$ is the physical step size. \revdel{The solver reports the negative of this residual.}\revadd{The solver prints the negative of the left-hand side of the BDF2 equation, so the predicted difference in its printed values is $+M_B\eta^n/\Delta t$.} The following comparisons measure the difference between the predicted and computed residual perturbations.
 
 At the 370 slip-wall vertices, with both residuals evaluated at the same trial state, the wall-normal momentum mismatch is $3.4\times10^{-12}$ for GP2, $4.1\times10^{-12}$ for GP3 and CV2, and $4.5\times10^{-12}$ for NN1. The tangential mismatch is $(1.4$--$1.7)\times10^{-11}$, a fraction $(1.1$--$1.3)\times10^{-7}$ of the tangential residual perturbation of $1.25\times10^{-4}$. All four transfers return the same wall state, that of the source solution; the difference in wall-normal momentum from the target-mesh reference is $1.1\times10^{-14}$, so the normal residual perturbation is negligible and enforcement of the target slip-wall condition does not alter it. The predicted and measured perturbations both include enforcement of the target slip-wall condition.
 
 \subsection{Residual probes in the \revdel{cancellation experiment}\revadd{cancellation test}}
 
-In the \revdel{cancellation experiment}\revadd{cancellation test}, the history discrepancies are $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$, giving $\eta^n=2\eps^n-\eps^{n-1}/2=0$. The initial probes use different trial states. Let $\Phi_B$ be the constant-step BDF2 residual, with latest and older states $V,W$ and spatial residual $F_B$. The time $t^{n+1}$ is the next physical time. Let $Y$ be the reference trial state and $\Delta Y$ the trial-state increment. If the two stored-state errors are $\eps^n,\eps^{n-1}$, then
-\begin{equation}
+In the \revdel{cancellation experiment}\revadd{cancellation test}, the history discrepancies are $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$, giving $\eta^n=2\eps^n-\eps^{n-1}/2=0$. The initial probes use different trial states. \revdel{Let $\Phi_B$ be the constant-step BDF2 residual, with latest and older states $V,W$ and spatial residual $F_B$.}\revadd{Let $\Phi_B$ be the constant-step BDF2 residual, with latest and older states $U_B^n,U_B^{n-1}$ and spatial residual $F_B$.} The time $t^{n+1}$ is the next physical time. Let $Y$ be the reference trial state and $\Delta Y$ the trial-state increment. \revdel{If the two stored-state errors are $\eps^n,\eps^{n-1}$, then}\revadd{With $\widehat U_B^k=U_B^k+\eps^k$ at the two stored levels $k=n,n-1$, the residual difference is}
+\revdel{\begin{equation*}
  \begin{aligned}
  \Phi_B(Y;V,W)
  &=\frac{M_B}{\Delta t}\left(\tfrac32Y-2V+\tfrac12W\right)+F_B(Y,t^{n+1}),\\
@@ -163,8 +163,19 @@ In the \revdel{cancellation experiment}\revadd{cancellation test}, the history d
        +F_B(Y+\Delta Y,t^{n+1})-F_B(Y,t^{n+1})
        -\frac{M_B\eta^n}{\Delta t}.
  \end{aligned}
+\end{equation*}}
+\revadd{\begin{equation}
+ \begin{aligned}
+ \Phi_B(Y;U_B^n,U_B^{n-1})
+ &=\frac{M_B}{\Delta t}\big(\tfrac32Y-2U_B^n+\tfrac12U_B^{n-1}\big)+F_B(Y,t^{n+1}),\\
+ \Delta\Phi_B
+ &\equiv \Phi_B(Y+\Delta Y;\widehat U_B^n,\widehat U_B^{n-1})-\Phi_B(Y;U_B^n,U_B^{n-1})\\
+ &=\frac{3M_B\Delta Y}{2\Delta t}
+       +F_B(Y+\Delta Y,t^{n+1})-F_B(Y,t^{n+1})
+       -\frac{M_B\eta^n}{\Delta t}.
+ \end{aligned}
  \label{eq:unequal-trial-residual}
-\end{equation}
+\end{equation}}
 
 With $\Delta Y=\eps^{\mathrm{st}}/4$ and $\eta^n=0$, the temporal part is three quarters of the magnitude of the residual perturbation with only the older state in error. The measured ratio near 0.75 also includes a spatial-residual difference and therefore does not verify the residual identity at a common trial state. In contrast, at an identical trial state the history contribution to the residual difference is exactly $-M_B\eta^n/\Delta t$. Cancellation is temporary even for an exact first step: if the first-step state difference vanishes, the older level retains $\eps^{\mathrm{st}}/4$, producing the subsequent history combination $-\eps^{\mathrm{st}}/8$.
 
@@ -188,7 +199,7 @@ The computed lift differences in the cancellation test are of order $10^{-9}$, b
 
 \section{Perturbation-amplitude dependence}
 
-The state and lift remainders and both state norms are defined in Section~S2. Scaling the same discrepancy $\eps^{\mathrm{st}}$ by $\lambda=1,1/2,1/4$ reduces the Euclidean and lift remainders for BAR2, GP2, and CV2 (Table~\ref{tab:naca-amplitude-app}). Here $\lambda$ is the imposed amplitude factor. The absolute Euclidean remainder decreases by factors of about 3.2--3.5 per halving. The absolute volume-weighted remainder decreases more slowly, from approximately $2.4\times10^{-5}$ to $1.5$--$1.7\times10^{-5}$, while its relative value rises from about 3.4\% to 8.7--9.2\%. These tests do not establish a quadratic remainder in every norm, and no independently measured iterative error explains the remaining discrepancy.
+The state and lift remainders and both state norms are defined in Section~S2. Scaling the same discrepancy $\eps^{\mathrm{st}}$ by $\lambda=1,1/2,1/4$ reduces the Euclidean and lift remainders for BAR2, GP2, and CV2 (Table~\ref{tab:naca-amplitude-app}). Here $\lambda$ is the imposed amplitude factor. The absolute Euclidean remainder decreases by factors of about 3.2--3.5 per halving. The absolute volume-weighted remainder decreases more slowly, from approximately $2.4\times10^{-5}$ to $1.5$--$1.7\times10^{-5}$, while its relative value rises from about 3.4\% to 8.7--9.2\%. \revdel{These tests do not establish a quadratic remainder in every norm, and no independently measured iterative error explains the remaining discrepancy.}\revadd{These finite-amplitude tests do not establish the quadratic prediction uniformly in the reported norms. The remaining iterative error was not independently measured.}
 
 \begin{table}[!htbp]
 \centering\footnotesize
@@ -329,16 +340,24 @@ The density extrema permitted by LC are measured relative to the source range at
 \section{Separating transfer error from mesh dependence}
 \label{supp:reference-decomposition}
 
-Let $U_{\mathrm{ex}}^k=U_{\mathrm{ex}}(\boldsymbol x,t^k)$ be a common exact continuum state at physical time $t^k$, with spatial position $\boldsymbol x$. The sampling map $\Pi_M$ represents this field at the solver vertices of mesh $M$. The independently computed discrete reference is $U_M^k$, and its discretization error is $e_{\mathrm{disc},M}^k=U_M^k-\Pi_M U_{\mathrm{ex}}^k$. With the complete transfer map $\mathcal T_{AB}$, the discrepancy from the target reference is
-\begin{align}
+Let $U_{\mathrm{ex}}^k=U_{\mathrm{ex}}(\boldsymbol x,t^k)$ be a common exact continuum state at physical time $t^k$, with spatial position $\boldsymbol x$. \revdel{The sampling map $\Pi_M$ represents this field at the solver vertices of mesh $M$.}\revadd{Write $U_{M,\mathrm{ex}}^k$ for the values of this exact field at the solver vertices of mesh $M$.} The independently computed discrete reference is $U_M^k$, and its discretization error is \revdel{$e_{\mathrm{disc},M}^k=U_M^k-\Pi_M U_{\mathrm{ex}}^k$}\revadd{$e_{\mathrm{disc},M}^k=U_M^k-U_{M,\mathrm{ex}}^k$}. With the complete transfer map $\mathcal T_{AB}$, the discrepancy from the target reference is
+\revdel{\begin{align*}
  \eps^k={}&
  \underbrace{\mathcal T_{AB}(\Pi_AU_{\mathrm{ex}}^k)-\Pi_BU_{\mathrm{ex}}^k}
-             _{\text{transfer of the exact sampled field}}\notag\\
+             _{\text{transfer of the exact sampled field}}\\
  &+\underbrace{\mathcal T_{AB}(U_A^k)-\mathcal T_{AB}(\Pi_AU_{\mathrm{ex}}^k)
                       -e_{\mathrm{disc},B}^k}
              _{\text{source and target discretization contributions}}.
+\end{align*}}
+\revadd{\begin{align}
+ \eps^k={}&
+ \underbrace{\mathcal T_{AB}(U_{A,\mathrm{ex}}^k)-U_{B,\mathrm{ex}}^k}
+             _{\text{transfer of the exact sampled field}}\notag\\
+ &+\underbrace{\mathcal T_{AB}(U_A^k)-\mathcal T_{AB}(U_{A,\mathrm{ex}}^k)
+                      -e_{\mathrm{disc},B}^k}
+             _{\text{source and target discretization contributions}}.
  \label{eq:defect-decomposition}
-\end{align}
+\end{align}}
 For a linear transfer map, the second line reduces to $\mathcal T_{AB}e_{\mathrm{disc},A}^k-e_{\mathrm{disc},B}^k$. Limiting and admissibility corrections can make the complete map nonlinear.
 
 For a scalar output functional $G_M$ evaluated from the state on mesh $M$, a source-to-target output difference satisfies
@@ -349,6 +368,24 @@ For a scalar output functional $G_M$ evaluated from the state on mesh $M$, a sou
  \label{eq:observable-decomposition}
 \end{align}
 Here $\widehat U_B^k=\mathcal T_{AB}(U_A^k)$. The first term measures the mesh dependence of the independently computed references; the second is the restart response on the target mesh. Neither term alone is the error relative to the exact continuum solution.
+
+\subsection{\revadd{How the history weights change for a later load}}
+\revadd{The main article gives the adjoint for the first step. Here consider a load $G_B$ at step $N\ge n+1$ on the same fixed target mesh, with no further transfers. Assume the same local linearization and converged solves as for the one-step prediction. Let $A_m=\tfrac32M_B+\Delta t\,\partial_U F_B(U_B^m,t^m)$ be the scaled step Jacobian on the reference solution at step $m$. The gradient of the final load is $g_N=\nabla_U G_B(U_B^N)$, and set $g_m=0$ for earlier steps.}
+
+\revadd{Start with $\boldsymbol\lambda_{N+1}=\boldsymbol\lambda_{N+2}=0$. For $m=N,N-1,\ldots,n+1$, solve
+\begin{equation}
+ A_m^T\boldsymbol\lambda_m=g_m+2M_B\boldsymbol\lambda_{m+1}
+                      -\tfrac12 M_B\boldsymbol\lambda_{m+2}.
+ \label{supp:eq:later-adjoint}
+\end{equation}
+The two terms on the right come from the two later BDF2 steps that use state $m$. To see this, multiply each linearized step equation by $\boldsymbol\lambda_m^T$ and sum from $n+1$ to $N$. The recurrence cancels the coefficients of intermediate state changes. The remaining dependence of the load on the two initial history errors is}
+\revadd{\begin{equation}
+ \Delta G^N \simeq
+ (2\boldsymbol\lambda_{n+1}-\tfrac12\boldsymbol\lambda_{n+2})^T M_B\eps^n
+ -\tfrac12\boldsymbol\lambda_{n+1}^T M_B\eps^{n-1}.
+ \label{supp:eq:later-history-weights}
+\end{equation}
+Here $\Delta G^N$ is the load from the transferred restart minus that from the reference continuation. For $N=n+1$, only $\boldsymbol\lambda_{n+1}$ remains and the expression reduces to $\boldsymbol\lambda_{n+1}^TM_B(2\eps^n-\eps^{n-1}/2)$. The later pressure and load histories reported in the article come from forward simulations.}
 
 \section{Steady mesh sensitivity and the medium-mesh transient}
 \label{supp:mesh-sensitivity}

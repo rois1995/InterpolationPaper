@@ -155,6 +155,12 @@ P.~Geuzaine, C.~Grandmont, C.~Farhat, Design and analysis of {ALE} schemes with
 \newblock \href {https://doi.org/10.1016/S0021-9991(03)00311-5}
   {\path{doi:10.1016/S0021-9991(03)00311-5}}.
 
+\bibitem{GilesPierce2000}
+M.~B. Giles, N.~A. Pierce, An introduction to the adjoint approach to design,
+  Flow Turbul. Combust. 65 (2000) 393--415.
+\newblock \href {https://doi.org/10.1023/A:1011430410075}
+  {\path{doi:10.1023/A:1011430410075}}.
+
 \bibitem{LeVeque2002}
 R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts
   in Applied Mathematics, Cambridge University Press, Cambridge, 2002.
