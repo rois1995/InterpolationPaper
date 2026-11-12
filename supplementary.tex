@@ -37,7 +37,6 @@
 }
 \newcommand{\Inner}[4]{\csname In@#1@#2@#3@#4\endcsname}
 \newcommand{\InnerDetailRow}[5]{#1 & #3 & #4 & #5 & \Inner{#1}{#2}{#3}{steps} & \Inner{#1}{#2}{#3}{cap} & \Inner{#1}{#2}{#3}{res}\\}
-% Keyed access to the existing control data. No numerical data are duplicated.
 \pgfplotstableread[col sep=comma]{generated/reassessed_rans_controls_compact.csv}\ControlData
 \pgfplotstableforeachcolumnelement{closure}\of\ControlData\as\ThisClosure{%
   \edef\SavedClosure{\ThisClosure}%
@@ -61,23 +60,10 @@
 \newcommand{\ControlRow}[3]{#1 & #3 &
   \MaxControlPercent{#1}{#2}{CL} & \MaxControlPercent{#1}{#2}{CD} &
   \ControlPercent{#1}{#2}{P}{CL} & \ControlPercent{#1}{#2}{P}{CD}\\}
-% Scientific display names for mesh levels; raw data labels are left unchanged.
 \expandafter\def\csname MeshLevel@coarse\endcsname{Coarse}
 \expandafter\def\csname MeshLevel@fine\endcsname{Medium}
 \expandafter\def\csname MeshLevel@finer\endcsname{Fine}
 \newcommand{\MeshLevelName}[1]{\csname MeshLevel@#1\endcsname}
-
-
-% Phrase-scoped review against commit 4758546 (first-round author comments).
-\newif\ifshowchanges
-\showchangestrue
-\definecolor{RevisionPurple}{RGB}{112,32,160}
-\definecolor{RevisionBrown}{RGB}{139,69,19}
-\long\def\revadd#1{{\ifshowchanges\color{RevisionPurple}\fi #1}}
-\long\def\revdel#1{\ifshowchanges{\color{RevisionBrown}#1}\ifhmode\hspace{.2em}\fi\fi}
-\long\def\authorcomment#1{\ifshowchanges{\color{red}#1}\fi}
-\long\def\reviewreply#1{\ifshowchanges\par\noindent{\color{RevisionPurple}\textit{Response: #1}}\par\fi}
-\pdfstringdefDisableCommands{\def\revadd#1{#1}\def\revdel#1{}\def\authorcomment#1{}\def\reviewreply#1{}}
 
 \begin{document}
 \maketitle
@@ -121,11 +107,11 @@ Table~\ref{tab:riemann-frequency-app} includes the higher-order alternatives to 
 \section{Boundary residuals and the cancellation test}
 \subsection{First-step response ratios}
 
-The source mesh is $A$ and the target mesh $B$. \revdel{After the first BDF2 step, the state difference is $\delta=\widehat U_B-U_B$, where $\widehat U_B$ is the continuation from transferred histories and $U_B$ the target-reference continuation.}\revadd{After the first BDF2 step, the state difference is $\eps^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$, with both states computed on $B$. At the two input times, $\eps^{n-1}$ and $\eps^n$ denote the differences introduced by transferring the histories.} Subscripts $\mathrm{both}$, $\mathrm{latest}$, and $\mathrm{older}$ identify which stored states were perturbed. All responses use the steady discrepancy $\eps^{\mathrm{st}}=\mathcal T_{AB}(U_A^{\mathrm{st}})-U_B^{\mathrm{st}}$, where the superscript $\mathrm{st}$ denotes the independently computed steady references and $\mathcal T_{AB}$ is the complete transfer including corrections. The lift difference from the target-mesh continuation is $\Delta C_L$.
+The source mesh is $A$ and the target mesh $B$. After the first BDF2 step, the state difference is $\eps^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$, with both states computed on $B$. At the two input times, $\eps^{n-1}$ and $\eps^n$ denote the differences introduced by transferring the histories. Subscripts $\mathrm{both}$, $\mathrm{latest}$, and $\mathrm{older}$ identify which stored states were perturbed. All responses use the steady discrepancy $\eps^{\mathrm{st}}=\mathcal T_{AB}(U_A^{\mathrm{st}})-U_B^{\mathrm{st}}$, where the superscript $\mathrm{st}$ denotes the independently computed steady references and $\mathcal T_{AB}$ is the complete transfer including corrections. The lift difference from the target-mesh continuation is $\Delta C_L$.
 
-States are stacked vertex by vertex. The mass matrix is $M_B=\operatorname{diag}(w_i^B)\otimes I_{n_U}$, with positive target control-volume measures $w_i^B$, $n_U$ state components, and component identity $I_{n_U}$. The symbol $\otimes$ denotes the Kronecker product and a superscript $T$ denotes transpose. \revdel{The volume-weighted norm is $\|\delta\|_{M_B}=(\delta^TM_B\delta)^{1/2}$ and the Euclidean norm $\|\delta\|_2=(\delta^T\delta)^{1/2}$.}\revadd{The first-step state difference has volume-weighted norm $\|\eps^{n+1}\|_{M_B}=[(\eps^{n+1})^TM_B\eps^{n+1}]^{1/2}$ and Euclidean norm $\|\eps^{n+1}\|_2=[(\eps^{n+1})^T\eps^{n+1}]^{1/2}$.}
+States are stacked vertex by vertex. The mass matrix is $M_B=\operatorname{diag}(w_i^B)\otimes I_{n_U}$, where $w_i^B$ is the area of the target control volume around vertex $i$ in this two-dimensional test, $n_U$ counts the state components, and $I_{n_U}$ is their identity matrix. The symbol $\otimes$ denotes the Kronecker product and a superscript $T$ denotes transpose. The first-step state difference has volume-weighted norm $\|\eps^{n+1}\|_{M_B}=[(\eps^{n+1})^TM_B\eps^{n+1}]^{1/2}$ and Euclidean norm $\|\eps^{n+1}\|_2=[(\eps^{n+1})^T\eps^{n+1}]^{1/2}$.
 
-The superposition remainders are $\mathcal E_U=\revadd{\eps_{\mathrm{both}}^{n+1}}-\revadd{\eps_{\mathrm{latest}}^{n+1}}-\revadd{\eps_{\mathrm{older}}^{n+1}}$ and $\mathcal E_{C_L}=\Delta C_{L,\mathrm{both}}-\Delta C_{L,\mathrm{latest}}-\Delta C_{L,\mathrm{older}}$. The relative errors are $e_{\mathrm{sup}}^U=\|\mathcal E_U\|_{M_B}/\|\revadd{\eps_{\mathrm{both}}^{n+1}}\|_{M_B}$ and $e_{\mathrm{sup}}^{C_L}=|\mathcal E_{C_L}|/|\Delta C_{L,\mathrm{both}}|$. All reported denominators are nonzero.
+The superposition remainders are $\mathcal E_U=\eps_{\mathrm{both}}^{n+1}-\eps_{\mathrm{latest}}^{n+1}-\eps_{\mathrm{older}}^{n+1}$ and $\mathcal E_{C_L}=\Delta C_{L,\mathrm{both}}-\Delta C_{L,\mathrm{latest}}-\Delta C_{L,\mathrm{older}}$. The relative errors are $e_{\mathrm{sup}}^U=\|\mathcal E_U\|_{M_B}/\|\eps_{\mathrm{both}}^{n+1}\|_{M_B}$ and $e_{\mathrm{sup}}^{C_L}=|\mathcal E_{C_L}|/|\Delta C_{L,\mathrm{both}}|$. All reported denominators are nonzero.
 
 For the same imposed error field, the BDF2 residual coefficients have exact ratios of $4/3$ and $-1/3$ relative to perturbing both histories. The first-step state and lift inherit these ratios to first order under the smoothness and solve assumptions in the article. The state-norm ratios are nonnegative, whereas lift ratios retain their signs.
 
@@ -137,8 +123,8 @@ For the same imposed error field, the BDF2 residual coefficients have exact rati
  columns={method,state_superposition_defect,state_latest_full,state_older_full,CL_superposition_defect,CL_latest_full,CL_older_full},
  columns/method/.style={string type,column name={Transfer}},
  columns/state_superposition_defect/.style={sci,precision=1,column name={$e_{\mathrm{sup}}^U$}},
- columns/state_latest_full/.style={fixed,precision=4,column name={$\frac{\|\revadd{\eps_{\mathrm{latest}}^{n+1}}\|_{M_B}}{\|\revadd{\eps_{\mathrm{both}}^{n+1}}\|_{M_B}}$}},
- columns/state_older_full/.style={fixed,precision=4,column name={$\frac{\|\revadd{\eps_{\mathrm{older}}^{n+1}}\|_{M_B}}{\|\revadd{\eps_{\mathrm{both}}^{n+1}}\|_{M_B}}$}},
+ columns/state_latest_full/.style={fixed,precision=4,column name={$\frac{\|\eps_{\mathrm{latest}}^{n+1}\|_{M_B}}{\|\eps_{\mathrm{both}}^{n+1}\|_{M_B}}$}},
+ columns/state_older_full/.style={fixed,precision=4,column name={$\frac{\|\eps_{\mathrm{older}}^{n+1}\|_{M_B}}{\|\eps_{\mathrm{both}}^{n+1}\|_{M_B}}$}},
  columns/CL_superposition_defect/.style={sci,precision=1,column name={$e_{\mathrm{sup}}^{C_L}$}},
  columns/CL_latest_full/.style={fixed,precision=4,column name={$\frac{\Delta C_{L,\mathrm{latest}}}{\Delta C_{L,\mathrm{both}}}$}},
  columns/CL_older_full/.style={fixed,precision=4,column name={$\frac{\Delta C_{L,\mathrm{older}}}{\Delta C_{L,\mathrm{both}}}$}}
@@ -146,26 +132,15 @@ For the same imposed error field, the BDF2 residual coefficients have exact rati
 \end{table}
 
 \subsection{Slip-wall comparison}
-At a common trial state, the predicted residual perturbation is $-M_B\eta^n/\Delta t$, with $\eta^n=2\eps^n-\eps^{n-1}/2$ formed from the errors in the latest and older states relative to the target-mesh reference. Here $n$ labels physical time steps, \revdel{$\eps^k$ is transferred state minus target-mesh reference at level $k$}\revadd{$\eps^k$ is the restarted state minus the reference state on $B$ at level $k$}, and $\Delta t$ is the physical step size. The solver prints the negative of the left-hand side of the BDF2 equation, so the predicted difference in its printed values is $+M_B\eta^n/\Delta t$. The following comparisons measure the difference between the predicted and computed residual perturbations.
+When both residuals are evaluated at the same estimate of the new state $U_B^{n+1}$, the predicted residual perturbation is $-M_B\eta^n/\Delta t$, with $\eta^n=2\eps^n-\eps^{n-1}/2$ formed from the errors in the latest and older states relative to the target-mesh reference. Here $n$ labels physical time steps, $\eps^k$ is the restarted state minus the reference state on $B$ at level $k$, and $\Delta t$ is the physical step size. The solver prints the negative of the left-hand side of the BDF2 equation, so the predicted difference in its printed values is $+M_B\eta^n/\Delta t$. The following comparisons measure the difference between the predicted and computed residual perturbations.
 
-At the 370 slip-wall vertices, with both residuals evaluated at the same trial state, the wall-normal momentum mismatch is $3.4\times10^{-12}$ for GP2, $4.1\times10^{-12}$ for GP3 and CV2, and $4.5\times10^{-12}$ for NN1. The tangential mismatch is $(1.4$--$1.7)\times10^{-11}$, a fraction $(1.1$--$1.3)\times10^{-7}$ of the tangential residual perturbation of $1.25\times10^{-4}$. All four transfers return the same wall state, that of the source solution; the difference in wall-normal momentum from the target-mesh reference is $1.1\times10^{-14}$, so the normal residual perturbation is negligible and enforcement of the target slip-wall condition does not alter it. The predicted and measured perturbations both include enforcement of the target slip-wall condition.
+At the 370 slip-wall vertices, the wall-normal momentum mismatch is $3.4\times10^{-12}$ for GP2, $4.1\times10^{-12}$ for GP3 and CV2, and $4.5\times10^{-12}$ for NN1. The tangential mismatch is $(1.4$--$1.7)\times10^{-11}$, a fraction $(1.1$--$1.3)\times10^{-7}$ of the tangential residual perturbation of $1.25\times10^{-4}$. All four transfers return the same wall state, that of the source solution; the difference in wall-normal momentum from the target-mesh reference is $1.1\times10^{-14}$, so the normal residual perturbation is negligible and enforcement of the target slip-wall condition does not alter it. The predicted and measured perturbations both include enforcement of the target slip-wall condition.
 
 \subsection{Residual probes in the cancellation test}
 
-In the cancellation test, the history discrepancies are $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$, giving $\eta^n=2\eps^n-\eps^{n-1}/2=0$. The initial probes use different trial states. Let $\Phi_B$ be the constant-step BDF2 residual, with latest and older states $U_B^n,U_B^{n-1}$ and spatial residual $F_B$. The time $t^{n+1}$ is the next physical time. \revdel{Let $Y$ be the reference trial state and $\Delta Y$ the trial-state increment.}\revadd{Write $U_{B,\mathrm{trial}}^{n+1}$ and $\widehat U_{B,\mathrm{trial}}^{n+1}$ for the trial values at $t^{n+1}$ in the reference and restarted solves. Their difference at the time of the probe is $\eps_{\mathrm{trial}}^{n+1}=\widehat U_{B,\mathrm{trial}}^{n+1}-U_{B,\mathrm{trial}}^{n+1}$. Both are provisional solver values.} With $\widehat U_B^k=U_B^k+\eps^k$ at the two stored levels $k=n,n-1$, the residual difference is
+In the cancellation test, the history discrepancies are $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$, giving $\eta^n=2\eps^n-\eps^{n-1}/2=0$. In this test the reference and restarted runs start their inner solves from different estimates of the flow at $t^{n+1}$. We record the constant-step BDF2 residual $\Phi_B$ before the first update in each run. Write $U_{B,\mathrm{trial}}^{n+1}$ for the reference initial guess and $\widehat U_{B,\mathrm{trial}}^{n+1}$ for the restarted initial guess. Their difference is $\eps_{\mathrm{trial}}^{n+1}=\widehat U_{B,\mathrm{trial}}^{n+1}-U_{B,\mathrm{trial}}^{n+1}$. In the expression below, $F_B$ is the spatial residual. With $\widehat U_B^k=U_B^k+\eps^k$ at the two stored levels $k=n,n-1$, the residual difference is
 
-\revdel{\begin{equation*}
- \begin{aligned}
- \Phi_B(Y;U_B^n,U_B^{n-1})
- &=\frac{M_B}{\Delta t}\big(\tfrac32Y-2U_B^n+\tfrac12U_B^{n-1}\big)+F_B(Y,t^{n+1}),\\
- \Delta\Phi_B
- &\equiv \Phi_B(Y+\Delta Y;\widehat U_B^n,\widehat U_B^{n-1})-\Phi_B(Y;U_B^n,U_B^{n-1})\\
- &=\frac{3M_B\Delta Y}{2\Delta t}
-       +F_B(Y+\Delta Y,t^{n+1})-F_B(Y,t^{n+1})
-       -\frac{M_B\eta^n}{\Delta t}.
- \end{aligned}
-\end{equation*}}
-\revadd{\begin{equation}
+\begin{equation}
 \begin{aligned}
  \Delta\Phi_B
  &\equiv\Phi_B(\widehat U_{B,\mathrm{trial}}^{n+1};\widehat U_B^n,\widehat U_B^{n-1})
@@ -174,9 +149,9 @@ In the cancellation test, the history discrepancies are $\eps^n=\eps^{\mathrm{st
    +F_B(\widehat U_{B,\mathrm{trial}}^{n+1},t^{n+1})-F_B(U_{B,\mathrm{trial}}^{n+1},t^{n+1}).
  \end{aligned}
  \label{eq:unequal-trial-residual}
-\end{equation}}
+\end{equation}
 
-\revdel{With $\Delta Y=\eps^{\mathrm{st}}/4$}\revadd{With $\eps_{\mathrm{trial}}^{n+1}=\eps^{\mathrm{st}}/4$} and $\eta^n=0$, the temporal part is three quarters of the magnitude of the residual perturbation with only the older state in error. The measured ratio near 0.75 also includes a spatial-residual difference and therefore does not verify the residual identity at a common trial state. In contrast, at an identical trial state the history contribution to the residual difference is exactly $-M_B\eta^n/\Delta t$. Cancellation is temporary even for an exact first step: if the first-step state difference vanishes, the older level retains $\eps^{\mathrm{st}}/4$, producing the subsequent history combination $-\eps^{\mathrm{st}}/8$.
+With $\eps_{\mathrm{trial}}^{n+1}=\eps^{\mathrm{st}}/4$ and $\eta^n=0$, the temporal part is three quarters of the magnitude of the residual perturbation with only the older state in error. The measured ratio near 0.75 also includes the change in $F_B$ between the two initial guesses. Evaluating both residuals at the same estimate would give $\eps_{\mathrm{trial}}^{n+1}=0$, cancel the spatial terms and leave exactly $-M_B\eta^n/\Delta t$. Cancellation is temporary even for an exact first step: if the first-step state difference vanishes, the older level retains $\eps^{\mathrm{st}}/4$, producing the subsequent history combination $-\eps^{\mathrm{st}}/8$.
 
 The computed lift differences in the cancellation test are of order $10^{-9}$, but volume-weighted state differences remain 4.3--9.0\% of the imposed discrepancy. Table~\ref{tab:naca-cancellation-app} gives both state norms. Iterative error is not independently quantified, so this test does not verify cancellation of the computed state response.
 
@@ -189,8 +164,8 @@ The computed lift differences in the cancellation test are of order $10^{-9}$, b
  columns/method/.style={string type,column name={Transfer}},
  columns/dCL_step2/.style={sci,precision=2,column name={$\Delta C_L$}},
  columns/dCD_step2/.style={sci,precision=2,column name={$\Delta C_D$}},
- columns/state_diff_step2_over_eps/.style={sci,precision=2,column name={$\|\revadd{\eps^{n+1}}\|_2/\|\eps^{\mathrm{st}}\|_2$}},
- columns/state_diff_step2_over_eps_volume_weighted/.style={sci,precision=2,column name={$\|\revadd{\eps^{n+1}}\|_{M_B}/\|\eps^{\mathrm{st}}\|_{M_B}$}}
+ columns/state_diff_step2_over_eps/.style={sci,precision=2,column name={$\|\eps^{n+1}\|_2/\|\eps^{\mathrm{st}}\|_2$}},
+ columns/state_diff_step2_over_eps_volume_weighted/.style={sci,precision=2,column name={$\|\eps^{n+1}\|_{M_B}/\|\eps^{\mathrm{st}}\|_{M_B}$}}
 ]{\DataDir/naca_cancellation.csv}
 \end{table}
 
@@ -202,16 +177,16 @@ The state and lift remainders and both state norms are defined in Section~S2. Sc
 
 \begin{table}[!htbp]
 \centering\footnotesize
-\caption{Amplitude dependence of first-step superposition. $\mathcal E_U=\revadd{\eps_{\mathrm{both}}^{n+1}}-\revadd{\eps_{\mathrm{latest}}^{n+1}}-\revadd{\eps_{\mathrm{older}}^{n+1}}$ is the state remainder and $\mathcal E_{C_L}$ its lift counterpart. Relative remainders use the corresponding response with both states perturbed. The Euclidean and volume-weighted state metrics have different amplitude dependence.}
+\caption{Amplitude dependence of first-step superposition. $\mathcal E_U=\eps_{\mathrm{both}}^{n+1}-\eps_{\mathrm{latest}}^{n+1}-\eps_{\mathrm{older}}^{n+1}$ is the state remainder and $\mathcal E_{C_L}$ its lift counterpart. Relative remainders use the corresponding response with both states perturbed. The Euclidean and volume-weighted state metrics have different amplitude dependence.}
 \label{tab:naca-amplitude-app}
 \pgfplotstabletypeset[publication table,
  columns={method,lambda,state_remainder_abs_euclid,state_superposition_defect_euclid,state_remainder_abs_M,state_superposition_defect_M,CL_remainder_abs},
  columns/method/.style={string type,column name={Transfer}},
  columns/lambda/.style={fixed,precision=2,column name={$\lambda$}},
  columns/state_remainder_abs_euclid/.style={sci,precision=2,column name={$\|\mathcal E_U\|_2$}},
- columns/state_superposition_defect_euclid/.style={sci,precision=2,column name={$\|\mathcal E_U\|_2/\|\revadd{\eps_{\mathrm{both}}^{n+1}}\|_2$}},
+ columns/state_superposition_defect_euclid/.style={sci,precision=2,column name={$\|\mathcal E_U\|_2/\|\eps_{\mathrm{both}}^{n+1}\|_2$}},
  columns/state_remainder_abs_M/.style={sci,precision=2,column name={$\|\mathcal E_U\|_{M_B}$}},
- columns/state_superposition_defect_M/.style={sci,precision=2,column name={$\|\mathcal E_U\|_{M_B}/\|\revadd{\eps_{\mathrm{both}}^{n+1}}\|_{M_B}$}},
+ columns/state_superposition_defect_M/.style={sci,precision=2,column name={$\|\mathcal E_U\|_{M_B}/\|\eps_{\mathrm{both}}^{n+1}\|_{M_B}$}},
  columns/CL_remainder_abs/.style={sci,precision=2,column name={$|\mathcal E_{C_L}|$}}
 ]{\DataDir/naca_amplitude_sequence.csv}
 \end{table}
@@ -339,7 +314,7 @@ The density extrema permitted by LC are measured relative to the source range at
 \section{Separating transfer error from mesh dependence}
 \label{supp:reference-decomposition}
 
-\revdel{Let $U_{\mathrm{ex}}^k=U_{\mathrm{ex}}(\boldsymbol x,t^k)$ be a common exact continuum state at physical time $t^k$, with spatial position $\boldsymbol x$. Write $U_{M,\mathrm{ex}}^k$ for the values of this exact field at the solver vertices of mesh $M$. The independently computed discrete reference is $U_M^k$, and its discretization error is $e_{\mathrm{disc},M}^k=U_M^k-U_{M,\mathrm{ex}}^k$. With the complete transfer map $\mathcal T_{AB}$, the discrepancy from the target reference is}\revadd{At either stored level $k=n-1,n$, let $U_{M,\mathrm{ex}}^k$ be the exact state sampled at the vertices of mesh $M$. The computed reference has discretization error $e_{\mathrm{disc},M}^k=U_M^k-U_{M,\mathrm{ex}}^k$. Adding and subtracting the transfer of the exact samples, $\mathcal T_{AB}(U_{A,\mathrm{ex}}^k)$, gives the error in the transferred history}
+At either stored level $k=n-1,n$, let $U_{M,\mathrm{ex}}^k$ be the exact state sampled at the vertices of mesh $M$. The computed reference has discretization error $e_{\mathrm{disc},M}^k=U_M^k-U_{M,\mathrm{ex}}^k$. Adding and subtracting the transfer of the exact samples, $\mathcal T_{AB}(U_{A,\mathrm{ex}}^k)$, gives the error in the transferred history
 
 \begin{align}
  \eps^k={}&
@@ -359,10 +334,10 @@ For a scalar output functional $G_M$ evaluated from the state on mesh $M$, a sou
  &+G_B(\widehat U_B^k)-G_B(U_B^k).
  \label{eq:observable-decomposition}
 \end{align}
-\revdel{Here $\widehat U_B^k=\mathcal T_{AB}(U_A^k)$. The first term measures the mesh dependence of the independently computed references; the second is the restart response on the target mesh. Neither term alone is the error relative to the exact continuum solution.}\revadd{Here $\widehat U_B^k=\mathcal T_{AB}(U_A^k)$. The first term compares the two discrete mesh references. The second measures the output difference on $B$ immediately after transfer.}
+Here $\widehat U_B^k=\mathcal T_{AB}(U_A^k)$. The first term compares the two discrete mesh references. The second measures the output difference on $B$ immediately after transfer.
 
 \subsection{How the history weights change for a later load}
-\revdel{The main article gives the adjoint for the first step. Here consider a load $G_B$ at step $N\ge n+1$ on the same fixed target mesh, with no further transfers. Assume the same local linearization and converged solves as for the one-step prediction.}\revadd{Consider a load $G_B$ at step $N\ge n+1$ on the same target mesh, with no further transfers. Use the smoothness and solve assumptions of the one-step prediction.} Let $A_m=\tfrac32M_B+\Delta t\,\partial_U F_B(U_B^m,t^m)$ be the scaled step Jacobian on the reference solution at step $m$. The gradient of the final load is $g_N=\nabla_U G_B(U_B^N)$, and set $g_m=0$ for earlier steps.
+Consider a load $G_B$ at step $N\ge n+1$ on the same target mesh, with no further transfers. Use the smoothness and solve assumptions of the one-step prediction. Let $A_m=\tfrac32M_B+\Delta t\,\partial_U F_B(U_B^m,t^m)$ be the scaled step Jacobian on the reference solution at step $m$. The gradient of the final load is $g_N=\nabla_U G_B(U_B^N)$, and set $g_m=0$ for earlier steps.
 
 Start with $\boldsymbol\lambda_{N+1}=\boldsymbol\lambda_{N+2}=0$. For $m=N,N-1,\ldots,n+1$, solve
 \begin{equation}
@@ -370,14 +345,14 @@ Start with $\boldsymbol\lambda_{N+1}=\boldsymbol\lambda_{N+2}=0$. For $m=N,N-1,\
                       -\tfrac12 M_B\boldsymbol\lambda_{m+2}.
  \label{supp:eq:later-adjoint}
 \end{equation}
-\revdel{The two terms on the right come from the two later BDF2 steps that use state $m$. To see this, multiply each linearized step equation by $\boldsymbol\lambda_m^T$ and sum from $n+1$ to $N$. The recurrence cancels the coefficients of intermediate state changes. The remaining dependence of the load on the two initial history errors is}\revadd{The coefficients $2$ and $-1/2$ come from the next two BDF2 steps. With $\eps^m=\widehat U_B^m-U_B^m$, multiply each linearized equation $A_m\eps^m\simeq M_B(2\eps^{m-1}-\eps^{m-2}/2)$ by $\boldsymbol\lambda_m^T$ and sum over $m=n+1,\ldots,N$. Eq.~\eqref{supp:eq:later-adjoint} cancels the intermediate state differences and leaves}
+The coefficients $2$ and $-1/2$ come from the next two BDF2 steps. With $\eps^m=\widehat U_B^m-U_B^m$, multiply each linearized equation $A_m\eps^m\simeq M_B(2\eps^{m-1}-\eps^{m-2}/2)$ by $\boldsymbol\lambda_m^T$ and sum over $m=n+1,\ldots,N$. Eq.~\eqref{supp:eq:later-adjoint} cancels the intermediate state differences and leaves
 \begin{equation}
  \Delta G^N \simeq
  (2\boldsymbol\lambda_{n+1}-\tfrac12\boldsymbol\lambda_{n+2})^T M_B\eps^n
  -\tfrac12\boldsymbol\lambda_{n+1}^T M_B\eps^{n-1}.
  \label{supp:eq:later-history-weights}
 \end{equation}
-\revdel{Here $\Delta G^N$ is the load from the transferred restart minus that from the reference continuation.}\revadd{Here $\Delta G^N=G_B(\widehat U_B^N)-G_B(U_B^N)$ compares the runs at the same final time.} For $N=n+1$, only $\boldsymbol\lambda_{n+1}$ remains and the expression reduces to $\boldsymbol\lambda_{n+1}^TM_B(2\eps^n-\eps^{n-1}/2)$.\revdel{ The later pressure and load histories reported in the article come from forward simulations.}
+Here $\Delta G^N=G_B(\widehat U_B^N)-G_B(U_B^N)$ compares the runs at the same final time. For $N=n+1$, only $\boldsymbol\lambda_{n+1}$ remains and the expression reduces to $\boldsymbol\lambda_{n+1}^TM_B(2\eps^n-\eps^{n-1}/2)$.
 
 \section{Steady mesh sensitivity and the medium-mesh transient}
 \label{supp:mesh-sensitivity}
