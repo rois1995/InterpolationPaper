@@ -113,13 +113,6 @@ B.~Diskin, J.~L. Thomas, Accuracy of gradient reconstruction on grids with high
   aspect ratio, Tech. Rep. NIA Report 2008-12, National Institute of Aerospace,
   Hampton, Virginia (2008).
 
-\bibitem{BarthJespersen1989}
-T.~J. Barth, D.~C. Jespersen, The design and application of upwind schemes on
-  unstructured meshes, in: 27th Aerospace Sciences Meeting, AIAA Paper 89-0366,
-  Reno, Nevada, 1989.
-\newblock \href {https://doi.org/10.2514/6.1989-366}
-  {\path{doi:10.2514/6.1989-366}}.
-
 \bibitem{Dunavant1985}
 D.~A. Dunavant, High degree efficient symmetrical {G}aussian quadrature rules
   for the triangle, Int. J. Numer. Methods Eng. 21~(6) (1985) 1129--1148.
@@ -127,6 +120,13 @@ D.~A. Dunavant, High degree efficient symmetrical {G}aussian quadrature rules
 \bibitem{Keast1986}
 P.~Keast, Moderate-degree tetrahedral quadrature formulas, Comput. Methods
   Appl. Mech. Eng. 55 (1986) 339--348.
+
+\bibitem{BarthJespersen1989}
+T.~J. Barth, D.~C. Jespersen, The design and application of upwind schemes on
+  unstructured meshes, in: 27th Aerospace Sciences Meeting, AIAA Paper 89-0366,
+  Reno, Nevada, 1989.
+\newblock \href {https://doi.org/10.2514/6.1989-366}
+  {\path{doi:10.2514/6.1989-366}}.
 
 \bibitem{ShashkovWendroff2004}
 M.~Shashkov, B.~Wendroff, The repair paradigm and application to conservation
@@ -171,16 +171,16 @@ R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts
 P.~R. Spalart, S.~R. Allmaras, A one-equation turbulence model for aerodynamic
   flows, Rech. A\'erosp.~(1) (1994) 5--21.
 
-\bibitem{Menter1994}
-F.~R. Menter, Two-equation eddy-viscosity turbulence models for engineering
-  applications, AIAA J. 32~(8) (1994) 1598--1605.
-\newblock \href {https://doi.org/10.2514/3.12149} {\path{doi:10.2514/3.12149}}.
-
 \bibitem{EconomonEtAl2016SU2}
 T.~D. Economon, F.~Palacios, S.~R. Copeland, T.~W. Lukaczyk, J.~J. Alonso,
   {SU2}: An open-source suite for multiphysics simulation and design, AIAA J.
   54~(3) (2016) 828--846.
 \newblock \href {https://doi.org/10.2514/1.J053813}
   {\path{doi:10.2514/1.J053813}}.
+
+\bibitem{Menter1994}
+F.~R. Menter, Two-equation eddy-viscosity turbulence models for engineering
+  applications, AIAA J. 32~(8) (1994) 1598--1605.
+\newblock \href {https://doi.org/10.2514/3.12149} {\path{doi:10.2514/3.12149}}.
 
 \end{thebibliography}

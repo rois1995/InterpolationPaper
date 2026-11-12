@@ -81,7 +81,7 @@
 
 \begin{document}
 \maketitle
-This supplement contains the full Euler remeshing comparisons and additional tests of the transferred history states supporting the article. \revdel{The tables use the archived numerical data supplied with the article.}\revadd{The tables also give the convergence controls for the viscous airfoil case and a companion turbulence-model calculation.} NN, BAR, GP, and CV denote nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer; suffixes give nominal order of accuracy for smooth fields. GC denotes bounded global correction; LC denotes locally conservative flux correction. BDF2 denotes the second-order backward differentiation formula.
+This supplement contains the full Euler remeshing comparisons and additional tests of the transferred history states supporting the article. The tables also give the convergence controls for the viscous airfoil case and a companion turbulence-model calculation. NN, BAR, GP, and CV denote nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer; suffixes give nominal order of accuracy for smooth fields. GC denotes bounded global correction; LC denotes locally conservative flux correction. BDF2 denotes the second-order backward differentiation formula.
 
 \section{Repeated remeshing in Euler simulations}
 \label{supp:euler}
@@ -121,13 +121,13 @@ Table~\ref{tab:riemann-frequency-app} includes the higher-order alternatives to 
 \section{Boundary residuals and the cancellation test}
 \subsection{First-step response ratios}
 
-The source mesh is $A$ and the target mesh $B$. After the first BDF2 step, the state difference is $\delta=\widehat U_B-U_B$, where $\widehat U_B$ is the continuation from transferred histories and $U_B$ the target-reference continuation. Subscripts $\mathrm{both}$, $\mathrm{latest}$, and $\mathrm{older}$ identify which stored states were perturbed. All responses use the steady discrepancy $\eps^{\mathrm{st}}=\mathcal T_{AB}(U_A^{\mathrm{st}})-U_B^{\mathrm{st}}$, where the superscript $\mathrm{st}$ denotes the independently computed steady references and $\mathcal T_{AB}$ is the complete transfer including corrections. The lift difference from the target-mesh continuation is $\Delta C_L$.
+The source mesh is $A$ and the target mesh $B$. \revdel{After the first BDF2 step, the state difference is $\delta=\widehat U_B-U_B$, where $\widehat U_B$ is the continuation from transferred histories and $U_B$ the target-reference continuation.}\revadd{After the first BDF2 step, the state difference is $\eps^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$, with both states computed on $B$. At the two input times, $\eps^{n-1}$ and $\eps^n$ denote the differences introduced by transferring the histories.} Subscripts $\mathrm{both}$, $\mathrm{latest}$, and $\mathrm{older}$ identify which stored states were perturbed. All responses use the steady discrepancy $\eps^{\mathrm{st}}=\mathcal T_{AB}(U_A^{\mathrm{st}})-U_B^{\mathrm{st}}$, where the superscript $\mathrm{st}$ denotes the independently computed steady references and $\mathcal T_{AB}$ is the complete transfer including corrections. The lift difference from the target-mesh continuation is $\Delta C_L$.
 
-States are stacked vertex by vertex. The mass matrix is $M_B=\operatorname{diag}(w_i^B)\otimes I_{n_U}$, with positive target control-volume measures $w_i^B$, $n_U$ state components, and component identity $I_{n_U}$. The symbol $\otimes$ denotes the Kronecker product and a superscript $T$ denotes transpose. The volume-weighted norm is $\|\delta\|_{M_B}=(\delta^TM_B\delta)^{1/2}$ and the Euclidean norm $\|\delta\|_2=(\delta^T\delta)^{1/2}$.
+States are stacked vertex by vertex. The mass matrix is $M_B=\operatorname{diag}(w_i^B)\otimes I_{n_U}$, with positive target control-volume measures $w_i^B$, $n_U$ state components, and component identity $I_{n_U}$. The symbol $\otimes$ denotes the Kronecker product and a superscript $T$ denotes transpose. \revdel{The volume-weighted norm is $\|\delta\|_{M_B}=(\delta^TM_B\delta)^{1/2}$ and the Euclidean norm $\|\delta\|_2=(\delta^T\delta)^{1/2}$.}\revadd{The first-step state difference has volume-weighted norm $\|\eps^{n+1}\|_{M_B}=[(\eps^{n+1})^TM_B\eps^{n+1}]^{1/2}$ and Euclidean norm $\|\eps^{n+1}\|_2=[(\eps^{n+1})^T\eps^{n+1}]^{1/2}$.}
 
-The superposition remainders are $\mathcal E_U=\delta_{\mathrm{both}}-\delta_{\mathrm{latest}}-\delta_{\mathrm{older}}$ and $\mathcal E_{C_L}=\Delta C_{L,\mathrm{both}}-\Delta C_{L,\mathrm{latest}}-\Delta C_{L,\mathrm{older}}$. The relative errors are $e_{\mathrm{sup}}^U=\|\mathcal E_U\|_{M_B}/\|\delta_{\mathrm{both}}\|_{M_B}$ and $e_{\mathrm{sup}}^{C_L}=|\mathcal E_{C_L}|/|\Delta C_{L,\mathrm{both}}|$. All reported denominators are nonzero.
+The superposition remainders are $\mathcal E_U=\revadd{\eps_{\mathrm{both}}^{n+1}}-\revadd{\eps_{\mathrm{latest}}^{n+1}}-\revadd{\eps_{\mathrm{older}}^{n+1}}$ and $\mathcal E_{C_L}=\Delta C_{L,\mathrm{both}}-\Delta C_{L,\mathrm{latest}}-\Delta C_{L,\mathrm{older}}$. The relative errors are $e_{\mathrm{sup}}^U=\|\mathcal E_U\|_{M_B}/\|\revadd{\eps_{\mathrm{both}}^{n+1}}\|_{M_B}$ and $e_{\mathrm{sup}}^{C_L}=|\mathcal E_{C_L}|/|\Delta C_{L,\mathrm{both}}|$. All reported denominators are nonzero.
 
-\revdel{Local linearity predicts latest-only and older-only responses of $4/3$ and $-1/3$ times the both-states response.}\revadd{For the same imposed error field, the BDF2 residual coefficients have exact ratios of $4/3$ and $-1/3$ relative to perturbing both histories. The first-step state and lift inherit these ratios to first order under the smoothness and solve assumptions in the article.} The state-norm ratios are nonnegative, whereas lift ratios retain their signs.
+For the same imposed error field, the BDF2 residual coefficients have exact ratios of $4/3$ and $-1/3$ relative to perturbing both histories. The first-step state and lift inherit these ratios to first order under the smoothness and solve assumptions in the article. The state-norm ratios are nonnegative, whereas lift ratios retain their signs.
 
 \begin{table}[!htbp]
 \centering\scriptsize\setlength{\tabcolsep}{3pt}
@@ -137,8 +137,8 @@ The superposition remainders are $\mathcal E_U=\delta_{\mathrm{both}}-\delta_{\m
  columns={method,state_superposition_defect,state_latest_full,state_older_full,CL_superposition_defect,CL_latest_full,CL_older_full},
  columns/method/.style={string type,column name={Transfer}},
  columns/state_superposition_defect/.style={sci,precision=1,column name={$e_{\mathrm{sup}}^U$}},
- columns/state_latest_full/.style={fixed,precision=4,column name={$\frac{\|\delta_{\mathrm{latest}}\|_{M_B}}{\|\delta_{\mathrm{both}}\|_{M_B}}$}},
- columns/state_older_full/.style={fixed,precision=4,column name={$\frac{\|\delta_{\mathrm{older}}\|_{M_B}}{\|\delta_{\mathrm{both}}\|_{M_B}}$}},
+ columns/state_latest_full/.style={fixed,precision=4,column name={$\frac{\|\revadd{\eps_{\mathrm{latest}}^{n+1}}\|_{M_B}}{\|\revadd{\eps_{\mathrm{both}}^{n+1}}\|_{M_B}}$}},
+ columns/state_older_full/.style={fixed,precision=4,column name={$\frac{\|\revadd{\eps_{\mathrm{older}}^{n+1}}\|_{M_B}}{\|\revadd{\eps_{\mathrm{both}}^{n+1}}\|_{M_B}}$}},
  columns/CL_superposition_defect/.style={sci,precision=1,column name={$e_{\mathrm{sup}}^{C_L}$}},
  columns/CL_latest_full/.style={fixed,precision=4,column name={$\frac{\Delta C_{L,\mathrm{latest}}}{\Delta C_{L,\mathrm{both}}}$}},
  columns/CL_older_full/.style={fixed,precision=4,column name={$\frac{\Delta C_{L,\mathrm{older}}}{\Delta C_{L,\mathrm{both}}}$}}
@@ -146,25 +146,15 @@ The superposition remainders are $\mathcal E_U=\delta_{\mathrm{both}}-\delta_{\m
 \end{table}
 
 \subsection{Slip-wall comparison}
-At a common trial state, the predicted residual perturbation is $-M_B\eta^n/\Delta t$, with $\eta^n=2\eps^n-\eps^{n-1}/2$ formed from the errors in the latest and older states relative to the target-mesh reference. Here $n$ labels physical time steps, $\eps^k$ is transferred state minus target-mesh reference at level $k$, and $\Delta t$ is the physical step size. \revdel{The solver reports the negative of this residual.}\revadd{The solver prints the negative of the left-hand side of the BDF2 equation, so the predicted difference in its printed values is $+M_B\eta^n/\Delta t$.} The following comparisons measure the difference between the predicted and computed residual perturbations.
+At a common trial state, the predicted residual perturbation is $-M_B\eta^n/\Delta t$, with $\eta^n=2\eps^n-\eps^{n-1}/2$ formed from the errors in the latest and older states relative to the target-mesh reference. Here $n$ labels physical time steps, \revdel{$\eps^k$ is transferred state minus target-mesh reference at level $k$}\revadd{$\eps^k$ is the restarted state minus the reference state on $B$ at level $k$}, and $\Delta t$ is the physical step size. The solver prints the negative of the left-hand side of the BDF2 equation, so the predicted difference in its printed values is $+M_B\eta^n/\Delta t$. The following comparisons measure the difference between the predicted and computed residual perturbations.
 
 At the 370 slip-wall vertices, with both residuals evaluated at the same trial state, the wall-normal momentum mismatch is $3.4\times10^{-12}$ for GP2, $4.1\times10^{-12}$ for GP3 and CV2, and $4.5\times10^{-12}$ for NN1. The tangential mismatch is $(1.4$--$1.7)\times10^{-11}$, a fraction $(1.1$--$1.3)\times10^{-7}$ of the tangential residual perturbation of $1.25\times10^{-4}$. All four transfers return the same wall state, that of the source solution; the difference in wall-normal momentum from the target-mesh reference is $1.1\times10^{-14}$, so the normal residual perturbation is negligible and enforcement of the target slip-wall condition does not alter it. The predicted and measured perturbations both include enforcement of the target slip-wall condition.
 
-\subsection{Residual probes in the \revdel{cancellation experiment}\revadd{cancellation test}}
+\subsection{Residual probes in the cancellation test}
 
-In the \revdel{cancellation experiment}\revadd{cancellation test}, the history discrepancies are $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$, giving $\eta^n=2\eps^n-\eps^{n-1}/2=0$. The initial probes use different trial states. \revdel{Let $\Phi_B$ be the constant-step BDF2 residual, with latest and older states $V,W$ and spatial residual $F_B$.}\revadd{Let $\Phi_B$ be the constant-step BDF2 residual, with latest and older states $U_B^n,U_B^{n-1}$ and spatial residual $F_B$.} The time $t^{n+1}$ is the next physical time. Let $Y$ be the reference trial state and $\Delta Y$ the trial-state increment. \revdel{If the two stored-state errors are $\eps^n,\eps^{n-1}$, then}\revadd{With $\widehat U_B^k=U_B^k+\eps^k$ at the two stored levels $k=n,n-1$, the residual difference is}
+In the cancellation test, the history discrepancies are $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$, giving $\eta^n=2\eps^n-\eps^{n-1}/2=0$. The initial probes use different trial states. Let $\Phi_B$ be the constant-step BDF2 residual, with latest and older states $U_B^n,U_B^{n-1}$ and spatial residual $F_B$. The time $t^{n+1}$ is the next physical time. \revdel{Let $Y$ be the reference trial state and $\Delta Y$ the trial-state increment.}\revadd{Write $U_{B,\mathrm{trial}}^{n+1}$ and $\widehat U_{B,\mathrm{trial}}^{n+1}$ for the trial values at $t^{n+1}$ in the reference and restarted solves. Their difference at the time of the probe is $\eps_{\mathrm{trial}}^{n+1}=\widehat U_{B,\mathrm{trial}}^{n+1}-U_{B,\mathrm{trial}}^{n+1}$. Both are provisional solver values.} With $\widehat U_B^k=U_B^k+\eps^k$ at the two stored levels $k=n,n-1$, the residual difference is
+
 \revdel{\begin{equation*}
- \begin{aligned}
- \Phi_B(Y;V,W)
- &=\frac{M_B}{\Delta t}\left(\tfrac32Y-2V+\tfrac12W\right)+F_B(Y,t^{n+1}),\\
- \Delta\Phi_B
- &\equiv \Phi_B(Y+\Delta Y;V+\eps^n,W+\eps^{n-1})-\Phi_B(Y;V,W)\\
- &=\frac{3M_B\Delta Y}{2\Delta t}
-       +F_B(Y+\Delta Y,t^{n+1})-F_B(Y,t^{n+1})
-       -\frac{M_B\eta^n}{\Delta t}.
- \end{aligned}
-\end{equation*}}
-\revadd{\begin{equation}
  \begin{aligned}
  \Phi_B(Y;U_B^n,U_B^{n-1})
  &=\frac{M_B}{\Delta t}\big(\tfrac32Y-2U_B^n+\tfrac12U_B^{n-1}\big)+F_B(Y,t^{n+1}),\\
@@ -174,10 +164,19 @@ In the \revdel{cancellation experiment}\revadd{cancellation test}, the history d
        +F_B(Y+\Delta Y,t^{n+1})-F_B(Y,t^{n+1})
        -\frac{M_B\eta^n}{\Delta t}.
  \end{aligned}
+\end{equation*}}
+\revadd{\begin{equation}
+\begin{aligned}
+ \Delta\Phi_B
+ &\equiv\Phi_B(\widehat U_{B,\mathrm{trial}}^{n+1};\widehat U_B^n,\widehat U_B^{n-1})
+       -\Phi_B(U_{B,\mathrm{trial}}^{n+1};U_B^n,U_B^{n-1})\\
+ &=\frac{M_B}{\Delta t}\big(\tfrac32\eps_{\mathrm{trial}}^{n+1}-\eta^n\big)
+   +F_B(\widehat U_{B,\mathrm{trial}}^{n+1},t^{n+1})-F_B(U_{B,\mathrm{trial}}^{n+1},t^{n+1}).
+ \end{aligned}
  \label{eq:unequal-trial-residual}
 \end{equation}}
 
-With $\Delta Y=\eps^{\mathrm{st}}/4$ and $\eta^n=0$, the temporal part is three quarters of the magnitude of the residual perturbation with only the older state in error. The measured ratio near 0.75 also includes a spatial-residual difference and therefore does not verify the residual identity at a common trial state. In contrast, at an identical trial state the history contribution to the residual difference is exactly $-M_B\eta^n/\Delta t$. Cancellation is temporary even for an exact first step: if the first-step state difference vanishes, the older level retains $\eps^{\mathrm{st}}/4$, producing the subsequent history combination $-\eps^{\mathrm{st}}/8$.
+\revdel{With $\Delta Y=\eps^{\mathrm{st}}/4$}\revadd{With $\eps_{\mathrm{trial}}^{n+1}=\eps^{\mathrm{st}}/4$} and $\eta^n=0$, the temporal part is three quarters of the magnitude of the residual perturbation with only the older state in error. The measured ratio near 0.75 also includes a spatial-residual difference and therefore does not verify the residual identity at a common trial state. In contrast, at an identical trial state the history contribution to the residual difference is exactly $-M_B\eta^n/\Delta t$. Cancellation is temporary even for an exact first step: if the first-step state difference vanishes, the older level retains $\eps^{\mathrm{st}}/4$, producing the subsequent history combination $-\eps^{\mathrm{st}}/8$.
 
 The computed lift differences in the cancellation test are of order $10^{-9}$, but volume-weighted state differences remain 4.3--9.0\% of the imposed discrepancy. Table~\ref{tab:naca-cancellation-app} gives both state norms. Iterative error is not independently quantified, so this test does not verify cancellation of the computed state response.
 
@@ -190,8 +189,8 @@ The computed lift differences in the cancellation test are of order $10^{-9}$, b
  columns/method/.style={string type,column name={Transfer}},
  columns/dCL_step2/.style={sci,precision=2,column name={$\Delta C_L$}},
  columns/dCD_step2/.style={sci,precision=2,column name={$\Delta C_D$}},
- columns/state_diff_step2_over_eps/.style={sci,precision=2,column name={$\|\delta\|_2/\|\eps^{\mathrm{st}}\|_2$}},
- columns/state_diff_step2_over_eps_volume_weighted/.style={sci,precision=2,column name={$\|\delta\|_{M_B}/\|\eps^{\mathrm{st}}\|_{M_B}$}}
+ columns/state_diff_step2_over_eps/.style={sci,precision=2,column name={$\|\revadd{\eps^{n+1}}\|_2/\|\eps^{\mathrm{st}}\|_2$}},
+ columns/state_diff_step2_over_eps_volume_weighted/.style={sci,precision=2,column name={$\|\revadd{\eps^{n+1}}\|_{M_B}/\|\eps^{\mathrm{st}}\|_{M_B}$}}
 ]{\DataDir/naca_cancellation.csv}
 \end{table}
 
@@ -199,27 +198,27 @@ The computed lift differences in the cancellation test are of order $10^{-9}$, b
 
 \section{Perturbation-amplitude dependence}
 
-The state and lift remainders and both state norms are defined in Section~S2. Scaling the same discrepancy $\eps^{\mathrm{st}}$ by $\lambda=1,1/2,1/4$ reduces the Euclidean and lift remainders for BAR2, GP2, and CV2 (Table~\ref{tab:naca-amplitude-app}). Here $\lambda$ is the imposed amplitude factor. The absolute Euclidean remainder decreases by factors of about 3.2--3.5 per halving. The absolute volume-weighted remainder decreases more slowly, from approximately $2.4\times10^{-5}$ to $1.5$--$1.7\times10^{-5}$, while its relative value rises from about 3.4\% to 8.7--9.2\%. \revdel{These tests do not establish a quadratic remainder in every norm, and no independently measured iterative error explains the remaining discrepancy.}\revadd{These finite-amplitude tests do not establish the quadratic prediction uniformly in the reported norms. The remaining iterative error was not independently measured.}
+The state and lift remainders and both state norms are defined in Section~S2. Scaling the same discrepancy $\eps^{\mathrm{st}}$ by $\lambda=1,1/2,1/4$ reduces the Euclidean and lift remainders for BAR2, GP2, and CV2 (Table~\ref{tab:naca-amplitude-app}). Here $\lambda$ is the imposed amplitude factor. The absolute Euclidean remainder decreases by factors of about 3.2--3.5 per halving. The absolute volume-weighted remainder decreases more slowly, from approximately $2.4\times10^{-5}$ to $1.5$--$1.7\times10^{-5}$, while its relative value rises from about 3.4\% to 8.7--9.2\%. These finite-amplitude tests do not establish the quadratic prediction uniformly in the reported norms. The remaining iterative error was not independently measured.
 
 \begin{table}[!htbp]
 \centering\footnotesize
-\caption{Amplitude dependence of first-step superposition. $\mathcal E_U=\delta_{\mathrm{both}}-\delta_{\mathrm{latest}}-\delta_{\mathrm{older}}$ is the state remainder and $\mathcal E_{C_L}$ its lift counterpart. Relative remainders use the corresponding response with both states perturbed. The Euclidean and volume-weighted state metrics have different amplitude dependence.}
+\caption{Amplitude dependence of first-step superposition. $\mathcal E_U=\revadd{\eps_{\mathrm{both}}^{n+1}}-\revadd{\eps_{\mathrm{latest}}^{n+1}}-\revadd{\eps_{\mathrm{older}}^{n+1}}$ is the state remainder and $\mathcal E_{C_L}$ its lift counterpart. Relative remainders use the corresponding response with both states perturbed. The Euclidean and volume-weighted state metrics have different amplitude dependence.}
 \label{tab:naca-amplitude-app}
 \pgfplotstabletypeset[publication table,
  columns={method,lambda,state_remainder_abs_euclid,state_superposition_defect_euclid,state_remainder_abs_M,state_superposition_defect_M,CL_remainder_abs},
  columns/method/.style={string type,column name={Transfer}},
  columns/lambda/.style={fixed,precision=2,column name={$\lambda$}},
  columns/state_remainder_abs_euclid/.style={sci,precision=2,column name={$\|\mathcal E_U\|_2$}},
- columns/state_superposition_defect_euclid/.style={sci,precision=2,column name={$\|\mathcal E_U\|_2/\|\delta_{\mathrm{both}}\|_2$}},
+ columns/state_superposition_defect_euclid/.style={sci,precision=2,column name={$\|\mathcal E_U\|_2/\|\revadd{\eps_{\mathrm{both}}^{n+1}}\|_2$}},
  columns/state_remainder_abs_M/.style={sci,precision=2,column name={$\|\mathcal E_U\|_{M_B}$}},
- columns/state_superposition_defect_M/.style={sci,precision=2,column name={$\|\mathcal E_U\|_{M_B}/\|\delta_{\mathrm{both}}\|_{M_B}$}},
+ columns/state_superposition_defect_M/.style={sci,precision=2,column name={$\|\mathcal E_U\|_{M_B}/\|\revadd{\eps_{\mathrm{both}}^{n+1}}\|_{M_B}$}},
  columns/CL_remainder_abs/.style={sci,precision=2,column name={$|\mathcal E_{C_L}|$}}
 ]{\DataDir/naca_amplitude_sequence.csv}
 \end{table}
 \FloatBarrier
 
-\section{\revdel{RANS iterative convergence for each method}\revadd{Inner convergence in the viscous airfoil calculations}}
-The Spalart--Allmaras (SA) and shear-stress-transport (SST) calculations use BDF2 equations solved by pseudo-time iteration at each physical time step. The stopping target is $\log_{10}\operatorname{rms}(r_\rho)\leq-12$ \revdel{where $r_\rho$ is the nodal density-equation residual in solver normalization and $\operatorname{rms}$ averages it over the solver vertices.}\revadd{where $r_\rho$ is the nodal density-equation residual in solver normalization and $\operatorname{rms}$ denotes its root-mean-square over the solver vertices.} Reaching the iteration limit alone does not establish convergence. Table~\ref{tab:inner-supp} gives the \revdel{full records behind the compact main-article comparison}\revadd{SA records behind the main-article table and the companion SST records}; final residuals are medians over physical time steps, not residuals of averaged solutions. The nominal rows cover the full remeshing interval and other rows the shorter sensitivity interval; $\Delta t_0$ denotes the nominal physical time step.
+\section{Inner convergence in the viscous airfoil calculations}
+The Spalart--Allmaras (SA) and shear-stress-transport (SST) calculations use BDF2 equations solved by pseudo-time iteration at each physical time step. The stopping target is $\log_{10}\operatorname{rms}(r_\rho)\leq-12$ where $r_\rho$ is the nodal density-equation residual in solver normalization and $\operatorname{rms}$ denotes its root-mean-square over the solver vertices. Reaching the iteration limit alone does not establish convergence. Table~\ref{tab:inner-supp} gives the SA records behind the main-article table and the companion SST records; final residuals are medians over physical time steps, not residuals of averaged solutions. The nominal rows cover the full remeshing interval and other rows the shorter sensitivity interval; $\Delta t_0$ denotes the nominal physical time step.
 
 \begin{table}[!htbp]
 \centering\footnotesize
@@ -288,10 +287,10 @@ Closure & Iteration limit & $\Delta C_L$ & $\Delta C_D$ & $P_L$ & $P_D$\\
 
 For SA at successively smaller time steps, the RMS lift differences between methods are approximately $1.21\times10^{-5}$, $1.60\times10^{-5}$, and $2.08\times10^{-5}$. Drag values are $2.19\times10^{-6}$, $3.77\times10^{-6}$, and $4.55\times10^{-6}$. Individual RMS amplitudes are closer, but the differences between the time histories remain unresolved. SA quarter-step friction-drag history differences are approximately 76--92\% of the nominal RMS response, so convergence of total drag does not establish convergence of each component.
 
-\paragraph{\revadd{Companion SST calculation}}
-\revadd{The SST runs use the same airfoil, mesh sequences and flow conditions as the SA runs. Both stored histories include $\rho k$ and $\rho\omega$, where $k$ is turbulent kinetic energy and $\omega$ is specific dissipation rate. Across the two mesh sequences the largest relative integral changes for NN2 are 52 and 37 times those for GP2 for $\rho k$ and $\rho\omega$, respectively. The integrals were recorded before the final lower bounds were imposed on $k$ and $\omega$.}
+\paragraph{Companion SST calculation}
+The SST runs use the same airfoil, mesh sequences and flow conditions as the SA runs. Both stored histories include $\rho k$ and $\rho\omega$, where $k$ is turbulent kinetic energy and $\omega$ is specific dissipation rate. Across the two mesh sequences the largest relative integral changes for NN2 are 52 and 37 times those for GP2 for $\rho k$ and $\rho\omega$, respectively. The integrals were recorded before the final lower bounds were imposed on $k$ and $\omega$.
 
-\revadd{The iteration record limits the interpretation of the SST loads. With 6400 inner iterations, GP2, NN2 and CV2 still reach the limit on 28, 30 and 29 of the 38 nominal-size steps, respectively (Table~\ref{tab:inner-supp}). Raising the limit from 800 to 6400 changes the NN2--GP2 lift difference by 67.7\% of its nominal RMS (Table~\ref{tab:rans-controls-app}). Halving the physical step changes the NN2--GP2 drag difference by 110.3\%, and 56--60 of the resulting 78 steps still reach the 800-iteration limit. The SST histories thus document sensitivity to the inner solve as well as to the physical step.}
+The iteration record limits the interpretation of the SST loads. With 6400 inner iterations, GP2, NN2 and CV2 still reach the limit on 28, 30 and 29 of the 38 nominal-size steps, respectively (Table~\ref{tab:inner-supp}). Raising the limit from 800 to 6400 changes the NN2--GP2 lift difference by 67.7\% of its nominal RMS (Table~\ref{tab:rans-controls-app}). Halving the physical step changes the NN2--GP2 drag difference by 110.3\%, and 56--60 of the resulting 78 steps still reach the 800-iteration limit. The SST histories thus document sensitivity to the inner solve as well as to the physical step.
 
 \FloatBarrier
 \section{Flux correction in repeated Euler transfers}
@@ -310,7 +309,7 @@ Table~\ref{tab:lc-pairs-supp} reports all 36 matched comparisons. Standard and L
  columns/s/.style={fixed,precision=0,column name={$s$}},
  columns/seed/.style={fixed,precision=0,column name={Realization}},
  columns/position_standard/.style={fixed,precision=2,column name={$\Delta x_{\mathrm{std}}/h$}},
- columns/position_lc/.style={fixed,precision=2,column name={\revdel{$\Delta \boldsymbol x_{\mathrm{LC}}/h$}\revadd{$\Delta x_{\mathrm{LC}}/h$}}},
+ columns/position_lc/.style={fixed,precision=2,column name={$\Delta x_{\mathrm{LC}}/h$}},
  columns/width_standard/.style={fixed,precision=2,column name={$\Delta w_{\mathrm{std}}^{\mathrm{shock}}/h$}},
  columns/width_lc/.style={fixed,precision=2,column name={$\Delta w_{\mathrm{LC}}^{\mathrm{shock}}/h$}}
 ]{generated/riemann_lc_pairs.csv}
@@ -340,16 +339,9 @@ The density extrema permitted by LC are measured relative to the source range at
 \section{Separating transfer error from mesh dependence}
 \label{supp:reference-decomposition}
 
-Let $U_{\mathrm{ex}}^k=U_{\mathrm{ex}}(\boldsymbol x,t^k)$ be a common exact continuum state at physical time $t^k$, with spatial position $\boldsymbol x$. \revdel{The sampling map $\Pi_M$ represents this field at the solver vertices of mesh $M$.}\revadd{Write $U_{M,\mathrm{ex}}^k$ for the values of this exact field at the solver vertices of mesh $M$.} The independently computed discrete reference is $U_M^k$, and its discretization error is \revdel{$e_{\mathrm{disc},M}^k=U_M^k-\Pi_M U_{\mathrm{ex}}^k$}\revadd{$e_{\mathrm{disc},M}^k=U_M^k-U_{M,\mathrm{ex}}^k$}. With the complete transfer map $\mathcal T_{AB}$, the discrepancy from the target reference is
-\revdel{\begin{align*}
- \eps^k={}&
- \underbrace{\mathcal T_{AB}(\Pi_AU_{\mathrm{ex}}^k)-\Pi_BU_{\mathrm{ex}}^k}
-             _{\text{transfer of the exact sampled field}}\\
- &+\underbrace{\mathcal T_{AB}(U_A^k)-\mathcal T_{AB}(\Pi_AU_{\mathrm{ex}}^k)
-                      -e_{\mathrm{disc},B}^k}
-             _{\text{source and target discretization contributions}}.
-\end{align*}}
-\revadd{\begin{align}
+\revdel{Let $U_{\mathrm{ex}}^k=U_{\mathrm{ex}}(\boldsymbol x,t^k)$ be a common exact continuum state at physical time $t^k$, with spatial position $\boldsymbol x$. Write $U_{M,\mathrm{ex}}^k$ for the values of this exact field at the solver vertices of mesh $M$. The independently computed discrete reference is $U_M^k$, and its discretization error is $e_{\mathrm{disc},M}^k=U_M^k-U_{M,\mathrm{ex}}^k$. With the complete transfer map $\mathcal T_{AB}$, the discrepancy from the target reference is}\revadd{At either stored level $k=n-1,n$, let $U_{M,\mathrm{ex}}^k$ be the exact state sampled at the vertices of mesh $M$. The computed reference has discretization error $e_{\mathrm{disc},M}^k=U_M^k-U_{M,\mathrm{ex}}^k$. Adding and subtracting the transfer of the exact samples, $\mathcal T_{AB}(U_{A,\mathrm{ex}}^k)$, gives the error in the transferred history}
+
+\begin{align}
  \eps^k={}&
  \underbrace{\mathcal T_{AB}(U_{A,\mathrm{ex}}^k)-U_{B,\mathrm{ex}}^k}
              _{\text{transfer of the exact sampled field}}\notag\\
@@ -357,7 +349,7 @@ Let $U_{\mathrm{ex}}^k=U_{\mathrm{ex}}(\boldsymbol x,t^k)$ be a common exact con
                       -e_{\mathrm{disc},B}^k}
              _{\text{source and target discretization contributions}}.
  \label{eq:defect-decomposition}
-\end{align}}
+\end{align}
 For a linear transfer map, the second line reduces to $\mathcal T_{AB}e_{\mathrm{disc},A}^k-e_{\mathrm{disc},B}^k$. Limiting and admissibility corrections can make the complete map nonlinear.
 
 For a scalar output functional $G_M$ evaluated from the state on mesh $M$, a source-to-target output difference satisfies
@@ -367,30 +359,30 @@ For a scalar output functional $G_M$ evaluated from the state on mesh $M$, a sou
  &+G_B(\widehat U_B^k)-G_B(U_B^k).
  \label{eq:observable-decomposition}
 \end{align}
-Here $\widehat U_B^k=\mathcal T_{AB}(U_A^k)$. The first term measures the mesh dependence of the independently computed references; the second is the restart response on the target mesh. Neither term alone is the error relative to the exact continuum solution.
+\revdel{Here $\widehat U_B^k=\mathcal T_{AB}(U_A^k)$. The first term measures the mesh dependence of the independently computed references; the second is the restart response on the target mesh. Neither term alone is the error relative to the exact continuum solution.}\revadd{Here $\widehat U_B^k=\mathcal T_{AB}(U_A^k)$. The first term compares the two discrete mesh references. The second measures the output difference on $B$ immediately after transfer.}
 
-\subsection{\revadd{How the history weights change for a later load}}
-\revadd{The main article gives the adjoint for the first step. Here consider a load $G_B$ at step $N\ge n+1$ on the same fixed target mesh, with no further transfers. Assume the same local linearization and converged solves as for the one-step prediction. Let $A_m=\tfrac32M_B+\Delta t\,\partial_U F_B(U_B^m,t^m)$ be the scaled step Jacobian on the reference solution at step $m$. The gradient of the final load is $g_N=\nabla_U G_B(U_B^N)$, and set $g_m=0$ for earlier steps.}
+\subsection{How the history weights change for a later load}
+\revdel{The main article gives the adjoint for the first step. Here consider a load $G_B$ at step $N\ge n+1$ on the same fixed target mesh, with no further transfers. Assume the same local linearization and converged solves as for the one-step prediction.}\revadd{Consider a load $G_B$ at step $N\ge n+1$ on the same target mesh, with no further transfers. Use the smoothness and solve assumptions of the one-step prediction.} Let $A_m=\tfrac32M_B+\Delta t\,\partial_U F_B(U_B^m,t^m)$ be the scaled step Jacobian on the reference solution at step $m$. The gradient of the final load is $g_N=\nabla_U G_B(U_B^N)$, and set $g_m=0$ for earlier steps.
 
-\revadd{Start with $\boldsymbol\lambda_{N+1}=\boldsymbol\lambda_{N+2}=0$. For $m=N,N-1,\ldots,n+1$, solve
+Start with $\boldsymbol\lambda_{N+1}=\boldsymbol\lambda_{N+2}=0$. For $m=N,N-1,\ldots,n+1$, solve
 \begin{equation}
  A_m^T\boldsymbol\lambda_m=g_m+2M_B\boldsymbol\lambda_{m+1}
                       -\tfrac12 M_B\boldsymbol\lambda_{m+2}.
  \label{supp:eq:later-adjoint}
 \end{equation}
-The two terms on the right come from the two later BDF2 steps that use state $m$. To see this, multiply each linearized step equation by $\boldsymbol\lambda_m^T$ and sum from $n+1$ to $N$. The recurrence cancels the coefficients of intermediate state changes. The remaining dependence of the load on the two initial history errors is}
-\revadd{\begin{equation}
+\revdel{The two terms on the right come from the two later BDF2 steps that use state $m$. To see this, multiply each linearized step equation by $\boldsymbol\lambda_m^T$ and sum from $n+1$ to $N$. The recurrence cancels the coefficients of intermediate state changes. The remaining dependence of the load on the two initial history errors is}\revadd{The coefficients $2$ and $-1/2$ come from the next two BDF2 steps. With $\eps^m=\widehat U_B^m-U_B^m$, multiply each linearized equation $A_m\eps^m\simeq M_B(2\eps^{m-1}-\eps^{m-2}/2)$ by $\boldsymbol\lambda_m^T$ and sum over $m=n+1,\ldots,N$. Eq.~\eqref{supp:eq:later-adjoint} cancels the intermediate state differences and leaves}
+\begin{equation}
  \Delta G^N \simeq
  (2\boldsymbol\lambda_{n+1}-\tfrac12\boldsymbol\lambda_{n+2})^T M_B\eps^n
  -\tfrac12\boldsymbol\lambda_{n+1}^T M_B\eps^{n-1}.
  \label{supp:eq:later-history-weights}
 \end{equation}
-Here $\Delta G^N$ is the load from the transferred restart minus that from the reference continuation. For $N=n+1$, only $\boldsymbol\lambda_{n+1}$ remains and the expression reduces to $\boldsymbol\lambda_{n+1}^TM_B(2\eps^n-\eps^{n-1}/2)$. The later pressure and load histories reported in the article come from forward simulations.}
+\revdel{Here $\Delta G^N$ is the load from the transferred restart minus that from the reference continuation.}\revadd{Here $\Delta G^N=G_B(\widehat U_B^N)-G_B(U_B^N)$ compares the runs at the same final time.} For $N=n+1$, only $\boldsymbol\lambda_{n+1}$ remains and the expression reduces to $\boldsymbol\lambda_{n+1}^TM_B(2\eps^n-\eps^{n-1}/2)$.\revdel{ The later pressure and load histories reported in the article come from forward simulations.}
 
 \section{Steady mesh sensitivity and the medium-mesh transient}
 \label{supp:mesh-sensitivity}
 
-The steady meshes in Table~\ref{tab:rans-meshlevels-app} retain the first off-wall spacing while refining other regions. \revadd{For SST, the coarse steady reference meets the density-residual target and the medium reference ends at $\log_{10}\operatorname{rms}(r_\rho)\simeq-11.1$. }Lift $C_L$, total drag $C_D$, and pressure drag $C_{D,p}$ decrease monotonically; viscous drag $C_{D,v}$ does not. Let $n_M$ be the vertex count of mesh $M$, and $n_{\mathrm{coarse}}$ that of the coarse mesh. Define $h_{\mathrm{eff},M}=n_M^{-1/2}$, with the coarse-mesh value defined in the same way. Their ratio $h_{\mathrm{eff},M}/h_{\mathrm{eff,coarse}}=\sqrt{n_{\mathrm{coarse}}/n_M}$ describes the density of this two-dimensional mesh family. It does not establish a common asymptotic error expansion or a refinement ratio in every direction. The table therefore reports absolute-load sensitivity without extrapolated loads or a discretization-uncertainty estimate. It does not quantify error in the load difference between transfer methods on a common mesh.
+The steady meshes in Table~\ref{tab:rans-meshlevels-app} retain the first off-wall spacing while refining other regions. For SST, the coarse steady reference meets the density-residual target and the medium reference ends at $\log_{10}\operatorname{rms}(r_\rho)\simeq-11.1$. Lift $C_L$, total drag $C_D$, and pressure drag $C_{D,p}$ decrease monotonically; viscous drag $C_{D,v}$ does not. Let $n_M$ be the vertex count of mesh $M$, and $n_{\mathrm{coarse}}$ that of the coarse mesh. Define $h_{\mathrm{eff},M}=n_M^{-1/2}$, with the coarse-mesh value defined in the same way. Their ratio $h_{\mathrm{eff},M}/h_{\mathrm{eff,coarse}}=\sqrt{n_{\mathrm{coarse}}/n_M}$ describes the density of this two-dimensional mesh family. It does not establish a common asymptotic error expansion or a refinement ratio in every direction. The table therefore reports absolute-load sensitivity without extrapolated loads or a discretization-uncertainty estimate. It does not quantify error in the load difference between transfer methods on a common mesh.
 
 \begin{table}[!htbp]
 \centering\small
