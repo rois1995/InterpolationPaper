@@ -115,7 +115,7 @@
   \expandafter\xdef\csname In@\SavedModel @\ThisSetting @\ThisMethod @res\endcsname{\pgfplotsretval}%
 }
 \newcommand{\Inner}[4]{\csname In@#1@#2@#3@#4\endcsname}
-\newcommand{\InnerRow}[4]{#1 & #3 & #4 & \Inner{#1}{#2}{GP2}{steps} &
+\newcommand{\InnerRow}[4]{#3 & #4 & \Inner{#1}{#2}{GP2}{steps} &
  \Inner{#1}{#2}{GP2}{cap} & \Inner{#1}{#2}{NN2}{cap} & \Inner{#1}{#2}{CV2}{cap}\\}
 \pgfplotstableset{publication table/.style={
  col sep=comma,
@@ -157,7 +157,7 @@
 \begin{abstract}
 When an unsteady flow simulation changes its mesh, transferring the solution can introduce errors that affect later flow evolution and aerodynamic loads. Multistep time integrators also require solutions from earlier times, so remeshing must transfer several stored states. Transfer is often assessed by field accuracy, the absence of new extrema, and preservation of domain integrals. These measures do not, however, directly describe how the restarted calculation will respond. This study asks how errors in the latest and older stored states influence that response, and what must be checked to assess transfer reliably.
 
-We compare nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer using static tests, repeated remeshing, and airfoil calculations. Repeated remeshing shows that restoring total mass does not recover a smeared wave profile. It also shows that preserving mass at each transfer does not ensure negligible subsequent mass drift: corrections that redistribute mass across the domain can alter open-boundary fluxes. Controlled restarts with the second-order backward differentiation formula (BDF2) show that an error in an older stored state changes next-step lift even when the latest state matches the reference. \revdel{In fixed-body Reynolds-averaged Navier--Stokes calculations}\revadd{In unsteady Reynolds-averaged Navier--Stokes calculations on a stationary airfoil}, smaller transfer-integral errors do not establish better aerodynamic accuracy because load differences remain sensitive to the time step and iterative convergence. Transfer should therefore be assessed through both the transferred states and the flow computed after the restart.
+We compare nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer using static tests, repeated remeshing, and airfoil calculations. Repeated remeshing shows that restoring total mass does not recover a smeared wave profile. It also shows that preserving mass at each transfer does not ensure negligible subsequent mass drift: corrections that redistribute mass across the domain can alter open-boundary fluxes. Controlled restarts with the second-order backward differentiation formula (BDF2) show that an error in an older stored state changes next-step lift even when the latest state matches the reference. \revdel{In fixed-body Reynolds-averaged Navier--Stokes calculations}\revadd{In the viscous airfoil test with the Spalart--Allmaras model}, \revdel{smaller transfer-integral errors do not establish better aerodynamic accuracy because load differences remain sensitive to the time step and iterative convergence.}\revadd{control-volume transfer best preserves the monitored integrals. Its root-mean-square drag departure from the fixed-mesh reference is the smallest on one mesh sequence and the largest on the other.} \revdel{Transfer should therefore be assessed through both the transferred states and the flow computed after the restart.}\revadd{The differences in drag between methods remain sensitive to the physical time step.}
 \end{abstract}
 
 % Identical to submission/highlights.txt (3--5 bullets, at most 85 characters each).
@@ -181,7 +181,7 @@ Galerkin projection \sep Backward differentiation \sep Finite-volume methods
 \setlength{\hfuzz}{0.2pt}
 
 \authorcomment{[C1] A: I think I would like to remove the SST results if the SA ones achieve inner-iteration convergence.}
-\reviewreply{SA meets the density criterion in the short 1600-iteration and refined-time-step controls, but the nominal 398-step runs stop at their limit on 147--155 steps. SST is retained because full-window SA iteration convergence has not been established.}
+\reviewreply{The main viscous case now uses Spalart--Allmaras. Its short convergence tests include two finer physical time steps. Table~\ref{tab:rans-inner-app} gives the iteration record for both the short tests and the full run. Supplementary Section S4 documents the companion SST calculation and its sensitivity to the iteration limit.}
 
 \ifshowchanges\noindent\authorcomment{Author comments are red; }\revadd{additions are purple; }\revdel{proposed deletions are brown.}\par\medskip\fi
 
@@ -200,7 +200,7 @@ The central question of this paper is whether conventional transfer-quality meas
 
 We compare nearest-neighbor Taylor interpolation (NN), barycentric interpolation (BAR), continuous Galerkin projection (GP), and conservative control-volume transfer (CV) \revdel{in a vertex-centered finite-volume solver using the second-order backward differentiation formula (BDF2)}\revadd{in a vertex-centered finite-volume solver. The unsteady calculations use the second-order backward differentiation formula (BDF2)}\authorcomment{[C2] (the "using the seonc order bla bla bla" looks like you compare the methods with that. I don't think it is the correct phrasing)}. An exact identity relates errors in the two stored BDF2 states to the change in the time-step residual. We distinguish this identity from the additional assumptions needed to predict the computed state and load response. Global integral correction and local flux correction are examined separately to establish what restoring an integral can, and cannot, resolve.
 
-The \revdel{experiments}\revadd{numerical tests}\authorcomment{[C3] (numerical)} progress from smooth and discontinuous static fields to repeated remeshing of a Riemann problem, controlled airfoil restarts, and repeated-remeshing airfoil calculations. \revdel{Fixed-body}\revadd{Unsteady}\authorcomment{[C4] (maybe Steady instead of fixed body?)} Reynolds-averaged Navier--Stokes (RANS) calculations \revadd{on a stationary airfoil} extend the assessment to turbulence transport and viscous loads. All tests use prescribed remeshing on fixed physical domains and independently computed reference solutions; they do not assess the choice of an adaptive mesh. Section~\ref{sec:numerical-framework} describes the transfer methods. The BDF2 analysis then connects history-state errors to the restart response, and each \revdel{experimental}\revadd{test-case}\authorcomment{[C5] (I don't think I like you naming the test cases as "experiments")} subsection presents its setup, results, and interpretation together.
+The \revdel{experiments}\revadd{numerical tests}\authorcomment{[C3] (numerical)} progress from smooth and discontinuous static fields to repeated remeshing of a Riemann problem, controlled airfoil restarts, and repeated-remeshing airfoil calculations. \revdel{Fixed-body}\revadd{Unsteady}\authorcomment{[C4] (maybe Steady instead of fixed body?)} Reynolds-averaged Navier--Stokes (RANS) calculations \revadd{on a stationary airfoil with the Spalart--Allmaras (SA) model} extend the assessment to turbulence transport and viscous loads. All tests use prescribed remeshing on fixed physical domains and independently computed reference solutions; they do not assess the choice of an adaptive mesh. Section~\ref{sec:numerical-framework} describes the transfer methods. The BDF2 analysis then connects history-state errors to the restart response, and each \revdel{experimental}\revadd{test-case}\authorcomment{[C5] (I don't think I like you naming the test cases as "experiments")} subsection presents its setup, results, and interpretation together.
 
 
 \section{Transferring a solution between meshes}
@@ -506,7 +506,7 @@ Let $U_A^k$ and $U_B^k$ be independently computed reference solutions for the sa
  \eps^k=\widehat U_B^k-U_B^k,\qquad k=n,n-1.
  \label{eq:history-defects}
 \end{equation}
-The complete map $\mathcal T_{AB}$ includes the chosen raw transfer, limiting, boundary treatment, and admissibility corrections. It is therefore distinct from the raw operators $\calI_{AB}^{m}$ in Sec.~\ref{sec:point-transfer}. The difference $\eps^k$ therefore includes both transfer error and the difference between the solutions computed on the two meshes. The target reference $U_B^k$ fixes the discretization for the comparison; it is not an exact continuum solution. Supplementary Section S6 separates these contributions.
+The complete map $\mathcal T_{AB}$ includes the chosen raw transfer, limiting, boundary treatment, and admissibility corrections. It is therefore distinct from the raw operators $\calI_{AB}^{m}$ in Sec.~\ref{sec:point-transfer}. \revdel{The difference $\eps^k$ therefore includes both transfer error and the difference between the solutions computed on the two meshes. The target reference $U_B^k$ fixes the discretization for the comparison; it is not an exact continuum solution. Supplementary Section S6 separates these contributions.}\revadd{Because $U_A^k$ and $U_B^k$ are computed independently, $\eps^k$ includes the effects of discretization on both meshes as well as the error introduced by transfer. Supplementary Section S6 gives this decomposition.}
 
 \subsection{How errors in the stored states change the next step}
 
@@ -529,7 +529,7 @@ Let $\Phi_B$ be the constant-step BDF2 residual of Eq.~\eqref{eq:bdf2}, and let 
 At the common trial state and time, the spatial residual and the term $3M_BY/(2\Delta t)$ cancel. The remaining difference is $(M_B/\Delta t)(-2\eps^n+\eps^{n-1}/2)$.\qed
 \end{proof}
 
-The vector $\eta^n$ combines the latest and older state errors with different BDF2 weights and opposite signs. Equation~\eqref{eq:history-residual-identity} is exact for finite errors and nonlinear $F_B$, because BDF2 depends linearly on the stored states. If boundary conditions modify a residual equation, they must also modify its predicted perturbation. This identity describes a change in the equation, not yet the change in its computed solution.
+\revdel{The vector $\eta^n$ combines the latest and older state errors with different BDF2 weights and opposite signs.}\revadd{With one history perturbed at a time, an error in the older state produces $-1/4$ of the residual change caused by the same error in the latest state.} Equation~\eqref{eq:history-residual-identity} is exact for finite errors and nonlinear $F_B$, because BDF2 depends linearly on the stored states. If boundary conditions modify a residual equation, they must also modify its predicted perturbation. \revdel{This identity describes a change in the equation, not yet the change in its computed solution.}\revadd{To obtain the corresponding change in the computed solution, we must also account for the spatial residual and the accuracy of the solve.}
 
 Define the next-state difference $\delta^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$. The remaining algebraic residuals are $\mathfrak r_B^{n+1}=\Phi_B(U_B^{n+1};U_B^n,U_B^{n-1})$ and $\widehat{\mathfrak r}_B^{n+1}=\Phi_B(\widehat U_B^{n+1};\widehat U_B^n,\widehat U_B^{n-1})$. These definitions use the sign of $\Phi_B$; the solver's printed residual has the opposite sign. Subtracting the equations gives
 \begin{equation}
@@ -607,7 +607,7 @@ Later steps use both the newly computed state and a retained older state. Their 
 \label{sec:methodology}
 \label{sec:results}
 
-The methods included in each test follow its purpose. NN3, BAR3, and GP3 test third-order accuracy in smooth fields and its relation to bounds and integral preservation in discontinuous fields and the Riemann problem. Third-order variants are also included in the controlled BDF2 restarts. The repeated-remeshing Euler airfoil and RANS comparisons use NN2, GP2, and CV2 at a common nominal second order, which is the order of the CV formulation studied here. Those aerodynamic tests do not compare second- and third-order transfer. The Riemann comparisons use three random mesh-perturbation realizations per amplitude; the repeated-remeshing airfoil comparisons use two, and the RANS sensitivity tests use one. Local flux correction is tested in the Riemann problem.
+\revdel{The methods included in each test follow its purpose. }NN3, BAR3, and GP3 test third-order accuracy in smooth fields and its relation to bounds and integral preservation in discontinuous fields and the Riemann problem. Third-order variants are also included in the controlled BDF2 restarts. The repeated-remeshing Euler airfoil and RANS comparisons use NN2, GP2, and CV2 at a common nominal second order, which is the order of the CV formulation studied here. \revdel{Those aerodynamic tests do not compare second- and third-order transfer. }The Riemann comparisons use three random mesh-perturbation realizations per amplitude; the repeated-remeshing airfoil comparisons use two, and the RANS sensitivity tests use one. Local flux correction is tested in the Riemann problem.
 
 
 \subsection{Single-transfer tests}
@@ -965,24 +965,24 @@ A separate restart test also shows why the first load difference is insufficient
 \end{figure}
 
 \FloatBarrier
-\subsection{\revdel{Fixed-body RANS calculations}\revadd{Unsteady RANS on a stationary airfoil}}
+\subsection{\revdel{Fixed-body RANS calculations}\revadd{Viscous airfoil restarts with the SA model}}
 
 \subsubsection{Setup and numerical sensitivity tests}
 \label{sec:rans-methodology}
 
-The RANS tests ask whether the transfer differences persist with turbulence transport and viscous loads. Prescribed remeshing disturbs a nominally steady solution; we compare load changes between methods and check their sensitivity to numerical settings. The conditions are $M_\infty=0.1$, $\alpha=6^\circ$, and chord Reynolds number $Re_c=\rho_\infty U_\infty c/\mu_\infty=6\times10^6$, where $\mu_\infty$ is freestream dynamic viscosity, using Spalart--Allmaras (SA) and shear-stress-transport (SST) models~\cite{SpalartAllmaras1994,Menter1994}.
+\revdel{The RANS tests ask whether the transfer differences persist with turbulence transport and viscous loads. Prescribed remeshing disturbs a nominally steady solution; we compare load changes between methods and check their sensitivity to numerical settings.}\revadd{For a viscous flow, does the transfer method that best preserves the integrals also keep drag closest to the fixed-mesh reference? We test this on the stationary airfoil with the one-equation SA model~\cite{SpalartAllmaras1994}. Each run starts from a steady RANS calculation. The prescribed mesh changes then disturb the flow.} The conditions are $M_\infty=0.1$, $\alpha=6^\circ$, and chord Reynolds number $Re_c=\rho_\infty U_\infty c/\mu_\infty=6\times10^6$, where $\mu_\infty$ is freestream dynamic viscosity\revdel{, using Spalart--Allmaras (SA) and shear-stress-transport (SST) models~\cite{SpalartAllmaras1994,Menter1994}}.
 
 The coarse mesh has 23,271 vertices, 9,686 boundary-layer and wake quadrilaterals, 26,851 triangles, and 256 airfoil vertices. Medium and fine meshes have 32,102 and 48,228 vertices. All retain a first off-wall spacing of approximately $5\times10^{-6}c$. The farfield is at $100c$, and the quadrilateral region extends to about $0.11c$.
 
 We use the Stanford University Unstructured (SU2) solver~\cite{EconomonEtAl2016SU2}. Mean-flow convection uses the Harten--Lax--van Leer contact (HLLC) approximate Riemann solver with a monotonic upstream-centered scheme for conservation laws (MUSCL) reconstruction. Turbulence transport uses scalar upwinding without MUSCL. BDF2 is solved by dual-time stepping at a pseudo-time Courant--Friedrichs--Lewy (CFL) number of 6. The nominal limit is 800 pseudo-time iterations per physical step. After ten iterations, the solver stops if $\log_{10}\operatorname{rms}(r_\rho)\leq-12$, with $r_\rho$ the nodal density-equation residual in solver normalization and $\operatorname{rms}$ its root-mean-square over solver vertices.
 
-The dimensional physical step $\Delta t_0=10^{-3}$~s corresponds to $\Delta t_0^*\simeq0.347224$. A superscript $*$ denotes normalization by solver reference scales. With $U_\infty^*=0.1$, the 400-step window spans approximately 13.9 chord flow-through times, measured by $tU_\infty/c$. Startup uses a first-order step ten times smaller. Each turbulence model has a fixed-mesh reference continued for 800 steps from matching stored states.
+The dimensional physical step $\Delta t_0=10^{-3}$~s corresponds to $\Delta t_0^*\simeq0.347224$. A superscript $*$ denotes normalization by solver reference scales. With $U_\infty^*=0.1$, the 400-step window spans approximately 13.9 chord flow-through times, measured by $tU_\infty/c$. Startup uses a first-order step ten times smaller. \revdel{Each turbulence model has a fixed-mesh reference continued for 800 steps from matching stored states.}\revadd{The fixed-mesh SA reference advances for 800 steps from matching stored states.}
 
-The coarse steady SST solution reaches the density-residual target. SA instead reaches its 20,000-iteration limit at $-11.2$, with lift and drag stationary to $10^{-7}$ over the last 2,000 iterations. The medium-mesh steady SST solution stops at approximately $-11.1$. These are steady-solution checks; convergence during the remeshed physical steps is assessed separately.
+\revdel{The coarse steady SST solution reaches the density-residual target. SA instead reaches}\revadd{The coarse steady SA solution reaches} its 20,000-iteration limit at $-11.2$, with lift and drag stationary to $10^{-7}$ over the last 2,000 iterations. \revdel{The medium-mesh steady SST solution stops at approximately $-11.1$. These are steady-solution checks; convergence during the remeshed physical steps is assessed separately.}\revadd{Table~\ref{tab:rans-inner-app} reports convergence during the subsequent physical steps.}
 
 NN2, limited GP2, and limited CV2 follow the same prescribed mesh sequences. At each event, 12,602 vertices may move and 10,669 remain fixed. No vertex with solver wall distance below $0.01c$ moves. The geometric mask uses distance to the nearest airfoil vertex, allowing part of the outer quadrilateral region to move. The deformation parameter is $s=4$; a minimum corner-area ratio of 0.2 maintains valid cells. Boundary vertices remain fixed. Remeshing occurs every ten physical steps, independently of the solution.
 
-Both stored states of the mean flow and turbulence variables are transferred. SA transports the working variable $\widetilde\nu$. SST transports turbulent kinetic energy $k$ and specific dissipation rate $\omega$; their density-weighted values are transferred before lower bounds are applied to the primitive variables. Wall distance and eddy viscosity are recomputed. Integral changes use $e_Q$ from Sec.~\ref{sec:derivative-reconstruction}; all monitored source integrals are nonzero. These are transfer diagnostics. Turbulence-variable integrals need not be conserved during flow evolution because their equations have source terms. SST integrals are measured before the final lower bounds, so they do not describe the fully corrected state.
+\revdel{Both stored states of the mean flow and turbulence variables are transferred. SA transports the working variable $\widetilde\nu$. SST transports turbulent kinetic energy $k$ and specific dissipation rate $\omega$; their density-weighted values are transferred before lower bounds are applied to the primitive variables.}\revadd{At each mesh change we transfer both stored time levels of the mean flow and the SA working variable $\widetilde\nu$. We monitor the integral of $\rho\widetilde\nu$ alongside the mass, momentum and total-energy integrals.} Wall distance and eddy viscosity are recomputed. Integral changes use $e_Q$ from Sec.~\ref{sec:derivative-reconstruction}; all monitored source integrals are nonzero. \revdel{These are transfer diagnostics. Turbulence-variable integrals need not be conserved during flow evolution because their equations have source terms. SST integrals are measured before the final lower bounds, so they do not describe the fully corrected state.}\revadd{The SA equation contains source terms, so the integral of $\rho\widetilde\nu$ can subsequently change during a flow step.}
 
 Pressure and viscous drag contributions are $C_{D,p}$ and $C_{D,v}$, with $C_D=C_{D,p}+C_{D,v}$. The label $Q$ selects a monitored coefficient $C_Q$: lift, total drag, pressure drag, or viscous drag. For transfer method $m$, the remeshing response is the coefficient minus its fixed-mesh reference at the same numerical setting:
 \begin{equation}
@@ -991,102 +991,110 @@ Pressure and viscous drag contributions are $C_{D,p}$ and $C_{D,v}$, with $C_D=C
  P_Q(t)=\Delta C_{Q,\mathrm{NN2}}(t)-\Delta C_{Q,\mathrm{GP2}}(t).
  \label{eq:rans-comparisons}
 \end{equation}
-The function $P_Q$ measures the difference between methods. Remeshed and reference calculations use identical surface quadrature. For any scalar history $q(t)$ sampled at $N_s$ common physical times $t_i$, define $\mathcal R(q)=(N_s^{-1}\sum_{i=1}^{N_s}q(t_i)^2)^{1/2}$. Write $q_{\mathrm{nom}}$ and $q_{\mathrm{test}}$ for this history at the nominal and modified numerical settings. The sensitivity is
+\revdel{The function $P_Q$ measures the difference between methods.}\revadd{Thus $\Delta C_{D,\mathrm{GP2}}$ measures how far the GP2 drag history departs from its fixed-mesh reference, and $P_D$ measures the difference between the NN2 and GP2 drag histories on the same mesh sequence.} Remeshed and reference calculations use identical surface quadrature. For any scalar history $q(t)$ sampled at $N_s$ common physical times $t_i$, define $\mathcal R(q)=(N_s^{-1}\sum_{i=1}^{N_s}q(t_i)^2)^{1/2}$. Write $q_{\mathrm{nom}}$ and $q_{\mathrm{test}}$ for this history at the nominal and modified numerical settings. The sensitivity is
 \begin{equation}
  S_{\mathrm{test}}(q)=
  \frac{\mathcal R(q_{\mathrm{test}}-q_{\mathrm{nom}})}
       {\mathcal R(q_{\mathrm{nom}})}.
  \label{eq:control-sensitivity}
 \end{equation}
-All nominal RMS values reported here are nonzero. This measures the difference between histories relative to the nominal RMS. It is different from the fractional change of RMS amplitude, $[\mathcal R(q_{\mathrm{test}})-\mathcal R(q_{\mathrm{nom}})]/\mathcal R(q_{\mathrm{nom}})$: two curves can have similar amplitudes but differ in timing or shape.
+\revdel{All nominal RMS values reported here are nonzero. This measures the difference between histories relative to the nominal RMS. It is different from the fractional change of RMS amplitude, $[\mathcal R(q_{\mathrm{test}})-\mathcal R(q_{\mathrm{nom}})]/\mathcal R(q_{\mathrm{nom}})$: two curves can have similar amplitudes but differ in timing or shape.}\revadd{All reported histories have nonzero nominal RMS. Subtracting the two histories at each common sample time makes $S_{\mathrm{test}}$ sensitive to changes in both amplitude and timing.}
 
-Sensitivity tests share a 38-sample window containing three remeshing events. Inner-iteration limits are raised to 1600 for both models and to 6400 for SST. Time-step tests use $\Delta t_0/2$ for both models and $\Delta t_0/4$ for SA. The same displacement fields are applied at matching physical times, and each step size has its own fixed-mesh reference. Medium and fine steady meshes assess absolute-load sensitivity. A short medium-mesh SA transient uses the same displacement statistics and amplitude limit, but a different nodal deformation field; its differences therefore combine mesh-resolution and disturbance changes.
+\revdel{Sensitivity tests share a 38-sample window containing three remeshing events. Inner-iteration limits are raised to 1600 for both models and to 6400 for SST. Time-step tests use $\Delta t_0/2$ for both models and $\Delta t_0/4$ for SA.}\revadd{For the first mesh sequence we compare 38 common time samples spanning three remeshing events. At $\Delta t_0$ we raise the inner-iteration limit from 800 to 1600. We also repeat the calculation at $\Delta t_0/2$ and $\Delta t_0/4$, each with the original 800-iteration limit.} The same displacement fields are applied at matching physical times, and each step size has its own fixed-mesh reference. Medium and fine steady meshes assess absolute-load sensitivity. A short medium-mesh SA transient uses the same displacement statistics and amplitude limit, but a different nodal deformation field; its differences therefore combine mesh-resolution and disturbance changes.
 
 \subsubsection{Transferred integrals and aerodynamic loads}
 \label{sec:results-rans-new}
 
-GP2 and CV2 change the transferred integrals less than NN2 (Table~\ref{tab:rans-integrals-new}). GP2's maximum \revdel{density and total-energy errors}\revadd{errors in the density and total-energy integrals} are roughly two orders of magnitude smaller. Ratios of the separately maximized turbulence-variable errors are approximately 247 for SA, and 52 and 37 for SST $k$ and $\omega$. CV2 keeps mean-flow errors below $1.5\times10^{-14}$ and turbulence-variable errors below $4.6\times10^{-12}$. These measurements are made across transfer, with SST values taken before the final lower bounds (Sec.~\ref{sec:rans-methodology}).
+GP2 and CV2 change the transferred integrals less than NN2 (Table~\ref{tab:rans-integrals-new}). GP2's maximum \revdel{density and total-energy errors}\revadd{errors in the density and total-energy integrals} are roughly two orders of magnitude smaller. \revdel{Ratios of the separately maximized turbulence-variable errors are approximately 247 for SA, and 52 and 37 for SST $k$ and $\omega$. CV2 keeps mean-flow errors below $1.5\times10^{-14}$ and turbulence-variable errors below $4.6\times10^{-12}$. These measurements are made across transfer, with SST values taken before the final lower bounds (Sec.~\ref{sec:rans-methodology}).}\revadd{For the integral of $\rho\widetilde\nu$, the largest relative changes are $1.70\times10^{-6}$ with NN2, $6.88\times10^{-9}$ with GP2 and $1.99\times10^{-12}$ with CV2. CV2 preserves each mean-flow integral to within a relative change of $1.2\times10^{-14}$.}
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Largest absolute relative integral change across the repeated transfers of the stored RANS states. Each column is maximized separately over the methods' two realizations. SST values are measured before the final lower bounds are imposed. The last column is the NN2/GP2 ratio of the separate maxima.}
+\caption{Largest absolute relative integral change across the repeated transfers of the \revdel{stored RANS states. Each column is maximized separately over the methods' two realizations. SST values are measured before the final lower bounds are imposed.}\revadd{stored states in the SA case. Each method column gives the maximum over both mesh sequences and both stored time levels.} The last column is the NN2/GP2 ratio of the separate maxima.}
 \label{tab:rans-integrals-new}
+\pgfplotstableread[col sep=comma]{\GeneratedDir/reassessed_rans_integrals.csv}\RansIntegralData
 \pgfplotstabletypeset[publication table,
- columns={closure,quantity,NN2_max,GP2_max,CV2_max,ratio},
- columns/closure/.style={string type,column name={Closure}},
+ row predicate/.code={%
+   \pgfplotstablegetelem{#1}{closure}\of\RansIntegralData
+   \ifnum\pdfstrcmp{\pgfplotsretval}{SA}=0\relax\else\pgfplotstableuserowfalse\fi},
+ columns={quantity,NN2_max,GP2_max,CV2_max,ratio},
  columns/quantity/.style={string type,column name={Integrand},assign cell content/.code={\pgfkeyssetvalue{/pgfplots/table/@cell content}{\InventorySymbol{##1}}}},
  columns/NN2_max/.style={sci,precision=2,column name={NN2}},
  columns/GP2_max/.style={sci,precision=2,column name={GP2}},
  columns/CV2_max/.style={sci,precision=2,column name={CV2}},
  columns/ratio/.style={fixed,precision=0,column name={NN2/GP2}}
-]{\GeneratedDir/reassessed_rans_integrals.csv}
+]{\RansIntegralData}
 \end{table}
 
-The load responses are much closer than the integral errors suggest. RMS drag differences from the fixed-mesh references range from $6.09\times10^{-5}$ to $6.79\times10^{-5}$ across the three methods. NN2--GP2 differences have RMS $0.77\times10^{-5}$ to $1.11\times10^{-5}$; NN2--CV2 and GP2--CV2 give $0.66$--$1.15\times10^{-5}$ and $0.52$--$0.75\times10^{-5}$. The ordering changes with turbulence model and realization. These smaller differences require a closer time-step assessment before the methods can be ranked.
+\revdel{The load responses are much closer than the integral errors suggest. RMS drag differences from the fixed-mesh references range from $6.09\times10^{-5}$ to $6.79\times10^{-5}$ across the three methods. NN2--GP2 differences have RMS $0.77\times10^{-5}$ to $1.11\times10^{-5}$; NN2--CV2 and GP2--CV2 give $0.66$--$1.15\times10^{-5}$ and $0.52$--$0.75\times10^{-5}$. The ordering changes with turbulence model and realization. These smaller differences require a closer time-step assessment before the methods can be ranked.}\revadd{Table~\ref{tab:sa-drag-sequences} compares the three transfer methods over both mesh sequences. CV2 gives the smallest RMS drag departure from the fixed-mesh reference on the first sequence and the largest on the second. The last column gives the smaller difference between NN2 and GP2. We use this difference to test how strongly the physical time step affects the comparison.}
 
-Halving the time step changes the histories even when their RMS amplitudes remain similar (Figure~\ref{fig:rans-drag-sensitivity}). At common physical times, the RMS change in each lift response is 15.1--16.5\% of its nominal RMS for SA and 18.8--20.5\% for SST. Drag changes are 8.0--10.2\% and 9.6--10.8\%. The smaller NN2--GP2 differences are much more sensitive: changes reach 75.2\% in lift and 128.7\% in drag for SA, and 146.1\% and 110.3\% for SST. The SA quarter-step comparison changes still more. Similar RMS amplitudes therefore do not establish convergence of the response or a reliable ranking.
+\begin{table}[pos=htbp]
+\centering\small
+\caption{\revadd{RMS drag differences for the SA case over 398 samples on each mesh sequence, at the nominal time step. The first three method columns compare each drag history with its fixed-mesh reference. The last column compares the NN2 and GP2 histories directly. Multiply each entry by \(10^{-6}\) to obtain the drag-coefficient difference.}}
+\label{tab:sa-drag-sequences}
+\ifshowchanges\color{RevisionPurple}\fi
+\begin{tabular}{lrrrr}
+\toprule
+Mesh sequence & NN2 & GP2 & CV2 & NN2 minus GP2\\
+\midrule
+1 & 63.84 & 64.32 & 63.26 & 7.72\\
+2 & 60.85 & 60.90 & 61.90 & 9.57\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\revdel{Halving the time step changes the histories even when their RMS amplitudes remain similar (Figure~\ref{fig:rans-drag-sensitivity}). At common physical times, the RMS change in each lift response is 15.1--16.5\% of its nominal RMS for SA and 18.8--20.5\% for SST. Drag changes are 8.0--10.2\% and 9.6--10.8\%. The smaller NN2--GP2 differences are much more sensitive: changes reach 75.2\% in lift and 128.7\% in drag for SA, and 146.1\% and 110.3\% for SST. The SA quarter-step comparison changes still more. Similar RMS amplitudes therefore do not establish convergence of the response or a reliable ranking.}\revadd{In the 38-sample control window, halving the time step changes the GP2 drag response by 8.0\% of its nominal RMS (Figure~\ref{fig:rans-drag-sensitivity}a). Over the same samples the NN2--GP2 drag difference has a nominal RMS of $2.19\times10^{-6}$. Halving the step changes this difference by $2.82\times10^{-6}$ in RMS, or 129\% of the signal being compared (Figure~\ref{fig:rans-drag-sensitivity}b). At the quarter step the change reaches 171\% relative to the same nominal history. The corresponding changes in the lift difference are 75\% and 132\%.}
 
 \begin{figure}[pos=!htbp]
 \centering\color{black}
 \begin{tikzpicture}
-\begin{groupplot}[group style={group size=2 by 2,horizontal sep=1.2cm,vertical sep=1.2cm},
- evidence axis,width=0.43\textwidth,height=0.28\textwidth,
+\begin{groupplot}[group style={group size=2 by 1,horizontal sep=1.55cm},
+ evidence axis,width=0.43\textwidth,height=0.31\textwidth,
  xmin=2,xmax=39,xtick={5,15,25,35},xlabel={Nominal physical-step index}]
-\nextgroupplot[xlabel={},title={SA: GP2 response},ylabel={$10^5\Delta C_D$},legend to name=legend:rans-drag,legend columns=3]
+\nextgroupplot[title={\revadd{(a) GP2 versus fixed mesh}},ylabel={$10^5\Delta C_D$},legend to name=legend:rans-drag,legend columns=3]
 \addplot[black,solid] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_GP2_production}]{\GeneratedDir/rans_drag_plot.csv};
 \addlegendentry{$\Delta t_0$}
 \addplot[NavyBlue,dashed] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_GP2_halfstep}]{\GeneratedDir/rans_drag_plot.csv};
 \addlegendentry{$\Delta t_0/2$}
 \addplot[BrickRed,dashdotted] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_GP2_quarterstep}]{\GeneratedDir/rans_drag_plot.csv};
 \addlegendentry{$\Delta t_0/4$}
-\nextgroupplot[xlabel={},title={SST: GP2 response},ylabel={$10^5\Delta C_D$}]
-\addplot[black,solid] table[col sep=comma,x=step,y expr=1e5*\thisrow{SST_GP2_production}]{\GeneratedDir/rans_drag_plot.csv};
-\addplot[NavyBlue,dashed] table[col sep=comma,x=step,y expr=1e5*\thisrow{SST_GP2_halfstep}]{\GeneratedDir/rans_drag_plot.csv};
-\nextgroupplot[title={SA: NN2--GP2 difference},ylabel={$10^5P_D$}]
+\nextgroupplot[title={\revadd{(b) NN2 minus GP2}},ylabel={$10^5P_D$}]
 \addplot[black,solid] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_P_production}]{\GeneratedDir/rans_drag_plot.csv};
 \addplot[NavyBlue,dashed] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_P_halfstep}]{\GeneratedDir/rans_drag_plot.csv};
 \addplot[BrickRed,dashdotted] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_P_quarterstep}]{\GeneratedDir/rans_drag_plot.csv};
-\nextgroupplot[title={SST: NN2--GP2 difference},ylabel={$10^5P_D$}]
-\addplot[black,solid] table[col sep=comma,x=step,y expr=1e5*\thisrow{SST_P_production}]{\GeneratedDir/rans_drag_plot.csv};
-\addplot[NavyBlue,dashed] table[col sep=comma,x=step,y expr=1e5*\thisrow{SST_P_halfstep}]{\GeneratedDir/rans_drag_plot.csv};
 \end{groupplot}
 \end{tikzpicture}
 \par\smallskip\ref*{legend:rans-drag}
-\caption{Time-step sensitivity of RANS drag over three remeshing events for deformation realization 1. Columns show the Spalart--Allmaras (SA) and shear-stress-transport (SST) models. Top: representative GP2 drag differences $\Delta C_D$ from the fixed-mesh reference at the same time step. Bottom: the smaller NN2--GP2 drag difference, $P_D=C_{D,\mathrm{NN2}}-C_{D,\mathrm{GP2}}$. All curves use common physical sample times; the horizontal axis gives time divided by the nominal step $\Delta t_0$. Mesh perturbations are applied at matching physical times. The difference between methods remains sensitive to the time step; SST also has remaining inner-iteration error. No SST quarter-step calculation is available.}
+\caption{\revdel{Time-step sensitivity of RANS drag}\revadd{Time-step sensitivity of drag with SA} over three remeshing events for deformation realization 1. \revdel{Columns show the Spalart--Allmaras (SA) and shear-stress-transport (SST) models. }\revdel{Top: representative GP2 drag differences}\revadd{Panel (a) shows the GP2 drag difference} $\Delta C_D$ from the fixed-mesh reference at the same time step. \revdel{Bottom: the smaller NN2--GP2 drag difference,}\revadd{Panel (b) shows the NN2--GP2 drag difference,} $P_D=C_{D,\mathrm{NN2}}-C_{D,\mathrm{GP2}}$. All curves use common physical sample times; the horizontal axis gives time divided by the nominal step $\Delta t_0$. Mesh perturbations are applied at matching physical times. \revdel{The difference between methods remains sensitive to the time step; SST also has remaining inner-iteration error. No SST quarter-step calculation is available.}}
 \label{fig:rans-drag-sensitivity}
 \end{figure}
 
 \subsubsection{Numerical convergence and limits of the comparison}
 
-Table~\ref{tab:rans-inner-app} distinguishes steps that meet the residual criterion from those that stop at an iteration limit. SA meets the density criterion throughout the 1600-iteration test and at every half- and quarter-step point. SST reaches its limit on 28--30 of 38 steps even with 6400 inner iterations, and on 56--60 of 78 half-step points. Its measured time-step sensitivity can therefore include iterative error.
+Table~\ref{tab:rans-inner-app} distinguishes steps that meet the residual criterion from those that stop at an iteration limit. \revdel{SA meets the density criterion throughout the 1600-iteration test and at every half- and quarter-step point. SST reaches its limit on 28--30 of 38 steps even with 6400 inner iterations, and on 56--60 of 78 half-step points. Its measured time-step sensitivity can therefore include iterative error.}\revadd{On the first mesh sequence, the nominal runs reach the 800-iteration limit on 147--155 of 398 steps, depending on the transfer method. All three methods meet the density criterion on every step of the short 1600-iteration test and the half- and quarter-step tests.}
 
 \begin{table}[pos=htbp]
 \centering\footnotesize
-\caption{Iterative convergence for the first mesh-perturbation realization. $N_{\max}$ is the iteration limit. Separate columns give the number of steps reaching that limit for each method. Nominal rows cover the full interval; other rows cover the short sensitivity window. Supplementary Section S4 gives the median final density residuals for each method.}
+\caption{\revdel{Iterative convergence for the first mesh-perturbation realization.}\revadd{Inner-iteration convergence for SA on the first mesh sequence.} $N_{\max}$ is the iteration limit. Separate columns give the number of steps reaching that limit for each method. Nominal rows cover the full interval; other rows cover the short sensitivity window. Supplementary Section S4 gives the median final density residuals for each method.}
 \label{tab:rans-inner-app}
-\begin{tabular}{lrrrrrr}
+\begin{tabular}{rrrrrr}
 \toprule
- & & & & \multicolumn{3}{c}{Steps at limit}\\
-\cmidrule(lr){5-7}
-Closure & $N_{\max}$ & $\Delta t/\Delta t_0$ & Steps & GP2 & NN2 & CV2\\
+ & & & \multicolumn{3}{c}{Steps at limit}\\
+\cmidrule(lr){4-6}
+$N_{\max}$ & $\Delta t/\Delta t_0$ & Steps & GP2 & NN2 & CV2\\
 \midrule
 \InnerRow{SA}{production}{800}{1}
 \InnerRow{SA}{cap1600}{1600}{1}
 \InnerRow{SA}{halfstep}{800}{$1/2$}
 \InnerRow{SA}{quarterstep}{800}{$1/4$}
-\InnerRow{SST}{production}{800}{1}
-\InnerRow{SST}{cap1600}{1600}{1}
-\InnerRow{SST}{cap6400}{6400}{1}
-\InnerRow{SST}{halfstep}{800}{$1/2$}
 \bottomrule
 \end{tabular}
 \end{table}
 
-Raising the iteration limit changes SA lift and total-drag histories by at most 0.3\% of their own RMS, but changes the smaller differences between methods by 8.4--10.9\%. For SST, raising the limit to 6400 changes the lift difference between methods by 67.7\% of its nominal RMS. Residual stagnation accompanies this sensitivity without identifying a unique cause in the turbulence equations. Supplementary Section S4 gives the full residual records and iteration-sensitivity table.
+\revdel{Raising the iteration limit changes SA lift and total-drag histories by at most 0.3\% of their own RMS, but changes the smaller differences between methods by 8.4--10.9\%. For SST, raising the limit to 6400 changes the lift difference between methods by 67.7\% of its nominal RMS. Residual stagnation accompanies this sensitivity without identifying a unique cause in the turbulence equations. Supplementary Section S4 gives the full residual records and iteration-sensitivity table.}\revadd{When the iteration limit is doubled, the largest RMS change in an individual lift or total-drag history is 0.34\% of its nominal RMS over the control window. The NN2--GP2 difference changes by 10.9\% for lift and 8.4\% for drag. Supplementary Section S4 gives the residual records and a companion check with the shear-stress-transport model~\cite{Menter1994}.}
 
 The drag components also require care. In the SA quarter-step test, friction-drag history differences are approximately 76--92\% of the nominal RMS friction-drag response. The smaller sensitivity of total drag does not establish convergence of its separate components.
 
-Steady RANS mesh comparisons show sensitivity of the absolute loads, but do not establish an asymptotic refinement sequence or bound errors in the NN2--GP2 difference. The medium-mesh transient also changes the nodal disturbance, preventing a refinement-only interpretation. Supplementary Section S7 contains the steady-mesh loads and the separate medium-mesh transient. GP2 and CV2 thus have smaller measured transfer-integral errors, but these calculations establish no aerodynamic advantage over NN2. The load differences remain too sensitive to the time step and, for SST, iterative convergence.
+Steady RANS mesh comparisons show sensitivity of the absolute loads, but do not establish an asymptotic refinement sequence or bound errors in the NN2--GP2 difference. The medium-mesh transient also changes the nodal disturbance, preventing a refinement-only interpretation. Supplementary Section S7 contains the steady-mesh loads and the separate medium-mesh transient. \revdel{GP2 and CV2 thus have smaller measured transfer-integral errors, but these calculations establish no aerodynamic advantage over NN2. The load differences remain too sensitive to the time step and, for SST, iterative convergence.}\revadd{The integral comparison favors GP2 and CV2. The drag comparison yields different orderings on the two mesh sequences, and the time-step changes exceed the small NN2--GP2 drag signal in the control window. An aerodynamic ranking for this SA case therefore remains unresolved.}
 
 \subsection{Interpreting the comparisons}
 \label{sec:discussion}
@@ -1108,7 +1116,7 @@ The Riemann results distinguish preservation of mass, wave shape, and mass balan
 
 Local flux correction keeps final mass and energy drift near roundoff and modestly reduces GP/CV density error without materially changing shock broadening. It allows small extrema within relaxed bounds and can leave part of the unlimited correction unapplied. Exact wall compatibility immediately after transfer is not guaranteed either.
 
-\revdel{In fixed-body RANS,}\revadd{In RANS restarts on a stationary airfoil,} smaller transfer-integral errors do not establish smaller aerodynamic errors. The differences between methods remain sensitive to time-step refinement, with additional iterative uncertainty for SST. The slower initial Euler drag growth of GP2 and CV2 therefore cannot be extended to a RANS ranking. Transfer accuracy must be assessed through both the transferred fields and the flow evolution that follows, including all stored time levels.
+\revdel{In fixed-body RANS,}\revadd{In the SA airfoil restarts,} \revdel{smaller transfer-integral errors do not establish smaller aerodynamic errors. The differences between methods remain sensitive to time-step refinement, with additional iterative uncertainty for SST. The slower initial Euler drag growth of GP2 and CV2 therefore cannot be extended to a RANS ranking.}\revadd{CV2 produces the smallest changes in the monitored integrals. The ordering of the RMS drag departures depends on the mesh sequence, and halving the physical time step changes the NN2--GP2 drag difference by more than its nominal RMS. The viscous calculations therefore leave the aerodynamic ranking unresolved.} Transfer accuracy must be assessed through both the transferred fields and the flow evolution that follows, including all stored time levels.
 
 \FloatBarrier
 \section*{Data availability}
