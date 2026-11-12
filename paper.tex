@@ -334,7 +334,7 @@ Here $K_A$ and $K_B$ are source and target simplices, and $|K_A\cap K_B|$ is the
 \node[align=center,text width=4.3cm] at (1.15,-.65) {Gray lines: linear subtriangles.\\Dashed lines: dual boundaries.\\Only outer vertices are unknowns.};
 \end{scope}
 \end{tikzpicture}}
-\caption{\revadd{Geometry used to integrate the source field. (a) Source and target element intersections provide pieces on which both polynomials have one expression. (b) The shaded median-dual piece belongs to vertex $k$. It differs from a reconstruction subtriangle. The center field value depends on the original vertex values; no new solver unknown is added. These are explanatory geometries, not meshes from the flow cases.}}
+\caption{\revadd{Geometry used to integrate the source field. (a) Source and target element intersections provide pieces on which both polynomials have one expression. (b) The shaded median-dual piece belongs to vertex $k$. It differs from a reconstruction subtriangle. The center field value depends on the original vertex values; no new solver unknown is added. These are explanatory geometries, not meshes from the flow cases.}\authorcomment{(Figure 1a is not really helpful. I though it would be better if there were multiple cells in both the new and old mesh overlapping, like taking a sample of the cells of a real mesh. Figure 1b should have the node at its center, with quads and trias connected to it and highlighted its CV in all of the connected cells. Also, there is overlapping of text.}}
 \label{fig:transfer-geometry}
 \end{figure}
 
@@ -343,7 +343,7 @@ GP2 uses piecewise-linear ($P^1$) source and target fields. GP3 reconstructs a q
 \subsection{Conservative control-volume transfer}
 \label{sec:cv-transfer}
 
-The CV method matches source and target field integrals over each target control volume. \revadd{The representation below is chosen so that integrating the field between vertices gives the same domain total as the solver's weighted vertex sum. }For an element $K$ of mesh $M$, the portion of vertex $i$'s control volume inside it is $C_i^M\cap K$. Both meshes represent the field as $\phi_M^h=\sum_k\phi_{M,k}\psi_k^M$. On triangles and tetrahedra, $\psi_k^M=N_k^M$ is the usual $P^1$ hat function. \revdel{A quadrilateral is divided by joining its edges to the vertex-average center.}\revadd{A quadrilateral is divided into triangles by joining its vertices to their average center (Figure~\ref{fig:transfer-geometry}b).} The value at that center is a weighted combination of the original nodal values, rather than an independent unknown. Nonsimplicial three-dimensional elements use analogous centered subdivisions. These dependent values are chosen so that
+The CV method matches source and target field integrals over each target control volume. \revadd{The representation below is chosen so that integrating the field between vertices gives the same domain total as the solver's weighted vertex sum. } \authorcomment{What do you mean?} For an element $K$ of mesh $M$, the portion of vertex $i$'s control volume inside it is $C_i^M\cap K$. Both meshes represent the field as $\phi_M^h=\sum_k\phi_{M,k}\psi_k^M$. On triangles and tetrahedra, $\psi_k^M=N_k^M$ is the usual $P^1$ hat function. \revdel{A quadrilateral is divided by joining its edges to the vertex-average center.}\revadd{A quadrilateral is divided into triangles by joining its vertices to their average center (Figure~\ref{fig:transfer-geometry}b).} The value at that center is a weighted combination of the original nodal values, rather than an independent unknown. Nonsimplicial three-dimensional elements use analogous centered subdivisions. These dependent values are chosen so that
 \begin{equation}
  \int_K\psi_k^M\dd x=|C_k^M\cap K|
  \qquad\text{for every element $K$ and vertex $k$ of $M$.}
@@ -402,7 +402,7 @@ On simplicial meshes, CV2 and GP2 use the same continuous $P^1$ source and targe
 \subsection{\revdel{Conservation and bounds in the field used by the solver}\revadd{Field integrals and the solver integral}}
 \label{sec:galerkin-vertex-output}
 
-Galerkin projection preserves the integral of the complete finite-element field if the unconstrained target space contains constants. It also preserves coordinate moments represented in the test space. These statements follow from Eq.~\eqref{eq:galerkin-orthogonality}, but do not imply conservation over arbitrary finite-volume cells: a function that is one in a cell and zero elsewhere generally lies outside a continuous finite-element space. CV2 uses precisely these cell indicators in Eq.~\eqref{eq:cv-condition} and preserves the finite-volume total through Eq.~\eqref{eq:cv-global}. \revdel{Neither the Galerkin mass-matrix inverse nor $\widetilde H_B^{-1}$ is local. Unchanged mesh geometry in one region does not guarantee unchanged transferred values there.}\authorcomment{[C23] (why are you re-stating all of this here?)}
+Galerkin projection preserves the integral of the complete finite-element field if the unconstrained target space contains constants. It also preserves coordinate moments represented in the test space. These statements follow from Eq.~\eqref{eq:galerkin-orthogonality}, but do not imply conservation over arbitrary finite-volume cells: a function that is one in a cell and zero elsewhere generally lies outside a continuous finite-element space. CV2 uses precisely these cell indicators in Eq.~\eqref{eq:cv-condition} and preserves the finite-volume total through Eq.~\eqref{eq:cv-global}. \revdel{Neither the Galerkin mass-matrix inverse nor $\widetilde H_B^{-1}$ is local. Unchanged mesh geometry in one region does not guarantee unchanged transferred values there.}\authorcomment{[C23] (why are you re-stating all of this here?)} \authorcomment{I meant this whole paragraph.}
 
 For GP2, the field integral and the finite-volume integral agree when $w_i^M=\int_\Omega N_i^M\dd x$ on both meshes. This holds on simplicial meshes. It generally fails when a quadrilateral mesh is triangulated, because the hat-function integrals differ from the median-dual measures. CV2 enforces the corresponding equality through Eq.~\eqref{eq:cv-lumped-exact} \revdel{on every supported  element type}\revadd{for any subdivision satisfying that identity\authorcomment{[C24] (supported is just a matter of implementation, not of model.)}}. GP3 adds another difference: reconstructing a quadratic source field and then retaining only target vertices changes the representation. \revdel{Even an exact quadratic projection can then have a second-order finite-volume integral error (Eq.~\eqref{eq:vertex-restriction-counterexample})}\revadd{The next example shows that even an exact quadratic projection can then have a second-order finite-volume integral error}\authorcomment{[C25] (same as before, referencing before introducing, it feels out of place and not well connected to the text.)}. Third-order point-value accuracy does not imply third-order accuracy of the solver's integral.
 
@@ -439,7 +439,7 @@ For GP2, the field integral and the finite-volume integral agree when $w_i^M=\in
 
 \subsubsection{\revadd{Limiting new extrema}}
 \label{sec:galerkin-limiter}
-\revadd{Limiting reduces reconstructed slopes or curvature to control new extrema. The limiter factor $\theta_i$ multiplies the Taylor correction. Choosing $0\leq\theta_i\leq1$ reduces NN2 or NN3 to NN1 when $\theta_i=0$, but reduces BAR3 to BAR2. Smooth-field verification uses no limiter. Discontinuous-field tests also use Barth--Jespersen (BJ) limiting~\cite{BarthJespersen1989}. A limiter computed from the linear increment $\boldsymbol g_i\cdot\boldsymbol r$ does not also constrain the quadratic term $\tfrac12\boldsymbol r^T\mathcal H_i\boldsymbol r$. We therefore check the bounds on the final transferred values.}
+\revadd{Limiting reduces reconstructed slopes or curvature to control new extrema. The limiter factor $\theta_i$ multiplies the Taylor correction. Choosing $0\leq\theta_i\leq1$ reduces NN2 or NN3 to NN1 when $\theta_i=0$, but reduces BAR3 to BAR2. Smooth-field verification uses no limiter. Discontinuous-field tests also use Barth--Jespersen (BJ) limiting~\cite{BarthJespersen1989}. A limiter computed from the linear increment $\boldsymbol g_i\cdot\boldsymbol r$ does not also constrain the quadratic term $\tfrac12\boldsymbol r^T\mathcal H_i\boldsymbol r$. We therefore check the bounds on the final transferred values.} \authorcomment{This paragraph is not clear. Are there two different limitings, one with theta and one with Barth-Jespersen? If yes, why and are they both used?}
 
 \revadd{GP and CV limiters use the extrema of overlapping source vertices as target bounds. Hard limiting uses these extrema directly; soft limiting widens the range by $\tau$ times the source range. Values outside the bounds are clipped, then the resulting integral change is redistributed to preserve a selected total: the simplicial lumped total for GP and $Q_B$ for CV. This operation can remove Galerkin orthogonality and the best-approximation property. For CV, it changes individual target-volume integrals while preserving their sum.}
 
@@ -476,7 +476,7 @@ The Riemann tests include an alternative that redistributes corrections only bet
 \end{equation}
 The pair flux $\mathcal F_{jk}$ is a correction to the content of volume $j$ exchanged with neighboring volume $k$; the sum is over vertices sharing a target element. The symmetric factor $\theta_{jk}$ is the fraction of this exchange allowed by the limiter, and $\phi_j^{\mathrm{LC}}$ is the corrected nodal value. Applied in full, they recover the integral-corrected unlimited transfer. Each exchange adds to one volume what it removes from its neighbor, so the domain sum is unchanged even when limiting permits only part of a flux. Local conservation here allows neighboring volumes to exchange content; it does not require each nodal content to remain equal to $\tilde b_j$.
 
-The starting low-order state, $\tilde b_j/w_j^B$, is bounded. Iterative flux-corrected transport~\cite{Zalesak1979} adds as much of the correction as the bounds allow, with a relaxation of $2\times10^{-3}$ of the source range. At most 12 limiting passes are used. Paired fluxes ensure conservation, but the pass limit can leave part of the unlimited correction unapplied. Only the Riemann calculations use LC; the airfoil calculations use the standard treatment above.
+The starting low-order state, $\tilde b_j/w_j^B$, is bounded. Iterative flux-corrected transport~\cite{Zalesak1979} adds as much of the correction as the bounds allow, with a relaxation of $2\times10^{-3}$ of the source range\authorcomment{(same tolerance as the bound limits for GP and CV?)}. At most 12 limiting passes are used\authorcomment{(why?)}. Paired fluxes ensure conservation, but the pass limit can leave part of the unlimited correction unapplied. Only the Riemann calculations use LC; the airfoil calculations use the standard treatment above.
 
 \section{Effect of remeshing on multistep time integration}
 \label{sec:restart-consistency}
@@ -498,7 +498,7 @@ Here $t$ is physical time, $\dot U_M=\mathrm dU_M/\mathrm dt$, and $F_M$ is the 
         \left(\tfrac32Y-2V+\tfrac12W\right)+F_B(Y,t^{n+1})=0.
  \label{eq:bdf2}
 \end{equation}
-Here $n$ is the physical time-step index, $t^n$ the corresponding time, and $\Delta t=t^n-t^{n-1}>0$ the constant step size. The unknown is the next state $Y$; $V$ and $W$ are placeholders for the latest and older stored states at $t^n$ and $t^{n-1}$. The function $\Phi_B(Y;V,W)$ is the algebraic BDF2 residual. Each mesh is stationary during a time step. Continuously moving meshes would require compatible geometric histories and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; Eq.~\eqref{eq:bdf2} does not cover that case.
+Here $n$ is the physical time-step index, $t^n$ the corresponding time, and $\Delta t=t^n-t^{n-1}>0$ the constant step size. The unknown is the next state $Y$; $V$ and $W$ are placeholders for the latest and older stored states at $t^n$ and $t^{n-1}$ \authorcomment{(why not simply $U^n, U^{n-1} and U^{n+1}$?)}. The function $\Phi_B(Y;V,W)$ is the algebraic BDF2 residual. Each mesh is stationary during a time step. Continuously moving meshes would require compatible geometric histories and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; Eq.~\eqref{eq:bdf2} does not cover that case.
 
 Let $U_A^k$ and $U_B^k$ be independently computed reference solutions for the same problem on meshes $A$ and $B$. Transfer produces the target states
 \begin{equation}
@@ -506,11 +506,11 @@ Let $U_A^k$ and $U_B^k$ be independently computed reference solutions for the sa
  \eps^k=\widehat U_B^k-U_B^k,\qquad k=n,n-1.
  \label{eq:history-defects}
 \end{equation}
-The complete map $\mathcal T_{AB}$ includes the chosen raw transfer, limiting, boundary treatment, and admissibility corrections. It is therefore distinct from the raw operators $\calI_{AB}^{m}$ in Sec.~\ref{sec:point-transfer}. \revdel{The difference $\eps^k$ therefore includes both transfer error and the difference between the solutions computed on the two meshes. The target reference $U_B^k$ fixes the discretization for the comparison; it is not an exact continuum solution. Supplementary Section S6 separates these contributions.}\revadd{Because $U_A^k$ and $U_B^k$ are computed independently, $\eps^k$ includes the effects of discretization on both meshes as well as the error introduced by transfer. Supplementary Section S6 gives this decomposition.}
+The complete map $\mathcal T_{AB}$ includes the chosen raw transfer, limiting, boundary treatment, and admissibility corrections. It is therefore distinct from the raw operators $\calI_{AB}^{m}$ in Sec.~\ref{sec:point-transfer}. \revdel{The difference $\eps^k$ therefore includes both transfer error and the difference between the solutions computed on the two meshes. The target reference $U_B^k$ fixes the discretization for the comparison; it is not an exact continuum solution. Supplementary Section S6 separates these contributions.}\revadd{Because $U_A^k$ and $U_B^k$ are computed independently, $\eps^k$ includes the effects of discretization on both meshes as well as the error introduced by transfer. Supplementary Section S6 gives this decomposition.} \authorcomment{(I don't think that the paper or the readers have access to the supplementary material. If important, it should be stated directly here. This same comment should be checked across all the paper text.)}
 
 \subsection{How errors in the stored states change the next step}
 
-Evaluate the reference and transferred BDF2 equations at the same trial state. The spatial terms are then identical, leaving only the contributions from the two stored-state errors:
+Evaluate the reference and transferred BDF2 equations at the same trial state\authorcomment{(This phrase here is too sudden, it does not look like a thing you would write as start of a subsection.)}. The spatial terms are then identical, leaving only the contributions from the two stored-state errors:
 
 \begin{proposition}[Residual perturbation from transferred states]
 \label{prop:history-forcing}
@@ -529,9 +529,11 @@ Let $\Phi_B$ be the constant-step BDF2 residual of Eq.~\eqref{eq:bdf2}, and let 
 At the common trial state and time, the spatial residual and the term $3M_BY/(2\Delta t)$ cancel. The remaining difference is $(M_B/\Delta t)(-2\eps^n+\eps^{n-1}/2)$.\qed
 \end{proof}
 
-\revdel{The vector $\eta^n$ combines the latest and older state errors with different BDF2 weights and opposite signs.}\revadd{With one history perturbed at a time, an error in the older state produces $-1/4$ of the residual change caused by the same error in the latest state.} Equation~\eqref{eq:history-residual-identity} is exact for finite errors and nonlinear $F_B$, because BDF2 depends linearly on the stored states. If boundary conditions modify a residual equation, they must also modify its predicted perturbation. \revdel{This identity describes a change in the equation, not yet the change in its computed solution.}\revadd{To obtain the corresponding change in the computed solution, we must also account for the spatial residual and the accuracy of the solve.}
+\authorcomment{(I think that the proof could be a little bit more explicit with equations showing the simplification.)}
 
-Define the next-state difference $\delta^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$. The remaining algebraic residuals are $\mathfrak r_B^{n+1}=\Phi_B(U_B^{n+1};U_B^n,U_B^{n-1})$ and $\widehat{\mathfrak r}_B^{n+1}=\Phi_B(\widehat U_B^{n+1};\widehat U_B^n,\widehat U_B^{n-1})$. These definitions use the sign of $\Phi_B$; the solver's printed residual has the opposite sign. Subtracting the equations gives
+\revdel{The vector $\eta^n$ combines the latest and older state errors with different BDF2 weights and opposite signs.}\revadd{With one history perturbed at a time, an error in the older state produces $-1/4$ of the residual change caused by the same error in the latest state.} \authorcomment{(Where is this coming from? Is it a statement derived from a proof or something verified with thests?)}Equation~\eqref{eq:history-residual-identity} is exact for finite errors and nonlinear $F_B$\authorcomment{(Are you sure?)}, because BDF2 depends linearly on the stored states. If boundary conditions modify a residual equation, they must also modify its predicted perturbation. \revdel{This identity describes a change in the equation, not yet the change in its computed solution.}\revadd{To obtain the corresponding change in the computed solution, we must also account for the spatial residual and the accuracy of the solve.}
+
+Define the next-state difference $\delta^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$ \authorcomment{(wasn0t the difference between interpolated and original state both on mesh B defined as $\epsilon$?)}. The remaining algebraic residuals are $\mathfrak r_B^{n+1}=\Phi_B(U_B^{n+1};U_B^n,U_B^{n-1})$ and $\widehat{\mathfrak r}_B^{n+1}=\Phi_B(\widehat U_B^{n+1};\widehat U_B^n,\widehat U_B^{n-1})$. These definitions use the sign of $\Phi_B$; the solver's printed residual has the opposite sign\authorcomment{(What?)}. Subtracting the equations gives
 \begin{equation}
  \begin{aligned}
  A_B\delta^{n+1}
@@ -544,15 +546,15 @@ Define the next-state difference $\delta^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$. Th
 \end{equation}
 The matrix $A_B$ is the time-step Jacobian multiplied by $\Delta t$, and $J_B$ is the spatial Jacobian. For an arbitrary state increment $\delta$, the nonlinear remainder is
 $\mathcal N_B(\delta)=F_B(U_B^{n+1}+\delta,t^{n+1})-F_B(U_B^{n+1},t^{n+1})-J_B\delta$.
-For a locally Lipschitz Jacobian, $\mathcal N_B(\delta)=O(\|\delta\|^2)$ in any fixed state-vector norm. If $A_B$ is invertible, the perturbation is small, and the algebraic residual difference is negligible at that scale, then
+For a locally Lipschitz Jacobian, $\mathcal N_B(\delta)=O(\|\delta\|^2)$ in any fixed state-vector norm\authorcomment{(Why? Is it a literature result?)}. If $A_B$ is invertible, the perturbation is small, and the algebraic residual difference is negligible at that scale, then
 \begin{equation}
  \delta^{n+1}=R_B\eta^n+O(\Delta t\|\eta^n\|^2),
  \qquad R_B=A_B^{-1}M_B.
  \label{eq:state-response}
 \end{equation}
-The response matrix $R_B$ converts stored-state errors into a next-state change. This approximation is local to the chosen mesh, state, step, and norm. Limiter switching or insufficient iterative convergence can invalidate it without invalidating the exact residual identity.
+The response matrix $R_B$ converts stored-state errors into a next-state change. This approximation is local to the chosen mesh, state, step, and norm. Limiter switching \authorcomment{(what do you mean?)} or insufficient iterative convergence can invalidate it without invalidating the exact residual identity \authorcomment{(why?)}.
 
-A superscript $\mathrm{st}$ denotes a computed steady reference state. Table~\ref{tab:naca-history-decomposition} assigns the same spatial discrepancy $\eps^{\mathrm{st}}=\mathcal T_{AB}U_A^{\mathrm{st}}-U_B^{\mathrm{st}}$ to the two stored states independently.
+A superscript $\mathrm{st}$ denotes a computed steady reference state. Table~\ref{tab:naca-history-decomposition} assigns the same spatial discrepancy $\eps^{\mathrm{st}}=\mathcal T_{AB}U_A^{\mathrm{st}}-U_B^{\mathrm{st}}$ to the two stored states independently. \authorcomment{(And here we are back to using $\epsilon$. Am I missing something?)}
 
 \begin{table}[pos=htbp]
 \centering\small
@@ -582,12 +584,12 @@ The older-only case reveals an error that checking the latest state alone would 
 \subsection{Aerodynamic response}
 \label{sec:delayed-response}
 
-For a scalar output $G_B$ with locally Lipschitz state gradient, let $\Delta G^{n+1}=G_B(\widehat U_B^{n+1})-G_B(U_B^{n+1})$. The gradient $\nabla_U G_B$ is evaluated at $U_B^{n+1}$. Under the small-error and converged-solve assumptions of Eq.~\eqref{eq:state-response},
+For a scalar output $G_B$ with locally Lipschitz state gradient \authorcomment{(what are the consequences of this Lipschitz requirement? Is it always satisfied in CFD cases or is this an assumption you made for your proofs and theorems?)}, let $\Delta G^{n+1}=G_B(\widehat U_B^{n+1})-G_B(U_B^{n+1})$. The gradient $\nabla_U G_B$ is evaluated at $U_B^{n+1}$. Under the small-error and converged-solve assumptions of Eq.~\eqref{eq:state-response},
 \begin{equation}
  \Delta G^{n+1}=(\nabla_U G_B)^TR_B\eta^n+O(\|\eta^n\|^2).
  \label{eq:force-response}
 \end{equation}
-Thus the output depends on the location of the error and on the target dynamics. A domain integral cannot describe that weighting. Preserving every source component integral implies
+Thus the output depends on the location of the error and on the target dynamics \authorcomment{(How did you derive this conclusion from this eq?)}. A domain integral cannot describe that weighting. Preserving every source component integral implies
 \revdel{\[
 (\bm1_{n_B}^{T}\otimes I_{n_U})M_B\eps^k
        =Q_A(U_A^k)-Q_B(U_B^k).
@@ -598,9 +600,9 @@ Thus the output depends on the location of the error and on the target dynamics.
  \qquad a=1,\ldots,n_U.
  \label{eq:gc-native-mismatch}
 \end{equation}}
-\revdel{Both sides are vectors with one entry per transported variable.} \revadd{Here $a$ selects a transported component and $\eps_{j,a}^k$ is its error at target vertex $j$. }The right-hand side need not be zero because independently computed mesh references can have different integrals. Preserving a source integral therefore need not bring the transferred state or its loads closer to the target-mesh reference.
+\revdel{Both sides are vectors with one entry per transported variable.} \revadd{Here $a$ selects a transported component and $\eps_{j,a}^k$ is its error at target vertex $j$. }The right-hand side need not be zero because independently computed mesh references can have different integrals. Preserving a source integral therefore need not bring the transferred state or its loads closer to the target-mesh reference. \authorcomment{(I feel this paragraph is not clear.)}
 
-Later steps use both the newly computed state and a retained older state. Their errors can continue to influence the flow, so the first load difference need not be the largest. A disturbance away from the airfoil can produce a delayed acoustic or convective response. Projection and implicit time integration can also introduce small immediate changes outside the perturbed region. Arrival times are therefore measured with finite-amplitude thresholds.
+Later steps use both the newly computed state and a retained older state. Their errors can continue to influence the flow, so the first load difference need not be the largest. A disturbance away from the airfoil can produce a delayed acoustic or convective response. Projection and implicit time integration can also introduce small immediate changes outside the perturbed region. Arrival times are therefore measured with finite-amplitude thresholds. \authorcomment{(I feel this paragraph is hard to understand why it is here. Also, I recall seeing some versions ago an adjoint treatment of this part to derive the influence of the errors to the quantities of interest. would it be useful to include here?)}
 
 
 \section{\revdel{Numerical experiments and results}\revadd{Numerical tests and results}}
