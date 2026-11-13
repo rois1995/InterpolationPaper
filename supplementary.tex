@@ -339,22 +339,51 @@ For a scalar output functional $G_M$ evaluated from the state on mesh $M$, a sou
 Here $\widehat U_B^k=\mathcal T_{AB}(U_A^k)$. The first term compares the two discrete mesh references. The second measures the output difference on $B$ immediately after transfer.
 
 \subsection{How the history weights change for a later load}
-Consider a load $G_B$ at step $N\ge n+1$ on the same target mesh, with no further transfers. Use the smoothness and solve assumptions of the one-step prediction. Let $A_m=\tfrac32M_B+\Delta t\,\partial_U F_B(U_B^m,t^m)$ be the scaled step Jacobian on the reference solution at step $m$. The gradient of the final load is $g_N=\nabla_U G_B(U_B^N)$, and set $g_m=0$ for earlier steps.
+Consider a load $G_B$ at step $N\ge n+1$ on the same stationary target mesh, at constant $\Delta t$ and with no further transfers. At each step $m$, define the spatial Jacobian at the reference state by $J_m=\partial_U F_B(U_B^m,t^m)$ and the scaled step Jacobian by $A_m=\tfrac32M_B+\Delta t J_m$. The state difference is $\eps^m=\widehat U_B^m-U_B^m$. Let $\mathfrak r_B^m$ and $\widehat{\mathfrak r}_B^m$ be the BDF2 residuals evaluated at each run's own state and histories when its inner solve stops. The spatial remainder is
+\[
+ \mathcal N_m(\eps^m)
+ =F_B(\widehat U_B^m,t^m)-F_B(U_B^m,t^m)-J_m\eps^m.
+\]
+The full difference equation at each advanced step is therefore
+\begin{equation}
+\begin{aligned}
+ A_m\eps^m={}&M_B(2\eps^{m-1}-\tfrac12\eps^{m-2})\\
+ &+\Delta t(\widehat{\mathfrak r}_B^m-\mathfrak r_B^m)
+   -\Delta t\,\mathcal N_m(\eps^m).
+\end{aligned}
+\label{supp:eq:later-state-balance}
+\end{equation}
+This is the one-step BDF2 balance from the article applied at each time, with different new states and spatial residuals retained. The state and adjoint systems must use the same boundary constraints.
 
-Start with $\boldsymbol\lambda_{N+1}=\boldsymbol\lambda_{N+2}=0$. For $m=N,N-1,\ldots,n+1$, solve
+For the final output, define $\Delta G^N=G_B(\widehat U_B^N)-G_B(U_B^N)$, its reference gradient $g_N=\nabla_U G_B(U_B^N)$, and the output remainder $\mathcal N_G^N=\Delta G^N-g_N^T\eps^N$. Set $g_m=0$ for earlier steps. Assuming each $A_m$ is invertible, start with $\boldsymbol\lambda_{N+1}=\boldsymbol\lambda_{N+2}=0$ and solve backwards for $m=N,N-1,\ldots,n+1$:
 \begin{equation}
  A_m^T\boldsymbol\lambda_m=g_m+2M_B\boldsymbol\lambda_{m+1}
                       -\tfrac12 M_B\boldsymbol\lambda_{m+2}.
  \label{supp:eq:later-adjoint}
 \end{equation}
-The coefficients $2$ and $-1/2$ come from the next two BDF2 steps. With $\eps^m=\widehat U_B^m-U_B^m$, multiply each linearized equation $A_m\eps^m\simeq M_B(2\eps^{m-1}-\eps^{m-2}/2)$ by $\boldsymbol\lambda_m^T$ and sum over $m=n+1,\ldots,N$. Eq.~\eqref{supp:eq:later-adjoint} cancels the intermediate state differences and leaves
+The coefficients $2$ and $-1/2$ come from the next two BDF2 steps. Multiply Eq.~\eqref{supp:eq:later-state-balance} by $\boldsymbol\lambda_m^T$ and sum over $m=n+1,\ldots,N$. Equation~\eqref{supp:eq:later-adjoint} cancels the intermediate state differences. Using $M_B^T=M_B$, the exact final-output balance is
+\begin{equation}
+\begin{aligned}
+ \Delta G^N={}&
+ (2\boldsymbol\lambda_{n+1}-\tfrac12\boldsymbol\lambda_{n+2})^T M_B\eps^n
+ -\tfrac12\boldsymbol\lambda_{n+1}^T M_B\eps^{n-1}\\
+ &+\Delta t\sum_{m=n+1}^{N}\boldsymbol\lambda_m^T
+      (\widehat{\mathfrak r}_B^m-\mathfrak r_B^m)\\
+ &-\Delta t\sum_{m=n+1}^{N}\boldsymbol\lambda_m^T\mathcal N_m(\eps^m)
+   +\mathcal N_G^N.
+\end{aligned}
+\label{supp:eq:later-output-balance}
+\end{equation}
+The first line contains the contributions of the two transferred histories. The remaining lines carry the inner-solve residual differences and the nonlinear remainders through to the final load. The adjoint weights include the spatial Jacobian at each reference new state.
+
+For exact inner solves and small state differences on a common smooth solution branch, discarding the nonlinear remainders gives the leading history-weight formula
 \begin{equation}
  \Delta G^N \simeq
  (2\boldsymbol\lambda_{n+1}-\tfrac12\boldsymbol\lambda_{n+2})^T M_B\eps^n
  -\tfrac12\boldsymbol\lambda_{n+1}^T M_B\eps^{n-1}.
  \label{supp:eq:later-history-weights}
 \end{equation}
-Here $\Delta G^N=G_B(\widehat U_B^N)-G_B(U_B^N)$ compares the runs at the same final time. For $N=n+1$, only $\boldsymbol\lambda_{n+1}$ remains and the expression reduces to $\boldsymbol\lambda_{n+1}^TM_B(2\eps^n-\eps^{n-1}/2)$.
+The remainders are quadratic in the state differences under the gradient and Jacobian smoothness assumptions in the article. At a fixed finite horizon their adjoint-weighted sums determine the accuracy of this approximation. Early termination of the inner solves adds the residual sum in Eq.~\eqref{supp:eq:later-output-balance}. For $N=n+1$, only $\boldsymbol\lambda_{n+1}$ remains; Eqs.~\eqref{supp:eq:later-output-balance} and \eqref{supp:eq:later-history-weights} recover the article's full one-step functional balance and its leading term, respectively. These expressions interpret the forward calculations; the reported tables do not evaluate the adjoint weights numerically.
 
 \section{Steady mesh sensitivity and the medium-mesh transient}
 \label{supp:mesh-sensitivity}

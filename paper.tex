@@ -644,24 +644,52 @@ The response matrix $R_B$ converts stored-state errors into a next-state change.
 \subsection{Aerodynamic response}
 \label{sec:delayed-response}
 
-Let $G_B$ be a scalar aerodynamic output evaluated on mesh $B$. Its change after one step is $\Delta G^{n+1}=G_B(\widehat U_B^{n+1})-G_B(U_B^{n+1})$. At a fixed time on this mesh, assume that the gradient $\nabla_U G_B$ changes at most in proportion to a small change in the flow state near $U_B^{n+1}$. The remainder in a first-order load prediction is then bounded by a constant times $\|\eps^{n+1}\|^2$.
+Let $G_B$ be a scalar aerodynamic output evaluated on mesh $B$. Its change after one step is $\Delta G^{n+1}=G_B(\widehat U_B^{n+1})-G_B(U_B^{n+1})$. Evaluate its gradient $\nabla_U G_B$ at the reference new state $U_B^{n+1}$. Define the output remainder by
+\begin{equation}
+ \mathcal N_G^{n+1}
+ =\Delta G^{n+1}-(\nabla_U G_B)^T\eps^{n+1}.
+ \label{eq:output-remainder}
+\end{equation}
+If the gradient changes by at most $L_G$ times the state change along the segment joining the two new states, in the norms induced by the chosen state norm, then $|\mathcal N_G^{n+1}|\leq L_G\|\eps^{n+1}\|^2/2$. Here $L_G$ is a finite bound on the gradient variation.
 
-Evaluating the gradient at $U_B^{n+1}$ and substituting Eq.~\eqref{eq:state-response} into the first-order expansion gives
+For example, on a fixed airfoil in inviscid flow, the lift and drag coefficients are weighted sums of the wall pressure. Geometry, force direction and the reference quantities fix the surface weights. For an ideal gas with $\rho>0$, pressure varies smoothly with the local conserved variables. In viscous flow, wall shear also contributes to the load. The derivative compares nearby states at a single time. If an arriving disturbance changes the wall pressure sharply in one physical step, the load can change sharply in that step as well.
+
+Assume that $A_B$ in Eq.~\eqref{eq:linearized-bdf2-response} is invertible. Define the discrete adjoint vector $\boldsymbol\lambda_G$ by the transpose solve~\cite{GilesPierce2000}
+\begin{equation}
+ A_B^T\boldsymbol\lambda_G=\nabla_U G_B.
+ \label{eq:output-adjoint-system}
+\end{equation}
+This uses the full time-step matrix $A_B=\tfrac32M_B+\Delta t J_B$. The spatial Jacobian $J_B$ accounts for the first-order change in $F_B$ between the two new states. No common trial state is imposed in this derivation. Boundary rows must be constrained consistently in the state and transpose systems, as specified for Proposition~\ref{prop:restart-response}.
+
+Multiplying Eq.~\eqref{eq:linearized-bdf2-response} by $\boldsymbol\lambda_G^T$ and using Eq.~\eqref{eq:output-remainder} gives the exact output balance
+\begin{equation}
+\begin{aligned}
+ \Delta G^{n+1}
+ ={}&\boldsymbol\lambda_G^T M_B\eta^n
+   +\Delta t\,\boldsymbol\lambda_G^T
+       (\widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1})\\
+ &-\Delta t\,\boldsymbol\lambda_G^T\mathcal N_B(\eps^{n+1})
+   +\mathcal N_G^{n+1}.
+\end{aligned}
+\label{eq:output-full-balance}
+\end{equation}
+The first term weights the input history differences by their load sensitivity. The second weights the difference in the residuals left by the two inner solves. The remaining terms account for nonlinear changes in the spatial residual and the load. Their definitions make Eq.~\eqref{eq:output-full-balance} an identity; treating the remainders as quadratic additionally requires the smoothness assumptions above.
+
+For exact inner solves on the same local solution branch, small $\eta^n$, and the state-response assumptions in Sec.~\ref{sec:restart-consistency}, the leading prediction is
 \begin{equation}
  \Delta G^{n+1}=(\nabla_U G_B)^TR_B\eta^n+O(\|\eta^n\|^2).
  \label{eq:force-response}
 \end{equation}
-For example, on a fixed airfoil in inviscid flow, the lift and drag coefficients are weighted sums of the wall pressure. Geometry, force direction and the reference quantities fix the surface weights. For an ideal gas with $\rho>0$, pressure varies smoothly with the local conserved variables. In viscous flow, wall shear also contributes to the load. The derivative above compares nearby states at a single time. If an arriving disturbance changes the wall pressure sharply in one physical step, the load can change sharply in that step as well.
+When the inner solves stop early, the residual term in Eq.~\eqref{eq:output-full-balance} must also be assessed. A small history error alone does not bound that contribution.
 
-The sensitivity of the load to each stored-state error can be written explicitly using a discrete adjoint~\cite{GilesPierce2000}. For this output, define the vector $\boldsymbol\lambda_G$ by the transpose solve $A_B^T\boldsymbol\lambda_G=\nabla_U G_B$. At target vertex $j$, write $\boldsymbol\lambda_{G,j}$ and $\eta_j^n$ for the entries of the adjoint and the history combination at that vertex. In two-dimensional Euler flow each is a four-entry vector, ordered as density, streamwise momentum, transverse momentum and total energy per unit volume. Since $R_B=A_B^{-1}M_B$, the leading term in Eq.~\eqref{eq:force-response} is
-
+At target vertex $j$, write $\boldsymbol\lambda_{G,j}$ and $\eta_j^n$ for the entries of the adjoint and the history combination at that vertex. In two-dimensional Euler flow each is a four-entry vector, ordered as density, streamwise momentum, transverse momentum and total energy per unit volume. Since $R_B=A_B^{-1}M_B$, the leading term in Eq.~\eqref{eq:force-response} is
 \begin{equation}
-(\nabla_U G_B)^T R_B\eta^n
+ (\nabla_U G_B)^T R_B\eta^n
  =\boldsymbol\lambda_G^T M_B\eta^n
  =\sum_{j=1}^{n_B} w_j^B\,\boldsymbol\lambda_{G,j}^T\eta_j^n.
  \label{eq:output-adjoint}
 \end{equation}
-The dot product multiplies each history error by its own load sensitivity at that vertex and adds the products. For example, the density error is multiplied by the sensitivity to density. These adjoint sensitivities depend on the chosen load through its gradient and on the target flow through $A_B$.
+The dot product multiplies each history error by its load sensitivity at that vertex and adds the products. For example, the density error is multiplied by the sensitivity to density. These adjoint sensitivities depend on the chosen load through its gradient and on the target flow through $A_B$. The numerical comparisons below use forward restarts; they do not report a numerical evaluation of these adjoint weights.
 
 Consider mass conservation at a stored time level $k$. Let $\rho_A^k$ and $\rho_B^k$ be the independently computed density fields and $\widehat\rho_B^k$ the density field transferred to $B$. If transfer preserves the source mass, $Q_B(\widehat\rho_B^k)=Q_A(\rho_A^k)$. Subtracting the target-reference mass from both sides gives
 
@@ -670,9 +698,9 @@ Consider mass conservation at a stored time level $k$. Let $\rho_A^k$ and $\rho_
       =Q_A(\rho_A^k)-Q_B(\rho_B^k).
  \label{eq:gc-native-mismatch}
 \end{equation}
- Here $w_j^B=|C_j^B|$ is the area of the target control volume around vertex $j$ in two dimensions, or its volume in three dimensions. The left-hand side weights each density difference by this measure and sums over the target vertices. The right-hand side is the mass difference between the two reference solutions. The same identity holds for each momentum component or for total energy when its integral is preserved. Even if the two reference masses agree, adding a given mass at one vertex and removing it at another leaves their total unchanged. For the same history level, those two changes cancel in first-order lift only if the density sensitivities in Eq.~\eqref{eq:output-adjoint} are equal at the two vertices.
+ Here $w_j^B=|C_j^B|$ is the area of the target control volume around vertex $j$ in two dimensions, or its volume in three dimensions. The left-hand side weights each density difference by this measure and sums over the target vertices. The right-hand side is the mass difference between the two reference solutions. The same identity holds for each momentum component or for total energy when its integral is preserved. Even if the two reference masses agree, adding a given mass at one vertex and removing it at another leaves their total unchanged. For the same history level, those two changes cancel in the leading history contribution to lift only if the density sensitivities in Eq.~\eqref{eq:output-adjoint} are equal at the two vertices. The residual and nonlinear terms in Eq.~\eqref{eq:output-full-balance} remain separate contributions.
 
-Equation~\eqref{eq:output-adjoint} concerns the load one step after transfer. On the following step, BDF2 uses the newly computed difference $\eps^{n+1}$ and the retained input error $\eps^n$. Its history combination is now $2\eps^{n+1}-\eps^n/2$. A load can therefore keep changing after a single mesh replacement. Section~\ref{sec:delayed-airfoil-test} tests this by disturbing a band away from the wall and measuring when pressure and lift respond.
+Equation~\eqref{eq:output-full-balance} concerns the load one step after transfer. On the following step, BDF2 uses the newly computed difference $\eps^{n+1}$ and the retained input error $\eps^n$. Its history combination is now $2\eps^{n+1}-\eps^n/2$. A load can therefore keep changing after a single mesh replacement. Section~\ref{sec:delayed-airfoil-test} tests this by disturbing a band away from the wall and measuring when pressure and lift respond.
 
 \section{Numerical tests and results}
 \label{sec:methodology}
@@ -1018,7 +1046,7 @@ Restoring the global integral barely changes first-step lift. With both states p
 
 The second- and third-order methods give state-error norms near $7.0\times10^{-4}$, with less than 3\% spread; NN1 gives $1.47\times10^{-3}$. These are differences from the independently computed target-mesh reference. They include both transfer error and mesh-dependent steady-solution differences, so they do not rank interpolation accuracy alone.
 
-Across all eight variants, the latest-only/both-states state-norm ratio is 1.3330--1.3333, and the older-only/both-states ratio is 0.3335--0.3341. The relative superposition errors are 1.8--3.5\% in the volume-weighted state norm and 0.28--1.49\% in lift. The ratios support the linearized prediction in Eq.~\eqref{eq:naca-history-ratios} for this imposed error field. Additional cancellation and amplitude tests show where this approximation remains unverified.
+Across all eight variants, the latest-only/both-states state-norm ratio is 1.3330--1.3333, and the older-only/both-states ratio is 0.3335--0.3341. The relative superposition errors are 1.8--3.5\% in the volume-weighted state norm and 0.28--1.49\% in lift. The ratios support the linearized prediction in Eq.~\eqref{eq:naca-history-ratios} for this imposed error field. Because the ratios follow for any common linear response matrix, they check scaling with the history coefficients. They do not independently determine $R_B$ or the adjoint weights. Additional cancellation and amplitude tests show where this approximation remains unverified.
 
 \subsubsection{Limits of the linear-response approximation}
 
@@ -1219,7 +1247,7 @@ CV2 preserves the global finite-volume integral but loses affine reproduction wh
 \section{Conclusions}
 \label{sec:conclusions}
 
-Transfer in an unsteady calculation must supply every state used by the time integrator. In the controlled BDF2 restarts, an error in the older state changes next-step lift even when the latest state matches the target-mesh reference. The full BDF2 balance retains the difference between the two computed new states and between their spatial residuals. With converged inner solves, these changes balance the forcing from the transferred histories. Evaluating both equations at a chosen common trial state is a simplification that isolates this forcing: the same error in the older history contributes $-1/4$ of its latest-history contribution. This coefficient ratio alone does not prescribe the ratio of the computed state or load changes. The measured lift changes also have opposite signs. Their magnitudes depend on how the target flow and the chosen load weight that error.
+Transfer in an unsteady calculation must supply every state used by the time integrator. In the controlled BDF2 restarts, an error in the older state changes next-step lift even when the latest state matches the target-mesh reference. The full BDF2 balance retains the difference between the two computed new states and between their spatial residuals. With converged inner solves, these changes balance the forcing from the transferred histories. Evaluating both equations at a chosen common trial state is a simplification that isolates this forcing: the same error in the older history contributes $-1/4$ of its latest-history contribution. This coefficient ratio alone does not prescribe the ratio of the computed state or load changes. The measured lift changes also have opposite signs. Their magnitudes depend on how the target flow and the chosen load weight that error. The full functional balance separates the history contribution from incomplete inner convergence and nonlinear remainders.
 
 The Riemann results distinguish preservation of mass, wave shape, and mass balance during later flow evolution. Global mass correction does not restore a smeared profile. At high transfer counts, a wide-window 10--90\% width also includes contact smearing, so it must be separated from shock-only broadening. GP2 and CV2 preserve the tested profiles more closely than NN1 and BAR2, but standard global limiting can disturb the far field and allow mass changes during subsequent flow steps.
 
