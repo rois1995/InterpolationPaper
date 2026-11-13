@@ -181,7 +181,7 @@ The transfer methods differ in how they compute values on the target mesh. NN an
 \subsection{Stored variables and reconstructed derivatives}
 \label{sec:derivative-reconstruction}
 
-The source mesh $A$ and target mesh $B$ cover the same discretized domain $\Omega$ in spatial dimension $d$. A mesh $M$ has $n_M$ solver vertices. Vertex $i$ has position $\boldsymbol x_i^M$ and a surrounding median-dual control volume $C_i^M$ of positive measure $w_i^M=|C_i^M|$. The symbol $|C|$ denotes area or volume, and $\dd x$ the corresponding integration measure. For mesh $M$, vertex indices range from $1$ to $n_M$.
+The source mesh $A$ and target mesh $B$ cover the same discretized domain $\Omega$ in spatial dimension $d$. A mesh $M$ has $n_M$ solver vertices. Vertex $i$ has position $\boldsymbol x_i^M$ and a surrounding median-dual control volume $C_i^M$ of positive measure $w_i^M=|C_i^M|$. The symbol $|C|$ denotes area or volume, and $\dd x$ the corresponding integration measure.
 
 The solver state $U_M$ is stacked vertex by vertex, with $n_U$ transported variables per vertex. A superscript $T$ means transpose. For a scalar component $\phi$, $\phi_M=(\phi_{M,1},\ldots,\phi_{M,n_M})^T$ collects its vertex values, and its discrete integral is
 \begin{equation}
@@ -190,9 +190,9 @@ The solver state $U_M$ is stacked vertex by vertex, with $n_U$ transported varia
 \end{equation}
 For the full state $U_M$, $Q_M(U_M)$ means the vector of these integrals, one per transported component.
 
-For a nonzero source integral, define the signed relative integral change as $e_Q(\phi_A,\phi_B)=[Q_B(\phi_B)-Q_A(\phi_A)]/Q_A(\phi_A)$. Static and RANS transfer diagnostics use this normalization.
+For a nonzero source integral, define the signed relative integral change as $e_Q(\phi_A,\phi_B)=[Q_B(\phi_B)-Q_A(\phi_A)]/Q_A(\phi_A)$. Static and RANS transfer diagnostics use this normalization \textcolor{red}{(not needed to specify which cases, maybe just say that the numerical tests will use this.)}.
 
-Mean-flow transfer acts on density $\rho$, momentum density $\rho\boldsymbol u$, and total energy per unit volume $\rho E$. Here $\boldsymbol u$ is velocity, with Cartesian components $(u,v)$ in two dimensions, and $E$ is total energy per unit mass. All methods supply values at the solver vertices, not control-volume averages.
+Mean-flow transfer acts on density $\rho$, momentum density $\rho\boldsymbol u$, and total energy per unit volume $\rho E$. Here $\boldsymbol u$ is velocity, with Cartesian components $(u,v)$ in two dimensions, and $E$ is total energy per unit mass. All \textcolor{red}{(interpolation?)} methods supply values at the solver vertices, not control-volume averages.
 
 Higher-order methods also need local slopes and curvature. Weighted least squares reconstructs them from neighboring source values:
 \begin{equation}
@@ -381,7 +381,7 @@ The CV method matches source and target field integrals over each target control
 \end{equation}
 For a quadrilateral, vertex $k$ contributes to the value at the center with weight $|C_k^M\cap K|/|K|$. To see why Eq.~\eqref{eq:cv-lumped-exact} matters, multiply it by the stored value $\phi_{M,k}$ and sum over the vertices of $K$. The resulting field integral is $\int_K\phi_M^h\dd x=\sum_{k\in K}|C_k^M\cap K|\phi_{M,k}$. Summing over all elements gives exactly the solver total $Q_M(\phi_M)$. The reconstructed field and the solver thus have the same domain integral whenever Eq.~\eqref{eq:cv-lumped-exact} holds.
 
-The source field interpolates nodal solver values continuously; it is not reconstructed from source-cell averages. Its domain integral equals $Q_A(\phi_A)$, but its integral over an individual source control volume need not equal $w_i^A\phi_{A,i}$. Before limiting and boundary treatment, CV preserves the source integral over the whole domain and matches the reconstructed field integral over each target control volume. It does not preserve each source nodal content.
+The source field interpolates nodal solver values continuously; it is not reconstructed from source-cell averages. Its domain integral equals $Q_A(\phi_A)$, but its integral over an individual source control volume need not equal $w_i^A\phi_{A,i}$ \textcolor{red}{(why is this important to be said?)}. Before limiting and boundary treatment, CV preserves the source integral over the whole domain and matches the reconstructed field integral over each target control volume \textcolor{red}{(what do you mean with "matches the reconstructed field integral over each target control volume"?)}. It does not preserve each source nodal content. \textcolor{red}{(Are there consequences to this?)}
 
 On parallelograms, the center weights give the arithmetic vertex average and reproduce affine fields. On quadrilaterals that remain distorted, they do not: the weights enforce Eq.~\eqref{eq:cv-lumped-exact} at the expense of exact affine reproduction.
 
@@ -391,7 +391,7 @@ The $n_B$ target vertex values are defined by
  \qquad j=1,\ldots,n_B.
  \label{eq:cv-condition}
 \end{equation}
-Equation~\eqref{eq:cv-condition} determines the target nodal values by matching one integral per target control volume. In finite-element terms, it is a Petrov--Galerkin condition: the trial functions are $\psi_k^B$, while the test functions equal one inside a target control volume and zero outside. Intersection-based $P^1$-conservative interpolation~\cite{AlauzetMehrenberger2010,Alauzet2016} instead preserves integrals over target elements, limits an element-wise linear reconstruction, and obtains vertex values by explicit volume-weighted averaging over incident elements. Matching the solver control volumes directly requires a sparse solve:
+Equation~\eqref{eq:cv-condition} determines the target nodal values by matching one integral per target control volume. In finite-element terms, it is a Petrov--Galerkin condition: the trial functions are $\psi_k^B$, while the test functions equal one inside a target control volume and zero outside. Intersection-based $P^1$-conservative interpolation~\cite{AlauzetMehrenberger2010,Alauzet2016} instead preserves integrals over target elements, limits an element-wise linear reconstruction, and obtains vertex values by explicit volume-weighted averaging over incident elements \textcolor{red}{(This comparison here looks a bit thrown without any context. I would like to retain this but I would also like a better context around why you mention it.)}. Matching the solver control volumes directly requires a sparse solve:
 \begin{equation}
  \widetilde H_B\phi_B=\tilde b,\qquad
  (\widetilde H_B)_{jk}=\int_{C_j^B}\psi_k^B\dd x,
@@ -406,7 +406,7 @@ The right-hand-side vector $\tilde b$ contains integrals of the piecewise-linear
       \int_{K_A\cap K_B\cap C_j^B}\phi_A^h\dd x,
  \label{eq:cv-load-intersections}
 \end{equation}
-Here $K_B$ ranges over target elements incident to $j$, and $K_A$ over source subelements. In these calculations, the meshes cover the same polygonal domain and the uncovered measure is below $10^{-20}$ of the domain. Equation~\eqref{eq:cv-system} is solved to a relative residual tolerance of $10^{-15}$. Its unknowns are nodal values, not the control-volume averages $\tilde b_j/w_j^B$.
+Here $K_B$ ranges over target elements incident to $j$, and $K_A$ over source subelements. In these calculations, the meshes cover the same polygonal domain and the uncovered measure is below $10^{-20}$ of the domain \textcolor{red}{(do you mean in the numerical tests? Also, why mentioning it?)}. Equation~\eqref{eq:cv-system} is solved to a relative residual tolerance of $10^{-15}$ \textcolor{red}{(was this tolerance specified for GP too?)}. Its unknowns are nodal values, not the control-volume averages $\tilde b_j/w_j^B$.
 
 Summing Eq.~\eqref{eq:cv-condition} over the target control volumes, which tile $\Omega$, and using Eq.~\eqref{eq:cv-lumped-exact} gives
 
@@ -418,11 +418,13 @@ Summing Eq.~\eqref{eq:cv-condition} over the target control volumes, which tile 
  \end{aligned}
  \label{eq:cv-global}
 \end{equation}
-to within integration and solve tolerances. Locally, Eq.~\eqref{eq:cv-condition} equates $\int_{C_j^B}\phi_B^h\dd x$ and $\int_{C_j^B}\phi_A^h\dd x$, integrating the target and source reconstructed fields over the same target region. This integral differs from the nodal content $w_j^B\phi_{B,j}$ by $(\widetilde H_B\phi_B)_j-w_j^B\phi_{B,j}$. These differences sum to zero but need not vanish individually. Transferring back to the same mesh, $B=A$, gives $\tilde b=\widetilde H_A\phi_A$ and recovers $\phi_A$. If both representations reproduce affine fields, uniqueness of Eq.~\eqref{eq:cv-system} also makes their transfer exact. CV2 is therefore nominally second order on simplicial meshes and quadrilaterals that remain parallelograms under refinement. Persistent quadrilateral distortion reduces the attainable order. No higher-order CV method is used.
+to within integration and solve tolerances. Locally, Eq.~\eqref{eq:cv-condition} equates $\int_{C_j^B}\phi_B^h\dd x$ and $\int_{C_j^B}\phi_A^h\dd x$, integrating the target and source reconstructed fields over the same target region. This integral differs from the nodal content $w_j^B\phi_{B,j}$ by $(\widetilde H_B\phi_B)_j-w_j^B\phi_{B,j}$. These differences sum to zero but need not vanish individually. Transferring back to the same mesh, $B=A$, gives $\tilde b=\widetilde H_A\phi_A$ and recovers $\phi_A$. If both representations reproduce affine fields, uniqueness of Eq.~\eqref{eq:cv-system} also makes their transfer exact. CV2 is therefore nominally second order on simplicial meshes and quadrilaterals that remain parallelograms under refinement. Persistent quadrilateral distortion reduces the attainable order \textcolor{red}{(persistent?)}. No higher-order CV method is used.
 
-On simplicial meshes, CV2 and GP2 use the same continuous $P^1$ source and target fields. Their test functions differ. GP2 weights the error by continuous hat functions and gives the best $L_2$ approximation. Choosing the constant function or a coordinate as the test function in Eq.~\eqref{eq:galerkin-orthogonality} explains why the unconstrained projection preserves the field integral and its coordinate moments. CV2 matches integrals over target control volumes and preserves the global finite-volume integral before limiting and boundary treatment. It generally preserves neither coordinate moments nor the minimum $L_2$ error. Both require a coupled solve: changing the mesh in one region can alter transferred values elsewhere. On quadrilaterals, their field representations also differ. GP2 triangulates without added vertices; CV2 uses a centered subdivision with dependent center values.
+On simplicial meshes, CV2 and GP2 use the same continuous $P^1$ source and target fields. Their test functions differ. GP2 weights the error by continuous hat functions and gives the best $L_2$ approximation. Choosing the constant function or a coordinate as the test function in Eq.~\eqref{eq:galerkin-orthogonality} explains why the unconstrained projection preserves the field integral and its coordinate moments \textcolor{red}{(why mentioning it? Is it a nice property for our cases or something useful for us? Same for CV2)}. CV2 matches integrals over target control volumes and preserves the global finite-volume integral before limiting and boundary treatment. It generally preserves neither coordinate moments nor the minimum $L_2$ error. Both require a coupled solve: changing the mesh in one region can alter transferred values elsewhere. On quadrilaterals, their field representations also differ. GP2 triangulates without added vertices; CV2 uses a centered subdivision with dependent center values.
 
 The symmetry established above and strict diagonal dominance make the CV recovery matrix positive definite on triangular, strictly convex quadrilateral, and tetrahedral meshes. These properties do not generally extend to mixed three-dimensional cells. All numerical comparisons here are two-dimensional; persistent quadrilateral distortion is the main limitation on CV accuracy.
+
+\textcolor{red}{(I still do not understand why this paragraph exists. I get the comparison of GP and CV, but I would make it more schematic and brief. Maybe a small table?)}
 
 \subsection{Field integrals and the solver integral}
 \label{sec:galerkin-vertex-output}
@@ -455,17 +457,19 @@ Here $\int_0^1f(x)\dd x=1/3$, and $\sum_{i=1}^{N-1}i^2=(N-1)N(2N-1)/6$ with $N=N
 \label{fig:vertex-integral}
 \end{figure}
 
+\textcolor{red}{(This whole subsection may be useless for the readers, especially the example. Maybe just mention the problem in the previous subsection and that is it?)}
+
 \subsection{Corrections applied to the transferred state}
 \label{sec:global-correction}
 The base transfer may create new extrema, change the solver's integral, or produce values incompatible with the boundary and gas-state constraints. The following steps address these different requirements; satisfying one does not guarantee the others.
 
 \subsubsection{Limiting new extrema}
 \label{sec:galerkin-limiter}
-For the point methods, the Barth--Jespersen (BJ) limiter~\cite{BarthJespersen1989} provides a single factor $0\leq\theta_i\leq1$ at source vertex $i$. It reduces the linear reconstruction increment wherever the predicted values would exceed the range of the neighboring source values. The same factor multiplies the Taylor correction in NN2 and NN3 or the gradient correction in BAR3. Thus $\theta_i=1$ retains the full correction and $\theta_i=0$ gives NN1 or BAR2, respectively. The smooth-field verification uses $\theta_i=1$. In the discontinuous tests labeled BJ, the factor is computed from the linear slope. For NN3 that check alone gives no bound on the added quadratic term, so extrema are measured on the final transferred field.
+For the point methods \textcolor{red}{(Point methods???)}, the Barth--Jespersen (BJ) limiter~\cite{BarthJespersen1989} provides a single factor $0\leq\theta_i\leq1$ at source vertex $i$. It reduces the linear reconstruction increment wherever the predicted values would exceed the range of the neighboring source values. The same factor multiplies the Taylor correction in NN2 and NN3 or the gradient correction in BAR3. Thus $\theta_i=1$ retains the full correction and $\theta_i=0$ gives NN1 or BAR2, respectively. The smooth-field verification uses $\theta_i=1$. In the discontinuous tests labeled BJ \textcolor{red}{(What?)}, the factor is computed from the linear slope. For NN3 that check alone gives no bound on the added quadratic term, so extrema are measured on the final transferred field.
 
 GP and CV use a different operation after solving for the target values. At each target vertex they use extrema from the overlapping source vertices. Hard limiting clips to those bounds. With relaxation, the lower and upper bounds are widened by $\tau$ times the source range, where $\tau$ is dimensionless. The correction introduced by clipping is redistributed to preserve the simplicial lumped total for GP or $Q_B$ for CV. This step can change Galerkin orthogonality or individual CV integrals.
 
-CV2 denotes the limited transfer, and CV2-u the unlimited construction. Flow comparisons use the same bound-relaxation tolerance as GP2, $\tau=2\times10^{-3}$. Limiting, boundary conditions, and positivity corrections can change the unlimited field. Its conservation properties must therefore be checked again in the field actually used by the solver.
+CV2 denotes the limited transfer, and CV2-u the unlimited construction. Flow comparisons use the same bound-relaxation tolerance as GP2, $\tau=2\times10^{-3}$ \textcolor{red}{(Flow comparisons?)}. Limiting, boundary conditions, and positivity corrections can change the unlimited field. Its conservation properties must therefore be checked again in the field actually used by the solver.
 
 \subsubsection{Bounded global correction}
 Bounded global correction (GC) can enforce Eq.~\eqref{eq:fv-discrete-integral} for any base transfer. For an uncorrected target field $\phi_B^{\mathrm{pre}}$, the nodal correction vector $\chi=(\chi_1,\ldots,\chi_{n_B})^T$ satisfies
@@ -476,6 +480,8 @@ Bounded global correction (GC) can enforce Eq.~\eqref{eq:fv-discrete-integral} f
 \end{equation}
 Here $\phi_j^{\min}$ and $\phi_j^{\max}$ are the lower and upper bounds at target vertex $j$. The input to global correction is $\phi_B^{\mathrm{pre}}$, and its corrected output is $\phi_B^{\mathrm{GC}}=\phi_B^{\mathrm{pre}}+\chi$. The correction is distributed among vertices that can change without exceeding those bounds; vertices already at a bound remain fixed~\cite{ShashkovWendroff2004,KucharikShashkovWendroff2003}. The requested integral must be feasible within the weighted bounds. A small total integral error does not require every nodal correction to be small.
 
+\textcolor{red}{(Maybe just say that this was introduced to test if making globally conservative the globally non conservative methods like NN and BAR would improve their results, or something like that.)}
+
 \subsubsection{Boundary conditions}
 
 Boundary enforcement supplies the values required on the physical boundary after transfer. Boundary values are interpolated from the source solution on the matching physical boundary. This replaces the unconstrained transfer at those vertices and can change the local GP or CV identities. Coincident source and target wall vertices retain the source wall condition. If the discretized surface changes, its new wall orientation can instead introduce a mismatch. The flow tests retain all boundary vertices, excluding this geometric effect.
@@ -483,12 +489,14 @@ Boundary enforcement supplies the values required on the physical boundary after
 \subsubsection{Positive density and pressure}
 For the ideal-gas states used here, pressure is $p=(\gamma-1)[\rho E-|\rho\boldsymbol u|^2/(2\rho)]$, with heat-capacity ratio $\gamma>1$. Positive density and internal energy are therefore coupled requirements: separate bounds on the conserved components do not guarantee positive pressure.
 
-For GP, CV, and globally corrected transfers, changes from boundary treatment and scalar lower bounds are followed by integral-preserving redistribution. Any remaining states with nonpositive density or internal energy are repaired while preserving the affected patch totals. These steps preserve the selected global integral but can change local constraints. Global redistribution can also alter a uniform far-field region: any vertex with room within its relaxed bounds can receive part of the correction. A transfer can therefore preserve the domain integral while changing the fluxes through open boundaries during the next flow step.
+For GP, CV, and globally corrected transfers, changes from boundary treatment and scalar lower bounds are followed by integral-preserving redistribution. Any remaining states with nonpositive density or internal energy are repaired while preserving the affected patch totals. These steps preserve the selected global integral but can change local constraints. Global redistribution can also alter a uniform far-field region: any vertex with room within its relaxed bounds can receive part of the correction. A transfer can therefore preserve the domain integral while changing the fluxes through open boundaries during the next flow step. \textcolor{red}{(This whole paragraph is misplaced as it is in the 2.6.4 subsubsection. I think it should be put later as a final recap of these corrections.)}
 
 \subsubsection{Locally conservative flux correction}
 \label{sec:local-flux-correction}
 
-The Riemann tests include an alternative that redistributes corrections only between neighboring target volumes. This locally conservative (LC) flux correction replaces each method's usual limiting, global correction, and boundary-state recovery. Let $\tilde b_j$ be the source field integral over target control volume $j$, as in Eq.~\eqref{eq:cv-system}. The corrected nodal content is
+\textcolor{red}{(There should be a reference for this, right? Where is it?)}
+
+The Riemann tests include an alternative that redistributes corrections only between neighboring target volumes. This locally conservative (LC) flux correction replaces each method's usual limiting, global correction, and boundary-state recovery \textcolor{red}{(What do you mean? These other post-pro are not applied with LC?)}. Let $\tilde b_j$ be the source field integral over target control volume $j$, as in Eq.~\eqref{eq:cv-system}. The corrected nodal content is
 \begin{equation}
  w_j^B\phi_j^{\mathrm{LC}}=\tilde b_j+\sum_k\theta_{jk}\mathcal F_{jk},
  \qquad \mathcal F_{jk}=-\mathcal F_{kj},\quad \theta_{jk}=\theta_{kj}\in[0,1].
@@ -497,6 +505,9 @@ The Riemann tests include an alternative that redistributes corrections only bet
 The pair flux $\mathcal F_{jk}$ is a correction to the content of volume $j$ exchanged with neighboring volume $k$; the sum is over vertices sharing a target element. The symmetric pair factor $\theta_{jk}$ is the fraction of this exchange allowed between target volumes $j$ and $k$, and $\phi_j^{\mathrm{LC}}$ is the corrected nodal value. Applied in full, they recover the integral-corrected unlimited transfer. Each exchange adds to one volume what it removes from its neighbor, so the domain sum is unchanged even when limiting permits only part of a flux. Local conservation here allows neighboring volumes to exchange content; it does not require each nodal content to remain equal to $\tilde b_j$.
 
 The starting low-order state, $\tilde b_j/w_j^B$, is bounded. Iterative flux-corrected transport~\cite{Zalesak1979} adds as much of the correction as the bounds allow, with the same relative relaxation, $\tau=2\times10^{-3}$, as standard GP2 and CV2 in the flow tests. Each pass attempts to apply the remaining flux within the available bounds. The calculations use a fixed maximum of 12 passes to limit the work per transfer. Each accepted pair exchange conserves the total on that pass. Reaching the cap can leave part of the intended correction unapplied. The reported errors and bounds apply to this 12-pass setting. Only the Riemann calculations use LC; the airfoil calculations use the standard treatment above.
+
+\textcolor{red}{(Maybe we can introduce this directly in the Riemann case and not mention it anywhere else?)}
+
 
 \section{Effect of remeshing on multistep time integration}
 \label{sec:restart-consistency}
@@ -540,9 +551,13 @@ At the two stored times $k=n-1,n$, the restarted run receives $\widehat U_B^k=\m
 \end{equation}
 The middle term passes the two source fields through the complete transfer separately. This makes the identity valid even when a limiter changes the transfer. The restart tests measure their combined effect, $\eps^k$.
 
+\textcolor{red}{(I don't think this section here is clear in what is its contribution and its motivation. I think it could be improved, as Eq 23 is not clear what entails in the end.)}
+
 \subsection{How errors in the stored states change the next step}
 
 The trial state $U_{B,\mathrm{trial}}^{n+1}$ is the current estimate of the flow at $t^{n+1}$. It starts as the initial guess for the inner solve. Each inner update gives a new estimate at the same physical time. To isolate the effect of transfer, take any one estimate and evaluate Eq.~\eqref{eq:bdf2} twice with that field held fixed. Use the transferred histories in the first evaluation and the target-mesh reference histories in the second. Subtracting the two residuals then measures the effect of changing the histories alone.
+
+\textcolor{red}{(This introduction is doing mathematical passages that I don't understand why they are written only in english instead of being also written in equations. Is it an anticipation of the passages we are going to see? If yes, why is it here?)}
 
 \begin{proposition}[Residual perturbation from transferred states]
 \label{prop:history-forcing}
@@ -558,6 +573,9 @@ Let $\Phi_B$ be the constant-step BDF2 residual of Eq.~\eqref{eq:bdf2}, and let 
 \end{equation}
 \end{proposition}
 \begin{proof}
+
+\textcolor{red}{(Maybe it is not clear to me, but why the trial state is the same?)}
+
 Let $\Delta\Phi_B$ denote the first residual minus the second in Eq.~\eqref{eq:history-residual-identity}. Substituting the two sets of histories into Eq.~\eqref{eq:bdf2} gives
 \begin{align*}
 \Delta\Phi_B={}&\frac{M_B}{\Delta t}
