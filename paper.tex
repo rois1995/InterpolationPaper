@@ -168,7 +168,7 @@ Multistep time integration makes this distinction particularly important. It use
 
 The central question of this paper is whether conventional transfer-quality measures are sufficient to assess the subsequent unsteady flow and aerodynamic loads. We ask how errors in the latest and older history states contribute to that response, and which additional checks are needed to interpret a comparison between transfer methods. To address these questions, we examine both the changes introduced during transfer and the flow computed after the restart. Controlled restarts separate the effects of errors in different history states; repeated remeshing shows how transfer and flow evolution interact over many events. Time-step and iterative-convergence checks assess whether observed load differences can support a ranking of the transfer methods.
 
-We compare nearest-neighbor Taylor interpolation (NN), barycentric interpolation (BAR), continuous Galerkin projection (GP), and conservative control-volume transfer (CV) in a vertex-centered finite-volume solver. The unsteady calculations use the second-order backward differentiation formula (BDF2). Evaluating two BDF2 residuals at a common estimate of the next state gives an exact identity for the contribution from errors in the two stored states. We distinguish this identity from the additional assumptions needed to predict the computed state and load response. Global integral correction and local flux correction are examined separately to establish what restoring an integral can, and cannot, resolve.
+We compare nearest-neighbor Taylor interpolation (NN), barycentric interpolation (BAR), continuous Galerkin projection (GP), and conservative control-volume transfer (CV) in a vertex-centered finite-volume solver. The unsteady calculations use the second-order backward differentiation formula (BDF2). Subtracting the BDF2 equations for the reference continuation and the transferred restart gives an exact balance for their different new states. A common-trial-state simplification isolates the contribution from the two stored histories. A linear prediction of the state and load response requires additional assumptions on the spatial residual and the accuracy of the solves. Global integral correction and local flux correction are examined separately to establish what restoring an integral can, and cannot, resolve.
 
 The numerical tests progress from smooth and discontinuous static fields to repeated remeshing of a Riemann problem, controlled airfoil restarts, and repeated-remeshing airfoil calculations. Unsteady Reynolds-averaged Navier--Stokes (RANS) calculations on a stationary airfoil with the Spalart--Allmaras (SA) model extend the assessment to turbulence transport and viscous loads. All tests use prescribed remeshing on fixed physical domains and independently computed reference solutions; they do not assess the choice of an adaptive mesh. Section~\ref{sec:numerical-framework} describes the transfer methods. The BDF2 analysis then connects history-state errors to the restart response, and each test-case subsection presents its setup, results, and interpretation together.
 
@@ -490,7 +490,7 @@ Global redistribution can reach any vertex with room inside its relaxed bounds, 
 \section{Effect of remeshing on multistep time integration}
 \label{sec:restart-consistency}
 
-BDF2 uses two stored solutions. If either changes during transfer, the next time-step equation changes. We compare a transferred restart with a reference continuation on the same target mesh, so both use the same spatial discretization. The BDF2 coefficients then give the exact change in the residual. Predicting the resulting state or load change also requires the spatial operator and the accuracy of the nonlinear solve.
+BDF2 uses two stored solutions. If either changes during transfer, the next time-step equation changes. We compare a transferred restart with a reference continuation on the same target mesh, so both use the same spatial discretization. Subtracting the two BDF2 equations gives an exact balance between the transferred history errors, the change in the new state, and the change in its spatial residual. A comparison at a fixed trial state then isolates the history contribution. Predicting the computed state or load change also requires the spatial operator and the accuracy of the nonlinear solve.
 
 \subsection{Stored states and the target-mesh reference}
 \label{sec:unsteady-discretization}
@@ -509,7 +509,7 @@ Here $t$ is physical time, $\dot U_M=\mathrm dU_M/\mathrm dt$, and $F_M$ is the 
    +F_B(U_B^{n+1},t^{n+1})=0.
  \label{eq:bdf2}
 \end{equation}
-Here $n$ is the physical time-step index, $t^n$ the corresponding time, and $\Delta t=t^n-t^{n-1}>0$ the constant step size. During this physical step, the solver holds the stored states $U_B^n$ and $U_B^{n-1}$ fixed. Its inner iterations update an estimate of $U_B^{n+1}$ to reduce the residual $\Phi_B$. Each mesh is stationary during a time step. Continuously moving meshes would require compatible geometric histories and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; Eq.~\eqref{eq:bdf2} does not cover that case.
+Here $n$ is the physical time-step index, $t^n$ the corresponding time, and $\Delta t=t^n-t^{n-1}>0$ the constant step size. During this physical step, the solver holds the stored states $U_B^n$ and $U_B^{n-1}$ fixed. Its inner iterations update an estimate of $U_B^{n+1}$ to reduce the residual $\Phi_B$. The spatial residual $F_B$ is evaluated at that estimate of the new state. The first estimate may be the latest stored state $U_B^n$, but it changes as the iterations proceed. Dual-time stepping is the solution procedure used here for this implicit BDF2 equation; the subtraction below does not depend on the particular inner solver. Each mesh is stationary during a time step. Continuously moving meshes would require compatible geometric histories and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; Eq.~\eqref{eq:bdf2} does not cover that case.
 
 Let $U_A^k$ and $U_B^k$ be the reference solutions computed on meshes $A$ and $B$ for the same problem at time $t^k$. A hat identifies the run that uses the transferred histories. At each time level $k$, define its state difference from the target-mesh reference by
 
@@ -531,56 +531,76 @@ The first term includes transfer error and the error already present in the sour
 
 \subsection{How errors in the stored states change the next step}
 
-The following identities apply to equations retaining the BDF2 balance in Eq.~\eqref{eq:bdf2}; replaced boundary equations must be compared with their own constraints. Two restarts with different histories can start from different initial guesses and follow different inner iterations. We therefore begin with the residual difference at two arbitrary estimates of the new state. Denote them by $U_{B,\mathrm{trial}}^{n+1}$ and $\widehat U_{B,\mathrm{trial}}^{n+1}$, and define their difference by $\eps_{\mathrm{trial}}^{n+1}=\widehat U_{B,\mathrm{trial}}^{n+1}-U_{B,\mathrm{trial}}^{n+1}$. Direct subtraction of Eq.~\eqref{eq:bdf2} gives
+The reference continuation and the transferred restart solve different BDF2 equations because their stored histories differ. After their inner iterations stop, their new states are $U_B^{n+1}$ and $\widehat U_B^{n+1}$. Equation~\eqref{eq:history-defects} gives their difference $\eps^{n+1}$. Both states are computed on $B$, and each spatial residual must be evaluated at its own state.
+
+Define the combination of the two input history errors by
+\begin{equation}
+ \eta^n=2\eps^n-\tfrac12\eps^{n-1}.
+ \label{eq:history-combination}
+\end{equation}
+The algebraic residuals remaining when the two solves stop are
+\[
+\begin{aligned}
+ \mathfrak r_B^{n+1}
+ &=\Phi_B(U_B^{n+1};U_B^n,U_B^{n-1}),\\
+ \widehat{\mathfrak r}_B^{n+1}
+ &=\Phi_B(\widehat U_B^{n+1};\widehat U_B^n,\widehat U_B^{n-1}).
+\end{aligned}
+\]
+They vanish for exact solves. The following identity retains them so that incomplete inner convergence is also represented. It applies to equations retaining the BDF2 balance in Eq.~\eqref{eq:bdf2}; replaced boundary equations must be compared with their own constraints.
+
+\begin{proposition}[BDF2 response to transferred histories]
+\label{prop:restart-response}
+On the same stationary target mesh, with the same constant physical time step and spatial operator, the two computed states satisfy
 \begin{equation}
 \begin{aligned}
- \Delta\Phi_B
- &\equiv\Phi_B(\widehat U_{B,\mathrm{trial}}^{n+1};\widehat U_B^n,\widehat U_B^{n-1})
-       -\Phi_B(U_{B,\mathrm{trial}}^{n+1};U_B^n,U_B^{n-1})\\
- &=\frac{M_B}{\Delta t}\left(\tfrac32\eps_{\mathrm{trial}}^{n+1}-\eta^n\right)
-   +F_B(\widehat U_{B,\mathrm{trial}}^{n+1},t^{n+1})
-   -F_B(U_{B,\mathrm{trial}}^{n+1},t^{n+1}),\\
- \eta^n&=2\eps^n-\tfrac12\eps^{n-1}.
+ &\frac{3M_B}{2\Delta t}\eps^{n+1}
+   +F_B(\widehat U_B^{n+1},t^{n+1})-F_B(U_B^{n+1},t^{n+1})\\
+ &\hspace{1cm}=\frac{M_B}{\Delta t}\eta^n
+   +\widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1}.
 \end{aligned}
-\label{eq:unequal-estimate-residual}
-\end{equation}
-The difference depends on both the changed histories and the changed estimate of the next state. To measure the history contribution alone, we can evaluate both equations at one chosen field, setting $\widehat U_{B,\mathrm{trial}}^{n+1}=U_{B,\mathrm{trial}}^{n+1}$. For example, a residual diagnostic can load the same initial guess twice and change only the stored histories. This is the comparison in Proposition~\ref{prop:history-forcing}.
-
-\begin{proposition}[Residual perturbation from transferred states]
-\label{prop:history-forcing}
-Fix any field $U_{B,\mathrm{trial}}^{n+1}$ on $B$. Evaluate the constant-step BDF2 residual once with transferred histories and once with reference histories, using that same field in both evaluations. Their history errors are $\eps^n$ and $\eps^{n-1}$ from Eq.~\eqref{eq:history-defects}, with $\eta^n$ defined in Eq.~\eqref{eq:unequal-estimate-residual}. Then
-\begin{equation}
- \begin{aligned}
- &\Phi_B(U_{B,\mathrm{trial}}^{n+1};U_B^n+\eps^n,U_B^{n-1}+\eps^{n-1})
-       -\Phi_B(U_{B,\mathrm{trial}}^{n+1};U_B^n,U_B^{n-1})\\
- &\hspace{2cm}=-\frac{M_B}{\Delta t}\eta^n.
- \end{aligned}
- \label{eq:history-residual-identity}
+\label{eq:nonlinear-bdf2-response}
 \end{equation}
 \end{proposition}
 \begin{proof}
-
-Let $\Delta\Phi_B$ denote the first residual minus the second in Eq.~\eqref{eq:history-residual-identity}. Substituting the two sets of histories into Eq.~\eqref{eq:bdf2} gives
+Subtract Eq.~\eqref{eq:bdf2} evaluated at the reference state and histories from the same equation evaluated at the restarted state and histories:
 \begin{align*}
-\Delta\Phi_B={}&\frac{M_B}{\Delta t}
-\Big[\big(\tfrac32U_{B,\mathrm{trial}}^{n+1}-2\widehat U_B^n+\tfrac12\widehat U_B^{n-1}\big)
-   -\big(\tfrac32U_{B,\mathrm{trial}}^{n+1}-2U_B^n+\tfrac12U_B^{n-1}\big)\Big]\\
-&+F_B(U_{B,\mathrm{trial}}^{n+1},t^{n+1})-F_B(U_{B,\mathrm{trial}}^{n+1},t^{n+1})\\
-={}&\frac{M_B}{\Delta t}
-\big[-2(\widehat U_B^n-U_B^n)+\tfrac12(\widehat U_B^{n-1}-U_B^{n-1})\big]
-=-\frac{M_B}{\Delta t}\eta^n.
+ \widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1}
+ ={}&\frac{M_B}{\Delta t}\Big[
+    \tfrac32(\widehat U_B^{n+1}-U_B^{n+1})
+   -2(\widehat U_B^n-U_B^n)
+   +\tfrac12(\widehat U_B^{n-1}-U_B^{n-1})\Big]\\
+ &+F_B(\widehat U_B^{n+1},t^{n+1})-F_B(U_B^{n+1},t^{n+1})\\
+ ={}&\frac{3M_B}{2\Delta t}\eps^{n+1}-\frac{M_B}{\Delta t}\eta^n
+   +F_B(\widehat U_B^{n+1},t^{n+1})-F_B(U_B^{n+1},t^{n+1}).
 \end{align*}
-Both residuals contain the same trial value in the time derivative and the same spatial residual. These terms cancel exactly.\qed
+Rearranging gives Eq.~\eqref{eq:nonlinear-bdf2-response}. No linearization or equality of the new states has been used.\qed
 \end{proof}
 
-Inserting the same error vector $e$ in the latest state alone or in the older state alone gives, directly from Eq.~\eqref{eq:history-residual-identity},
-\[
-\Delta\Phi_{\mathrm{latest}}=-2M_Be/\Delta t,\qquad
-\Delta\Phi_{\mathrm{older}}=M_Be/(2\Delta t)=-\tfrac14\Delta\Phi_{\mathrm{latest}}.
-\]
-The factor $-1/4$ applies to these two history contributions evaluated at one common field. Residuals taken from two independently advancing inner solves also contain the other terms in Eq.~\eqref{eq:unequal-estimate-residual}. The residual identity holds for finite history errors and even for nonlinear $F_B$, because both evaluations use the same trial value, time, mesh and spatial operator. The cancellation uses no Taylor expansion. At a boundary the same constraint must be applied to the prediction and the reported residual. For example, a row replaced by a prescribed value independent of the histories has zero history contribution. To obtain the corresponding change in the computed solution, we must also account for the spatial residual and the accuracy of the solve.
+For exact inner solves, the residuals on the right vanish. The history forcing $M_B\eta^n/\Delta t$ is then balanced by the change in the new state and its spatial residual on the left. Thus zero algebraic residuals in both runs do not require equal new states. In particular, if $\eps^n=0$ but $\eps^{n-1}\ne0$, the older history still changes the equation through $\eta^n=-\eps^{n-1}/2$.
 
-After the two restarts advance one step, Eq.~\eqref{eq:history-defects} gives $\eps^{n+1}=\widehat U_B^{n+1}-U_B^{n+1}$. Both states at this level are computed on $B$. The time index distinguishes this measured response from the input errors $\eps^{n-1}$ and $\eps^n$. The remaining algebraic residuals are $\mathfrak r_B^{n+1}=\Phi_B(U_B^{n+1};U_B^n,U_B^{n-1})$ and $\widehat{\mathfrak r}_B^{n+1}=\Phi_B(\widehat U_B^{n+1};\widehat U_B^n,\widehat U_B^{n-1})$. These are the residuals when each solve stops, evaluated at its own computed state. Both vanish for exact solves. In that case the history contribution in Proposition~\ref{prop:history-forcing} is balanced by the changes involving the new state in Eq.~\eqref{eq:unequal-estimate-residual}. To compare the two computed states we subtract the residual of the reference run from that of the transferred run, using the same sign convention throughout. This gives
+\paragraph{Simplification at a common trial state.}
+We can isolate the history contribution by evaluating both BDF2 equations at one chosen field $U_{B,\mathrm{trial}}^{n+1}$ instead of their independently computed new states. The difference of the trial fields is then zero, and both evaluations contain the same $F_B$. Direct subtraction gives
+\begin{equation}
+\begin{aligned}
+ &\Phi_B(U_{B,\mathrm{trial}}^{n+1};\widehat U_B^n,\widehat U_B^{n-1})
+ -\Phi_B(U_{B,\mathrm{trial}}^{n+1};U_B^n,U_B^{n-1})\\
+ &\hspace{1cm}=-\frac{M_B}{\Delta t}\eta^n.
+\end{aligned}
+\label{eq:history-residual-identity}
+\end{equation}
+This simplifies the comparison by holding the candidate field fixed. It measures the change caused by the histories at a fixed candidate field. Independent inner solves still use their own changing estimates. The cancellation is exact for nonlinear $F_B$ and finite history errors; it does not approximate the spatial-residual difference between the two computed states as small. Its purpose is to check the history contribution independently of the subsequent flow response. For example, the initial residual can be evaluated twice with the same guess and different stored histories.
+
+For the same error vector $e$ inserted only in the latest or only in the older stored state, Eq.~\eqref{eq:history-residual-identity} gives
+\[
+ \Delta\Phi_{\mathrm{latest}}=-2M_Be/\Delta t,\qquad
+ \Delta\Phi_{\mathrm{older}}=M_Be/(2\Delta t)
+   =-\tfrac14\Delta\Phi_{\mathrm{latest}}.
+\]
+Here each $\Delta\Phi$ is the changed-history residual minus the reference-history residual at the common field. The factor $-1/4$ concerns this history forcing. The computed state and load changes also depend on the response in Eq.~\eqref{eq:nonlinear-bdf2-response}. At a boundary the same constraint must be applied to the prediction and the reported residual. A row replaced by a prescribed value independent of the histories, for example, has zero history contribution. The subtraction also holds at different intermediate estimates when their residuals are evaluated at those estimates; Supplementary Sec.~S2.3 gives this form for the initial guesses in the cancellation test.
+
+\paragraph{Linear approximation of the computed response.}
+To predict $\eps^{n+1}$, expand the spatial residual about the reference new state. Its linear term is proportional to $\eps^{n+1}$ and must be retained. Substituting this expansion into the full balance, Eq.~\eqref{eq:nonlinear-bdf2-response}, gives
 \begin{equation}
  \begin{aligned}
  A_B\eps^{n+1}
@@ -591,7 +611,7 @@ After the two restarts advance one step, Eq.~\eqref{eq:history-defects} gives $\
  \end{aligned}
  \label{eq:linearized-bdf2-response}
 \end{equation}
-The matrix $A_B$ is the time-step Jacobian multiplied by $\Delta t$, and $J_B$ is the spatial Jacobian. The nonlinear remainder is the change in the spatial residual left over after subtracting its linear prediction,
+The matrix $A_B$ is the time-step Jacobian multiplied by $\Delta t$, and $J_B$ is the spatial Jacobian. The term $J_B\eps^{n+1}$ is first order in the state difference; only the remainder can be of higher order under the smoothness assumption below. The nonlinear remainder is
 \[
  \mathcal N_B(\eps^{n+1})=
  F_B(\widehat U_B^{n+1},t^{n+1})-F_B(U_B^{n+1},t^{n+1})-J_B\eps^{n+1}.
@@ -619,7 +639,7 @@ This local Lipschitz assumption on the Jacobian gives a quadratic remainder. If 
  \qquad R_B=A_B^{-1}M_B.
  \label{eq:state-response}
 \end{equation}
-The response matrix $R_B$ converts stored-state errors into a next-state change. This approximation is local to the chosen mesh, state, step, and norm. For example, a small change in the computed state can cause the flow solver to start clipping a reconstructed face value that was previously inside its bounds. Across that switch the spatial residual can have different derivatives. Likewise, stopping the two solves early can leave a residual difference large enough to matter in Eq.~\eqref{eq:linearized-bdf2-response}. Both effects concern the computed next states. Proposition~\ref{prop:history-forcing} remains a statement about residual evaluations at a common field. Predicting either independent solve uses Eq.~\eqref{eq:unequal-estimate-residual} and the response assumptions above.
+The response matrix $R_B$ converts stored-state errors into a next-state change. This approximation is local to the chosen mesh, state, step, and norm. For example, a small change in the computed state can cause the flow solver to start clipping a reconstructed face value that was previously inside its bounds. Across that switch the spatial residual can have different derivatives. Likewise, stopping the two solves early can leave a residual difference large enough to matter in Eq.~\eqref{eq:linearized-bdf2-response}. The full balance in Proposition~\ref{prop:restart-response} retains both effects. The common-trial simplification in Eq.~\eqref{eq:history-residual-identity} isolates the history forcing, while the state and load predictions require the response assumptions above.
 
 \subsection{Aerodynamic response}
 \label{sec:delayed-response}
@@ -1002,7 +1022,7 @@ Across all eight variants, the latest-only/both-states state-norm ratio is 1.333
 
 \subsubsection{Limits of the linear-response approximation}
 
-Setting $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$ gives $\eta^n=0$, so the reference and perturbed BDF2 equations are identical when evaluated with the same boundary treatment. An exact solve on the same local solution branch would give the same next state. In the computed cancellation test, lift differences are of order $10^{-9}$, but volume-weighted state differences remain 4.3--9.0\% of the imposed discrepancy. Iterative error has not been independently quantified, so the small lift difference does not verify cancellation of the state response. This test uses different initial guesses. Its initial residual difference therefore contains the additional terms in Eq.~\eqref{eq:unequal-estimate-residual}. The common-field residual check reported above tests Proposition~\ref{prop:history-forcing} separately.
+Setting $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$ gives $\eta^n=0$, so the reference and perturbed BDF2 equations are identical when evaluated with the same boundary treatment. An exact solve on the same local solution branch would give the same next state. In the computed cancellation test, lift differences are of order $10^{-9}$, but volume-weighted state differences remain 4.3--9.0\% of the imposed discrepancy. Iterative error has not been independently quantified, so the small lift difference does not verify cancellation of the state response. This test uses different initial guesses. Their initial residual difference also contains the change in the trial field and its spatial residual, as in the subtraction used for Eq.~\eqref{eq:nonlinear-bdf2-response}; Supplementary Sec.~S2.3 gives the expression. The common-field residual check reported above tests the simplified identity, Eq.~\eqref{eq:history-residual-identity}, separately.
 
 We repeat the restarts with the full, half and quarter amplitudes of the same imposed history error. The result depends on how the state difference is measured. Lift and Euclidean state-norm responses approach superposition more closely for BAR2, GP2, and CV2. In the volume-weighted norm, however, the absolute remainder decreases slowly and the relative remainder grows from about 3.4\% to 8.7--9.2\%. These tests do not establish a uniform quadratic remainder in every norm. Even with an exact first step, the cancellation would last only one step. The retained error $\eps^n=\eps^{\mathrm{st}}/4$ would give $2\eps^{n+1}-\eps^n/2=-\eps^{\mathrm{st}}/8$ at the next step.
 
@@ -1199,7 +1219,7 @@ CV2 preserves the global finite-volume integral but loses affine reproduction wh
 \section{Conclusions}
 \label{sec:conclusions}
 
-Transfer in an unsteady calculation must supply every state used by the time integrator. In the controlled BDF2 restarts, an error in the older state changes next-step lift even when the latest state matches the target-mesh reference. Evaluating both residuals at a chosen common state isolates an exact history contribution, with an older-history error giving $-1/4$ of the contribution from the same latest-history error. Independent inner solves can have different new-state estimates, whose contributions also enter the residual difference. The measured lift changes also have opposite signs. Their magnitudes depend on how the target flow and the chosen load weight that error.
+Transfer in an unsteady calculation must supply every state used by the time integrator. In the controlled BDF2 restarts, an error in the older state changes next-step lift even when the latest state matches the target-mesh reference. The full BDF2 balance retains the difference between the two computed new states and between their spatial residuals. With converged inner solves, these changes balance the forcing from the transferred histories. Evaluating both equations at a chosen common trial state is a simplification that isolates this forcing: the same error in the older history contributes $-1/4$ of its latest-history contribution. This coefficient ratio alone does not prescribe the ratio of the computed state or load changes. The measured lift changes also have opposite signs. Their magnitudes depend on how the target flow and the chosen load weight that error.
 
 The Riemann results distinguish preservation of mass, wave shape, and mass balance during later flow evolution. Global mass correction does not restore a smeared profile. At high transfer counts, a wide-window 10--90\% width also includes contact smearing, so it must be separated from shock-only broadening. GP2 and CV2 preserve the tested profiles more closely than NN1 and BAR2, but standard global limiting can disturb the far field and allow mass changes during subsequent flow steps.
 
