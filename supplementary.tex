@@ -113,7 +113,7 @@ States are stacked vertex by vertex. The mass matrix is $M_B=\operatorname{diag}
 
 The superposition remainders are $\mathcal E_U=\eps_{\mathrm{both}}^{n+1}-\eps_{\mathrm{latest}}^{n+1}-\eps_{\mathrm{older}}^{n+1}$ and $\mathcal E_{C_L}=\Delta C_{L,\mathrm{both}}-\Delta C_{L,\mathrm{latest}}-\Delta C_{L,\mathrm{older}}$. The relative errors are $e_{\mathrm{sup}}^U=\|\mathcal E_U\|_{M_B}/\|\eps_{\mathrm{both}}^{n+1}\|_{M_B}$ and $e_{\mathrm{sup}}^{C_L}=|\mathcal E_{C_L}|/|\Delta C_{L,\mathrm{both}}|$. All reported denominators are nonzero.
 
-For the same imposed error field, the BDF2 residual coefficients have exact ratios of $4/3$ and $-1/3$ relative to perturbing both histories. The first-step state and lift inherit these ratios to first order under the smoothness and solve assumptions in the article. The state-norm ratios are nonnegative, whereas lift ratios retain their signs.
+For the same imposed error field, the BDF2 history contributions have exact ratios of $4/3$ and $-1/3$ relative to perturbing both histories. The first-step state and lift inherit these ratios to first order if the inner solves are exact, the time-step Jacobian is invertible, the new states approach the reference as the imposed error decreases, and the spatial Jacobian and load gradient have bounded variation proportional to the state change. These are the conditions made explicit in the article's state and load derivations. The state-norm ratios are nonnegative, whereas lift ratios retain their signs.
 
 \begin{table}[!htbp]
 \centering\scriptsize\setlength{\tabcolsep}{3pt}
@@ -339,7 +339,7 @@ For a scalar output functional $G_M$ evaluated from the state on mesh $M$, a sou
 Here $\widehat U_B^k=\mathcal T_{AB}(U_A^k)$. The first term compares the two discrete mesh references. The second measures the output difference on $B$ immediately after transfer.
 
 \subsection{How the history weights change for a later load}
-Consider a load $G_B$ at step $N\ge n+1$ on the same stationary target mesh, at constant $\Delta t$ and with no further transfers. At each step $m$, define the spatial Jacobian at the reference state by $J_m=\partial_U F_B(U_B^m,t^m)$ and the scaled step Jacobian by $A_m=\tfrac32M_B+\Delta t J_m$. The state difference is $\eps^m=\widehat U_B^m-U_B^m$. Let $\mathfrak r_B^m$ and $\widehat{\mathfrak r}_B^m$ be the BDF2 residuals evaluated at each run's own state and histories when its inner solve stops. The spatial remainder is
+An error introduced at transfer enters several subsequent steps, so the weights for a later load need not be those for the first load. To obtain them, consider $G_B$ at step $N\ge n+1$ on the same stationary target mesh, at constant $\Delta t$ and with no further transfers. As in the article, prescribed state components are eliminated and both runs impose the same boundary data. At each step $m$, define the spatial Jacobian at the reference state by $J_m=\partial_U F_B(U_B^m,t^m)$ and the scaled step Jacobian by $A_m=\tfrac32M_B+\Delta t J_m$. The state difference is $\eps^m=\widehat U_B^m-U_B^m$. Let $\mathfrak r_B^m$ and $\widehat{\mathfrak r}_B^m$ be the BDF2 residuals evaluated at each run's own state and histories when its inner solve stops. The spatial remainder is
 \[
  \mathcal N_m(\eps^m)
  =F_B(\widehat U_B^m,t^m)-F_B(U_B^m,t^m)-J_m\eps^m.
@@ -353,15 +353,26 @@ The full difference equation at each advanced step is therefore
 \end{aligned}
 \label{supp:eq:later-state-balance}
 \end{equation}
-This is the one-step BDF2 balance from the article applied at each time, with different new states and spatial residuals retained. The state and adjoint systems must use the same boundary constraints.
+This is the one-step BDF2 balance from the article applied at each time, with different new states and spatial residuals retained.
 
-For the final output, define $\Delta G^N=G_B(\widehat U_B^N)-G_B(U_B^N)$, its reference gradient $g_N=\nabla_U G_B(U_B^N)$, and the output remainder $\mathcal N_G^N=\Delta G^N-g_N^T\eps^N$. Set $g_m=0$ for earlier steps. Assuming each $A_m$ is invertible, start with $\boldsymbol\lambda_{N+1}=\boldsymbol\lambda_{N+2}=0$ and solve backwards for $m=N,N-1,\ldots,n+1$:
+For the final output, define $\Delta G^N=G_B(\widehat U_B^N)-G_B(U_B^N)$, its reference gradient $g_N=\nabla_U G_B(U_B^N)$, and the output remainder $\mathcal N_G^N=\Delta G^N-g_N^T\eps^N$. Set $g_m=0$ for earlier steps. We seek weights that combine all the step balances while eliminating the unknown intermediate state differences. Assuming each $A_m$ is invertible, start with $\boldsymbol\lambda_{N+1}=\boldsymbol\lambda_{N+2}=0$ and solve backwards for $m=N,N-1,\ldots,n+1$:
 \begin{equation}
  A_m^T\boldsymbol\lambda_m=g_m+2M_B\boldsymbol\lambda_{m+1}
                       -\tfrac12 M_B\boldsymbol\lambda_{m+2}.
  \label{supp:eq:later-adjoint}
 \end{equation}
-The coefficients $2$ and $-1/2$ come from the next two BDF2 steps. Multiply Eq.~\eqref{supp:eq:later-state-balance} by $\boldsymbol\lambda_m^T$ and sum over $m=n+1,\ldots,N$. Equation~\eqref{supp:eq:later-adjoint} cancels the intermediate state differences. Using $M_B^T=M_B$, the exact final-output balance is
+Each solve is possible because $A_m^T$ is invertible and the later weights are already known. To see why these weights eliminate intermediate errors, transpose Eq.~\eqref{supp:eq:later-adjoint} and use $M_B^T=M_B$:
+\[
+ \boldsymbol\lambda_m^TA_m
+ =g_m^T+2\boldsymbol\lambda_{m+1}^TM_B
+          -\tfrac12\boldsymbol\lambda_{m+2}^TM_B.
+\]
+Multiply Eq.~\eqref{supp:eq:later-state-balance} by $\boldsymbol\lambda_m^T$ and sum over the advanced steps. For any intermediate $\eps^m$, its coefficient after moving the history terms to the left is
+\[
+ \boldsymbol\lambda_m^TA_m-2\boldsymbol\lambda_{m+1}^TM_B
+             +\tfrac12\boldsymbol\lambda_{m+2}^TM_B=g_m^T.
+\]
+All earlier $g_m$ are zero, leaving only $g_N^T\eps^N$ on the left. The initial differences $\eps^n$ and $\eps^{n-1}$ remain on the right because their time levels precede the summed equations. Adding $\mathcal N_G^N$ gives the exact final-output balance
 \begin{equation}
 \begin{aligned}
  \Delta G^N={}&
@@ -376,14 +387,14 @@ The coefficients $2$ and $-1/2$ come from the next two BDF2 steps. Multiply Eq.~
 \end{equation}
 The first line contains the contributions of the two transferred histories. The remaining lines carry the inner-solve residual differences and the nonlinear remainders through to the final load. The adjoint weights include the spatial Jacobian at each reference new state.
 
-For exact inner solves and small state differences on a common smooth solution branch, discarding the nonlinear remainders gives the leading history-weight formula
+For exact inner solves, the residual sum vanishes. Discarding the nonlinear remainders then gives the leading history-weight formula
 \begin{equation}
  \Delta G^N \simeq
  (2\boldsymbol\lambda_{n+1}-\tfrac12\boldsymbol\lambda_{n+2})^T M_B\eps^n
  -\tfrac12\boldsymbol\lambda_{n+1}^T M_B\eps^{n-1}.
  \label{supp:eq:later-history-weights}
 \end{equation}
-The remainders are quadratic in the state differences under the gradient and Jacobian smoothness assumptions in the article. At a fixed finite horizon their adjoint-weighted sums determine the accuracy of this approximation. Early termination of the inner solves adds the residual sum in Eq.~\eqref{supp:eq:later-output-balance}. For $N=n+1$, only $\boldsymbol\lambda_{n+1}$ remains; Eqs.~\eqref{supp:eq:later-output-balance} and \eqref{supp:eq:later-history-weights} recover the article's full one-step functional balance and its leading term, respectively. These expressions interpret the forward calculations; the reported tables do not evaluate the adjoint weights numerically.
+For this approximation, require at every advanced step the quantitative derivative bounds used in the article: the spatial Jacobian changes by at most $L_{F,m}$ times the Euclidean state change along the segment between the two fields, and the final load gradient changes by at most $L_{G,N}$ times that change. These finite constants give $\|\mathcal N_m(\eps^m)\|_2\leq L_{F,m}\|\eps^m\|_2^2/2$ and $|\mathcal N_G^N|\leq L_{G,N}\|\eps^N\|_2^2/2$ by the same chain-rule integration as in the article. For solutions approaching the reference trajectory as the initial errors decrease, the invertible step matrices then give state differences proportional to those errors over a fixed finite number of steps. The omitted terms are consequently quadratic in the initial errors, with constants depending on the horizon and adjoint weights. These conditions allow different trajectories; they do not identify the two runs' states. Early termination of the inner solves also adds the residual sum in Eq.~\eqref{supp:eq:later-output-balance}. For $N=n+1$, Eqs.~\eqref{supp:eq:later-output-balance} and \eqref{supp:eq:later-history-weights} recover the article's full one-step load balance and its leading term. These adjoint sensitivities are not computed in the numerical tests.
 
 \section{Steady mesh sensitivity and the medium-mesh transient}
 \label{supp:mesh-sensitivity}

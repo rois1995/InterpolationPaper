@@ -238,7 +238,7 @@ The same weights define BAR2 and its gradient-corrected extension:
 \end{align}
 BAR2 reproduces affine fields, meaning a linear function plus a constant, and introduces no new maximum or minimum relative to the containing-simplex vertex values, because its nonnegative weights sum to one. For a quadratic field with exact vertex gradients, the half-gradient term cancels the interpolation remainder, giving BAR3 third-order consistency. Shared values and gradients make the interpolant continuous across conforming simplex interfaces. Neither method constrains the source-to-target integral.
 
-For completeness, let $q$ be a quadratic field with constant Hessian $\mathcal H_q$, let $\boldsymbol x=\boldsymbol x_j^B$, and set $\boldsymbol d_r=\boldsymbol x-\boldsymbol x_{i_r}^A$. Exact Taylor expansion gives
+To see why BAR3 uses half of the gradient correction, let $q$ be a quadratic field with constant Hessian $\mathcal H_q$, let $\boldsymbol x=\boldsymbol x_j^B$, and set $\boldsymbol d_r=\boldsymbol x-\boldsymbol x_{i_r}^A$. Exact Taylor expansion gives
 \begin{align*}
 q(\boldsymbol x_{i_r}^A)&=q(\boldsymbol x)-\nabla q(\boldsymbol x)\cdot\boldsymbol d_r+\tfrac12\boldsymbol d_r^T\mathcal H_q\boldsymbol d_r,\\
 \nabla q(\boldsymbol x_{i_r}^A)&=\nabla q(\boldsymbol x)-\mathcal H_q\boldsymbol d_r.
@@ -249,7 +249,7 @@ Substituting these expressions into Eq.~\eqref{eq:bar3} gives $q(\boldsymbol x)-
 \label{sec:galerkin-projection}
 \label{sec:simplicial-representation}
 
-Galerkin projection chooses the target field that best matches the reconstructed source field in the $L_2$ norm~\cite{FarrellMaddison2011,JiaoHeath2004}. This transfer uses finite-element basis functions, while the flow equations here remain finite volume. It solves for the target values together rather than interpolating each vertex independently. Let $\phi_A^h$ be the piecewise-polynomial source field and $V_B^\ell$ the space of continuous Lagrange functions of polynomial degree $\ell$ on the target simplicial mesh. The superscript $h$ denotes the piecewise-polynomial field built from the source vertex values; GP3 also uses their reconstructed derivatives. For scalar fields $f_1,f_2$, the inner product is $(f_1,f_2)_{L_2(\Omega)}=\int_\Omega f_1f_2\dd x$; the associated norm is $\|f_1\|_{L_2(\Omega)}=(f_1,f_1)_{L_2(\Omega)}^{1/2}$. The target field $\phi_B^h\in V_B^\ell$ satisfies
+Galerkin projection chooses the target field that best matches the reconstructed source field in the $L_2$ norm~\cite{FarrellMaddison2011,JiaoHeath2004}. This transfer uses finite-element basis functions, while the flow equations here remain finite volume. It solves for the target values together rather than interpolating each vertex independently. Let $\phi_A^h$ be the piecewise-polynomial source field and $V_B^\ell$ the space of continuous Lagrange functions of polynomial degree $\ell$ on the target simplicial mesh. We write $P^\ell$ for polynomials of total degree at most $\ell$. The superscript $h$ denotes the piecewise-polynomial field built from the source vertex values; GP3 also uses their reconstructed derivatives. For scalar fields $f_1,f_2$, the inner product is $(f_1,f_2)_{L_2(\Omega)}=\int_\Omega f_1f_2\dd x$; the associated norm is $\|f_1\|_{L_2(\Omega)}=(f_1,f_1)_{L_2(\Omega)}^{1/2}$. The target field $\phi_B^h\in V_B^\ell$ satisfies
 \begin{equation}
  (\phi_B^h-\phi_A^h,\xi_B)_{L_2(\Omega)}=0
  \quad\text{for every }\xi_B\in V_B^\ell.
@@ -272,7 +272,7 @@ The two meshes generally do not share element boundaries. A target element can o
       \int_{K_A\cap K_B}N_i^B\phi_A^h\dd x.
  \label{eq:galerkin-load-intersections}
 \end{equation}
-Here $K_A$ is a source simplex, $K_B$ is a target simplex incident to $i$, and $|K_A\cap K_B|$ is their intersection measure. The weight $N_i^B$ varies from one at $i$ to zero on the opposite edge of a GP2 triangle. Element contributions are summed before solving Eq.~\eqref{eq:galerkin-system}. Their intersections form a common refinement (Figure~\ref{fig:transfer-geometry}a). Both fields have one polynomial expression on each intersection, allowing exact polynomial quadrature: degree two for $P^1$/$P^1$ transfer and degree four for $P^2$/$P^2$ transfer on affine simplices~\cite{Dunavant1985,Keast1986}. The intersections must cover the domain without gaps or overlap. This geometric integration and the coupled solve distinguish GP from point interpolation.
+Here $K_A$ is a source simplex, $K_B$ is a target simplex incident to $i$, and $|K_A\cap K_B|$ is their intersection measure. The weight $N_i^B$ varies from one at $i$ to zero on the opposite edge of a GP2 triangle. Element contributions are summed before solving Eq.~\eqref{eq:galerkin-system}. Their intersections form a common refinement (Figure~\ref{fig:transfer-geometry}a). Both fields have one polynomial expression on each intersection, allowing exact polynomial quadrature: degree two for $P^1$/$P^1$ transfer and degree four for $P^2$/$P^2$ transfer on affine simplices~\cite{Dunavant1985,Keast1986}. The intersections must cover the domain without gaps or overlap. This geometric integration and the coupled solve distinguish GP from NN and BAR, which evaluate source reconstructions at each target vertex independently.
 
 \begin{figure}[pos=htbp]
 \centering
@@ -369,7 +369,7 @@ Here $K_A$ is a source simplex, $K_B$ is a target simplex incident to $i$, and $
 \label{fig:transfer-geometry}
 \end{figure}
 
-GP2 uses piecewise-linear ($P^1$) source and target fields. GP3 reconstructs a quadratic ($P^2$) source field, including internal edge values, and solves for a complete quadratic target field. The solver receives only the original-vertex values. The projection preserves the integral of its complete finite-element field. The solver evaluates a different quantity, $Q_B$, from the retained vertex values and median-dual weights. These integrals agree for GP2 on triangular meshes. Triangulating a quadrilateral or retaining only vertices of a quadratic field can make them differ. We therefore measure $Q_B$ on the final solver values in the numerical tests. Here $P^\ell$ means polynomials of total degree at most $\ell$, while $Q^\ell$ permits degree at most $\ell$ in each coordinate. Mixed-element meshes use $P^\ell$ on simplicial subdivisions. The coefficient vector $z_B$ contains every finite-element degree of freedom; the solver vector $\phi_B$ retains only its original-vertex entries. Under smoothness and mesh-stability assumptions, the nominal orders are two and three; the accuracy of the vertex values is tested separately.
+GP2 uses piecewise-linear ($P^1$) source and target fields. GP3 reconstructs a quadratic ($P^2$) source field, including internal edge values, and solves for a complete quadratic target field. The solver receives only the original-vertex values. The projection preserves the integral of its complete finite-element field. The solver evaluates a different quantity, $Q_B$, from the retained vertex values and median-dual weights. These integrals agree for GP2 on triangular meshes. Triangulating a quadrilateral or retaining only vertices of a quadratic field can make them differ. We therefore measure $Q_B$ on the final solver values in the numerical tests. Mixed-element meshes use $P^\ell$ on simplicial subdivisions. The coefficient vector $z_B$ contains every finite-element degree of freedom; the solver vector $\phi_B$ retains only its original-vertex entries. The nominal accuracy orders are two for GP2 and three for GP3; the smooth-field tests check the accuracy of the retained vertex values.
 
 \subsection{Conservative control-volume transfer}
 \label{sec:cv-transfer}
@@ -381,8 +381,6 @@ The CV method matches source and target field integrals over each target control
  \label{eq:cv-lumped-exact}
 \end{equation}
 For a quadrilateral, vertex $k$ contributes to the value at the center with weight $|C_k^M\cap K|/|K|$. To see why Eq.~\eqref{eq:cv-lumped-exact} matters, multiply it by the stored value $\phi_{M,k}$ and sum over the vertices of $K$. The resulting field integral is $\int_K\phi_M^h\dd x=\sum_{k\in K}|C_k^M\cap K|\phi_{M,k}$. Summing over all elements gives exactly the solver total $Q_M(\phi_M)$. The reconstructed field and the solver thus have the same domain integral whenever Eq.~\eqref{eq:cv-lumped-exact} holds.
-
-The source data are values at vertices. Integrating their continuous reconstruction over a source control volume generally gives a different result from multiplying its area by the value at its central vertex. Equation~\eqref{eq:cv-lumped-exact} makes the sums of these quantities agree over the domain. Consequently, the conservation guarantee concerns the domain total and the reconstructed fields used in Eq.~\eqref{eq:cv-condition}. Individual vertex values can change even when that total is preserved.
 
 On parallelograms, the center weights give the arithmetic vertex average and reproduce affine fields. On quadrilaterals that remain distorted, they do not: the weights enforce Eq.~\eqref{eq:cv-lumped-exact} at the expense of exact affine reproduction.
 
@@ -421,11 +419,11 @@ Summing Eq.~\eqref{eq:cv-condition} over the target control volumes, which tile 
  \end{aligned}
  \label{eq:cv-global}
 \end{equation}
-to within integration and solve tolerances. The matched target-region integral is $(\widetilde H_B\phi_B)_j$. The solver assigns the nodal content $w_j^B\phi_{B,j}$ to vertex $j$. These two quantities have the same domain sum but can differ at individual vertices. Thus CV transfer can alter a local solver value while preserving the domain total.
+to within integration and solve tolerances. The matched target-region integral is $(\widetilde H_B\phi_B)_j$. The solver instead assigns the nodal content $w_j^B\phi_{B,j}$ to vertex $j$. Integrating a continuous field over a control volume generally differs from multiplying that volume by the value at its central vertex. These quantities have the same domain sum here, but can differ at individual vertices. Thus the CV condition matches reconstructed field integrals locally and preserves the solver's nodal-content sum globally.
 
 If $B=A$, the system has $\tilde b=\widetilde H_A\phi_A$ and recovers the source vertex values. If both reconstructions reproduce affine fields, uniqueness also makes transfer exact for those fields. This gives nominal second-order accuracy on triangles and on quadrilaterals that remain parallelograms during refinement. When quadrilateral distortion remains finite as the cells become smaller, affine reproduction can fail and the observed order can decrease.
 
-Table~\ref{tab:gp-cv-comparison} summarizes the choices that matter for the comparisons below. For GP, choosing a coordinate as the test function also preserves the corresponding coordinate-weighted field integral. This property helps describe the distribution retained by the projection, but the load analysis in Sec.~\ref{sec:delayed-response} uses the full state error and its load sensitivity. Limiting and boundary corrections can change these transfer properties.
+Table~\ref{tab:gp-cv-comparison} summarizes the choices that matter for the comparisons below. It describes the raw transfers; limiting and boundary corrections can change their accuracy, bounds and integral preservation, as discussed next.
 
 \begin{table}[pos=htbp]
 \centering\small
@@ -482,7 +480,7 @@ The reach of redistribution also matters for the subsequent flow. Global redistr
 \section{Effect of remeshing on multistep time integration}
 \label{sec:restart-consistency}
 
-BDF2 uses two stored solutions. If either changes during transfer, the next time-step equation changes. We compare a transferred restart with a reference continuation on the same target mesh, so both use the same spatial discretization. Subtracting the two BDF2 equations gives an exact balance between the transferred history errors, the change in the new state, and the change in its spatial residual. A comparison at a fixed trial state then isolates the history contribution. Predicting the computed state or load change also requires the spatial operator and the accuracy of the nonlinear solve.
+BDF2 uses two stored solutions. If either changes during transfer, the next time-step equation changes. We compare a transferred restart with a reference continuation on the same target mesh, so both use the same spatial discretization. The calculations use dual-time stepping: at each physical step, inner iterations in pseudo-time solve the implicit BDF2 equation while holding the two stored solutions fixed. The iterations may stop before the equation is solved exactly. The analysis below first retains this remaining residual and the different new states of the two runs. It then derives approximations for the state and aerodynamic load changes.
 
 \subsection{Stored states and the target-mesh reference}
 \label{sec:unsteady-discretization}
@@ -493,18 +491,20 @@ The finite-volume mass matrix is $M_M=\operatorname{diag}(w_i^M)\otimes I_{n_U}$
  M_M\dot U_M+F_M(U_M,t)=0.
  \label{eq:semidiscrete}
 \end{equation}
-Here $t$ is physical time, $\dot U_M=\mathrm dU_M/\mathrm dt$, and $F_M$ is the assembled spatial residual, including fluxes, source terms, and boundary treatment. The state contains every variable used by the time integrator, including RANS turbulence variables. Boundary constraints must be applied consistently to the stored states and the equations. At constant time step, BDF2 on the target mesh is
+Here $t$ is physical time, $\dot U_M=\mathrm dU_M/\mathrm dt$, and $F_M$ is the assembled spatial residual, including fluxes, source terms, and boundary contributions. The state includes the RANS turbulence variables when they are advanced in time.
 
+Some boundary conditions prescribe a state component directly. For example, imposing zero wall velocity replaces its evolution equation by a prescribed value; changing the stored histories does not change that value. In the algebra below, such prescribed components are held fixed and eliminated from the unknown vector. We retain the symbols $U_M$, $M_M$, and $F_M$ for the remaining components and equations. Boundary fluxes that depend on those unknowns remain in $F_M$. Both runs must impose the same boundary data. This convention makes the state equation and its derivatives refer to the same unknowns.
+
+At constant time step, BDF2 on the target mesh is
 \begin{equation}
   \Phi_B(U_B^{n+1};U_B^n,U_B^{n-1})
  =\frac{M_B}{\Delta t}\left(\tfrac32U_B^{n+1}-2U_B^n+\tfrac12U_B^{n-1}\right)
    +F_B(U_B^{n+1},t^{n+1})=0.
  \label{eq:bdf2}
 \end{equation}
-Here $n$ is the physical time-step index, $t^n$ the corresponding time, and $\Delta t=t^n-t^{n-1}>0$ the constant step size. During this physical step, the solver holds the stored states $U_B^n$ and $U_B^{n-1}$ fixed. Its inner iterations update an estimate of $U_B^{n+1}$ to reduce the residual $\Phi_B$. The spatial residual $F_B$ is evaluated at that estimate of the new state. The first estimate may be the latest stored state $U_B^n$, but it changes as the iterations proceed. Dual-time stepping is the solution procedure used here for this implicit BDF2 equation; the subtraction below does not depend on the particular inner solver. Each mesh is stationary during a time step. Continuously moving meshes would require compatible geometric histories and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; Eq.~\eqref{eq:bdf2} does not cover that case.
+Here $n$ is the physical time-step index, $t^n$ the corresponding time, and $\Delta t=t^n-t^{n-1}>0$ the constant step size. During this step, the inner iterations update an estimate of $U_B^{n+1}$. The spatial residual $F_B$ is evaluated at that estimate of the new state. The first estimate may be $U_B^n$, but it changes as the iterations proceed. Each mesh is stationary during a time step. Continuously moving meshes would require compatible geometric histories and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; Eq.~\eqref{eq:bdf2} does not cover that case.
 
 Let $U_A^k$ and $U_B^k$ be the reference solutions computed on meshes $A$ and $B$ for the same problem at time $t^k$. A hat identifies the run that uses the transferred histories. At each time level $k$, define its state difference from the target-mesh reference by
-
 \begin{equation}
 \eps^k=\widehat U_B^k-U_B^k.
  \label{eq:history-defects}
@@ -523,14 +523,7 @@ The first term includes transfer error and the error already present in the sour
 
 \subsection{How errors in the stored states change the next step}
 
-The reference continuation and the transferred restart solve different BDF2 equations because their stored histories differ. After their inner iterations stop, their new states are $U_B^{n+1}$ and $\widehat U_B^{n+1}$. Equation~\eqref{eq:history-defects} gives their difference $\eps^{n+1}$. Both states are computed on $B$, and each spatial residual must be evaluated at its own state.
-
-Define the combination of the two input history errors by \textcolor{red}{(why? This looks totally unjustified.)}
-\begin{equation}
- \eta^n=2\eps^n-\tfrac12\eps^{n-1}.
- \label{eq:history-combination}
-\end{equation}
-The algebraic residuals remaining when the two solves stop are
+The reference continuation and the transferred restart solve different BDF2 equations because their stored histories differ. After their inner iterations stop, their new states are $U_B^{n+1}$ and $\widehat U_B^{n+1}$. Their difference is $\eps^{n+1}$. Each spatial residual must be evaluated at its own new state. Denote the residuals left by the two inner solves by
 \[
 \begin{aligned}
  \mathfrak r_B^{n+1}
@@ -539,23 +532,23 @@ The algebraic residuals remaining when the two solves stop are
  &=\Phi_B(\widehat U_B^{n+1};\widehat U_B^n,\widehat U_B^{n-1}).
 \end{aligned}
 \]
-They vanish for exact solves. The following identity retains them so that incomplete inner convergence is also represented. It applies to equations retaining the BDF2 balance in Eq.~\eqref{eq:bdf2}; replaced boundary equations must be compared with their own constraints.  \textcolor{red}{(What? This part is not clear, especially the boundary part.)}
+They vanish for exact solves. Retaining them allows the following balance to describe incomplete inner convergence as well.
 
 \begin{proposition}[BDF2 response to transferred histories]
 \label{prop:restart-response}
-On the same stationary target mesh, with the same constant physical time step and spatial operator, the two computed states satisfy
+On the same stationary target mesh, with the same constant physical time step, spatial operator and prescribed boundary data, the two computed states satisfy
 \begin{equation}
 \begin{aligned}
  &\frac{3M_B}{2\Delta t}\eps^{n+1}
    +F_B(\widehat U_B^{n+1},t^{n+1})-F_B(U_B^{n+1},t^{n+1})\\
- &\hspace{1cm}=\frac{M_B}{\Delta t}\eta^n
+ &\hspace{1cm}=\frac{M_B}{\Delta t}(2\eps^n-\tfrac12\eps^{n-1})
    +\widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1}.
 \end{aligned}
 \label{eq:nonlinear-bdf2-response}
 \end{equation}
 \end{proposition}
 \begin{proof}
-Subtract Eq.~\eqref{eq:bdf2} evaluated at the reference state and histories from the same equation evaluated at the restarted state and histories:
+Subtract the reference BDF2 residual from the restarted BDF2 residual:
 \begin{align*}
  \widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1}
  ={}&\frac{M_B}{\Delta t}\Big[
@@ -563,16 +556,22 @@ Subtract Eq.~\eqref{eq:bdf2} evaluated at the reference state and histories from
    -2(\widehat U_B^n-U_B^n)
    +\tfrac12(\widehat U_B^{n-1}-U_B^{n-1})\Big]\\
  &+F_B(\widehat U_B^{n+1},t^{n+1})-F_B(U_B^{n+1},t^{n+1})\\
- ={}&\frac{3M_B}{2\Delta t}\eps^{n+1}-\frac{M_B}{\Delta t}\eta^n
-   +F_B(\widehat U_B^{n+1},t^{n+1})-F_B(U_B^{n+1},t^{n+1}).
+ ={}&\frac{M_B}{\Delta t}
+       (\tfrac32\eps^{n+1}-2\eps^n+\tfrac12\eps^{n-1})\\
+ &+F_B(\widehat U_B^{n+1},t^{n+1})-F_B(U_B^{n+1},t^{n+1}).
 \end{align*}
-Rearranging gives Eq.~\eqref{eq:nonlinear-bdf2-response}. No linearization or equality of the new states has been used.\qed
+Moving the two stored-state terms to the right gives Eq.~\eqref{eq:nonlinear-bdf2-response}. No linearization or equality of the new states has been used.\qed
 \end{proof}
 
-For exact inner solves, the residuals on the right vanish. The history forcing $M_B\eta^n/\Delta t$ is then balanced by the change in the new state and its spatial residual on the left. Thus zero algebraic residuals in both runs do not require equal new states. In particular, if $\eps^n=0$ but $\eps^{n-1}\ne0$, the older history still changes the equation through $\eta^n=-\eps^{n-1}/2$.
+The subtraction shows why the two history errors enter together: BDF2 multiplies the latest stored value by $-2$ and the older value by $1/2$. For the rest of the analysis, write this resulting combination as
+\begin{equation}
+ \eta^n=2\eps^n-\tfrac12\eps^{n-1}.
+ \label{eq:history-combination}
+\end{equation}
+For exact inner solves, the residuals on the right of Eq.~\eqref{eq:nonlinear-bdf2-response} vanish. The history contribution $M_B\eta^n/\Delta t$ is then balanced by the change in the new state and its spatial residual. Thus solving both equations exactly does not require equal new states. In particular, if $\eps^n=0$ but $\eps^{n-1}\ne0$, the older history still changes the equation through $\eta^n=-\eps^{n-1}/2$.
 
 \paragraph{Simplification at a common trial state.}
-We can isolate the history contribution by evaluating both BDF2 equations at one chosen field $U_{B,\mathrm{trial}}^{n+1}$ instead of their independently computed new states. The difference of the trial fields is then zero, and both evaluations contain the same $F_B$. Direct subtraction gives
+A useful implementation check isolates the history contribution before the inner iterations change the state. Evaluate both BDF2 equations at one chosen field $U_{B,\mathrm{trial}}^{n+1}$. Both evaluations then contain the same new-state term and the same $F_B$, so subtraction gives
 \begin{equation}
 \begin{aligned}
  &\Phi_B(U_{B,\mathrm{trial}}^{n+1};\widehat U_B^n,\widehat U_B^{n-1})
@@ -581,81 +580,131 @@ We can isolate the history contribution by evaluating both BDF2 equations at one
 \end{aligned}
 \label{eq:history-residual-identity}
 \end{equation}
-This simplifies the comparison by holding the candidate field fixed. It measures the change caused by the histories at a fixed candidate field. Independent inner solves still use their own changing estimates. The cancellation is exact for nonlinear $F_B$ and finite history errors; it does not approximate the spatial-residual difference between the two computed states as small. Its purpose is to check the history contribution independently of the subsequent flow response. For example, the initial residual can be evaluated twice with the same guess and different stored histories.
-
-For the same error vector $e$ inserted only in the latest or only in the older stored state, Eq.~\eqref{eq:history-residual-identity} gives
+For the same error vector $e$ inserted only in the latest or only in the older stored state, this gives
 \[
  \Delta\Phi_{\mathrm{latest}}=-2M_Be/\Delta t,\qquad
  \Delta\Phi_{\mathrm{older}}=M_Be/(2\Delta t)
    =-\tfrac14\Delta\Phi_{\mathrm{latest}}.
 \]
-Here each $\Delta\Phi$ is the changed-history residual minus the reference-history residual at the common field. The factor $-1/4$ concerns this history forcing \textcolor{red}{(why are these observations needed?)}. The computed state and load changes also depend on the response in Eq.~\eqref{eq:nonlinear-bdf2-response}. At a boundary the same constraint must be applied to the prediction and the reported residual. A row replaced by a prescribed value independent of the histories, for example, has zero history contribution. The subtraction also holds at different intermediate estimates when their residuals are evaluated at those estimates; Supplementary Sec.~S2.3 gives this form for the initial guesses in the cancellation test. \textcolor{red}{(There is no supplementary section!)}
+Here each $\Delta\Phi$ is the changed-history residual minus the reference-history residual at the common field. The factor $-1/4$ checks the signs and relative weights with which the code inserts the histories. It is exact even for nonlinear $F_B$ and finite history errors. It does not predict the states reached after the inner iterations: those states and their spatial residuals generally differ, as retained in Proposition~\ref{prop:restart-response}.
 
 \paragraph{Linear approximation of the computed response.}
-To predict $\eps^{n+1}$, expand the spatial residual about the reference new state. Its linear term is proportional to $\eps^{n+1}$ and must be retained. Substituting this expansion into the full balance, Eq.~\eqref{eq:nonlinear-bdf2-response}, gives
+To predict the new-state difference, we must account for the spatial-residual difference in Proposition~\ref{prop:restart-response}. A linear approximation makes this possible for small errors and leads to testable relations between restarts that perturb different history levels.
+
+Let $J_B=\partial_U F_B(U_B^{n+1},t^{n+1})$ be the spatial Jacobian at the reference new state, where $\partial_U$ denotes differentiation with respect to the state vector. Separate the residual difference into its linear term and a remainder:
+\begin{equation}
+\begin{aligned}
+ F_B(\widehat U_B^{n+1},t^{n+1})-F_B(U_B^{n+1},t^{n+1})
+ =J_B\eps^{n+1}+\mathcal N_B(\eps^{n+1}).
+\end{aligned}
+\label{eq:spatial-remainder}
+\end{equation}
+The linear term $J_B\eps^{n+1}$ is first order in the state difference. We now show when the remainder is quadratic, rather than assuming the whole spatial-residual difference is negligible.
+
+Join the two discrete states by $U_B^{n+1}+\sigma\eps^{n+1}$, with $0\leq\sigma\leq1$. The parameter $\sigma$ varies every state component from its reference value to its restarted value, at fixed vertices and physical time. These intermediate fields are used only to differentiate $F_B$; they are not additional flow calculations. The chain rule gives
+\[
+ \frac{\mathrm d}{\mathrm d\sigma}
+ F_B(U_B^{n+1}+\sigma\eps^{n+1},t^{n+1})
+ =\partial_U F_B(U_B^{n+1}+\sigma\eps^{n+1},t^{n+1})\eps^{n+1}.
+\]
+Integrating this derivative from zero to one recovers the difference between the endpoint residuals. Subtracting $J_B\eps^{n+1}=\int_0^1J_B\eps^{n+1}\dd\sigma$ therefore gives the remainder in Eq.~\eqref{eq:spatial-remainder}:
+\[
+ \mathcal N_B(\eps^{n+1})
+ =\int_0^1\!\big[\partial_U F_B(U_B^{n+1}+\sigma\eps^{n+1},t^{n+1})-J_B\big]
+              \eps^{n+1}\dd\sigma.
+\]
+For this estimate, use the Euclidean vector norm $\|\cdot\|_2$ and its induced matrix norm. Assume a finite constant $L_F$ bounds the Jacobian variation as
+\begin{equation}
+ \|\partial_U F_B(U_B^{n+1}+\sigma\eps^{n+1},t^{n+1})-J_B\|_2
+ \leq L_F\sigma\|\eps^{n+1}\|_2,
+ \quad 0\leq\sigma\leq1.
+ \label{eq:jacobian-variation-bound}
+\end{equation}
+This assumption states quantitatively how much the derivative may change between the two fields. Applying it inside the integral yields
+\begin{equation}
+ \|\mathcal N_B(\eps^{n+1})\|_2
+ \leq\int_0^1 L_F\sigma\|\eps^{n+1}\|_2^2\dd\sigma
+ =\tfrac12 L_F\|\eps^{n+1}\|_2^2.
+ \label{eq:spatial-remainder-bound}
+\end{equation}
+
+Substituting Eq.~\eqref{eq:spatial-remainder} into the full BDF2 balance and multiplying by $\Delta t$ gives
 \begin{equation}
  \begin{aligned}
  A_B\eps^{n+1}
  &=M_B\eta^n+\Delta t\bigl(\widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1}\bigr)
                  -\Delta t\,\mathcal N_B(\eps^{n+1}),\\
- A_B&=\tfrac32M_B+\Delta t J_B,
- \qquad J_B=\left.\frac{\partial F_B}{\partial U}\right|_{U_B^{n+1},\,t^{n+1}}.
+ A_B&=\tfrac32M_B+\Delta t J_B.
  \end{aligned}
  \label{eq:linearized-bdf2-response}
 \end{equation}
-The matrix $A_B$ is the time-step Jacobian multiplied by $\Delta t$, and $J_B$ is the spatial Jacobian. The term $J_B\eps^{n+1}$ is first order in the state difference; only the remainder can be of higher order under the smoothness assumption below \textcolor{red}{(which one?)}. The nonlinear remainder is
+The matrix $A_B$ is the Jacobian of the full time-step equation multiplied by $\Delta t$. Suppose it is invertible and the inner solves are exact. Multiplication by $A_B^{-1}$ then gives
 \[
- \mathcal N_B(\eps^{n+1})=
- F_B(\widehat U_B^{n+1},t^{n+1})-F_B(U_B^{n+1},t^{n+1})-J_B\eps^{n+1}.
+ \eps^{n+1}=A_B^{-1}M_B\eta^n
+                 -\Delta t A_B^{-1}\mathcal N_B(\eps^{n+1}).
 \]
-To bound it, join the reference state and the restarted state along a straight line in the space of discrete flow states. The states on this line are
+To use this as a small-error approximation, consider solutions that approach the reference state as $\eta^n$ approaches zero. This allows different new states for every nonzero error; it excludes a jump to a distant solution of the nonlinear equation. Equation~\eqref{eq:spatial-remainder-bound} gives
 \[
- (1-\sigma)U_B^{n+1}+\sigma\widehat U_B^{n+1}
-       =U_B^{n+1}+\sigma\eps^{n+1},\qquad 0\leq\sigma\leq1.
+ \|\eps^{n+1}\|_2
+ \leq\|A_B^{-1}M_B\|_2\|\eta^n\|_2
+ +\tfrac12\Delta t\|A_B^{-1}\|_2L_F\|\eps^{n+1}\|_2^2.
 \]
-At $\sigma=0$ every vertex has the reference values. At $\sigma=1$ every vertex has the restarted values. Intermediate $\sigma$ interpolates each stored variable at the same vertex, with mesh and physical time held fixed.
-
-Assume that along this segment the Jacobian change is at most $L_F$ times the change in state, with finite constant $L_F$ and the matrix norm induced by the chosen state norm. At fraction $\sigma$ the distance from the reference is $\sigma\|\eps^{n+1}\|$. Integrating the Jacobian along the segment therefore gives \textcolor{red}{(why these integrals? Why $\mathcal N_B(\eps^{n+1})$ is equalt to that integral?)}
-\[
-\begin{aligned}
-\mathcal N_B(\eps^{n+1})
- &=\int_0^1\!\big[\partial_U F_B(U_B^{n+1}+\sigma\eps^{n+1},t^{n+1})-J_B\big]\eps^{n+1}\dd\sigma,\\
-\|\mathcal N_B(\eps^{n+1})\|
- &\leq\int_0^1 L_F\sigma\|\eps^{n+1}\|^2\dd\sigma
- =\tfrac12 L_F\|\eps^{n+1}\|^2.
-\end{aligned}
-\]
-This local Lipschitz assumption on the Jacobian gives a quadratic remainder. If $A_B$ is invertible, the two solves are exact on the same local solution branch, and $\eta^n$ is small, Eq.~\eqref{eq:linearized-bdf2-response} therefore yields  \textcolor{red}{(This whole proof is kind of difficult to follow for me. Are there steps that you have skipped that would make this easier to follow? Is the wording a bit too technical and complicated and not really human-readable? Is this derivation even useful? Does it have nice/useful consequences or not?)}
+For a sufficiently small state difference, the last term is at most $\|\eps^{n+1}\|_2/2$. Moving it to the left shows that $\|\eps^{n+1}\|_2\leq2\|A_B^{-1}M_B\|_2\|\eta^n\|_2$. The remainder is consequently quadratic in $\eta^n$ as well, and
 \begin{equation}
- \eps^{n+1}=R_B\eta^n+O(\Delta t\|\eta^n\|^2),
+ \eps^{n+1}=R_B\eta^n+O(\Delta t\|\eta^n\|_2^2),
  \qquad R_B=A_B^{-1}M_B.
  \label{eq:state-response}
 \end{equation}
-The response matrix $R_B$ converts stored-state errors into a next-state change. This approximation is local to the chosen mesh, state, step, and norm. For example, a small change in the computed state can cause the flow solver to start clipping a reconstructed face value that was previously inside its bounds. Across that switch the spatial residual can have different derivatives. Likewise, stopping the two solves early can leave a residual difference large enough to matter in Eq.~\eqref{eq:linearized-bdf2-response}. The full balance in Proposition~\ref{prop:restart-response} retains both effects. The common-trial simplification in Eq.~\eqref{eq:history-residual-identity} isolates the history forcing, while the state and load predictions require the response assumptions above.
+The response matrix $R_B$ converts the history combination into a leading prediction of the next-state change. Applying the same matrix to proportional history combinations predicts proportional state changes. Section~\ref{sec:naca-fixed-methodology} uses this consequence to test the relative effects of the two stored levels.
+
+This approximation is local to the chosen mesh, reference state and time step. In particular, a small state change can cause the solver to start clipping a face value that was previously inside its bounds. The spatial residual may then fail to satisfy the derivative bound in Eq.~\eqref{eq:jacobian-variation-bound}. Early stopping can also leave a significant residual difference in Eq.~\eqref{eq:linearized-bdf2-response}. Proposition~\ref{prop:restart-response} remains valid in both situations, but the history-only prediction in Eq.~\eqref{eq:state-response} need not be accurate.
 
 \subsection{Aerodynamic response}
 \label{sec:delayed-response}
 
-Let $G_B$ be a scalar aerodynamic output evaluated on mesh $B$. Its change after one step is $\Delta G^{n+1}=G_B(\widehat U_B^{n+1})-G_B(U_B^{n+1})$. Evaluate its gradient $\nabla_U G_B$ at the reference new state $U_B^{n+1}$. Define the output remainder by
+The state change matters through its effect on loads such as lift and drag. On a fixed airfoil in inviscid flow, these coefficients are weighted sums of wall pressure, with weights fixed by geometry, force direction and reference quantities. In viscous flow, wall shear also contributes. A load therefore responds to particular components and locations in the flow field, rather than to its total error alone.
+
+Let $G_B$ be one scalar load evaluated on mesh $B$, and let $\Delta G^{n+1}=G_B(\widehat U_B^{n+1})-G_B(U_B^{n+1})$. Its reference gradient $\nabla_U G_B$ contains the derivatives with respect to the unknown state components, evaluated at $U_B^{n+1}$. Write
 \begin{equation}
- \mathcal N_G^{n+1}
- =\Delta G^{n+1}-(\nabla_U G_B)^T\eps^{n+1}.
+ \Delta G^{n+1}=(\nabla_U G_B)^T\eps^{n+1}+\mathcal N_G^{n+1},
  \label{eq:output-remainder}
 \end{equation}
-If the gradient changes by at most $L_G$ times the state change along the segment joining the two new states, in the norms induced by the chosen state norm, then $|\mathcal N_G^{n+1}|\leq L_G\|\eps^{n+1}\|^2/2$ \textcolor{red}{(is this the same proof as before?)}. Here $L_G$ is a finite bound on the gradient variation.
+which defines the load remainder $\mathcal N_G^{n+1}$. The same chain-rule integration used for $F_B$ gives
+\[
+ \mathcal N_G^{n+1}=\int_0^1
+ [\nabla_U G_B(U_B^{n+1}+\sigma\eps^{n+1})-\nabla_U G_B]^T
+       \eps^{n+1}\dd\sigma.
+\]
+If a finite constant $L_G$ bounds the gradient variation by
+\begin{equation}
+ \|\nabla_U G_B(U_B^{n+1}+\sigma\eps^{n+1})-\nabla_U G_B\|_2
+ \leq L_G\sigma\|\eps^{n+1}\|_2,
+ \quad 0\leq\sigma\leq1,
+ \label{eq:output-gradient-variation-bound}
+\end{equation}
+then integrating $L_G\sigma\|\eps^{n+1}\|_2^2$ gives
+$|\mathcal N_G^{n+1}|\leq L_G\|\eps^{n+1}\|_2^2/2$.
+For example, ideal-gas wall pressure is a differentiable function of the conserved variables for positive density; a finite bound additionally requires the density to remain away from zero over the states considered. The viscous load also depends on the wall-gradient reconstruction and constitutive model, which must satisfy the stated gradient bound for this quadratic estimate to apply.
 
-For example, on a fixed airfoil in inviscid flow, the lift and drag coefficients are weighted sums of the wall pressure. Geometry, force direction and the reference quantities fix the surface weights. For an ideal gas with $\rho>0$, pressure varies smoothly with the local conserved variables. In viscous flow, wall shear also contributes to the load. The derivative compares nearby states at a single time. If an arriving disturbance changes the wall pressure sharply in one physical step, the load can change sharply in that step as well. \textcolor{red}{(This paragraphs started good as well embedded in the context of the subsection, but then it felt out of context and not with a useful purpose. Either Fix it or remove it.)}
+Substituting the state prediction into Eq.~\eqref{eq:output-remainder} gives
+\begin{equation}
+ \Delta G^{n+1}=(\nabla_U G_B)^TR_B\eta^n+O(\|\eta^n\|_2^2).
+ \label{eq:force-response}
+\end{equation}
+This approximation requires exact inner solves, invertible $A_B$, solutions approaching the reference as the history errors decrease, and the explicit derivative bounds in Eqs.~\eqref{eq:jacobian-variation-bound} and \eqref{eq:output-gradient-variation-bound}. It does not set the two new states equal.
 
-Assume that $A_B$ in Eq.~\eqref{eq:linearized-bdf2-response} is invertible. Define the discrete adjoint vector $\boldsymbol\lambda_G$ by the transpose solve~\cite{GilesPierce2000}
-\textcolor{red}{(Why can I write something like this?)}
-
+An adjoint expresses the leading load change directly as weights on the history errors~\cite{GilesPierce2000}. Since $R_B=A_B^{-1}M_B$, these weights involve $(\nabla_U G_B)^TA_B^{-1}$. Define $\boldsymbol\lambda_G=A_B^{-T}\nabla_U G_B$, where $A_B^{-T}$ is the transpose of $A_B^{-1}$. This vector exists uniquely because $A_B$ is invertible. Equivalently, it is obtained by solving
 \begin{equation}
  A_B^T\boldsymbol\lambda_G=\nabla_U G_B.
  \label{eq:output-adjoint-system}
 \end{equation}
-This uses the full time-step matrix $A_B=\tfrac32M_B+\Delta t J_B$. The spatial Jacobian $J_B$ accounts for the first-order change in $F_B$ between the two new states. No common trial state is imposed in this derivation. Boundary rows must be constrained consistently in the state and transpose systems, as specified for Proposition~\ref{prop:restart-response}.
+Transposing this equation gives $\boldsymbol\lambda_G^TA_B=(\nabla_U G_B)^T$, and hence $\boldsymbol\lambda_G^T=(\nabla_U G_B)^TA_B^{-1}$. One transpose solve for the chosen load thus supplies its weights for any input history error. The matrix includes $J_B$, so it accounts for the first-order spatial-residual change between the different new states. Its unknowns are the same unconstrained components used in the state equation.
 
-Multiplying Eq.~\eqref{eq:linearized-bdf2-response} by $\boldsymbol\lambda_G^T$ and using Eq.~\eqref{eq:output-remainder} gives the exact output balance
+The adjoint also gives a balance retaining incomplete convergence and both nonlinear remainders. First, Eq.~\eqref{eq:output-remainder} and the transposed adjoint equation give
+\[
+ \Delta G^{n+1}=\boldsymbol\lambda_G^TA_B\eps^{n+1}+\mathcal N_G^{n+1}.
+\]
+Replacing $A_B\eps^{n+1}$ by Eq.~\eqref{eq:linearized-bdf2-response} then yields
 \begin{equation}
 \begin{aligned}
  \Delta G^{n+1}
@@ -667,44 +716,32 @@ Multiplying Eq.~\eqref{eq:linearized-bdf2-response} by $\boldsymbol\lambda_G^T$ 
 \end{aligned}
 \label{eq:output-full-balance}
 \end{equation}
-The first term weights the input history differences by their load sensitivity. The second weights the difference in the residuals left by the two inner solves. The remaining terms account for nonlinear changes in the spatial residual and the load. Their definitions make Eq.~\eqref{eq:output-full-balance} an identity; treating the remainders as quadratic additionally requires the smoothness assumptions above \textcolor{red}{(which one? The Lipschitz?)}.
+This is an exact identity with the remainders defined above. The first term weights the input history errors; the second weights the residuals left by the inner solves. The last two terms account for nonlinear changes in the spatial residual and the load. The derivative bounds in Eqs.~\eqref{eq:jacobian-variation-bound} and \eqref{eq:output-gradient-variation-bound} justify treating those remainders as quadratic. They do not bound the remaining inner-solve residuals, which must be assessed separately when iterations stop early.
 
-For exact inner solves on the same local solution branch \textcolor{red}{($\hat{U}^{n+1}=U^{n+1}$?)}, small $\eta^n$, and the state-response assumptions in Sec.~\ref{sec:restart-consistency}, the leading prediction is
-\begin{equation}
- \Delta G^{n+1}=(\nabla_U G_B)^TR_B\eta^n+O(\|\eta^n\|^2).
- \label{eq:force-response}
-\end{equation}
-When the inner solves stop early \textcolor{red}{(I guess we should have defined the fact that we are using a dual time-stepping approach, right?)}, the residual term in Eq.~\eqref{eq:output-full-balance} must also be assessed. A small history error alone does not bound that contribution.
-
-At target vertex $j$, write $\boldsymbol\lambda_{G,j}$ and $\eta_j^n$ for the entries of the adjoint and the history combination at that vertex. In two-dimensional Euler flow each is a four-entry vector, ordered as density, streamwise momentum, transverse momentum and total energy per unit volume. Since $R_B=A_B^{-1}M_B$, the leading term in Eq.~\eqref{eq:force-response} is
+For a vertex-wise interpretation, extend the adjoint by zeros in prescribed components. Write $\boldsymbol\lambda_{G,j}$ and $\eta_j^n$ for the component vectors at target vertex $j$. In two-dimensional Euler flow, their four entries correspond to density, streamwise momentum, transverse momentum and total energy per unit volume. Using Eq.~\eqref{eq:output-adjoint-system} gives
 \begin{equation}
  (\nabla_U G_B)^T R_B\eta^n
  =\boldsymbol\lambda_G^T M_B\eta^n
  =\sum_{j=1}^{n_B} w_j^B\,\boldsymbol\lambda_{G,j}^T\eta_j^n.
  \label{eq:output-adjoint}
 \end{equation}
+Each component of the history error is multiplied by its sensitivity for the chosen load. For example, the density error at a vertex is weighted by the density entry of its adjoint. These sensitivities are not computed in the numerical tests.
 
-\textcolor{red}{(Maybe here I would also reference (and/or use) the definition of eq:output-adjoint-system)}
-The dot product multiplies each history error by its load sensitivity at that vertex and adds the products. For example, the density error is multiplied by the sensitivity to density. These adjoint sensitivities depend on the chosen load through its gradient and on the target flow through $A_B$. The numerical comparisons below use forward restarts; they do not report a numerical evaluation of these adjoint weights. \textcolor{red}{(This last sentence could be either removed or simply say that we are not evaluating these sensitivities.)}
-
-Consider mass conservation at a stored time level $k$. Let $\rho_A^k$ and $\rho_B^k$ be the independently computed density fields and $\widehat\rho_B^k$ the density field transferred to $B$. If transfer preserves the source mass, $Q_B(\widehat\rho_B^k)=Q_A(\rho_A^k)$. Subtracting the target-reference mass from both sides gives
-
+This weighting explains why preserving a global integral does not by itself preserve a load. Consider mass at stored level $k=n-1$ or $n$. Let $\rho_A^k$ and $\rho_B^k$ be the independently computed reference densities, and $\widehat\rho_B^k$ the transferred density. A mass-preserving transfer satisfies $Q_B(\widehat\rho_B^k)=Q_A(\rho_A^k)$. Subtracting the target-reference mass gives
 \begin{equation}
-\sum_{j=1}^{n_B} w_j^B\big(\widehat\rho_{B,j}^k-\rho_{B,j}^k\big)
-      =Q_A(\rho_A^k)-Q_B(\rho_B^k).
+ \sum_{j=1}^{n_B} w_j^B(\widehat\rho_{B,j}^k-\rho_{B,j}^k)
+ =Q_A(\rho_A^k)-Q_B(\rho_B^k).
  \label{eq:gc-native-mismatch}
 \end{equation}
- Here $w_j^B=|C_j^B|$ is the area of the target control volume around vertex $j$ in two dimensions, or its volume in three dimensions. The left-hand side weights each density difference by this measure and sums over the target vertices. The right-hand side is the mass difference between the two reference solutions. The same identity holds for each momentum component or for total energy when its integral is preserved. Even if the two reference masses agree, adding a given mass at one vertex and removing it at another leaves their total unchanged. For the same history level, those two changes cancel in the leading history contribution to lift only if the density sensitivities in Eq.~\eqref{eq:output-adjoint} are equal at the two vertices. The residual and nonlinear terms in Eq.~\eqref{eq:output-full-balance} remain separate contributions.
+Thus preservation of source mass need not imply zero mass difference from the target reference. Even when the two reference masses agree, mass can be added at one vertex and removed at another. Those changes cancel in the mass sum, but their leading contributions to a load cancel only if the corresponding density sensitivities in Eq.~\eqref{eq:output-adjoint} agree. This is why the tests measure integral changes and load changes separately.
 
-\textcolor{red}{(These observations in this paragraph look out of context and not well connected to what was said just before.)}
-
-Equation~\eqref{eq:output-full-balance} concerns the load one step after transfer. On the following step, BDF2 uses the newly computed difference $\eps^{n+1}$ and the retained input error $\eps^n$. Its history combination is now $2\eps^{n+1}-\eps^n/2$ \textcolor{red}{(Just in the same post/restart state assumption, maybe we could say that it is an approximation.)}. A load can therefore keep changing after a single mesh replacement. Section~\ref{sec:delayed-airfoil-test} tests this by disturbing a band away from the wall and measuring when pressure and lift respond. \textcolor{red}{(The last phrase is just there and not really useful. Neither it is clear how the test connects to the previous observation ("A load can therefore keep changing after a single mesh replacement"). Either improve it or remove it.)}
+Finally, the one-step load change need not capture the later response. At the following step, the stored differences are $\eps^{n+1}$ and $\eps^n$, so their BDF2 combination is exactly $\eta^{n+1}=2\eps^{n+1}-\eps^n/2$. This follows from shifting the time indices in Eq.~\eqref{eq:history-combination}; it requires no common trial state or linear approximation. The newly computed error therefore enters subsequent steps, where spatial evolution can carry a disturbance toward the wall. Section~\ref{sec:delayed-airfoil-test} follows pressure and lift after one transfer away from the wall to determine how much of that response occurs after the first step.
 
 \section{Numerical tests and results}
 \label{sec:methodology}
 \label{sec:results}
 
-NN3, BAR3, and GP3 test third-order accuracy in smooth fields and its relation to bounds and integral preservation in discontinuous fields and the Riemann problem. \textcolor{red}{(This introduction to the numerical tests is nonsense. You are supposed to introduce the fact we are now presenting the tests, not the methods used in the tests. Refactor this whole introduction to this new section.)} Third-order variants are also included in the controlled BDF2 restarts. The repeated-remeshing Euler airfoil and RANS comparisons use NN2, GP2, and CV2 at a common nominal second order, which is the order of the CV formulation studied here. The Riemann comparisons use three random mesh-perturbation realizations per amplitude; the repeated-remeshing airfoil comparisons use two, and the RANS sensitivity tests use one. Local flux correction is tested in the Riemann problem.
+The tests examine three questions: how accurately a solution is transferred, how transfer errors accumulate during flow evolution, and how they affect aerodynamic loads. We begin with single transfers of known fields to measure accuracy, bounds and integral preservation without introducing flow-solver error. Repeated remeshing of a Riemann problem then tests whether these properties predict profile distortion and mass drift after many transfers. Controlled airfoil restarts isolate the two BDF2 history contributions, followed by calculations that track the load response over several steps. Finally, viscous airfoil restarts with the SA model assess integral preservation and drag sensitivity when turbulence transport is included. Each case presents its setup together with its results.
 
 \subsection{Single-transfer tests}
 \label{sec:static-verification}
@@ -835,7 +872,7 @@ giving left and right temperatures of 1 and 0.8. Upper and lower boundaries are 
 
 The calculation runs for 400 physical steps with $\Delta t=10^{-3}$. At each remeshing event, interior vertices receive fresh random streamwise displacements relative to the original mesh. Boundary vertices remain fixed, and geometric distortion does not accumulate from mesh to mesh. If $a_{i,\min}$ is the smallest altitude of the corner triangles incident to vertex $i$, its maximum displacement is $a_{i,\min}/s$. We use deformation parameters $s=4$ and $s=2$; the latter allows twice the displacement.
 
-Remeshing every ten or two physical steps compares less and more frequent transfer. Both BDF2 states are transferred at every mesh change. The lower-frequency comparison has 80 transfer evaluations; the higher-frequency integral record has 398. A fixed-mesh calculation with the same initial and boundary conditions supplies a numerical reference. Differences from it include both transfer error and the changed spatial discretization.
+The method set includes NN1--NN3, BAR2--BAR3, GP2--GP3, and CV2. Remeshing every ten or two physical steps compares less and more frequent transfer. The high-frequency comparison uses three random mesh realizations at each deformation amplitude. Both BDF2 states are transferred at every mesh change. The lower-frequency comparison has 80 transfer evaluations; the higher-frequency integral record has 398. A fixed-mesh calculation with the same initial and boundary conditions supplies a numerical reference. Differences from it include both transfer error and the changed spatial discretization.
 
 The density profile is averaged in $y$. A first width measure uses the window $W_1=[2.40,3.00]$ and estimates plateau densities at its ends. Position is the 50\% crossing; width is the distance between the 10\% and 90\% crossings. Their differences from the fixed-mesh reference, $\Delta x$ and $\Delta w^{\mathrm{wide}}$, are expressed in cells of spacing $h=0.01$. After many transfers, the smeared contact can enter the left plateau interval $[2.40,2.46]$. The measured width then combines contact and shock distortion. A second, shock-only measure uses $[2.55,2.85]$ to exclude the contact tail; its width change is $\Delta w^{\mathrm{shock}}$. The wide-window tables use 16 sampling lines and 800 probes; the shock-only measure uses the stored eight-line mean profile at the same streamwise resolution. Both are evaluated at step 399 against their corresponding fixed-mesh references.
 
@@ -967,7 +1004,7 @@ Controlled airfoil restarts separate the effects of the latest and older stored 
 
 The source and independent target meshes have 16,255 and 22,508 vertices, with 32,077 and 44,583 triangles. They share 370 airfoil vertices and a 63-vertex farfield polygon at $100c$, keeping the discretized boundary unchanged. Forces use pressure only, unit reference chord and area, and a moment reference at $x/c=0.25$. Lift and drag coefficients are $C_L$ and $C_D$. Any nonzero steady drag is numerical, rather than skin friction or shock drag.
 
-Both meshes start from independently computed steady solutions, denoted by the superscript $\mathrm{st}$. Each steady solution supplies two identical history levels. For each transfer method we form a single error field on the target mesh, $\eps^{\mathrm{st}}=\mathcal T_{AB}(U_A^{\mathrm{st}})-U_B^{\mathrm{st}}$. We add this same field to the latest history, the older history, both histories, or neither (Table~\ref{tab:naca-history-decomposition}). Each run then advances one step on $B$. Comparing it with the run that retains both reference histories isolates the contribution of the chosen history levels.
+Both meshes start from independently computed steady solutions, denoted by the superscript $\mathrm{st}$. Each steady solution supplies two identical history levels. The comparison includes NN1--NN3, BAR2--BAR3, GP2--GP3, and CV2, so it also checks the history response of the higher-order variants. For each method we form a single error field on the target mesh, $\eps^{\mathrm{st}}=\mathcal T_{AB}(U_A^{\mathrm{st}})-U_B^{\mathrm{st}}$. We add this same field to the latest history, the older history, both histories, or neither (Table~\ref{tab:naca-history-decomposition}). Each run then advances one step on $B$. Comparing it with the run that retains both reference histories isolates the contribution of the chosen history levels.
 
 \begin{table}[pos=htbp]
 \centering\small
@@ -1048,7 +1085,7 @@ Across all eight variants, the latest-only/both-states state-norm ratio is 1.333
 
 \subsubsection{Limits of the linear-response approximation}
 
-Setting $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$ gives $\eta^n=0$, so the reference and perturbed BDF2 equations are identical when evaluated with the same boundary treatment. An exact solve on the same local solution branch would give the same next state. In the computed cancellation test, lift differences are of order $10^{-9}$, but volume-weighted state differences remain 4.3--9.0\% of the imposed discrepancy. Iterative error has not been independently quantified, so the small lift difference does not verify cancellation of the state response. This test uses different initial guesses. Their initial residual difference also contains the change in the trial field and its spatial residual, as in the subtraction used for Eq.~\eqref{eq:nonlinear-bdf2-response}; Supplementary Sec.~S2.3 gives the expression. The common-field residual check reported above tests the simplified identity, Eq.~\eqref{eq:history-residual-identity}, separately.
+Setting $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$ gives $\eta^n=0$, so the reference and perturbed BDF2 equations are identical when evaluated with the same boundary treatment. If that equation has a unique solution near the reference, exact inner solves give the same next state. In the computed cancellation test, lift differences are of order $10^{-9}$, but volume-weighted state differences remain 4.3--9.0\% of the imposed discrepancy. Iterative error has not been independently quantified, so the small lift difference does not verify cancellation of the state response. This test uses different initial guesses. Their initial residual difference also contains the change in the trial field and its spatial residual, as retained in Eq.~\eqref{eq:nonlinear-bdf2-response} when its states and remaining residuals are evaluated at those initial guesses. The common-field residual check reported above tests the simplified identity, Eq.~\eqref{eq:history-residual-identity}, separately.
 
 We repeat the restarts with the full, half and quarter amplitudes of the same imposed history error. The result depends on how the state difference is measured. Lift and Euclidean state-norm responses approach superposition more closely for BAR2, GP2, and CV2. In the volume-weighted norm, however, the absolute remainder decreases slowly and the relative remainder grows from about 3.4\% to 8.7--9.2\%. These tests do not establish a uniform quadratic remainder in every norm. Even with an exact first step, the cancellation would last only one step. The retained error $\eps^n=\eps^{\mathrm{st}}/4$ would give $2\eps^{n+1}-\eps^n/2=-\eps^{\mathrm{st}}/8$ at the next step.
 
@@ -1060,7 +1097,7 @@ The following Euler tests use the flow conditions of Sec.~\ref{sec:naca-fixed-me
 
 \subsubsection{Initial load growth under repeated remeshing}
 
-To examine accumulation in the airfoil calculation, we perturb vertices at wall distances between $0.01c$ and $20c$, keeping boundary vertices fixed. NN2, GP2, and CV2 use matching random deformations. A 400-step interval contains 39 remeshing events followed by flow evolution. Load differences are measured against the corresponding fixed-mesh trajectory. Fitted slopes per 100 physical steps describe this window; they are neither long-time drift estimates nor estimates of independent-sample uncertainty.
+To examine accumulation in the airfoil calculation, we perturb vertices at wall distances between $0.01c$ and $20c$, keeping boundary vertices fixed. NN2, GP2, and CV2 use matching random deformations in two realizations. A 400-step interval contains 39 remeshing events followed by flow evolution. Load differences are measured against the corresponding fixed-mesh trajectory. Fitted slopes per 100 physical steps describe this window; they are neither long-time drift estimates nor estimates of independent-sample uncertainty.
 
 GP2 and CV2 give slower initial drag growth than NN2 in both realizations. GP2 slopes are $6.31\times10^{-6}$ and $5.89\times10^{-6}$ per 100 physical steps; CV2 gives $5.92\times10^{-6}$ and $5.82\times10^{-6}$, compared with $3.95\times10^{-5}$ and $3.84\times10^{-5}$ for NN2. The mean NN2 slope is approximately 6.4 times the GP2 mean and 6.6 times the CV2 mean. However, 400 steps span only about 0.047 convective and 0.47 acoustic chord times. The result describes early growth, and lift trends vary more between realizations.
 
@@ -1115,7 +1152,7 @@ The dimensional physical step $\Delta t_0=10^{-3}$~s corresponds to $\Delta t_0^
 
 The coarse steady SA solution reaches its 20,000-iteration limit at $-11.2$, with lift and drag stationary to $10^{-7}$ over the last 2,000 iterations. Table~\ref{tab:rans-inner-app} reports convergence during the subsequent physical steps.
 
-NN2, limited GP2, and limited CV2 follow the same prescribed mesh sequences. At each event, 12,602 vertices may move and 10,669 remain fixed. No vertex with solver wall distance below $0.01c$ moves. The geometric mask uses distance to the nearest airfoil vertex, allowing part of the outer quadrilateral region to move. The deformation parameter is $s=4$; a minimum corner-area ratio of 0.2 maintains valid cells. Boundary vertices remain fixed. Remeshing occurs every ten physical steps, independently of the solution.
+NN2, limited GP2, and limited CV2 are compared at a common nominal second order. They follow the same prescribed mesh sequences, with one sequence used for the numerical sensitivity tests. At each event, 12,602 vertices may move and 10,669 remain fixed. No vertex with solver wall distance below $0.01c$ moves. The geometric mask uses distance to the nearest airfoil vertex, allowing part of the outer quadrilateral region to move. The deformation parameter is $s=4$; a minimum corner-area ratio of 0.2 maintains valid cells. Boundary vertices remain fixed. Remeshing occurs every ten physical steps, independently of the solution.
 
 At each mesh change we transfer both stored time levels of the mean flow and the SA working variable $\widetilde\nu$. We monitor the integral of $\rho\widetilde\nu$ alongside the mass, momentum and total-energy integrals. Wall distance and eddy viscosity are recomputed. Integral changes use $e_Q$ from Sec.~\ref{sec:derivative-reconstruction}; all monitored source integrals are nonzero. The SA equation contains source terms, so the integral of $\rho\widetilde\nu$ can subsequently change during a flow step.
 
@@ -1245,7 +1282,7 @@ CV2 preserves the global finite-volume integral but loses affine reproduction wh
 \section{Conclusions}
 \label{sec:conclusions}
 
-Transfer in an unsteady calculation must supply every state used by the time integrator. In the controlled BDF2 restarts, an error in the older state changes next-step lift even when the latest state matches the target-mesh reference. The full BDF2 balance retains the difference between the two computed new states and between their spatial residuals. With converged inner solves, these changes balance the forcing from the transferred histories. Evaluating both equations at a chosen common trial state is a simplification that isolates this forcing: the same error in the older history contributes $-1/4$ of its latest-history contribution. This coefficient ratio alone does not prescribe the ratio of the computed state or load changes. The measured lift changes also have opposite signs. Their magnitudes depend on how the target flow and the chosen load weight that error. The full functional balance separates the history contribution from incomplete inner convergence and nonlinear remainders.
+Transfer in an unsteady calculation must supply every state used by the time integrator. In the controlled BDF2 restarts, an error in the older state changes next-step lift even when the latest state matches the target-mesh reference. The full BDF2 balance retains the difference between the two computed new states and between their spatial residuals. For exact inner solves, these changes balance the forcing from the transferred histories. Evaluating both equations at a chosen common trial state is a simplification that isolates this forcing: the same error in the older history contributes $-1/4$ of its latest-history contribution. This coefficient ratio alone does not prescribe the ratio of the computed state or load changes. The measured lift changes also have opposite signs. Their magnitudes depend on how the target flow and the chosen load weight that error. The full functional balance separates the history contribution from incomplete inner convergence and nonlinear remainders.
 
 The Riemann results distinguish preservation of mass, wave shape, and mass balance during later flow evolution. Global mass correction does not restore a smeared profile. At high transfer counts, a wide-window 10--90\% width also includes contact smearing, so it must be separated from shock-only broadening. GP2 and CV2 preserve the tested profiles more closely than NN1 and BAR2, but standard global limiting can disturb the far field and allow mass changes during subsequent flow steps.
 
