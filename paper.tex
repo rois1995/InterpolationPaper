@@ -523,7 +523,7 @@ The first term includes transfer error and the error already present in the sour
 
 \subsection{How errors in the stored states change the next step}
 
-The reference continuation and the transferred restart solve different BDF2 equations because their stored histories differ. After their inner iterations stop, their new states are $U_B^{n+1}$ and $\widehat U_B^{n+1}$. Their difference is $\eps^{n+1}$. Each spatial residual must be evaluated at its own new state. Denote the residuals left by the two inner solves by
+The reference continuation and the transferred restart solve different BDF2 equations because their stored histories differ. After their inner iterations stop, their new states are $U_B^{n+1}$ and $\widehat U_B^{n+1}$. Their difference is $\eps^{n+1}$. Each spatial residual must be evaluated at its own new state. Denote the remaining residuals of the full BDF2 equations, including their temporal and spatial terms, by
 \[
 \begin{aligned}
  \mathfrak r_B^{n+1}
@@ -532,7 +532,7 @@ The reference continuation and the transferred restart solve different BDF2 equa
  &=\Phi_B(\widehat U_B^{n+1};\widehat U_B^n,\widehat U_B^{n-1}).
 \end{aligned}
 \]
-They vanish for exact solves. Retaining them allows the following balance to describe incomplete inner convergence as well.
+An exact inner solve makes its full BDF2 residual zero. Retaining these residuals allows the following balance to describe incomplete inner convergence as well.
 
 \begin{proposition}[BDF2 response to transferred histories]
 \label{prop:restart-response}
@@ -568,7 +568,7 @@ The subtraction shows why the two history errors enter together: BDF2 multiplies
  \eta^n=2\eps^n-\tfrac12\eps^{n-1}.
  \label{eq:history-combination}
 \end{equation}
-For exact inner solves, the residuals on the right of Eq.~\eqref{eq:nonlinear-bdf2-response} vanish \textcolor{red}{(do you mean $F_B$?)}. The history contribution $M_B\eta^n/\Delta t$ is then balanced by the change in the new state and its spatial residual. Thus solving both equations exactly does not require equal new states. In particular, if $\eps^n=0$ but $\eps^{n-1}\ne0$, the older history still changes the equation through $\eta^n=-\eps^{n-1}/2$.
+For exact inner solves, $\widehat{\mathfrak r}_B^{n+1}=\mathfrak r_B^{n+1}=0$ on the right of Eq.~\eqref{eq:nonlinear-bdf2-response}. The spatial residuals $F_B$ on the left generally remain nonzero: in each run, the spatial term balances that run's discrete time derivative. The history contribution $M_B\eta^n/\Delta t$ is therefore balanced by the difference in the new states and their spatial residuals. Thus solving both equations exactly does not require equal new states. In particular, if $\eps^n=0$ but $\eps^{n-1}\ne0$, the older history still changes the equation through $\eta^n=-\eps^{n-1}/2$.
 
 \paragraph{Simplification at a common trial state.}
 A useful implementation check isolates the history contribution before the inner iterations change the state. Evaluate both BDF2 equations at one chosen field $U_{B,\mathrm{trial}}^{n+1}$. Both evaluations then contain the same new-state term and the same $F_B$, so subtraction gives
@@ -586,7 +586,7 @@ For the same error vector $e$ inserted only in the latest or only in the older s
  \Delta\Phi_{\mathrm{older}}=M_Be/(2\Delta t)
    =-\tfrac14\Delta\Phi_{\mathrm{latest}}.
 \]
-Here each $\Delta\Phi$ is the changed-history residual minus the reference-history residual at the common field. The factor $-1/4$ checks the signs and relative weights with which the code inserts the histories. It is exact even for nonlinear $F_B$ and finite history errors. It does not predict the states reached after the inner iterations: those states and their spatial residuals generally differ, as retained in Proposition~\ref{prop:restart-response}. \textcolor{red}{(I still do not understand the purpose of these last observations. Explain them to me in the chat.)}
+Here each $\Delta\Phi$ is the changed-history BDF2 residual minus the reference-history BDF2 residual at the common field. This comparison checks that the code inserts both histories with the correct signs and relative weights. To predict the resulting state change, we must also determine how the inner solve responds to the changed equation. This is the purpose of the linear approximation derived next.
 
 \paragraph{Linear approximation of the computed response.}
 To predict the new-state difference, we must account for the spatial-residual difference in Proposition~\ref{prop:restart-response}. A linear approximation makes this possible for small errors and leads to testable relations between restarts that perturb different history levels.
@@ -638,7 +638,15 @@ Substituting Eq.~\eqref{eq:spatial-remainder} into the full BDF2 balance and mul
  \end{aligned}
  \label{eq:linearized-bdf2-response}
 \end{equation}
-The matrix $A_B$ is the Jacobian of the full time-step equation multiplied by $\Delta t$. Suppose it is invertible and the inner solves are exact. Multiplication by $A_B^{-1}$ then gives \textcolor{red}{($\tau$ just went away without any reason?)}
+The matrix $A_B$ is the Jacobian of the full time-step equation multiplied by $\Delta t$. If it is invertible, multiplication by $A_B^{-1}$ gives
+\[
+\begin{aligned}
+ \eps^{n+1}={}&A_B^{-1}M_B\eta^n
+ +\Delta t A_B^{-1}(\widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1})\\
+ &-\Delta t A_B^{-1}\mathcal N_B(\eps^{n+1}).
+\end{aligned}
+\]
+For the following approximation, assume exact inner solves: $\widehat{\mathfrak r}_B^{n+1}=\mathfrak r_B^{n+1}=0$. Only the residual-difference term is removed, leaving
 \[
  \eps^{n+1}=A_B^{-1}M_B\eta^n
                  -\Delta t A_B^{-1}\mathcal N_B(\eps^{n+1}).
@@ -657,12 +665,12 @@ For a sufficiently small state difference, the last term is at most $\|\eps^{n+1
 \end{equation}
 The response matrix $R_B$ converts the history combination into a leading prediction of the next-state change. Applying the same matrix to proportional history combinations predicts proportional state changes. Section~\ref{sec:naca-fixed-methodology} uses this consequence to test the relative effects of the two stored levels.
 
-This approximation is local to the chosen mesh, reference state and time step. In particular, a small state change can cause the solver to start clipping a face value that was previously inside its bounds. The spatial residual may then fail to satisfy the derivative bound in Eq.~\eqref{eq:jacobian-variation-bound} \textcolor{red}{(this last observation (from "this approximation is local..." to "...derivative bound") is not clear to me, it feels artificially written and not clear how it connects to previous text)}. Early stopping can also leave a significant residual difference in Eq.~\eqref{eq:linearized-bdf2-response}. Proposition~\ref{prop:restart-response} remains valid in both situations, but the history-only prediction in Eq.~\eqref{eq:state-response} need not be accurate.
+Equation~\eqref{eq:state-response} neglects the nonlinear contribution $-\Delta t A_B^{-1}\mathcal N_B(\eps^{n+1})$. The bound in Eq.~\eqref{eq:spatial-remainder-bound} explains why this contribution decreases quadratically for sufficiently small state differences, provided the derivative condition in Eq.~\eqref{eq:jacobian-variation-bound} holds. That condition is an assumption about the spatial discretization, not a consequence of BDF2. Section~\ref{sec:history-amplitude-tests} varies the imposed error amplitude to assess whether the predicted scaling is observed. If the inner iterations stop before convergence, the additional term $\Delta t A_B^{-1}(\widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1})$ must also be retained. The exact balance in Proposition~\ref{prop:restart-response} accounts for both contributions.
 
 \subsection{Aerodynamic response}
 \label{sec:delayed-response}
 
-The state change matters through its effect on loads such as lift and drag. On a fixed airfoil in inviscid flow, these coefficients are weighted sums of wall pressure, with weights fixed by geometry, force direction and reference quantities. In viscous flow, wall shear also contributes. A load therefore responds to particular components and locations in the flow field, rather than to its total error alone \textcolor{red}{(this observation is not clearly true, as you talked about aerodynamic coeffs being dependent on wall points and then talk about dependence to the whole flow field.)}.
+The state change matters through its effect on loads such as lift and drag. On a fixed airfoil in inviscid flow, these coefficients are weighted sums of wall pressure, with weights fixed by geometry, force direction and reference quantities. In viscous flow, wall shear also contributes, using velocity gradients reconstructed near the wall. These load formulas use surface values and the states needed to reconstruct them. An error away from the wall can affect a later load by changing the wall solution through the flow equations. The analysis below combines the state response $R_B$ with the load gradient to account for this indirect effect.
 
 Let $G_B$ be one scalar load evaluated on mesh $B$, and let $\Delta G^{n+1}=G_B(\widehat U_B^{n+1})-G_B(U_B^{n+1})$. Its reference gradient $\nabla_U G_B$ contains the derivatives with respect to the unknown state components, evaluated at $U_B^{n+1}$. Write
 \begin{equation}
@@ -698,7 +706,7 @@ An adjoint expresses the leading load change directly as weights on the history 
  A_B^T\boldsymbol\lambda_G=\nabla_U G_B.
  \label{eq:output-adjoint-system}
 \end{equation}
-Transposing this equation gives $\boldsymbol\lambda_G^TA_B=(\nabla_U G_B)^T$, and hence $\boldsymbol\lambda_G^T=(\nabla_U G_B)^TA_B^{-1}$. One transpose solve for the chosen load thus supplies its weights for any input history error. The matrix includes $J_B$, so it accounts for the first-order spatial-residual change between the different new states. Its unknowns are the same unconstrained components used in the state equation.
+Transposing this equation gives $\boldsymbol\lambda_G^TA_B=(\nabla_U G_B)^T$, and hence $\boldsymbol\lambda_G^T=(\nabla_U G_B)^TA_B^{-1}$. One transpose solve for the chosen load thus supplies its weights for any input history error. The load gradient has nonzero entries only for states used in the surface calculation. The adjoint can also have nonzero entries at interior vertices, because $A_B$ couples the equations at different vertices. The matrix includes $J_B$ and uses the same unconstrained components as the state equation.
 
 The adjoint also gives a balance retaining incomplete convergence and both nonlinear remainders. First, Eq.~\eqref{eq:output-remainder} and the transposed adjoint equation give
 \[
@@ -1084,6 +1092,7 @@ The second- and third-order methods give state-error norms near $7.0\times10^{-4
 Across all eight variants, the latest-only/both-states state-norm ratio is 1.3330--1.3333, and the older-only/both-states ratio is 0.3335--0.3341. The relative superposition errors are 1.8--3.5\% in the volume-weighted state norm and 0.28--1.49\% in lift. The ratios support the linearized prediction in Eq.~\eqref{eq:naca-history-ratios} for this imposed error field. Because the ratios follow for any common linear response matrix, they check scaling with the history coefficients. They do not independently determine $R_B$ or the adjoint weights. Additional cancellation and amplitude tests show where this approximation remains unverified.
 
 \subsubsection{Limits of the linear-response approximation}
+\label{sec:history-amplitude-tests}
 
 Setting $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$ gives $\eta^n=0$, so the reference and perturbed BDF2 equations are identical when evaluated with the same boundary treatment. If that equation has a unique solution near the reference, exact inner solves give the same next state. In the computed cancellation test, lift differences are of order $10^{-9}$, but volume-weighted state differences remain 4.3--9.0\% of the imposed discrepancy. Iterative error has not been independently quantified, so the small lift difference does not verify cancellation of the state response. This test uses different initial guesses. Their initial residual difference also contains the change in the trial field and its spatial residual, as retained in Eq.~\eqref{eq:nonlinear-bdf2-response} when its states and remaining residuals are evaluated at those initial guesses. The common-field residual check reported above tests the simplified identity, Eq.~\eqref{eq:history-residual-identity}, separately.
 
