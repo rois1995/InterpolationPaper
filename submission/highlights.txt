@@ -2,4 +2,4 @@
 - Conserving mass at each transfer does not prevent mass drift in later flow steps.
 - Global mass correction does not restore a smeared wave profile.
 - Global redistribution within relaxed bounds disturbs a uniform far field.
-- Load differences between transfer methods need a time-step convergence check.
+- Conservative remeshing changes lift and drag even for a nominally steady airfoil.
