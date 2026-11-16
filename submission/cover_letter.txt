@@ -10,7 +10,7 @@ The Riemann tests distinguish preservation of wave structure from integral prese
 
 The controlled BDF2 restarts isolate a different effect: an error in the older stored state changes the next-step lift even when the latest state matches the target-mesh reference. An exact residual identity explains the signed contributions of the two stored states. In the RANS cases, improved preservation of transferred integrals does not establish an aerodynamic ranking, because load differences remain sensitive to time-step refinement and iterative convergence. These airfoil cases use the standard transfer treatment and do not establish an aerodynamic result for local flux correction.
 
-The contribution is a controlled comparison of the properties retained by the transfer operators and their consequences for the evolving numerical solution. The main text and supplementary material define the profile and conservation diagnostics, report the matched flux-correction results, and distinguish measured changes from claims requiring stronger numerical resolution.
+The contribution is a controlled comparison of the properties retained by the transfer operators and their consequences for the evolving numerical solution. The main text defines the profile and conservation diagnostics, reports the matched flux-correction results, and distinguishes measured changes from claims requiring stronger numerical resolution.
 
 The numerical inputs used to compile the figures and tables are available in the versioned project repository [TODO(author): DOI of the archived release]. The manuscript is not under consideration elsewhere [TODO(author): confirm]. [TODO(author): suggested reviewers are entered in the submission system.]
 

@@ -151,11 +151,12 @@ P.~Geuzaine, C.~Grandmont, C.~Farhat, Design and analysis of {ALE} schemes with
 \newblock \href {https://doi.org/10.1016/S0021-9991(03)00311-5}
   {\path{doi:10.1016/S0021-9991(03)00311-5}}.
 
-\bibitem{GilesPierce2000}
-M.~B. Giles, N.~A. Pierce, An introduction to the adjoint approach to design,
-  Flow Turbul. Combust. 65 (2000) 393--415.
-\newblock \href {https://doi.org/10.1023/A:1011430410075}
-  {\path{doi:10.1023/A:1011430410075}}.
+\bibitem{OrtegaRheinboldt2000}
+J.~M. Ortega, W.~C. Rheinboldt, Iterative Solution of Nonlinear Equations in
+  Several Variables, Vol.~30 of Classics in Applied Mathematics, Society for
+  Industrial and Applied Mathematics, Philadelphia, 2000.
+\newblock \href {https://doi.org/10.1137/1.9780898719468}
+  {\path{doi:10.1137/1.9780898719468}}.
 
 \bibitem{LeVeque2002}
 R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts
@@ -177,10 +178,5 @@ T.~D. Economon, F.~Palacios, S.~R. Copeland, T.~W. Lukaczyk, J.~J. Alonso,
   54~(3) (2016) 828--846.
 \newblock \href {https://doi.org/10.2514/1.J053813}
   {\path{doi:10.2514/1.J053813}}.
-
-\bibitem{Menter1994}
-F.~R. Menter, Two-equation eddy-viscosity turbulence models for engineering
-  applications, AIAA J. 32~(8) (1994) 1598--1605.
-\newblock \href {https://doi.org/10.2514/3.12149} {\path{doi:10.2514/3.12149}}.
 
 \end{thebibliography}
