@@ -871,7 +871,7 @@ Repeated transfer smears the contact as well as the shock (Figure~\ref{fig:riema
 
 After 398 transfers, the mean shock broadening is 1.43 cells for NN1 at $s=4$ and 8.35 cells at $s=2$, and 1.07 and 2.21 cells for BAR2. For GP2 and CV2 the mean change in shock width over the three mesh sequences is below 0.02 cell in magnitude at both deformation amplitudes, and their wide-window changes are at most 0.07 cell in magnitude. GP2 and CV2 thus preserve the tested wave profiles more closely than NN1 and BAR2, even after contact smearing is excluded from the shock measurement.
 
-NN1+GC keeps the normalized signed sum of transfer mass changes below $1.0\times10^{-13}$ in all three mesh sequences, yet its wave profile remains strongly smeared. CV2 also keeps this transfer-only sum near roundoff, while GP2 gives values of order $10^{-6}$--$10^{-5}$. Preserving mass during transfer therefore does not preserve its spatial distribution, and by itself it says nothing about mass changes during the intervening flow steps.
+NN1+GC keeps the normalized signed sum of transfer mass changes below $1.0\times10^{-13}$ in all three mesh sequences, yet its wave profile remains strongly smeared. CV2 also keeps this transfer-only sum near roundoff, while GP2 gives values of order $10^{-6}$--$10^{-5}$. Preserving mass during transfer therefore does not preserve its spatial distribution, and by itself it says nothing about mass changes during the intervening flow steps. This agrees with studies that separate integral preservation from other discrete properties~\cite{MaddisonHiester2017} and that preserve discrete equilibria to suppress transfer-induced disturbances~\cite{MaddisonCotterFarrell2011,MaddisonCotterFarrell2013}.
 
 \subsubsection{Mass balance and local flux correction}
 \label{sec:results-local-conservation}
@@ -1211,13 +1211,6 @@ As the steady SA mesh is refined from 23,271 to 32,102 and 48,228 vertices, tota
 
 In summary, the integral comparison favors GP2 and CV2. The RMS drag departures of the three methods agree to within 2\% while their histories differ, the ordering of the departures changes with the mesh sequence, the nominal runs are not fully converged in their inner iterations, and the time-step changes exceed the NN2--GP2 drag difference in the comparison window. The loads therefore do not rank the transfer methods in this case.
 
-\subsection{Limitations}
-\label{sec:discussion}
-
-Several limits apply to these comparisons. Differences from a target-mesh reference include the difference between the independently computed solutions on the two meshes, so the controlled restarts and the airfoil histories do not isolate transfer error or identify the dominant error source. Both airfoil flows are steady, so their two reference histories coincide. The inner-solve residuals of the controlled restarts were not recorded, and the adjoint weights for lift and drag were not computed. In the Riemann problem, the boundary mass flux was not integrated, the standard limiter was not run with redistribution disabled, and the standard and LC runs used different code revisions. LC was tested only in the Riemann problem; the airfoil tests use standard transfer and establish no aerodynamic benefit of LC.
-
-Within these limits, the results agree with studies that separate integral preservation from other discrete properties~\cite{MaddisonHiester2017} and that preserve discrete equilibria to suppress transfer-induced disturbances~\cite{MaddisonCotterFarrell2011,MaddisonCotterFarrell2013}.
-
 \FloatBarrier
 \section{Conclusions}
 \label{sec:conclusions}
@@ -1229,6 +1222,8 @@ The Riemann results distinguish preservation of mass, wave shape, and mass balan
 The LC implementation keeps final mass and energy drift near roundoff without materially changing shock broadening. It gives modestly lower GP and CV density errors, but the comparison includes changes to the linear solves and does not isolate flux correction. LC allows small extrema within the tolerance on the bounds, can leave part of the unlimited correction unapplied, and does not guarantee the wall condition immediately after transfer.
 
 In the SA airfoil restarts, the RMS drag departures of the three methods differ by less than 2\% while the NN2 and GP2 histories differ by 12--16\% of the GP2 departure. The ordering of the departures depends on the mesh sequence, and halving the physical time step changes the NN2--GP2 drag difference by more than its nominal RMS. CV2 produces the smallest changes in the monitored integrals; all are small relative to whole-domain totals, which does not by itself establish their aerodynamic significance. The viscous calculations therefore do not rank the methods.
+
+The airfoil comparisons use steady reference flows and independently computed target-mesh solutions. They therefore establish how errors in the stored states are weighted, not a ranking of the methods by transfer error alone. Locally conservative correction was assessed in the Riemann problem only.
 
 These results suggest five checks when a transfer method is assessed for unsteady restarts:
 \begin{enumerate}
