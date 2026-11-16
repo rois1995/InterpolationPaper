@@ -161,13 +161,13 @@ Mesh adaptation lets an unsteady flow calculation change its spatial resolution 
 
 Transfer quality is commonly described by three properties. Accuracy measures how closely the transferred field represents the source field, and the approximation order describes how that error decreases under mesh refinement for smooth data. Boundedness requires that transfer create no values outside the source range. Conservation requires that selected integrals or moments be preserved. Several families of methods address these properties. Common-refinement and Galerkin methods provide accurate conservative transfer between nonmatching meshes~\cite{JiaoHeath2004,FarrellMaddison2011}, and constrained formulations can also preserve norms and weak incompressibility~\cite{MaddisonHiester2017}. Conservative remapping integrates a reconstructed source field over target cells~\cite{DukowiczKodis1987,MargolinShashkov2003,AlauzetMehrenberger2010,Alauzet2016}, and conservative Galerkin transfer has been used in high-order implicit adaptation with bounds near discontinuities~\cite{LevyMay2024,LevyMay2025}.
 
-These properties describe the transfer itself. They do not directly determine the quality of the calculation after it restarts. Preserving total mass does not determine where that mass is located, and suppressing new extrema can modify both accuracy and conservation. The subsequent flow also depends on the spatial discretization, the boundary conditions, and the time integrator. Shallow-water studies show, for example, that preserving a discrete equilibrium can suppress disturbances introduced by transfer~\cite{MaddisonCotterFarrell2011,MaddisonCotterFarrell2013}. This link between transfer and subsequent evolution motivates examining the complete restart, rather than only the field immediately after transfer.
+A transfer can satisfy all three properties and still alter the subsequent flow. Preserving total mass does not determine where that mass is located, and suppressing new extrema can modify both accuracy and conservation. The subsequent flow also depends on the spatial discretization, the boundary conditions, and the time integrator. Shallow-water studies show, for example, that preserving a discrete equilibrium can suppress disturbances introduced by transfer~\cite{MaddisonCotterFarrell2011,MaddisonCotterFarrell2013}. This link between transfer and subsequent evolution motivates examining the complete restart, rather than only the field immediately after transfer.
 
 Multistep time integration sharpens the distinction. A multistep scheme advances the latest solution using solutions stored from earlier times, which we call history states. After remeshing, these states have been transferred from another mesh instead of being computed by earlier steps on the target mesh. An error in an older state can therefore change the next time-step equation even when the latest state agrees with a target-mesh reference. Limiting, positivity corrections, and the reapplication of boundary conditions can change the stored states further.
 
 This paper asks whether the conventional measures of transfer quality suffice to assess the subsequent unsteady flow and the aerodynamic loads. Specifically, we ask how errors in the latest and older history states contribute to the response after a restart, and which additional checks are needed before transfer methods can be compared. We therefore examine both the changes introduced during transfer and the flow computed afterwards. Controlled restarts separate the effects of errors in different history states. Repeated remeshing shows how transfer and flow evolution interact over many events. Time-step and iterative-convergence checks establish whether observed load differences can support a ranking of the methods.
 
-We compare nearest-neighbor Taylor interpolation (NN), barycentric interpolation (BAR), continuous Galerkin projection (GP), and conservative control-volume transfer (CV) in a vertex-centered finite-volume solver. The unsteady calculations use the second-order backward differentiation formula (BDF2). The analysis connects the BDF2 coefficients of the stored states to the linear response of the next state and of an aerodynamic load. The CV transfer is formulated around the solver's vertex sum: its reconstructed field has the same domain integral, so the raw transfer preserves the quantity the solver computes. The numerical tests then examine why conservation across a transfer does not imply conservation during the flow steps that follow it. Global integral correction and local flux correction are examined separately to establish what restoring an integral can, and cannot, resolve.
+We compare nearest-neighbor Taylor interpolation (NN), barycentric interpolation (BAR), continuous Galerkin projection (GP), and conservative control-volume transfer (CV) in a vertex-centered finite-volume solver. The unsteady calculations use the second-order backward differentiation formula (BDF2). The analysis connects the BDF2 coefficients of the stored states to the linear response of the next state and of an aerodynamic load. The CV transfer is formulated around the solver's vertex sum: its reconstructed field has the same domain integral, so the raw transfer preserves the quantity the solver computes. The numerical tests then examine why conservation across a transfer does not imply conservation during the flow steps that follow it. We repeat selected transfers with a global mass correction to measure its effect on wave shape.
 
 The tests progress from static smooth and discontinuous fields to repeated remeshing of a Riemann problem, controlled airfoil restarts, and airfoil calculations with repeated remeshing. Unsteady Reynolds-averaged Navier--Stokes (RANS) calculations on a stationary airfoil with the Spalart--Allmaras (SA) model extend the assessment to turbulence transport and viscous loads. All tests use prescribed remeshing on fixed physical domains and independently computed reference solutions; the choice of an adaptive mesh is outside their scope. Section~\ref{sec:numerical-framework} describes the transfer methods, Section~\ref{sec:restart-consistency} connects history-state errors to the restart response, and Section~\ref{sec:results} presents the tests.
 
@@ -435,7 +435,7 @@ Summing Eq.~\eqref{eq:cv-condition} over the target control volumes, which tile 
  \end{aligned}
  \label{eq:cv-global}
 \end{equation}
-to within integration and solve tolerances. Equation~\eqref{eq:cv-condition} concerns the integral of the reconstructed field over each target control volume, $(\widetilde H_B\phi_B)_j$. This is not the product $w_j^B\phi_{B,j}$ that the solver attributes to vertex $j$, because integrating a continuous field over a control volume generally differs from multiplying that volume by the value at its vertex. The two quantities have the same sum over the domain but differ vertex by vertex. Limiting and flux correction act on the vertex values, so they can keep the domain sum while changing the individual integrals in Eq.~\eqref{eq:cv-condition}.
+to within integration and solve tolerances. Equation~\eqref{eq:cv-condition} concerns the integral of the reconstructed field over each target control volume, $(\widetilde H_B\phi_B)_j$. This is not the product $w_j^B\phi_{B,j}$ that the solver attributes to vertex $j$, because integrating a continuous field over a control volume generally differs from multiplying that volume by the value at its vertex. The two quantities have the same sum over the domain but differ vertex by vertex. Clipping vertex values and redistributing the resulting change can preserve the domain sum while changing the individual integrals in Eq.~\eqref{eq:cv-condition}.
 
 If $B=A$, the system has $\tilde b=\widetilde H_A\phi_A$ and recovers the source vertex values. If both reconstructions reproduce affine fields, uniqueness also makes transfer exact for those fields. This gives second-order consistency on triangles and parallelograms. For quadrilaterals that approach parallelograms under refinement, second-order consistency additionally requires the center-value error to decrease as $O(h^2)$. Where quadrilateral distortion does not vanish as the cells become smaller, the center-value error above makes the transfer first order.
 
@@ -606,30 +606,48 @@ No linearization is involved. The same relation holds at every later step in whi
  \delta^{\infty}=\tfrac32\delta^n-\tfrac12\delta^{n-1}.
  \label{eq:mass-long-run}
 \end{equation}
-Equal mass errors $\delta$ in both stored states thus shift the later mass by $\delta$, not by $2\delta$. An error in the older state alone shifts it with the opposite sign. A budget that adds the transfer mass changes of the two stored states therefore overstates their effect. Section~\ref{sec:results-local-conservation} compares these weights with the measured mass drift.
+Equal mass errors $\delta$ in both stored states thus shift the later mass by $\delta$, not by $2\delta$. An error in the older state alone shifts it with the opposite sign. The unweighted sum of the two transfer changes can therefore misrepresent the subsequent mass difference. Section~\ref{sec:results-local-conservation} examines this distinction in the shock tube.
 
 \section{Numerical tests and results}
 \label{sec:methodology}
 \label{sec:results}
 
-The tests examine three questions: how accurately a solution is transferred, how transfer errors accumulate during flow evolution, and how they affect aerodynamic loads. We begin with single transfers of known fields to measure accuracy, bounds and integral preservation without introducing flow-solver error. Repeated remeshing of a Riemann problem then tests whether these properties predict profile distortion and mass drift after many transfers. Controlled airfoil restarts isolate the two BDF2 history contributions, followed by calculations that track the load response over several steps. Finally, viscous airfoil restarts with the SA model assess integral preservation and drag sensitivity when turbulence transport is included.
+The static tests measure transfer error against prescribed density fields. In the shock tube, the waves evolve between transfers, so their shape and the total mass can also change during the flow steps. The airfoil cases follow the effect on loads, first by perturbing the two BDF2 states separately and then by tracking lift and drag over several steps.
 
 \subsection{Single-transfer tests}
 \label{sec:static-verification}
 
 \subsubsection{Smooth-field accuracy}
 
-A static test measures transfer alone, without evolving the flow. We first transfer the smooth asymmetric field
+Prescribing an exact density field gives a reference value at every vertex on both meshes. Figure~\ref{fig:reference-densities} shows the two reference fields. The smooth field tests how rapidly the error decreases under refinement. The circular density jump tests whether the transfer introduces new extrema. For the smooth case the exact density is
+
 \begin{equation}
- \phi(x,y)=\rho_\infty\left[2+0.3e^{0.8x/L_x+0.5y/L_y}
+ \rho(x,y)=\rho_\infty\left[2+0.3e^{0.8x/L_x+0.5y/L_y}
               \sin(2\pi x/L_x)\sin(2\pi y/L_y)\right].
  \label{eq:asymmetric-manufactured-field}
 \end{equation}
-Here $\rho_\infty$ is a reference density and $L_x,L_y$ are coordinate length scales. Target meshes are either structured quadrilaterals or independently generated mixed triangles and quadrilaterals, with nominal resolutions 64, 128, and 256. Source resolution is half the target resolution \textcolor{red}{(what do you mean?)}.
+Here $\rho_\infty=1.2$~kg/m$^3$ and $L_x,L_y$ are the side lengths of the square domain. The experiment uses three source-to-target resolution pairs, $32\to64$, $64\to128$, and $128\to256$. On the structured meshes these numbers count vertices along each side, so the first pair transfers values from $32^2$ to $64^2$ vertices. On the independently generated meshes of triangles and quadrilaterals, the numbers specify the nominal refinement levels. The actual vertex counts determine the effective spacing used below.
 
-In this test, the analytic density is the manufactured field $\rho(x,y)=\phi(x,y)$ \textcolor{red}{(why not simply name rho from the beginning? Also, I think I would prefer to visualize the reference field both for the continuous and discontinuous case, the density field at least.)}.  On each target mesh, the relative nodal error is
-$e_{\rho,2}^{\mathrm{node}}=[\sum_j(\rho_{B,j}-\rho(\boldsymbol x_j^B))^2/\sum_j\rho(\boldsymbol x_j^B)^2]^{1/2}$,
-a point-value measure with equal vertex weights rather than a volume-weighted field error \textcolor{red}{(why? wouldn't this be a better measure of error in FVM?)}. The dimensionless effective spacing is $h_{\mathrm{eff}}=n_B^{-1/2}$, where $n_B$ is the target vertex count. Between a coarser level and the next finer one, marked by subscripts $\mathrm c$ and $\mathrm f$, the observed order is
+\begin{figure}[pos=htbp]
+\centering
+\includegraphics[width=0.83\linewidth]{submission/figures/Figure_2.pdf}
+\caption{Exact density before transfer in the two static tests, shown on the same scale. The smooth field varies continuously. The circular inclusion has density 3.6~kg/m$^3$ inside and 1.2~kg/m$^3$ outside.}
+\label{fig:reference-densities}
+\end{figure}
+
+Each method returns a value at each target vertex. To test the accuracy of those values, we compare the transferred density $\rho_{B,j}$ with the exact density $\rho(\boldsymbol x_j^B)$ at the same location. For the convergence study we give every vertex equal weight. To measure the error over physical space in a finite-volume calculation, the corresponding discrete norm weights each squared error by the area $w_j^B$ represented by that vertex. With $d_j=\rho_{B,j}-\rho(\boldsymbol x_j^B)$, the two relative errors are
+\begin{equation}
+ e_{\rho,2}^{\mathrm{node}}=
+ \left[\frac{\sum_j d_j^2}{\sum_j \rho(\boldsymbol x_j^B)^2}\right]^{1/2},
+ \qquad
+ e_{\rho,2}^{\mathrm{FV}}=
+ \left[\frac{\sum_j w_j^B d_j^2}{\sum_j w_j^B \rho(\boldsymbol x_j^B)^2}\right]^{1/2}.
+ \label{eq:static-error-norms}
+\end{equation}
+The distinction matters where vertices cluster in a small area. For example, on the $32\to64$ transfer, recomputing NN1 with volume weights changes the relative error from 0.01288 to 0.01308 on the structured mesh and from 0.01065 to 0.01073 on the mixed mesh. The orders below refer to the nodal error for all methods.
+
+We use the dimensionless effective spacing $h_{\mathrm{eff}}=n_B^{-1/2}$, where $n_B$ is the number of target vertices. For a coarse level $\mathrm c$ and the next finer level $\mathrm f$, the observed order is
+
 \begin{equation}
  p^{\mathrm{obs}}=
  \frac{\log(e_{\rho,2,\mathrm c}^{\mathrm{node}}/e_{\rho,2,\mathrm f}^{\mathrm{node}})}
@@ -717,19 +735,18 @@ CV2 & 2.03 & 2.02 & 1.49 & 1.35\\
 
 \subsubsection{Bounds and integral preservation at a discontinuity}
 
-The second field has a circular inclusion of radius $0.25\min(L_x,L_y)$, whose boundary crosses the mesh. With an indicator $\beta$ equal to $1$ inside the inclusion and $-1$ outside, the state is temperature $T=273(2+\beta)$~K, density $\rho=1.2(2+\beta)$~kg/m$^3$, and velocity $(u,v)=(100,50)\beta$~m/s, so the density is 3.6 inside and 1.2 outside. Momentum and total energy follow from these primitive variables using the gas constant $R_{\mathrm g}=287.05$~J/(kg\,K) and $\gamma=1.4$. Each conserved field is transferred independently. We compare unlimited and limited transfers by their density excursions beyond the source range and by the relative density-integral change $e_Q(\rho_A,\rho_B)$.
+The disk in Figure~\ref{fig:reference-densities} is centered in the domain and has radius $\min(L_x,L_y)/4$. Its boundary cuts across mesh cells. Let $\beta=1$ inside the disk and $\beta=-1$ elsewhere. The initial temperature, density and velocity are $T=273(2+\beta)$~K, $\rho=1.2(2+\beta)$~kg/m$^3$, and $(u,v)=(100,50)\beta$~m/s. We form momentum and total energy from these values with $R_{\mathrm g}=287.05$~J/(kg\,K) and $\gamma=1.4$, then transfer each conserved component independently.
 
 \label{sec:results-boundedness}
+A gain in density on one side of the interface can offset a loss on the other, leaving the total mass unchanged even if the transfer creates new extrema. Table~\ref{tab:disc-selected} therefore reports both the signed relative mass change $e_Q(\rho_A,\rho_B)$ and the excursions beyond the two exact densities for the $64\to128$ structured transfer. The overshoot is $\max(0,\max_j\rho_{B,j}-\rho_{\max})$ and the undershoot is $\max(0,\rho_{\min}-\min_j\rho_{B,j})$, where $\rho_{\min}=1.2$ and $\rho_{\max}=3.6$~kg/m$^3$. Both excursions are nonnegative and vanish when all target densities lie within the source range.
 
-Preserving mass does not guarantee a bounded or physically valid solution (Table~\ref{tab:disc-selected}, structured transfer $64\to128$). Unlimited CV2 preserves the density integral to roundoff but produces values outside the source range. Unlimited NN2 gives nonpositive internal energy or pressure near the interface and is rejected.
+For example, unlimited CV2 preserves mass to roundoff, yet its lowest density falls 0.181~kg/m$^3$ below the outer state. Hard limiting removes that excursion and preserves the mass to roundoff, as it does for GP2 in this test. For GP3 the limited field also satisfies the density bounds, but retaining only the solver vertices changes its integral (Section~\ref{sec:galerkin-projection}).
 
-Limiting removes the measured new extrema, but can change the integral. In the BJ-limited NN2 test the reconstruction is suppressed at the jump, and the relative mass change reaches the NN1 value. Applying GC afterward restores the mass without creating new density extrema (Table~\ref{tab:disc-selected}). Hard-limited GP2 and CV2 satisfy both density bounds and near-roundoff integral preservation in this test. GP3 remains bounded after restriction to the solver vertices, but its finite-volume integral has a nonzero error, consistent with the difference between the complete projected field and its retained vertex values described in Section~\ref{sec:galerkin-projection}.
-
-\textcolor{red}{(I don't think I like this part, is a bit convoluted. Maybe make it feel less like a list of things and more a story-telling? Also, how do you define the Undershoot and Overshoot in the table?)}
+NN2 illustrates why the order of the corrections matters. Without limiting it produces a nonphysical state near the jump. The Barth--Jespersen limiter suppresses the reconstruction there and keeps the density within bounds, but the transferred state loses 0.446\% of its mass. Applying the bounded global correction after limiting restores that mass while keeping the density within the original range.
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Representative discontinuous-field transfers. Overshoot and undershoot measure excursions beyond the exact density range $[1.2,3.6]$, in density units (the jump is 2.4); the last column gives the signed relative mass change $e_Q(\rho_A,\rho_B)$. BJ denotes Barth--Jespersen limiting and GC the bounded global conservation correction. Unlimited NN2 is omitted because it produces nonpositive internal energy or pressure.}
+\caption{Transfer across the circular density jump on the $64\to128$ structured mesh. Overshoot and undershoot are measured in kg/m$^3$. Positive relative mass change denotes a gain. BJ denotes Barth--Jespersen limiting and GC denotes bounded global correction.}
 \label{tab:disc-selected}
 \begin{tabular}{lrrr}
 \toprule
@@ -749,7 +766,7 @@ CV2, hard limited & 0 & 0 & $6.62\times10^{-15}$ \\
 \end{tabular}
 \end{table}
 
-In a separate smooth transfer, global correction reduces the relative density-integral change to order $10^{-15}$ and changes the density $L_1$ error by at most 0.8\%, so restoring the integral has little effect on point-value accuracy in a single transfer.
+For comparison, applying global correction in a separate smooth test reduces the relative mass change to order $10^{-15}$ and changes the density $L_1$ error by at most 0.8\%.
 
 \FloatBarrier
 \subsection{Repeated remeshing of a Riemann problem}
@@ -757,7 +774,8 @@ In a separate smooth transfer, global correction reduces the relative density-in
 \subsubsection{Setup and error measures}
 \label{sec:riemann-methodology}
 
-A Riemann problem, Sod's shock tube, tests whether the behavior of one transfer predicts what happens after many \textcolor{red}{(Once again, the introduction does not feel scientific at all!)}. We solve the two-dimensional Euler equations on $[0,5]\times[0,1]$, starting from a uniform reference mesh with $501\times101$ vertices and spacing $h=0.01$, with nondimensional gas parameters $\gamma=1.4$ and $R_{\mathrm g}=1$. The initial state is
+We use Sod's shock tube to measure how repeated remeshing alters the contact discontinuity, the shock, and the total mass. The exact solution locates both waves, while a fixed-mesh calculation gives the broadening already present with the same flow solver. We solve the two-dimensional Euler equations on $[0,5]\times[0,1]$. The initial uniform mesh has $501\times101$ vertices at spacing $h=0.01$. With nondimensional gas parameters $\gamma=1.4$ and $R_{\mathrm g}=1$, the initial state is
+
 \begin{equation}
  (\rho,u,v,p)=
  \begin{cases}
@@ -768,37 +786,18 @@ A Riemann problem, Sod's shock tube, tests whether the behavior of one transfer 
 \end{equation}
 which gives left and right temperatures of 1 and 0.8. The upper and lower boundaries are inviscid slip walls. Characteristic conditions at $x=0$ and $x=5$ prescribe total pressure and temperature $(p_0,T_0)=(1,1)$ and $(0.1,0.8)$, respectively, with direction $(1,0)$ at both ends.
 
-The calculation runs for 400 physical steps with $\Delta t=10^{-3}$. At each remeshing event, the interior vertices receive fresh random streamwise displacements relative to the original mesh, so geometric distortion does not accumulate from mesh to mesh; boundary vertices remain fixed. The displacement of vertex $i$ is at most $a_{i,\min}/s$, where $a_{i,\min}$ is the smallest altitude of the corner triangles incident to it. We use deformation parameters $s=4$ and $s=2$; the latter allows twice the displacement.
+During the 400 physical steps of size $\Delta t=10^{-3}$, remeshing displaces interior vertices in the streamwise direction. At each event, we draw new displacements relative to the original mesh and keep the boundary vertices fixed. The displacement of vertex $i$ is at most $a_{i,\min}/s$, where $a_{i,\min}$ is the smallest altitude of its incident corner triangles. Reducing $s$ from 4 to 2 therefore doubles the allowed displacement.
 
-All eight methods are tested: NN1--NN3, BAR2--BAR3, GP2--GP3, and CV2. Remeshing takes place every ten or every two physical steps, and both BDF2 states are transferred at every mesh change. The ten-step interval gives 80 transfers. The two-step interval gives 398, two stored levels at each of 199 remeshing events, and is run with three random mesh sequences at each deformation amplitude. A fixed-mesh calculation with the same initial and boundary conditions supplies a numerical reference, so differences from it include the changed spatial discretization as well as the transfer error.
+At $s=4$ we compare all eight methods with remeshing every ten steps and every two steps. Each event transfers both stored BDF2 states, giving 80 and 398 field transfers, respectively. For NN1, BAR2, GP2 and CV2 we repeat the two-step case on three random mesh sequences at each displacement amplitude. The fixed-mesh run uses the same initial state and boundary conditions. Differences from it include the effect of evolving the flow on displaced meshes as well as the transfer itself.
 
-The density profile is averaged in $y$. Shock position is the 50\% crossing between the plateau densities on either side of the shock, and shock width is the distance between the 10\% and 90\% crossings; the plateau densities are estimated at the ends of a sampling window. Position uses the window $W_1=[2.40,3.00]$. Width uses the narrower window $[2.55,2.85]$, because after many transfers the smeared contact reaches the left end of $W_1$, $[2.40,2.46]$, and a width measured there, $\Delta w^{\mathrm{wide}}$, mixes contact and shock smearing. The differences from the fixed-mesh reference, $\Delta x$ and $\Delta w^{\mathrm{shock}}$, are expressed in cells of spacing $h=0.01$ and evaluated at step 399.
+At $t=0.399$ we average density across the tube and compare the profiles with the fixed-mesh solution. To locate the shock, we estimate the densities on its two sides from the ends of the interval $[2.40,3.00]$ and find the position halfway through the density jump. To measure its width, we use the distance between the 10\% and 90\% crossings. The contact can spread into the left end of the position window. For the width measurement we therefore estimate both plateau densities and both crossings in the narrower interval $[2.55,2.85]$, which isolates the shock. We express changes in position and width relative to the fixed mesh in units of $h$.
 
-\textcolor{red}{(Also this paragraphs should be made a little bit more readable and less feel like a list of things.)}
-
-We measure mass changes in two ways. First, the change across one transfer is $\Delta I_\rho$, target minus source, with $I_\rho=Q_M(\rho_M)$. We sum these changes over all transfers and divide by the initial mass $I_{\rho,0}$; this transfer sum, $\sum\Delta I_\rho/I_{\rho,0}$, excludes the flow steps. It counts both stored levels at each event with equal weight, whereas Eq.~\eqref{eq:mass-long-run} shows that their effect on the later mass is weighted by $3/2$ and $-1/2$ \textcolor{red}{(who cares here of these coefficients?)}. Second, the final mass drift is $[I_\rho(t)-I_{\rho,0}]/I_{\rho,0}$, which also includes changes during the flow steps. The exact mass and energy are 2.375 and 5.75, since no physical wave reaches an open boundary by $t=0.399$. Let $e_{\rho,1}^{\mathrm{FV}}$ denote the integral of the absolute density error against the exact solution~\cite{LeVeque2002}, weighted by the median-dual volumes and divided by the domain volume.
-
-\subsubsection{Locally conservative flux correction}
-\label{sec:local-flux-correction}
-
-\textcolor{red}{(I don't think I like this section here and this method in general. For example, I don't like that the boundary conditions are not enforced during the correction. Same for the limiting, does it mean that this does not apply limiters in a discontinuous case? Is it true also for the original formulation of Zalesak?)}
-
-To test whether the global reach of redistribution causes the subsequent mass drift, the Riemann calculations are repeated with a locally conservative (LC) flux correction based on the pairwise flux-limiting approach of Zalesak~\cite{Zalesak1979}. Each method first supplies its unlimited transferred field. LC then applies the same bounded local exchange to all methods, in place of their standard limiting, global redistribution, and separate boundary-state recovery. Boundary values therefore follow the LC exchanges, and the results check the wall condition and the positivity of the resulting states. With $\tilde b_j$ the source field integral over target control volume $j$, as in Eq.~\eqref{eq:cv-system}, the corrected vertex value $\phi_j^{\mathrm{LC}}$ satisfies
-\begin{equation}
- w_j^B\phi_j^{\mathrm{LC}}=\tilde b_j+\sum_k\theta_{jk}\mathcal F_{jk},
- \qquad \mathcal F_{jk}=-\mathcal F_{kj},\quad \theta_{jk}=\theta_{kj}\in[0,1].
- \label{eq:local-flux-correction}
-\end{equation}
-The pair flux $\mathcal F_{jk}$ is the correction exchanged between volume $j$ and a neighboring volume $k$. The sum runs over the vertices that share a target element with $j$. The symmetric factor $\theta_{jk}$ is the fraction of the exchange that is allowed. Applied in full ($\theta_{jk}=1$), the pair fluxes recover the integral-corrected unlimited transfer. Because each exchange adds to one volume what it removes from its neighbor, the domain sum is unchanged even when limiting permits only part of a flux. Local conservation here means that neighboring volumes exchange content; it does not require each product $w_j^B\phi_j^{\mathrm{LC}}$ to remain equal to $\tilde b_j$.
-
-The starting low-order state, $\tilde b_j/w_j^B$, is bounded. Iterative flux-corrected transport~\cite{Zalesak1979} then adds as much of the correction as the bounds allow, with the same tolerance, $\tau=2\times10^{-3}$, as standard GP2 and CV2 in the flow tests. Each pass tries to apply the remaining flux within the available bounds, and each accepted pair exchange conserves the total. The number of passes is capped at 12 to limit the work per transfer, so part of the intended correction can remain unapplied; the reported errors and bounds apply to this setting. The airfoil calculations use the standard corrections of Section~\ref{sec:global-correction}.
-
-The LC comparison contains 36 paired runs covering NN1--NN3, BAR2--BAR3, GP2--GP3, and CV2. All methods use intervals of ten and two steps at $s=4$. With the shorter interval, NN1, BAR2, GP2, and CV2 also use three mesh sequences at both $s=4$ and $s=2$. Each standard/LC pair follows the same mesh sequence. The two sets of runs used different revisions of the transfer code, and the LC revision also changed the CV and GP linear solves, so the pairs compare complete implementations rather than flux correction alone. Subscripts $\mathrm{std}$ and $\mathrm{LC}$ identify the density error $e_{\rho,1}^{\mathrm{FV}}$ with standard transfer and with LC; percentage changes are computed within each pair before averaging. Final mass and energy drift are measured after the last transfer.
+The exact solution retains its initial mass $I_{\rho,0}=2.375$ through the measurement time because no wave reaches either open end. To identify when a numerical mass change occurs, we record $I_\rho=Q_M(\rho_M)$ immediately before and after transferring each stored state. The signed sum of these changes, divided by $I_{\rho,0}$, measures the net change during transfer. We compare it with the final relative mass drift, $[I_\rho(t)-I_{\rho,0}]/I_{\rho,0}$, which also reflects the evolution between mesh changes.
 
 \subsubsection{Contact smearing and shock broadening}
 \label{sec:results-riemann}
 
-Repeated transfer smears the contact as well as the shock (Figure~\ref{fig:riemann-profiles}). After 398 transfers, the NN1 and BAR2 contact near $x\simeq2.370$ spreads into the interval $[2.40,2.46]$ and raises the density there from 0.266 to as much as 0.287. A width measured from that plateau exceeds 20 cells in the most diffused cases, but it is not a shock thickness; the widths below use the narrower window.
+In the exact solution~\cite{LeVeque2002}, the contact lies at $x\simeq2.370$ and the shock at $x\simeq2.699$ (Figure~\ref{fig:riemann-profiles}). After 398 transfers with NN1 or BAR2, the contact has spread into $[2.40,2.46]$, raising the density there from 0.266 to as much as 0.287. Using that region as the left shock plateau gives an apparent width of more than 20 cells in the most diffused cases. The narrower window excludes the contact tail.
 
 \begin{figure}[pos=!htbp]
 \centering\color{black}
@@ -807,95 +806,70 @@ Repeated transfer smears the contact as well as the shock (Figure~\ref{fig:riema
  evidence axis,width=0.43\textwidth,height=0.27\textwidth,
  xmin=2.30,xmax=3.00,ymin=0.10,ymax=0.45,xtick={2.3,2.5,2.7,2.9},
  xlabel={$x$},ylabel={Density $\rho$}]
-\nextgroupplot[xlabel={},title={NN1},legend to name=legend:riemann-profiles,legend columns=4]
+\nextgroupplot[xlabel={},title={NN1},legend to name=legend:riemann-profiles,legend columns=3]
 \addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
 \addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
 \addlegendentry{Exact}
 \addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
 \addlegendentry{Fixed mesh}
-\addplot[NavyBlue!45,solid,line width=2.2pt] table[col sep=comma,x=x,y=NN1_lc]{\DataDir/riemann_lc/density_profiles.csv};
-\addlegendentry{LC}
 \addplot[BrickRed,solid,line width=0.7pt] table[col sep=comma,x=x,y=NN1_standard]{\DataDir/riemann_lc/density_profiles.csv};
-\addlegendentry{Standard}
+\addlegendentry{Remeshed}
 \nextgroupplot[xlabel={},title={BAR2}]
 \addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
 \addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
 \addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
-\addplot[NavyBlue!45,solid,line width=2.2pt] table[col sep=comma,x=x,y=BAR2_lc]{\DataDir/riemann_lc/density_profiles.csv};
 \addplot[BrickRed,solid,line width=0.7pt] table[col sep=comma,x=x,y=BAR2_standard]{\DataDir/riemann_lc/density_profiles.csv};
 \nextgroupplot[title={GP2}]
 \addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
 \addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
 \addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
-\addplot[NavyBlue!45,solid,line width=2.2pt] table[col sep=comma,x=x,y=GP2_lc]{\DataDir/riemann_lc/density_profiles.csv};
 \addplot[BrickRed,solid,line width=0.7pt] table[col sep=comma,x=x,y=GP2_standard]{\DataDir/riemann_lc/density_profiles.csv};
 \nextgroupplot[title={CV2}]
 \addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
 \addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
 \addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
-\addplot[NavyBlue!45,solid,line width=2.2pt] table[col sep=comma,x=x,y=CV2_lc]{\DataDir/riemann_lc/density_profiles.csv};
 \addplot[BrickRed,solid,line width=0.7pt] table[col sep=comma,x=x,y=CV2_standard]{\DataDir/riemann_lc/density_profiles.csv};
 \end{groupplot}
 \end{tikzpicture}
 \par\smallskip\ref*{legend:riemann-profiles}
-\caption{Density profiles after 398 transfers at $t=0.399$, with remeshing every two steps, $s=2$, and mesh sequence 1. Each numerical curve is a mean over eight lines of constant $y$. The exact solution has the contact at $x\simeq2.370$ and the shock at $x\simeq2.699$. Shading marks the interval $[2.40,2.46]$ at the left end of the wide window: contact smearing raises the density there for NN1 and BAR2. Shock widths use $[2.55,2.85]$. The thin standard-transfer curve is drawn on top of the thick curve for locally conservative flux correction (LC), which has little effect on the visible broadening.}
+\caption{Density at $t=0.399$ after 398 transfers, for $s=2$ and mesh sequence 1. Each numerical profile averages eight lines of constant $y$. Shading marks $[2.40,2.46]$, where the smeared contact affects the NN1 and BAR2 profiles. The shock width is measured in $[2.55,2.85]$.}
 \label{fig:riemann-profiles}
 \end{figure}
 
-After 398 transfers, the mean shock broadening is 1.43 cells for NN1 at $s=4$ and 8.35 cells at $s=2$, and 1.07 and 2.21 cells for BAR2. For GP2 and CV2 the mean change in shock width over the three mesh sequences is below 0.02 cell in magnitude at both deformation amplitudes, and their wide-window changes are at most 0.07 cell in magnitude. GP2 and CV2 thus preserve the tested wave profiles more closely than NN1 and BAR2, even after contact smearing is excluded from the shock measurement.
+At $s=4$, the mean additional shock width after 398 transfers is 1.43 cells for NN1 and 1.07 cells for BAR2. Doubling the allowed displacement increases these widths to 8.35 and 2.21 cells, respectively (Figure~\ref{fig:riemann-mass-error}a). For GP2 and CV2 the mean change is below 0.02 cell in magnitude at both amplitudes. These methods retain a sharper shock even when the contact is excluded from the measurement.
 
-NN1+GC keeps the normalized signed sum of transfer mass changes below $1.0\times10^{-13}$ in all three mesh sequences, yet its wave profile remains strongly smeared. CV2 also keeps this transfer-only sum near roundoff, while GP2 gives values of order $10^{-6}$--$10^{-5}$. Preserving mass during transfer therefore does not preserve its spatial distribution, and by itself it says nothing about mass changes during the intervening flow steps. This agrees with studies that separate integral preservation from other discrete properties~\cite{MaddisonHiester2017} and that preserve discrete equilibria to suppress transfer-induced disturbances~\cite{MaddisonCotterFarrell2011,MaddisonCotterFarrell2013}.
+Restoring the total mass alone does little to recover a diffused wave. With bounded global correction, the magnitude of the NN1 signed transfer sum is at most $1.0\times10^{-13}$ in the three mesh sequences, yet the contact remains spread over many cells. This illustrates the distinction between preserving an integral and preserving the spatial distribution of the field~\cite{MaddisonHiester2017}.
 
-\subsubsection{Mass balance and local flux correction}
+\subsubsection{Mass changes during transfer and flow evolution}
 \label{sec:results-local-conservation}
 
-The final mass drift differs from the transfer sum for every method (Figure~\ref{fig:riemann-mass-error}a). For NN1 and BAR2 at $s=2$, the transfer sum is 1.8--2.2 times the final drift in all three mesh sequences. This is close to the factor of two that Eq.~\eqref{eq:mass-long-run} gives when the two stored levels receive similar mass errors: the sum counts both, but together they shift the later mass by only one of them. For CV2 the comparison goes the other way. Standard CV2 preserves mass during transfer to near roundoff. Its final relative mass drift is nevertheless $3.0\times10^{-7}$--$4.1\times10^{-7}$ at $s=4$ and $5.5\times10^{-6}$--$6.4\times10^{-6}$ at $s=2$. GP2 also drifts, by up to about $2\times10^{-6}$ at $s=4$. The final-step budgets place the CV2 change in the flow step: at $s=2$, mesh sequence 1, step 399 changes mass by $2.7\times10^{-8}$ of the initial mass, and the following transfer change is negligible. With LC the recorded flow-step and transfer mass changes for the same case and step are both zero at the reported precision.
+For NN1 and BAR2 at $s=2$, the magnitude of the signed transfer sum is 1.8--2.2 times the final drift (Figure~\ref{fig:riemann-mass-error}b). This ratio is consistent with similar mass changes in the two stored states. The sum counts both changes in full, while BDF2 carries an equal change in both histories forward only once under the conditions of Eq.~\eqref{eq:mass-long-run}.
 
-The standard GP/CV limiter clips values to its bounds and redistributes the integral change globally, according to the remaining capacity at each vertex. With a tolerance of $2\times10^{-3}$ on the bounds, even a constant far-field region can receive a correction. Measured density disturbances reach $1.4\times10^{-4}$ for $x<1$, and momentum density at the open boundaries reaches approximately $2\times10^{-4}$. NN and BAR retain the constant far-field states to roundoff. The CV2 mass errors at transfer are at roundoff in both stored levels, so Eq.~\eqref{eq:mass-first-step} leaves boundary flux and incomplete inner solves as the possible sources of its drift. The drift is consistent with altered open-boundary exchange caused by the disturbed far field. This contribution has not been separated from incomplete inner convergence, however: the boundary mass flux was not integrated, and inner-solve error was not independently quantified.
+For CV2 the two measurements differ by several orders of magnitude. CV2 preserves mass to near roundoff across the transfers, but the final relative mass drift is $3.0\times10^{-7}$--$4.1\times10^{-7}$ at $s=4$ and $5.5\times10^{-6}$--$6.4\times10^{-6}$ at $s=2$. In the first mesh sequence at $s=2$, for example, the final flow step changes the mass by $2.7\times10^{-8}$ of its initial value. The transfer immediately afterward leaves the mass unchanged at the reported precision.
 
-LC keeps final relative mass drift below $5\times10^{-13}$ and energy drift below $7\times10^{-13}$ in all 36 paired runs. Its effect on the density error is smaller (Figure~\ref{fig:riemann-mass-error}b): the mean change relative to standard transfer is $-3.3\%$ for GP and $-2.9\%$ for CV, compared with $+0.2\%$ for NN and $-0.3\%$ for BAR. At 398 transfers and $s=2$, the GP2 errors decrease by 7.0--7.9\% and the CV2 errors by 5.1--5.4\% across the three mesh sequences, and their wide-window position errors fall from $+0.17$--$+0.20$ cell to $0.00$--$+0.02$ cell. Shock broadening stays small: for CV2 at $s=2$, for example, its mean is $0.011$ cell with standard transfer and $0.029$ cell with LC. The LC implementation therefore gives better mass balance while retaining the diffusion of the underlying transfer. Its lower density errors cannot be attributed to flux correction alone, because the code revision changed as well \textcolor{red}{(This is a wild statement, you should not say something like this (related to the code revision))}.
+The GP and CV limiters redistribute the change introduced by clipping among vertices that still have room within their bounds. The tolerance $\tau=2\times10^{-3}$ allows part of that change to reach a uniform far field. We measure density disturbances up to $1.4\times10^{-4}$ for $x<1$ and momentum density of about $2\times10^{-4}$ at the open ends. NN and BAR retain the constant far-field state to roundoff. In the CV2 runs, a disturbed boundary state can change the mass flux during a flow step. Incomplete convergence of that step can also change the mass. The recorded flow-step balance measures their combined effect.
 
 \begin{figure}[pos=!htbp]
 \centering\color{black}
 \begin{tikzpicture}
 \begin{groupplot}[group style={group size=2 by 1,horizontal sep=1.55cm},
- evidence axis,width=0.42\textwidth,height=0.34\textwidth]
-\nextgroupplot[title={(a) Mass diagnostics},ymode=log,
- ylabel={Absolute normalized mass change},xmin=0.5,xmax=4.5,
- xtick={1,2,3,4},xticklabels={NN1,BAR2,GP2,CV2},ymin=1e-15,ymax=1e-2,
+ evidence axis,width=0.42\textwidth,height=0.32\textwidth,
+ xmin=0.5,xmax=4.5,xtick={1,2,3,4},xticklabels={NN1,BAR2,GP2,CV2}]
+\nextgroupplot[title={(a) Shock broadening},ylabel={Width change (cells)},ymin=-0.6,ymax=9.5,ytick={0,2,4,6,8}]
+\addplot[gray,dashed,forget plot] coordinates {(0.5,0) (4.5,0)};
+\addplot[only marks,mark=*,NavyBlue,mark size=1.7pt] table[col sep=comma,x=x,y=shock_width]{\GeneratedDir/riemann_mass_plot.csv};
+\nextgroupplot[title={(b) Mass balance},ymode=log,
+ ylabel={Absolute relative mass change},ymin=1e-15,ymax=1e-2,
  ytick={1e-14,1e-12,1e-10,1e-8,1e-6,1e-4,1e-2},
- legend style={font=\scriptsize,draw=none,at={(0.5,-0.18)},anchor=north,legend columns=1}]
-\addplot[only marks,mark=triangle,black,mark size=2pt] table[col sep=comma,x=x,y=transfer]{\GeneratedDir/riemann_mass_plot.csv};\addlegendentry{Standard: transfer sum}
-\addplot[only marks,mark=*,BrickRed,mark size=1.8pt] table[col sep=comma,x=x,y=standard]{\GeneratedDir/riemann_mass_plot.csv};\addlegendentry{Standard: final drift}
-\addplot[only marks,mark=square*,NavyBlue,mark size=1.8pt] table[col sep=comma,x=x,y=lc]{\GeneratedDir/riemann_mass_plot.csv};\addlegendentry{LC: final drift}
-\nextgroupplot[title={(b) Standard/LC density error change},
- xlabel={Time $t$},ylabel={Paired $L_1$ error change (\%)},
- xmin=0,xmax=0.4,ymin=-9,ymax=3,ytick={-8,-6,-4,-2,0,2},xtick={0,0.1,0.2,0.3,0.4},
- legend style={font=\scriptsize,draw=none,at={(0.5,-0.18)},anchor=north,legend columns=2}]
-\addplot[draw=none,name path=NN1min,forget plot] table[col sep=comma,x=t,y=NN1_min]{\GeneratedDir/riemann_error_plot.csv};
-\addplot[draw=none,name path=NN1max,forget plot] table[col sep=comma,x=t,y=NN1_max]{\GeneratedDir/riemann_error_plot.csv};
-\addplot[black!15,forget plot] fill between[of=NN1min and NN1max];
-\addplot[black,solid] table[col sep=comma,x=t,y=NN1_mean]{\GeneratedDir/riemann_error_plot.csv};\addlegendentry{NN1}
-\addplot[draw=none,name path=BAR2min,forget plot] table[col sep=comma,x=t,y=BAR2_min]{\GeneratedDir/riemann_error_plot.csv};
-\addplot[draw=none,name path=BAR2max,forget plot] table[col sep=comma,x=t,y=BAR2_max]{\GeneratedDir/riemann_error_plot.csv};
-\addplot[BrickRed!15,forget plot] fill between[of=BAR2min and BAR2max];
-\addplot[BrickRed,dashed] table[col sep=comma,x=t,y=BAR2_mean]{\GeneratedDir/riemann_error_plot.csv};\addlegendentry{BAR2}
-\addplot[draw=none,name path=GP2min,forget plot] table[col sep=comma,x=t,y=GP2_min]{\GeneratedDir/riemann_error_plot.csv};
-\addplot[draw=none,name path=GP2max,forget plot] table[col sep=comma,x=t,y=GP2_max]{\GeneratedDir/riemann_error_plot.csv};
-\addplot[Purple!15,forget plot] fill between[of=GP2min and GP2max];
-\addplot[Purple,densely dotted] table[col sep=comma,x=t,y=GP2_mean]{\GeneratedDir/riemann_error_plot.csv};\addlegendentry{GP2}
-\addplot[draw=none,name path=CV2min,forget plot] table[col sep=comma,x=t,y=CV2_min]{\GeneratedDir/riemann_error_plot.csv};
-\addplot[draw=none,name path=CV2max,forget plot] table[col sep=comma,x=t,y=CV2_max]{\GeneratedDir/riemann_error_plot.csv};
-\addplot[teal!15,forget plot] fill between[of=CV2min and CV2max];
-\addplot[teal,dashdotted] table[col sep=comma,x=t,y=CV2_mean]{\GeneratedDir/riemann_error_plot.csv};\addlegendentry{CV2}
+ legend style={font=\scriptsize,draw=none,at={(0.5,-0.22)},anchor=north,legend columns=2}]
+\addplot[only marks,mark=triangle,black,mark size=2pt] table[col sep=comma,x=x,y=transfer]{\GeneratedDir/riemann_mass_plot.csv};\addlegendentry{Transfer sum}
+\addplot[only marks,mark=*,BrickRed,mark size=1.7pt] table[col sep=comma,x=x,y=drift]{\GeneratedDir/riemann_mass_plot.csv};\addlegendentry{Final drift}
 \end{groupplot}
 \end{tikzpicture}
-\caption{Mass balance and density accuracy for remeshing every two steps with $s=2$. (a) Each symbol is one of three mesh sequences, offset horizontally for visibility. The transfer sum is the absolute value of the summed mass changes across all standard transfers and excludes the flow steps; final drift uses the mass integral after the last transfer. Both are normalized by initial mass. (b) Paired changes $100(e_{\rho,1,\mathrm{LC}}^{\mathrm{FV}}/e_{\rho,1,\mathrm{std}}^{\mathrm{FV}}-1)$, with density $L_1$ error measured against the exact Sod solution. Lines are means and shaded bands span the three mesh sequences. Samples precede transfer, except the final sample at $t=0.399$, which follows the last transfer. Negative values indicate lower error with LC.}
+\caption{Shock broadening and mass change at $t=0.399$ after 398 transfers with $s=2$. The three symbols for each method are individual mesh sequences, offset horizontally. (a) Shock width relative to the fixed-mesh run, in reference cells. (b) Magnitudes of the signed sum of mass changes during transfer and of the final mass drift, both divided by the initial mass.}
 \label{fig:riemann-mass-error}
 \end{figure}
 \FloatBarrier
-
-The tolerance on the bounds allows small new extrema. Standard NN1 and BAR2 transfers are strictly monotone in this test, whereas LC introduces density excursions within the $2\times10^{-3}$ tolerance. BAR2 excursions reach approximately $5.6\times10^{-5}$ of the source range; NN2, NN3, and BAR3 excursions are limited to $2\times10^{-3}$. LC reaches its 12-pass limit in 23 of the 36 final transfers, so part of the unlimited correction remains unapplied. The fields remain conservative and satisfy the relaxed bounds, but need not recover the unlimited result. The positivity fix is never activated. At slip walls, LC can introduce wall-normal momentum up to $1.3\times10^{-4}$, which the solver removes in the next step. Conservation and the relaxed bounds therefore do not guarantee the exact wall condition immediately after transfer.
 
 \subsection{Controlled BDF2 restarts over an airfoil}
 
@@ -1005,7 +979,7 @@ Even with an exact first step, the cancellation would last one step: the retaine
 \subsection{Airfoil loads after remeshing}
 \label{sec:results-euler-airfoil-new}
 
-The following Euler tests use the flow conditions of Section~\ref{sec:naca-fixed-methodology}.
+The first-step comparison leaves open how long transfer errors affect the airfoil load. Using the same Euler flow conditions as in Section~\ref{sec:naca-fixed-methodology}, we track the load through repeated mesh changes and then follow the pressure response to a single transfer away from the wall.
 
 \subsubsection{Initial load growth under repeated remeshing}
 
@@ -1190,15 +1164,13 @@ In summary, the integral comparison favors GP2 and CV2. The RMS drag departures 
 
 Transfer in an unsteady calculation must supply every state used by the time integrator. BDF2 uses both stored states with fixed coefficients, and the implicit solve acts on their weighted combination. Within the linear-response regime and for converged inner solves, an error placed in the older state alone therefore produces $-1/3$ of the response to the same error placed in both states, and $-1/4$ of the response to it in the latest state alone. For the imposed error field of the controlled restarts, the measured lift ratios are $-0.32$ to $-0.34$ and $-0.24$ to $-0.25$. For total mass, with conservative fluxes and a boundary flux that does not depend on the state, equal mass errors in both stored levels shift the later mass by that error, not by their sum. The finite-amplitude restarts are consistent with approximately quadratic scaling of the remainder in the Euclidean norm, but they do not verify the asymptotic estimate independently of iterative error.
 
-The Riemann results distinguish preservation of mass, wave shape, and mass balance during later flow steps. Global mass correction does not restore a smeared profile. GP2 and CV2 preserve the tested profiles more closely than NN1 and BAR2. However, standard limiting that redistributes globally within relaxed bounds changed a uniform far field by up to $1.4\times10^{-4}$ in density, and mass drifted during the following flow steps although CV2 conserved mass across every transfer. The drift is consistent with altered open-boundary exchange, but its contribution has not been separated from incomplete inner convergence. Such a correction should not be assumed to leave uniform regions unchanged.
-
-The LC implementation keeps final mass and energy drift near roundoff without materially changing shock broadening. It gives modestly lower GP and CV density errors, but the comparison includes changes to the linear solves and does not isolate flux correction. LC allows small extrema within the tolerance on the bounds, can leave part of the unlimited correction unapplied, and does not guarantee the wall condition immediately after transfer.
+In the shock tube, global mass correction leaves a smeared contact even when it restores the total mass. GP2 and CV2 preserve the wave profiles more closely than NN1 and BAR2. With relaxed bounds, however, their global redistribution also reaches the uniform far field. For CV2, mass changes during the subsequent flow steps despite near-roundoff conservation across transfers. Both open-boundary exchange and incomplete inner convergence can contribute to the measured drift.
 
 In the SA airfoil restarts, the RMS drag departures of the three methods differ by less than 2\% while the NN2 and GP2 histories differ by 12--16\% of the GP2 departure. The ordering of the departures depends on the mesh sequence, and halving the physical time step changes the NN2--GP2 drag difference by more than its nominal RMS. CV2 produces the smallest changes in the monitored integrals; all are small relative to whole-domain totals, which does not by itself establish their aerodynamic significance. The viscous calculations therefore do not rank the methods.
 
-The airfoil comparisons use steady reference flows and independently computed target-mesh solutions. They therefore establish how errors in the stored states are weighted, not a ranking of the methods by transfer error alone. Locally conservative correction was assessed in the Riemann problem only.
+The airfoil comparisons use steady reference flows and independently computed target-mesh solutions. They therefore establish how errors in the stored states are weighted, not a ranking of the methods by transfer error alone.
 
-These results suggest five checks when a transfer method is assessed for unsteady restarts. Every stored time level should be transferred, and its error weighted by the coefficients of the time integrator. Conservation should be measured on the state passed to the solver and over the flow steps that follow, not only across the transfer. Wave profiles should be compared as well as integrals. Loads should be monitored for at least the acoustic travel time from the remeshed region to the wall. Finally, time-step and iterative convergence should be established before methods are ranked by loads.
+For an unsteady restart, the time integrator determines which stored states must be transferred and how their errors enter the next step. In flows with shocks or contacts, comparing profiles reveals local smearing that a mass balance cannot detect. Measuring the mass immediately before and after each transfer, and again after the flow step, identifies when a change occurs. For aerodynamic loads, the observation interval must allow disturbances from the remeshed region to reach the wall. A ranking then requires load differences large enough to resolve under time-step refinement and tighter iterative convergence.
 
 \FloatBarrier
 \appendix

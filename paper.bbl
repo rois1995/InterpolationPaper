@@ -164,10 +164,6 @@ R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts
 \newblock \href {https://doi.org/10.1017/CBO9780511791253}
   {\path{doi:10.1017/CBO9780511791253}}.
 
-\bibitem{Zalesak1979}
-S.~T. Zalesak, Fully multidimensional flux-corrected transport algorithms for
-  fluids, J. Comput. Phys. 31~(3) (1979) 335--362.
-
 \bibitem{SpalartAllmaras1994}
 P.~R. Spalart, S.~R. Allmaras, A one-equation turbulence model for aerodynamic
   flows, Rech. A\'erosp.~(1) (1994) 5--21.
