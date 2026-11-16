@@ -601,16 +601,20 @@ Total mass is one quantity whose response is known exactly. Let $\delta^k=Q_B(\w
  \delta^{n+1}=\tfrac43\delta^n-\tfrac13\delta^{n-1}.
  \label{eq:mass-first-step}
 \end{equation}
+
+\textcolor{red}{(How can you prove these statements?)}
 No linearization is involved. The same relation holds at every later step in which the stored states are not transferred again. It leaves $\delta^{k+1}-\delta^k/3$ unchanged from one step to the next, while $\delta^{k+1}-\delta^k$ decreases by a factor of three per step. The mass difference therefore tends to
 \begin{equation}
  \delta^{\infty}=\tfrac32\delta^n-\tfrac12\delta^{n-1}.
  \label{eq:mass-long-run}
 \end{equation}
-Equal mass errors $\delta$ in both stored states thus shift the later mass by $\delta$, not by $2\delta$. An error in the older state alone shifts it with the opposite sign. The unweighted sum of the two transfer changes can therefore misrepresent the subsequent mass difference. Section~\ref{sec:results-local-conservation} examines this distinction in the shock tube.
+Equal mass errors $\delta$ in both stored states thus shift the later mass by $\delta$, not by $2\delta$. An error in the older state alone shifts it with the opposite sign. The unweighted sum of the two transfer changes can therefore misrepresent the subsequent mass difference. Section~\ref{sec:results-local-conservation} examines this distinction in the shock tube. \textcolor{red}{(So this is  problem only for non-conservative transfers right?)}
 
 \section{Numerical tests and results}
 \label{sec:methodology}
 \label{sec:results}
+
+\textcolor{red}{(do you think it is a proper way of introducing a new section??)}
 
 The static tests measure transfer error against prescribed density fields. In the shock tube, the waves evolve between transfers, so their shape and the total mass can also change during the flow steps. The airfoil cases follow the effect on loads, first by perturbing the two BDF2 states separately and then by tracking lift and drag over several steps.
 
@@ -763,7 +767,7 @@ CV2, hard limited & 0 & 0 & $6.62\times10^{-15}$ \\
 \end{tabular}
 \end{table}
 
-For comparison, applying global correction in a separate smooth test reduces the relative mass change to order $10^{-15}$ and changes the density $L_1$ error by at most 0.8\%.
+For comparison, applying global correction in a separate smooth test reduces the relative mass change to order $10^{-15}$ and changes the density $L_1$ error by at most 0.8\%. \textcolor{red}{(there is no context to this separate smooth test if it is not the previous one. So you cannot mention it.)}
 
 \FloatBarrier
 \subsection{Repeated remeshing of a Riemann problem}
@@ -787,7 +791,9 @@ During the 400 physical steps of size $\Delta t=10^{-3}$, remeshing displaces in
 
 At $s=4$ we compare all eight methods with remeshing every ten steps and every two steps. Each event transfers both stored BDF2 states, giving 80 and 398 field transfers, respectively. For NN1, BAR2, GP2 and CV2 we repeat the two-step case on three random mesh sequences at each displacement amplitude. The fixed-mesh run uses the same initial state and boundary conditions. Differences from it include the effect of evolving the flow on displaced meshes as well as the transfer itself.
 
-At $t=0.399$ we average density across the tube and compare the profiles with the fixed-mesh solution. To locate the shock, we estimate the densities on its two sides from the ends of the interval $[2.40,3.00]$ and find the position halfway through the density jump. To measure its width, we use the distance between the 10\% and 90\% crossings. The contact can spread into the left end of the position window. For the width measurement we therefore estimate both plateau densities and both crossings in the narrower interval $[2.55,2.85]$, which isolates the shock. We express changes in position and width relative to the fixed mesh in units of $h$.
+At $t=0.399$ we average density across the tube \textcolor{red}{(I guess you mean in the y direction)} and compare the profiles with the fixed-mesh solution. To locate the shock, we estimate the densities on its two sides from the ends of the interval $[2.40,3.00]$ and find the position halfway through the density jump. To measure its width, we use the distance between the 10\% and 90\% crossings. The contact can spread into the left end of the position window. For the width measurement we therefore estimate both plateau densities and both crossings in the narrower interval $[2.55,2.85]$, which isolates the shock. We express changes in position and width relative to the fixed mesh in units of $h$.
+
+\textcolor{red}{(The fact that you said first that we use a range for the width then you say that there could be a problem with the contact discontinuity and then you say that you change the measurement window feels artificial and thus describing the different trials you have done. Fix it.)}
 
 The exact solution retains its initial mass $I_{\rho,0}=2.375$ through the measurement time because no wave reaches either open end. To identify when a numerical mass change occurs, we record $I_\rho=Q_M(\rho_M)$ immediately before and after transferring each stored state. The signed sum of these changes, divided by $I_{\rho,0}$, measures the net change during transfer. We compare it with the final relative mass drift, $[I_\rho(t)-I_{\rho,0}]/I_{\rho,0}$, which also reflects the evolution between mesh changes.
 
@@ -833,6 +839,8 @@ In the exact solution~\cite{LeVeque2002}, the contact lies at $x\simeq2.370$ and
 \label{fig:riemann-profiles}
 \end{figure}
 
+\textcolor{red}{(WTF is that orange band? And also, why aren't you just using one plot with different colors respecting the color scheme of the previous case? And what about NN2?)}
+
 At $s=4$, the mean additional shock width after 398 transfers is 1.43 cells for NN1 and 1.07 cells for BAR2. Doubling the allowed displacement increases these widths to 8.35 and 2.21 cells, respectively (Figure~\ref{fig:riemann-mass-error}a). For GP2 and CV2 the mean change is below 0.02 cell in magnitude at both amplitudes. These methods retain a sharper shock even when the contact is excluded from the measurement.
 
 Restoring the total mass alone does little to recover a diffused wave. With bounded global correction, the magnitude of the NN1 signed transfer sum is at most $1.0\times10^{-13}$ in the three mesh sequences, yet the contact remains spread over many cells. This illustrates the distinction between preserving an integral and preserving the spatial distribution of the field~\cite{MaddisonHiester2017}.
@@ -840,11 +848,13 @@ Restoring the total mass alone does little to recover a diffused wave. With boun
 \subsubsection{Mass changes during transfer and flow evolution}
 \label{sec:results-local-conservation}
 
-For NN1 and BAR2 at $s=2$, the magnitude of the signed transfer sum is 1.8--2.2 times the final drift (Figure~\ref{fig:riemann-mass-error}b). This ratio is consistent with similar mass changes in the two stored states. The sum counts both changes in full, while BDF2 carries an equal change in both histories forward only once under the conditions of Eq.~\eqref{eq:mass-long-run}.
+For NN1 and BAR2 at $s=2$, the magnitude of the signed transfer sum is 1.8--2.2 times the final drift (Figure~\ref{fig:riemann-mass-error}b). This ratio is consistent with similar mass changes in the two stored states \textcolor{red}{(what do you mean?)}. The sum counts both changes in full, while BDF2 carries an equal change in both histories forward only once under the conditions of Eq.~\eqref{eq:mass-long-run}.
 
 For CV2 the two measurements differ by several orders of magnitude. CV2 preserves mass to near roundoff across the transfers, but the final relative mass drift is $3.0\times10^{-7}$--$4.1\times10^{-7}$ at $s=4$ and $5.5\times10^{-6}$--$6.4\times10^{-6}$ at $s=2$. In the first mesh sequence at $s=2$, for example, the final flow step changes the mass by $2.7\times10^{-8}$ of its initial value. The transfer immediately afterward leaves the mass unchanged at the reported precision.
 
 The GP and CV limiters redistribute the change introduced by clipping among vertices that still have room within their bounds. The tolerance $\tau=2\times10^{-3}$ allows part of that change to reach a uniform far field. We measure density disturbances up to $1.4\times10^{-4}$ for $x<1$ and momentum density of about $2\times10^{-4}$ at the open ends. NN and BAR retain the constant far-field state to roundoff. In the CV2 runs, a disturbed boundary state can change the mass flux during a flow step. Incomplete convergence of that step can also change the mass. The recorded flow-step balance measures their combined effect.
+
+\textcolor{red}{(I think these two last paragraphs are something important and you go a bit too quickly. I would like you to take a bit more time to explain them carefully, indicating the implications of what you are stating.)}
 
 \begin{figure}[pos=!htbp]
 \centering\color{black}
@@ -873,9 +883,9 @@ The GP and CV limiters redistribute the change introduced by clipping among vert
 
 We use steady flow over a NACA~0012 airfoil to measure how transferring each of the two BDF2 fields changes lift at the next time step. Steady flow lets us place exactly the same transfer error in either time level. In an unsteady flow the two errors would generally differ, making their individual contributions harder to identify.
 
-We solve the Euler equations independently on two triangular meshes with 16,255 source vertices and 22,508 target vertices. Both meshes have the same 370 vertices on the airfoil and the same 63 vertices on the outer boundary, $100$ chords away. The freestream Mach number is $M_\infty=U_\infty/a_\infty=0.1$ and the angle of attack is $\alpha=6^\circ$. We use unit chord $c$, unit reference area, and nondimensional freestream pressure, density and temperature all equal to one. The freestream sound speed is $a_\infty=\sqrt{1.4}$ and the flow speed is $U_\infty=0.1a_\infty$.
+We solve the Euler equations independently on two triangular meshes with 16,255 source vertices and 22,508 target vertices \textcolor{red}{(is there a difference in how they were obtained? I am just asking why the number of points change)}. Both meshes have the same 370 vertices on the airfoil and the same 63 vertices on the outer boundary, $100$ chords away. The freestream Mach number is $M_\infty=U_\infty/a_\infty=0.1$ and the angle of attack is $\alpha=6^\circ$. We use unit chord $c$, unit reference area, and nondimensional freestream pressure, density and temperature all equal to one. The freestream sound speed is $a_\infty=\sqrt{1.4}$ and the flow speed is $U_\infty=0.1a_\infty$.
 
-The reference run uses the steady target solution at both stored times. For each second-order method (NN2, BAR2, GP2 and CV2), we transfer the steady source solution once. We then replace the latest field, the older field, or both fields in the reference restart with that transferred solution. Each run advances one physical step of size $\Delta t=10^{-3}$ on the target mesh. We compute the lift coefficient $C_L$ from the resulting wall pressure and subtract the lift from the reference run. Table~\ref{tab:naca-first-lift} gives this difference, $\Delta C_L$.
+The reference run uses the steady target solution at both stored times. For each second-order method (NN2, BAR2, GP2 and CV2), we transfer the steady source solution once. We then replace the latest field \textcolor{red}{(n)}, the older field \textcolor{red}{(n-1)}, or both fields in the reference restart with that transferred solution. Each run advances one physical step of size $\Delta t=10^{-3}$ on the target mesh. We compute the lift coefficient $C_L$ from the resulting wall pressure and subtract the lift from the reference run. Table~\ref{tab:naca-first-lift} gives this difference, $\Delta C_L$.
 
 \begin{table}[pos=htbp]
 \centering\small
@@ -893,7 +903,7 @@ The reference run uses the steady target solution at both stored times. For each
 ]{\DataDir/naca_first_step_lift.csv}
 \end{table}
 
-Transferring only the older field raises lift for all four methods, even though the latest field is identical to the reference. Transferring only the latest field lowers lift. The signs and relative sizes follow from the BDF2 weights in Eq.~\eqref{eq:nonlinear-bdf2-response}. The same error enters with weight $2$ in the latest field and $-1/2$ in the older field, giving a combined weight of $3/2$ when both are transferred. The linear lift response in Eq.~\eqref{eq:force-response} therefore predicts that the older field alone gives $-1/3$ of the change from transferring both, and the latest alone gives $4/3$. The measured ratios are about $-0.336$ and $1.33$, respectively. This comparison tests how BDF2 weights a given discrepancy. Its absolute size also depends on the difference between the steady solutions on the two meshes.
+Transferring only the older field \textcolor{red}{(n-1)} raises lift for all four methods, even though the latest field \textcolor{red}{(n)} is identical to the reference. Transferring only the latest field lowers lift. The signs and relative sizes follow from the BDF2 weights in Eq.~\eqref{eq:nonlinear-bdf2-response}. The same error enters with weight $2$ in the latest field and $-1/2$ in the older field, giving a combined weight of $3/2$ when both are transferred. The linear lift response in Eq.~\eqref{eq:force-response} therefore predicts that the older field alone gives $-1/3$ of the change from transferring both, and the latest alone gives $4/3$. The measured ratios are about $-0.336$ and $1.33$, respectively \textcolor{red}{(measured how?)}. This comparison tests how BDF2 weights a given discrepancy. Its absolute size also depends on the difference between the steady solutions on the two meshes.
 
 \FloatBarrier
 \subsection{Airfoil loads after remeshing}
@@ -903,18 +913,28 @@ The first-step comparison leaves open how long transfer errors affect the airfoi
 
 \subsubsection{Initial load growth under repeated remeshing}
 
-To examine accumulation in the airfoil calculation, we perturb vertices at wall distances between $0.01c$ and $20c$, keeping boundary vertices fixed. NN2, GP2, and CV2 use the same two random mesh sequences. A 400-step interval contains 39 remeshing events. Load differences are measured against the fixed-mesh run, and slopes are fitted over these 400 steps only.
+To examine accumulation in the airfoil calculation, we perturb vertices at wall distances between $0.01c$ and $20c$, keeping boundary vertices fixed. NN2, GP2, and CV2 use the same two random mesh sequences. A 400-step interval contains 39 remeshing events \textcolor{red}{(we should say after how many steps the mesh is perturbed and the interpolation is performed. Also, we have to say how the mesh is perturbed (I suppose the same as before but we need to say it))}. Load differences are measured against the fixed-mesh run, and slopes are fitted over these 400 steps only.
 
-GP2 and CV2 give slower initial drag growth than NN2 in both mesh sequences. GP2 slopes are $6.31\times10^{-6}$ and $5.89\times10^{-6}$ per 100 physical steps; CV2 gives $5.92\times10^{-6}$ and $5.82\times10^{-6}$, compared with $3.95\times10^{-5}$ and $3.84\times10^{-5}$ for NN2. The mean NN2 slope is approximately 6.4 times the GP2 mean and 6.6 times the CV2 mean. However, 400 steps span only about 0.047 convective and 0.47 acoustic chord times. The result describes early growth only, and lift trends vary more between the two mesh sequences.
+\textcolor{red}{(Also we might want to say that BAR2 was not investigated since the previous results showed that it has the same effects than NN2 in smooth fields.)}
+
+GP2 and CV2 give slower initial drag growth than NN2 in both mesh sequences \textcolor{red}{(mesh sequences??)}. GP2 slopes are $6.31\times10^{-6}$ and $5.89\times10^{-6}$ per 100 physical steps; CV2 gives $5.92\times10^{-6}$ and $5.82\times10^{-6}$, compared with $3.95\times10^{-5}$ and $3.84\times10^{-5}$ for NN2. The mean NN2 slope is approximately 6.4 times the GP2 mean and 6.6 times the CV2 mean. However, 400 steps span only about 0.047 convective and 0.47 acoustic chord times. The result describes early growth only, and lift trends vary more between the two mesh sequences \textcolor{red}{(I think you are putting way too harshly, we are still demonstrating lift departures even at small total time. Also, mesh sequence??)}.
+
+\textcolor{red}{(Really no Figure here?? Just numbers? WTF)}
 
 \subsubsection{Delayed response to a disturbance away from the wall}
 \label{sec:delayed-airfoil-test}
 
-A separate test applies one transfer in a narrow band away from the wall, $0.20c\le r\le0.25c$, with GP2 and with CV2. Fixed shells measure the root-mean-square (RMS) pressure difference from a common fixed-mesh reference. Coupled transfer and implicit time integration can introduce small immediate changes outside the displaced band. We therefore define arrival as the first time the signal reaches a specified fraction of its peak. For a shell at wall distance $r$ inside a band beginning at $r_b$, the low-Mach acoustic travel estimate is $(r_b-r)/(a_\infty\Delta t)\simeq845(r_b-r)/c$ physical steps in these nondimensional Euler calculations. Transfer already produces immediate changes up to approximately $0.08c$ inward of the displaced band; these shells are excluded from propagation fits.
+A separate test applies one transfer in a narrow band away from the wall, $0.20c\le r\le0.25c$, with GP2 and with CV2. Fixed shells measure the root-mean-square (RMS) pressure difference from a common fixed-mesh reference \textcolor{red}{(What are these shells??)}. Coupled transfer and implicit time integration can introduce small immediate changes outside the displaced band. We therefore define arrival as the first time the signal reaches a specified fraction of its peak. For a shell at wall distance $r$ inside a band beginning at $r_b$, the low-Mach acoustic travel estimate is $(r_b-r)/(a_\infty\Delta t)\simeq845(r_b-r)/c$ physical steps in these nondimensional Euler calculations. Transfer already produces immediate changes up to approximately $0.08c$ inward of the displaced band; these shells are excluded from propagation fits.
+
+\textcolor{red}{(This paragraph is not really clear. Maybe a figure would help??)}
 
 Beyond the region changed immediately by transfer, the pressure response is delayed (Figure~\ref{fig:euler-pressure}). For GP2, the pressure difference first reaches half its local peak 55 steps after remeshing at $r/c=0.10$ and 130 steps after remeshing at $r/c=0.005$. The load is a smooth function of the state at each instant; it changes quickly in time because the wall state changes quickly when the disturbance arrives. Estimated propagation speeds are 1.09--1.27 with GP2 and 1.10--1.30 with CV2, using 10--75\% amplitude thresholds. Both ranges include the sound speed $a_\infty\simeq1.183$; their spread reflects the choice of threshold for a single event. A load-based check after remeshing must therefore cover at least the acoustic travel time from the remeshed region to the wall.
 
+\textcolor{red}{(Again, not really clear. What are these amplitude thresholds? How did you compute the estimated propagations?)}
+
 The first load difference can understate the response for a second reason. In a separate restart test, the NN1 lift difference peaks three steps after the first post-transfer sample, at 4.66 times its initial value, whereas the sampled second- and third-order responses peak at the first step and then decay.
+
+\textcolor{red}{(Same here, this is not clear and is just put there without a clear contribution.)}
 
 \begin{figure}[pos=!htbp]
 \centering\color{black}
@@ -948,17 +968,17 @@ The first load difference can understate the response for a second reason. In a 
 \subsubsection{Setup and numerical sensitivity tests}
 \label{sec:rans-methodology}
 
-For a viscous flow, does the transfer method that best preserves the integrals also keep drag closest to the fixed-mesh reference? We test this on the stationary airfoil with the one-equation SA model~\cite{SpalartAllmaras1994}. Each run starts from a steady RANS calculation, which the prescribed mesh changes then disturb. The conditions are $M_\infty=0.1$, $\alpha=6^\circ$, and chord Reynolds number $Re_c=\rho_\infty U_\infty c/\mu_\infty=6\times10^6$, where $\mu_\infty$ is freestream dynamic viscosity.
+For a viscous flow, does the transfer method that best preserves the integrals also keep drag closest to the fixed-mesh reference? \textcolor{red}{(Really? a question??)} We test this on the stationary airfoil with the one-equation SA model~\cite{SpalartAllmaras1994}. Each run starts from a steady RANS calculation, which the prescribed mesh changes then disturb. The conditions are $M_\infty=0.1$, $\alpha=6^\circ$, and chord Reynolds number $Re_c=\rho_\infty U_\infty c/\mu_\infty=6\times10^6$, where $\mu_\infty$ is freestream dynamic viscosity.
 
-The coarse mesh has 23,271 vertices, 9,686 boundary-layer and wake quadrilaterals, 26,851 triangles, and 256 airfoil vertices. Medium and fine meshes have 32,102 and 48,228 vertices. All retain a first off-wall spacing of approximately $5\times10^{-6}c$. The farfield is at $100c$, and the quadrilateral region extends to about $0.11c$.
+The coarse mesh has 23,271 vertices, 9,686 boundary-layer and wake quadrilaterals, 26,851 triangles, and 256 airfoil vertices. Medium and fine meshes have 32,102 and 48,228 vertices \textcolor{red}{(not really a nice mesh convergence I would say. They are not really doubling each.)}. All retain a first off-wall spacing of approximately $5\times10^{-6}c$. The farfield is at $100c$, and the quadrilateral region extends to about $0.11c$ \textcolor{red}{(do you mean the boundary layer?? I suppose there is no wake refinement with quads.)}.
 
-We use the SU2 solver~\cite{EconomonEtAl2016SU2}. Mean-flow convection uses the HLLC approximate Riemann solver with MUSCL reconstruction. Turbulence transport uses scalar upwinding without MUSCL. BDF2 is solved by dual-time stepping at a pseudo-time CFL number of 6. The nominal limit is 800 pseudo-time iterations per physical step. After ten iterations, the solver stops if $\log_{10}\operatorname{rms}(r_\rho)\leq-12$, with $r_\rho$ the nodal density-equation residual in solver normalization and $\operatorname{rms}$ its root-mean-square over solver vertices.
+We use the SU2 solver~\cite{EconomonEtAl2016SU2}\textcolor{red}{(We have used SU2 until now, why are you mentioning this only now?? We should have put this description at the beginning of the test cases section)}. Mean-flow convection uses the HLLC approximate Riemann solver with MUSCL reconstruction. Turbulence transport uses scalar upwinding without MUSCL. BDF2 is solved by dual-time stepping at a pseudo-time CFL number of 6. The nominal limit is 800 pseudo-time iterations per physical step. After ten iterations, the solver stops if $\log_{10}\operatorname{rms}(r_\rho)\leq-12$, with $r_\rho$ the nodal density-equation residual in solver normalization and $\operatorname{rms}$ its root-mean-square over solver vertices.
 
-The dimensional physical step $\Delta t_0=10^{-3}$~s corresponds to $\Delta t_0^*\simeq0.347224$. A superscript $*$ denotes normalization by solver reference scales. With $U_\infty^*=0.1$, the 400-step window spans approximately 13.9 chord flow-through times, measured by $tU_\infty/c$. Startup uses a first-order step ten times smaller. The fixed-mesh SA reference advances for 800 steps from matching stored states.
+The dimensional physical step $\Delta t_0=10^{-3}$~s corresponds to $\Delta t_0^*\simeq0.347224$. A superscript $*$ denotes normalization by solver reference scales. With $U_\infty^*=0.1$, the 400-step window spans approximately 13.9 chord flow-through times, measured by $tU_\infty/c$ \textcolor{red}{(how come the total convective time is so different than the Euler case??)}. Startup uses a first-order step ten times smaller \textcolor{red}{(to obtain the solution at time equal to dt since we have t=0 from the steady RANS)}. The fixed-mesh SA reference advances for 800 steps from matching stored states.
 
-The coarse steady SA solution reaches its 20,000-iteration limit at $-11.2$, with lift and drag stationary to $10^{-7}$ over the last 2,000 iterations. Table~\ref{tab:rans-inner-app} reports convergence during the subsequent physical steps.
+The coarse steady SA solution reaches its 20,000-iteration limit at $-11.2$, with lift and drag stationary to $10^{-7}$ over the last 2,000 iterations. Table~\ref{tab:rans-inner-app} reports convergence during the subsequent physical steps \textcolor{red}{(why are you presenting table 8 here???)}.
 
-NN2, limited GP2, and limited CV2 are compared at a common nominal second order. CV2's accuracy depends on element geometry (Section~\ref{sec:cv-transfer}); the distorted quadrilaterals in this mixed-mesh case prevent assuming affine exactness, and its transfer order is not measured here. The three methods follow the same prescribed mesh sequences, with one sequence used for the numerical sensitivity tests. At each event, 12,602 vertices may move and 10,669 remain fixed. No vertex with solver wall distance below $0.01c$ moves. The geometric mask uses distance to the nearest airfoil vertex, allowing part of the outer quadrilateral region to move. The deformation parameter is $s=4$; a minimum corner-area ratio of 0.2 maintains valid cells. Boundary vertices remain fixed. Remeshing occurs every ten physical steps, independently of the solution.
+NN2, limited GP2, and limited CV2 are compared at a common nominal second order. CV2's accuracy depends on element geometry (Section~\ref{sec:cv-transfer}); the distorted quadrilaterals in this mixed-mesh case prevent assuming affine exactness, and its transfer order is not measured here \textcolor{red}{(have we actually verified this? I don't think that there are distorted quads as outside the BL mesh everything is triangles and I do not think we have distorted in bands including the structured BL. But have we measured this somehow?)}. The three methods follow the same prescribed mesh sequences, with one sequence used for the numerical sensitivity tests \textcolor{red}{(what do you even mean??)}. At each event, 12,602 vertices may move and 10,669 remain fixed \textcolor{red}{(this is not useful as saying the boundaries of the band that is perturbed!)}. No vertex with solver wall distance below $0.01c$ moves \textcolor{red}{(wtf is solver wall distance? Just say wall distance!)}. The geometric mask uses distance to the nearest airfoil vertex, allowing part of the outer quadrilateral region to move. The deformation parameter is $s=4$; a minimum corner-area ratio of 0.2 maintains valid cells. Boundary vertices remain fixed. Remeshing occurs every ten physical steps, independently of the solution.
 
 At each mesh change we transfer both stored time levels of the mean flow and the SA working variable $\widetilde\nu$. We monitor the integral of $\rho\widetilde\nu$ alongside the mass, momentum and total-energy integrals. Wall distance and eddy viscosity are recomputed. Integral changes use $e_Q$ from Section~\ref{sec:derivative-reconstruction}. The SA equation contains source terms, so the integral of $\rho\widetilde\nu$ can subsequently change during a flow step.
 
