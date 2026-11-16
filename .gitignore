@@ -44,8 +44,10 @@ generated/.figures_stamp
 !/generated/asymmetric_convergence_L2.csv
 !/generated/euler_arrival_CV2.csv
 !/generated/euler_arrival_GP2.csv
+!/generated/euler_load_trends.csv
 !/generated/euler_pressure_plot.csv
 !/generated/rans_drag_plot.csv
+!/generated/rans_drag_full.csv
 !/generated/reassessed_rans_controls_compact.csv
 !/generated/reassessed_rans_integrals.csv
 !/generated/reassessed_rans_meshlevels.csv

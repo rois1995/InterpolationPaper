@@ -45,7 +45,6 @@
 \newcommand{\eps}{\varepsilon}
 \newcommand{\calK}{\mathcal{K}}
 
-
 \newcommand{\DataDir}{data}
 \newcommand{\GeneratedDir}{generated}
 
@@ -93,21 +92,6 @@
     round-precision=3,
 }
 
-\pgfplotstableread[col sep=comma]{data/rans_control_inner.csv}\InnerData
-\pgfplotstableforeachcolumnelement{model}\of\InnerData\as\ThisModel{%
-  \edef\SavedModel{\ThisModel}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{setting}\of\InnerData\edef\ThisSetting{\pgfplotsretval}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{method}\of\InnerData\edef\ThisMethod{\pgfplotsretval}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{steps}\of\InnerData
-  \expandafter\xdef\csname In@\SavedModel @\ThisSetting @\ThisMethod @steps\endcsname{\pgfplotsretval}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{steps_at_cap}\of\InnerData
-  \expandafter\xdef\csname In@\SavedModel @\ThisSetting @\ThisMethod @cap\endcsname{\pgfplotsretval}%
-  \pgfplotstablegetelem{\pgfplotstablerow}{log10_rms_rho_end_median}\of\InnerData
-  \expandafter\xdef\csname In@\SavedModel @\ThisSetting @\ThisMethod @res\endcsname{\pgfplotsretval}%
-}
-\newcommand{\Inner}[4]{\csname In@#1@#2@#3@#4\endcsname}
-\newcommand{\InnerRow}[4]{#3 & #4 & \Inner{#1}{#2}{GP2}{steps} &
- \Inner{#1}{#2}{GP2}{cap} & \Inner{#1}{#2}{NN2}{cap} & \Inner{#1}{#2}{CV2}{cap}\\}
 \pgfplotstableset{publication table/.style={
  col sep=comma,
  every head row/.style={before row=\toprule,after row=\midrule},
@@ -386,7 +370,7 @@ Here $K_A$ is a source simplex, $K_B$ is a target simplex incident to $i$, and $
 \label{fig:transfer-geometry}
 \end{figure}
 
-GP2 uses piecewise-linear ($P^1$) source and target fields. GP3 reconstructs a quadratic ($P^2$) source field, including internal edge values, and solves for a complete quadratic target field. The solver receives only the original-vertex values. Mixed-element meshes use $P^\ell$ on simplicial subdivisions. The projection preserves the integral of its complete finite-element field, whereas the solver evaluates $Q_B$ from the retained vertex values and the median-dual weights. The two integrals agree for GP2 on triangular meshes, but triangulating a quadrilateral, or retaining only the vertex values of a quadratic field, can make them differ. We therefore measure $Q_B$ on the final solver values in the numerical tests. The nominal accuracy orders are two for GP2 and three for GP3, and the smooth-field tests check the accuracy of the retained vertex values.
+GP2 uses piecewise-linear ($P^1$) source and target fields. GP3 reconstructs a quadratic ($P^2$) source field, including internal edge values, and solves for a complete quadratic target field. The solver receives only the original-vertex values. Mixed-element meshes use $P^\ell$ on simplicial subdivisions. The projection preserves the integral of its complete finite-element field, whereas the solver evaluates $Q_B$ from the retained vertex values and the median-dual weights. The two integrals agree for GP2 on triangular meshes, but triangulating a quadrilateral, or retaining only the vertex values of a quadratic field, can make them differ. We therefore measure $Q_B$ on the final solver values in the numerical tests. The smooth-field tests check the accuracy of these stored vertex values. Joining them linearly across each target triangle gives a different field from the quadratic one used in the GP3 solve.
 
 \subsection{Conservative control-volume transfer}
 \label{sec:cv-transfer}
@@ -591,32 +575,31 @@ Equation~\eqref{eq:force-response} also shows why preserving a global integral d
 \end{equation}
 Preserving the source mass therefore need not give zero mass difference from the target reference. Even when the two reference masses agree, mass can be added at one vertex and removed at another. These changes cancel in the mass sum. Their contributions to a load carry different weights in Eq.~\eqref{eq:force-response}, however, and need not cancel. The tests therefore measure integral changes and load changes separately.
 
-Finally, the first-step load difference need not capture the later response. At the following step the stored-state errors are $\eps^{n+1}$ and $\eps^n$, so the weighted history error is $\eta^{n+1}=2\eps^{n+1}-\eps^n/2$. The newly computed error thus enters the subsequent steps, during which the flow can carry a disturbance toward the wall. Section~\ref{sec:delayed-airfoil-test} follows pressure and lift after one transfer away from the wall to determine how much of the response occurs after the first step.
+Finally, the first-step load difference need not capture the later response. At the following step the stored-state errors are $\eps^{n+1}$ and $\eps^n$, so the weighted history error is $\eta^{n+1}=2\eps^{n+1}-\eps^n/2$. The newly computed error thus enters the subsequent steps, during which the flow can carry a disturbance toward the wall. Section~\ref{sec:delayed-airfoil-test} follows the pressure disturbance from one transfer away from the wall to vertices close to the airfoil.
 
 \subsection{Response of total mass}
 \label{sec:mass-response}
 
-Total mass is one quantity whose response is known exactly. Let $\delta^k=Q_B(\widehat\rho_B^k)-Q_B(\rho_B^k)$ be the mass difference between the two runs at time level $k$. Suppose that the spatial discretization is conservative and that the boundary mass flux does not depend on the state, as for slip walls. The density components of $F_B$ then sum over the mesh to the same value for every state. Summing the density components of Eq.~\eqref{eq:nonlinear-bdf2-response} over the mesh, with exact solves, therefore leaves only the time-derivative terms, $\tfrac32\delta^{n+1}=2\delta^n-\tfrac12\delta^{n-1}$, or
+Let $\delta^k=Q_B(\widehat\rho_B^k)-Q_B(\rho_B^k)$ be the difference in total mass between the restarted and reference runs at time level $k$. Consider two runs on the same fixed mesh with exact inner solves. When we sum the discrete density equations over all control volumes, each interior face flux appears twice with opposite signs. Only the net boundary flux remains. If that flux is the same in both runs, as it is for impermeable walls, it cancels when we subtract their summed equations. BDF2 then gives
 \begin{equation}
- \delta^{n+1}=\tfrac43\delta^n-\tfrac13\delta^{n-1}.
+ \delta^{k+1}=\tfrac43\delta^k-\tfrac13\delta^{k-1}.
  \label{eq:mass-first-step}
 \end{equation}
-
-\textcolor{red}{(How can you prove these statements?)}
-No linearization is involved. The same relation holds at every later step in which the stored states are not transferred again. It leaves $\delta^{k+1}-\delta^k/3$ unchanged from one step to the next, while $\delta^{k+1}-\delta^k$ decreases by a factor of three per step. The mass difference therefore tends to
+Suppose the last transfer supplied the states at $n-1$ and $n$. Subtracting $\delta^k$ from both sides gives $\delta^{k+1}-\delta^k=(\delta^k-\delta^{k-1})/3$. As long as the same flux balance holds and there is no further transfer, each successive increment is one third of the preceding one. Their geometric sum gives
 \begin{equation}
- \delta^{\infty}=\tfrac32\delta^n-\tfrac12\delta^{n-1}.
+ \delta^\infty=\delta^n+(\delta^n-\delta^{n-1})\sum_{j=1}^\infty 3^{-j}
+ =\tfrac32\delta^n-\tfrac12\delta^{n-1}.
  \label{eq:mass-long-run}
 \end{equation}
-Equal mass errors $\delta$ in both stored states thus shift the later mass by $\delta$, not by $2\delta$. An error in the older state alone shifts it with the opposite sign. The unweighted sum of the two transfer changes can therefore misrepresent the subsequent mass difference. Section~\ref{sec:results-local-conservation} examines this distinction in the shock tube. \textcolor{red}{(So this is  problem only for non-conservative transfers right?)}
+If both stored masses differ from the reference by $\delta$, the mass difference stays equal to $\delta$ at every subsequent step. If only the older mass differs by $\delta$, the difference tends to $-\delta/2$. Adding the two stored errors would predict the wrong result in either example.
+
+A transfer that preserves the mass of each source state adds zero to its mass at that event. If the source and reference masses already differ, the transfer carries that difference forward. Even when both stored masses match the reference, the runs can later develop a mass difference if their boundary fluxes differ or their inner solves stop with different residuals. The shock tube in Section~\ref{sec:results-local-conservation} has open ends, so we measure mass both across transfers and during the intervening flow steps.
 
 \section{Numerical tests and results}
 \label{sec:methodology}
 \label{sec:results}
 
-\textcolor{red}{(do you think it is a proper way of introducing a new section??)}
-
-The static tests measure transfer error against prescribed density fields. In the shock tube, the waves evolve between transfers, so their shape and the total mass can also change during the flow steps. The airfoil cases follow the effect on loads, first by perturbing the two BDF2 states separately and then by tracking lift and drag over several steps.
+A transfer changes the values written to the restart. Once the solver advances those values, the disturbance can also change a wave profile, the mass leaving the domain, or the pressure on a wall. We first measure the error immediately after one transfer using fields whose exact values are known. We then use SU2~\cite{EconomonEtAl2016SU2} for the shock-tube and airfoil calculations. In each, a run on a fixed mesh supplies the reference for changes observed after remeshing.
 
 \subsection{Single-transfer tests}
 \label{sec:static-verification}
@@ -658,6 +641,8 @@ Table~\ref{tab:observed-orders} reports the order fitted over all three levels, 
 \label{sec:results-asymmetric}
 
 The choice of norm has little effect on these meshes. Across all 48 transfers, volume weighting changes the relative error by less than 1.55\% and the fitted order by less than 0.01. In both norms NN1 converges at first order, NN2, BAR2 and GP2 at about second order, and NN3 at third order. BAR3 and GP3 have fitted orders above three, with volume-weighted orders near 3.2 on the finest pair.
+
+Both norms in Eq.~\eqref{eq:static-error-norms} sample the error at vertices. For GP3 the volume-weighted vertex errors give fitted orders of 3.35 and 3.23 on the structured and mixed meshes. To check what remains between vertices, we also joined the same stored values linearly on each target triangle and integrated the squared difference from the exact density over the domain. The relative $L_2$ error of this linear field gave orders of 2.07 and 2.05, respectively.
 
 CV2 is more sensitive to element shape than to the choice of norm. Its volume-weighted order is 2.04 on the structured quadrilaterals and 1.49 on the mixed mesh, falling to 1.34 on the finest mixed pair. This behavior is consistent with the loss of affine accuracy on quadrilaterals that remain distorted under refinement (Section~\ref{sec:cv-transfer}). CV2 still preserves total mass. The relative mass-change magnitude $|e_Q|$ stays below $4\times10^{-15}$ on both mesh families. On the finest meshes, the corresponding GP2 values are $4.3\times10^{-12}$ (structured) and $2.5\times10^{-7}$ (mixed).
 
@@ -767,8 +752,6 @@ CV2, hard limited & 0 & 0 & $6.62\times10^{-15}$ \\
 \end{tabular}
 \end{table}
 
-For comparison, applying global correction in a separate smooth test reduces the relative mass change to order $10^{-15}$ and changes the density $L_1$ error by at most 0.8\%. \textcolor{red}{(there is no context to this separate smooth test if it is not the previous one. So you cannot mention it.)}
-
 \FloatBarrier
 \subsection{Repeated remeshing of a Riemann problem}
 
@@ -791,55 +774,33 @@ During the 400 physical steps of size $\Delta t=10^{-3}$, remeshing displaces in
 
 At $s=4$ we compare all eight methods with remeshing every ten steps and every two steps. Each event transfers both stored BDF2 states, giving 80 and 398 field transfers, respectively. For NN1, BAR2, GP2 and CV2 we repeat the two-step case on three random mesh sequences at each displacement amplitude. The fixed-mesh run uses the same initial state and boundary conditions. Differences from it include the effect of evolving the flow on displaced meshes as well as the transfer itself.
 
-At $t=0.399$ we average density across the tube \textcolor{red}{(I guess you mean in the y direction)} and compare the profiles with the fixed-mesh solution. To locate the shock, we estimate the densities on its two sides from the ends of the interval $[2.40,3.00]$ and find the position halfway through the density jump. To measure its width, we use the distance between the 10\% and 90\% crossings. The contact can spread into the left end of the position window. For the width measurement we therefore estimate both plateau densities and both crossings in the narrower interval $[2.55,2.85]$, which isolates the shock. We express changes in position and width relative to the fixed mesh in units of $h$.
-
-\textcolor{red}{(The fact that you said first that we use a range for the width then you say that there could be a problem with the contact discontinuity and then you say that you change the measurement window feels artificial and thus describing the different trials you have done. Fix it.)}
+At $t=0.399$ we average density in the transverse ($y$) direction to obtain a streamwise profile. We locate the shock at the halfway point of the density jump, using the plateau densities estimated at the ends of $2.40\le x\le3.00$. For the width we use $2.55\le x\le2.85$, which contains the shock and excludes the tail of the broadened contact. Within that interval we estimate the two plateau densities and measure the distance between the 10\% and 90\% crossings of the jump. We report changes in position and width relative to the fixed-mesh solution in units of the original cell spacing $h$.
 
 The exact solution retains its initial mass $I_{\rho,0}=2.375$ through the measurement time because no wave reaches either open end. To identify when a numerical mass change occurs, we record $I_\rho=Q_M(\rho_M)$ immediately before and after transferring each stored state. The signed sum of these changes, divided by $I_{\rho,0}$, measures the net change during transfer. We compare it with the final relative mass drift, $[I_\rho(t)-I_{\rho,0}]/I_{\rho,0}$, which also reflects the evolution between mesh changes.
 
 \subsubsection{Contact smearing and shock broadening}
 \label{sec:results-riemann}
 
-In the exact solution~\cite{LeVeque2002}, the contact lies at $x\simeq2.370$ and the shock at $x\simeq2.699$ (Figure~\ref{fig:riemann-profiles}). After 398 transfers with NN1 or BAR2, the contact has spread into $[2.40,2.46]$, raising the density there from 0.266 to as much as 0.287. Using that region as the left shock plateau gives an apparent width of more than 20 cells in the most diffused cases. The narrower window excludes the contact tail.
+The exact solution~\cite{LeVeque2002} places the contact at $x\simeq2.370$ and the shock at $x\simeq2.699$. Figure~\ref{fig:riemann-profiles} shows both in the same profile. With NN1 and BAR2, the contact spreads far enough downstream to raise the density in $2.40\le x\le2.46$ from the exact plateau value of 0.266 to as much as 0.287. GP2 and CV2 remain closer to the fixed-mesh profile. The larger-displacement comparison ($s=2$) covers these four methods. NN2 was included at $s=4$, where its shock position and width after 398 transfers differ from the fixed-mesh values by $-0.04h$ and $-0.024h$, respectively.
 
 \begin{figure}[pos=!htbp]
 \centering\color{black}
 \begin{tikzpicture}
-\begin{groupplot}[group style={group size=2 by 2,horizontal sep=1.1cm,vertical sep=1.05cm},
- evidence axis,width=0.43\textwidth,height=0.27\textwidth,
- xmin=2.30,xmax=3.00,ymin=0.10,ymax=0.45,xtick={2.3,2.5,2.7,2.9},
- xlabel={$x$},ylabel={Density $\rho$}]
-\nextgroupplot[xlabel={},title={NN1},legend to name=legend:riemann-profiles,legend columns=3]
-\addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
-\addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
-\addlegendentry{Exact}
-\addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
-\addlegendentry{Fixed mesh}
-\addplot[BrickRed,solid,line width=0.7pt] table[col sep=comma,x=x,y=NN1_standard]{\DataDir/riemann_lc/density_profiles.csv};
-\addlegendentry{Remeshed}
-\nextgroupplot[xlabel={},title={BAR2}]
-\addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
-\addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
-\addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
-\addplot[BrickRed,solid,line width=0.7pt] table[col sep=comma,x=x,y=BAR2_standard]{\DataDir/riemann_lc/density_profiles.csv};
-\nextgroupplot[title={GP2}]
-\addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
-\addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
-\addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
-\addplot[BrickRed,solid,line width=0.7pt] table[col sep=comma,x=x,y=GP2_standard]{\DataDir/riemann_lc/density_profiles.csv};
-\nextgroupplot[title={CV2}]
-\addplot[draw=none,fill=Orange!18,forget plot] coordinates {(2.40,0.10) (2.46,0.10) (2.46,0.45) (2.40,0.45)} \closedcycle;
-\addplot[gray,densely dotted] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};
-\addplot[black!65] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};
-\addplot[BrickRed,solid,line width=0.7pt] table[col sep=comma,x=x,y=CV2_standard]{\DataDir/riemann_lc/density_profiles.csv};
-\end{groupplot}
+\begin{axis}[evidence axis,width=0.87\textwidth,height=0.42\textwidth,
+ xmin=2.30,xmax=2.85,ymin=0.10,ymax=0.45,xtick={2.3,2.4,2.5,2.6,2.7,2.8},
+ xlabel={Streamwise position $x$},ylabel={Density $\rho$},
+ legend columns=3,legend style={at={(0.5,-0.23)},anchor=north}]
+\addplot[gray,very thick,densely dashed] table[col sep=comma,x=x,y=rho]{\DataDir/riemann_lc/exact_profile.csv};\addlegendentry{Exact}
+\addplot[gray!65,very thick,solid] table[col sep=comma,x=x,y=reference]{\DataDir/riemann_lc/density_profiles.csv};\addlegendentry{Fixed mesh}
+\addplot[scheme NN1,mark repeat=33,mark size=1.3pt] table[col sep=comma,x=x,y=NN1_standard]{\DataDir/riemann_lc/density_profiles.csv};\addlegendentry{NN1}
+\addplot[scheme BAR2,mark repeat=38,mark size=1.5pt] table[col sep=comma,x=x,y=BAR2_standard]{\DataDir/riemann_lc/density_profiles.csv};\addlegendentry{BAR2}
+\addplot[scheme GP2,mark repeat=31,mark size=1.7pt] table[col sep=comma,x=x,y=GP2_standard]{\DataDir/riemann_lc/density_profiles.csv};\addlegendentry{GP2}
+\addplot[scheme CV2,mark repeat=42,mark size=1.4pt] table[col sep=comma,x=x,y=CV2_standard]{\DataDir/riemann_lc/density_profiles.csv};\addlegendentry{CV2}
+\end{axis}
 \end{tikzpicture}
-\par\smallskip\ref*{legend:riemann-profiles}
-\caption{Density at $t=0.399$ after 398 transfers, for $s=2$ and mesh sequence 1. Each numerical profile averages eight lines of constant $y$. Shading marks $[2.40,2.46]$, where the smeared contact affects the NN1 and BAR2 profiles. The shock width is measured in $[2.55,2.85]$.}
+\caption{Streamwise density at $t=0.399$ after 398 transfers with $s=2$, for the first random displacement sequence. Each numerical curve averages eight lines of constant $y$. The contact is the jump on the left and the shock is the jump on the right.}
 \label{fig:riemann-profiles}
 \end{figure}
-
-\textcolor{red}{(WTF is that orange band? And also, why aren't you just using one plot with different colors respecting the color scheme of the previous case? And what about NN2?)}
 
 At $s=4$, the mean additional shock width after 398 transfers is 1.43 cells for NN1 and 1.07 cells for BAR2. Doubling the allowed displacement increases these widths to 8.35 and 2.21 cells, respectively (Figure~\ref{fig:riemann-mass-error}a). For GP2 and CV2 the mean change is below 0.02 cell in magnitude at both amplitudes. These methods retain a sharper shock even when the contact is excluded from the measurement.
 
@@ -848,13 +809,11 @@ Restoring the total mass alone does little to recover a diffused wave. With boun
 \subsubsection{Mass changes during transfer and flow evolution}
 \label{sec:results-local-conservation}
 
-For NN1 and BAR2 at $s=2$, the magnitude of the signed transfer sum is 1.8--2.2 times the final drift (Figure~\ref{fig:riemann-mass-error}b). This ratio is consistent with similar mass changes in the two stored states \textcolor{red}{(what do you mean?)}. The sum counts both changes in full, while BDF2 carries an equal change in both histories forward only once under the conditions of Eq.~\eqref{eq:mass-long-run}.
+The signed transfer sum counts every change to either stored mass. The final drift measures the mass of a single evolving flow. For example, suppose a transfer adds the same mass to the latest and older states. The sum counts that addition twice. With equal boundary fluxes in the restarted and reference runs, Eq.~\eqref{eq:mass-first-step} shows that the next state carries the addition once. For NN1 and BAR2 at $s=2$, the magnitude of the transfer sum is 1.8--2.2 times the final drift (Figure~\ref{fig:riemann-mass-error}b). That ratio alone cannot tell us how much mass each stored state gained at each event, since the tube also exchanges mass through its ends.
 
-For CV2 the two measurements differ by several orders of magnitude. CV2 preserves mass to near roundoff across the transfers, but the final relative mass drift is $3.0\times10^{-7}$--$4.1\times10^{-7}$ at $s=4$ and $5.5\times10^{-6}$--$6.4\times10^{-6}$ at $s=2$. In the first mesh sequence at $s=2$, for example, the final flow step changes the mass by $2.7\times10^{-8}$ of its initial value. The transfer immediately afterward leaves the mass unchanged at the reported precision.
+CV2 makes the timing of the drift easier to identify. It preserves mass to near roundoff during transfer, yet the final relative drift reaches $3.0\times10^{-7}$--$4.1\times10^{-7}$ at $s=4$ and $5.5\times10^{-6}$--$6.4\times10^{-6}$ at $s=2$. In the first run at $s=2$, the last flow step adds $2.7\times10^{-8}$ of the initial mass. The transfer immediately afterward leaves it unchanged at the precision of the record. Checking mass only before and after interpolation would miss the change during this flow step.
 
-The GP and CV limiters redistribute the change introduced by clipping among vertices that still have room within their bounds. The tolerance $\tau=2\times10^{-3}$ allows part of that change to reach a uniform far field. We measure density disturbances up to $1.4\times10^{-4}$ for $x<1$ and momentum density of about $2\times10^{-4}$ at the open ends. NN and BAR retain the constant far-field state to roundoff. In the CV2 runs, a disturbed boundary state can change the mass flux during a flow step. Incomplete convergence of that step can also change the mass. The recorded flow-step balance measures their combined effect.
-
-\textcolor{red}{(I think these two last paragraphs are something important and you go a bit too quickly. I would like you to take a bit more time to explain them carefully, indicating the implications of what you are stating.)}
+A transfer can affect the later mass balance through the boundary state. When the GP or CV limiter clips a value, it redistributes the correction among vertices with room inside their permitted bounds. With the tolerance $\tau=2\times10^{-3}$, this redistribution can reach vertices in the initially uniform far field. We find density disturbances up to $1.4\times10^{-4}$ at $x<1$ and momentum density of about $2\times10^{-4}$ at the open ends, before the physical waves reach them. NN and BAR retain the uniform far-field state to roundoff. A change at an open end can alter the mass flux on the next flow step even if the transfer itself preserved total mass. The measured flow-step change includes both boundary flux and any residual left by the inner iterations. Separating their contributions requires recording both over the same step.
 
 \begin{figure}[pos=!htbp]
 \centering\color{black}
@@ -883,9 +842,9 @@ The GP and CV limiters redistribute the change introduced by clipping among vert
 
 We use steady flow over a NACA~0012 airfoil to measure how transferring each of the two BDF2 fields changes lift at the next time step. Steady flow lets us place exactly the same transfer error in either time level. In an unsteady flow the two errors would generally differ, making their individual contributions harder to identify.
 
-We solve the Euler equations independently on two triangular meshes with 16,255 source vertices and 22,508 target vertices \textcolor{red}{(is there a difference in how they were obtained? I am just asking why the number of points change)}. Both meshes have the same 370 vertices on the airfoil and the same 63 vertices on the outer boundary, $100$ chords away. The freestream Mach number is $M_\infty=U_\infty/a_\infty=0.1$ and the angle of attack is $\alpha=6^\circ$. We use unit chord $c$, unit reference area, and nondimensional freestream pressure, density and temperature all equal to one. The freestream sound speed is $a_\infty=\sqrt{1.4}$ and the flow speed is $U_\infty=0.1a_\infty$.
+We compute steady Euler solutions independently on two triangular meshes. Both use the same 370 vertices on the airfoil and 63 on the outer boundary, $100$ chords away. Their interiors were generated independently. The source mesh has 16,255 vertices in all. The Delaunay target mesh has 22,508 and a smaller minimum first off-wall spacing ($4.3\times10^{-4}c$ versus $5.9\times10^{-4}c$). We use unit chord $c$, unit reference area, angle of attack $\alpha=6^\circ$, and freestream Mach number $M_\infty=U_\infty/a_\infty=0.1$. In the Euler units the freestream pressure, density and temperature are one, the sound speed is $a_\infty=\sqrt{1.4}$, and the flow speed is $U_\infty=0.1a_\infty$.
 
-The reference run uses the steady target solution at both stored times. For each second-order method (NN2, BAR2, GP2 and CV2), we transfer the steady source solution once. We then replace the latest field \textcolor{red}{(n)}, the older field \textcolor{red}{(n-1)}, or both fields in the reference restart with that transferred solution. Each run advances one physical step of size $\Delta t=10^{-3}$ on the target mesh. We compute the lift coefficient $C_L$ from the resulting wall pressure and subtract the lift from the reference run. Table~\ref{tab:naca-first-lift} gives this difference, $\Delta C_L$.
+The reference run uses the steady target solution at both stored times. For each second-order method (NN2, BAR2, GP2 and CV2), we transfer the steady source solution once. We then replace the latest field at $n$, the older field at $n-1$, or both fields in the reference restart with that transferred solution. Each run advances one physical step of size $\Delta t=10^{-3}$ on the target mesh. We compute the lift coefficient $C_L$ from the resulting wall pressure and subtract the lift from the reference run. Table~\ref{tab:naca-first-lift} gives this difference, $\Delta C_L$.
 
 \begin{table}[pos=htbp]
 \centering\small
@@ -897,53 +856,67 @@ The reference run uses the steady target solution at both stored times. For each
  create on use/newest-column/.style={create col/expr={1000*\thisrow{latest}}},
  create on use/previous-column/.style={create col/expr={1000*\thisrow{older}}},
  create on use/both-column/.style={create col/expr={1000*\thisrow{both}}},
- columns/newest-column/.style={fixed,fixed zerofill,precision=3,column name={Latest field only}},
- columns/previous-column/.style={fixed,fixed zerofill,precision=3,column name={Older field only}},
+ columns/newest-column/.style={fixed,fixed zerofill,precision=3,column name={$n$ only}},
+ columns/previous-column/.style={fixed,fixed zerofill,precision=3,column name={$n-1$ only}},
  columns/both-column/.style={fixed,fixed zerofill,precision=3,column name={Both fields}}
 ]{\DataDir/naca_first_step_lift.csv}
 \end{table}
 
-Transferring only the older field \textcolor{red}{(n-1)} raises lift for all four methods, even though the latest field \textcolor{red}{(n)} is identical to the reference. Transferring only the latest field lowers lift. The signs and relative sizes follow from the BDF2 weights in Eq.~\eqref{eq:nonlinear-bdf2-response}. The same error enters with weight $2$ in the latest field and $-1/2$ in the older field, giving a combined weight of $3/2$ when both are transferred. The linear lift response in Eq.~\eqref{eq:force-response} therefore predicts that the older field alone gives $-1/3$ of the change from transferring both, and the latest alone gives $4/3$. The measured ratios are about $-0.336$ and $1.33$, respectively \textcolor{red}{(measured how?)}. This comparison tests how BDF2 weights a given discrepancy. Its absolute size also depends on the difference between the steady solutions on the two meshes.
+Transferring only the older field ($n-1$) raises lift for every method, although the latest field ($n$) still matches the reference. Transferring only the latest field lowers lift. In Eq.~\eqref{eq:nonlinear-bdf2-response} the same discrepancy carries weight $-1/2$ at $n-1$, $2$ at $n$, and $3/2$ when present at both times. The linear lift response in Eq.~\eqref{eq:force-response} therefore predicts ratios of $-1/3$ and $4/3$ when the older-only and latest-only changes are each divided by the both-fields change. For NN2, Table~\ref{tab:naca-first-lift} gives $2.313/(-6.884)=-0.336$ and $(-9.168)/(-6.884)=1.33$. The other methods give the same ratios to within 0.001 and 0.01, respectively. Each ratio compares three independent first-step solves with the same transferred field.
 
 \FloatBarrier
 \subsection{Airfoil loads after remeshing}
 \label{sec:results-euler-airfoil-new}
 
-The first-step comparison leaves open how long transfer errors affect the airfoil load. Using the same Euler flow conditions as in Section~\ref{sec:naca-fixed-methodology}, we track the load through repeated mesh changes and then follow the pressure response to a single transfer away from the wall.
+The steady airfoil also lets us follow a disturbance after the first step. We use the 16,255-vertex Euler mesh and the flow conditions of Section~\ref{sec:naca-fixed-methodology}. In one test we change the interior mesh repeatedly and measure how the loads depart from those on the original mesh. In a second test we change a narrow band only once and follow the pressure disturbance toward the wall.
 
-\subsubsection{Initial load growth under repeated remeshing}
+\subsubsection{Lift and drag during repeated remeshing}
 
-To examine accumulation in the airfoil calculation, we perturb vertices at wall distances between $0.01c$ and $20c$, keeping boundary vertices fixed. NN2, GP2, and CV2 use the same two random mesh sequences. A 400-step interval contains 39 remeshing events \textcolor{red}{(we should say after how many steps the mesh is perturbed and the interpolation is performed. Also, we have to say how the mesh is perturbed (I suppose the same as before but we need to say it))}. Load differences are measured against the fixed-mesh run, and slopes are fitted over these 400 steps only.
+Every ten physical steps, we generate a new mesh by randomly displacing interior vertices between $0.01c$ and $20c$ from the airfoil. The allowed displacement at each vertex scales with the smallest altitude of its incident triangles, so smaller elements receive smaller movements. The airfoil and farfield boundaries stay fixed. We transfer both stored fields at each of the 39 events in the 400-step record. We repeat the experiment with a second random seed. Within each repeat, NN2, GP2 and CV2 see exactly the same succession of meshes. NN2 represents pointwise interpolation in this comparison. BAR2 shares its approximate second-order convergence for the smooth density field in Section~\ref{sec:static-verification}, but the load histories reported here cover only the three methods tested.
 
-\textcolor{red}{(Also we might want to say that BAR2 was not investigated since the previous results showed that it has the same effects than NN2 in smooth fields.)}
+Figure~\ref{fig:euler-repeat} shows the slope of a straight line fitted to each lift or drag difference from the fixed-mesh run. Lift departs from the reference within this short interval. With NN2, for example, the fitted increase is $1.16\times10^{-5}$ per 100 steps in the first repeat and $4.87\times10^{-5}$ in the second. Drag shows a more reproducible pattern. Its increase with NN2 is $3.84$--$3.95\times10^{-5}$ per 100 steps, about six times the increase with GP2 or CV2 in both repeats. These 400 steps cover only $0.047$ chord flow-through times ($tU_\infty/c$), so the slopes describe the initial response.
 
-GP2 and CV2 give slower initial drag growth than NN2 in both mesh sequences \textcolor{red}{(mesh sequences??)}. GP2 slopes are $6.31\times10^{-6}$ and $5.89\times10^{-6}$ per 100 physical steps; CV2 gives $5.92\times10^{-6}$ and $5.82\times10^{-6}$, compared with $3.95\times10^{-5}$ and $3.84\times10^{-5}$ for NN2. The mean NN2 slope is approximately 6.4 times the GP2 mean and 6.6 times the CV2 mean. However, 400 steps span only about 0.047 convective and 0.47 acoustic chord times. The result describes early growth only, and lift trends vary more between the two mesh sequences \textcolor{red}{(I think you are putting way too harshly, we are still demonstrating lift departures even at small total time. Also, mesh sequence??)}.
-
-\textcolor{red}{(Really no Figure here?? Just numbers? WTF)}
+\begin{figure}[pos=!htbp]
+\centering\color{black}
+\begin{tikzpicture}
+\begin{groupplot}[group style={group size=2 by 1,horizontal sep=1.2cm},
+ evidence axis,width=0.44\textwidth,height=0.31\textwidth,
+ xmin=0.65,xmax=3.35,xtick={1,2,3},xticklabels={NN2,GP2,CV2},scaled y ticks=false,unbounded coords=discard,
+ ylabel={Change per 100 steps ($\times10^{-6}$)}]
+\nextgroupplot[title={(a) Lift},ymin=-10,ymax=55,ytick={0,10,20,30,40,50}]
+\addplot[gray,densely dashed,forget plot] coordinates {(0.65,0) (3.35,0)};
+\addplot[scheme NN2,only marks,mark size=2.8pt] table[col sep=comma,x=x,y=nn_lift]{\GeneratedDir/euler_load_trends.csv};
+\addplot[scheme GP2,only marks,mark size=2.8pt] table[col sep=comma,x=x,y=gp_lift]{\GeneratedDir/euler_load_trends.csv};
+\addplot[scheme CV2,only marks,mark size=2.8pt] table[col sep=comma,x=x,y=cv_lift]{\GeneratedDir/euler_load_trends.csv};
+\nextgroupplot[title={(b) Drag},ylabel={},ymin=-10,ymax=55,ytick={0,10,20,30,40,50}]
+\addplot[gray,densely dashed,forget plot] coordinates {(0.65,0) (3.35,0)};
+\addplot[scheme NN2,only marks,mark size=2.8pt] table[col sep=comma,x=x,y=nn_drag]{\GeneratedDir/euler_load_trends.csv};
+\addplot[scheme GP2,only marks,mark size=2.8pt] table[col sep=comma,x=x,y=gp_drag]{\GeneratedDir/euler_load_trends.csv};
+\addplot[scheme CV2,only marks,mark size=2.8pt] table[col sep=comma,x=x,y=cv_drag]{\GeneratedDir/euler_load_trends.csv};
+\end{groupplot}
+\end{tikzpicture}
+\caption{Fitted rates of change in lift and drag relative to the fixed Euler mesh over the first 400 steps. For each method the left marker is the first set of random displacements and the right marker is the independent repeat. The two panels use the same scale.}
+\label{fig:euler-repeat}
+\end{figure}
 
 \subsubsection{Delayed response to a disturbance away from the wall}
 \label{sec:delayed-airfoil-test}
 
-A separate test applies one transfer in a narrow band away from the wall, $0.20c\le r\le0.25c$, with GP2 and with CV2. Fixed shells measure the root-mean-square (RMS) pressure difference from a common fixed-mesh reference \textcolor{red}{(What are these shells??)}. Coupled transfer and implicit time integration can introduce small immediate changes outside the displaced band. We therefore define arrival as the first time the signal reaches a specified fraction of its peak. For a shell at wall distance $r$ inside a band beginning at $r_b$, the low-Mach acoustic travel estimate is $(r_b-r)/(a_\infty\Delta t)\simeq845(r_b-r)/c$ physical steps in these nondimensional Euler calculations. Transfer already produces immediate changes up to approximately $0.08c$ inward of the displaced band; these shells are excluded from propagation fits.
+To measure the delay between remeshing and a pressure response near the airfoil, we displace vertices only between $0.20c$ and $0.25c$ from the wall. We transfer once with GP2 and repeat the same test with CV2. The vertices between this band and the wall stay in place. We group them by their distance from the airfoil. For example, the group centered at $r=0.10c$ contains vertices whose wall distance lies within $0.004c$ of that value. At each sampled time we subtract the fixed-mesh pressure at the same vertices and take the root-mean-square (RMS) of those differences within the group.
 
-\textcolor{red}{(This paragraph is not really clear. Maybe a figure would help??)}
+Figure~\ref{fig:euler-pressure}a shows each group's RMS pressure difference divided by its own maximum during the 400 samples after remeshing. The horizontal line marks half of that maximum. With GP2 the curve for $r=0.10c$ first crosses it after 55 steps. The curve closest to the wall, at $r=0.005c$, takes 130 steps. A first-step pressure measurement would therefore miss much of the disturbance that reaches the wall region.
 
-Beyond the region changed immediately by transfer, the pressure response is delayed (Figure~\ref{fig:euler-pressure}). For GP2, the pressure difference first reaches half its local peak 55 steps after remeshing at $r/c=0.10$ and 130 steps after remeshing at $r/c=0.005$. The load is a smooth function of the state at each instant; it changes quickly in time because the wall state changes quickly when the disturbance arrives. Estimated propagation speeds are 1.09--1.27 with GP2 and 1.10--1.30 with CV2, using 10--75\% amplitude thresholds. Both ranges include the sound speed $a_\infty\simeq1.183$; their spread reflects the choice of threshold for a single event. A load-based check after remeshing must therefore cover at least the acoustic travel time from the remeshed region to the wall.
-
-\textcolor{red}{(Again, not really clear. What are these amplitude thresholds? How did you compute the estimated propagations?)}
-
-The first load difference can understate the response for a second reason. In a separate restart test, the NN1 lift difference peaks three steps after the first post-transfer sample, at 4.66 times its initial value, whereas the sampled second- and third-order responses peak at the first step and then decay.
-
-\textcolor{red}{(Same here, this is not clear and is just put there without a clear contribution.)}
+To estimate the propagation speed, we plot the crossing time against the distance from the inner edge of the displaced band, $0.20c-r$ (Figure~\ref{fig:euler-pressure}b). We fit a straight line with a free intercept to the seven groups at least $0.08c$ from that edge, beyond the region measurably affected at transfer. The reciprocal of the fitted slope, after converting steps to time with $\Delta t=10^{-3}$, gives the speed. At half maximum it is 1.26 for GP2 and 1.27 for CV2 in the Euler units. Repeating the fit at 10, 25 and 75\% of each group's peak gives an overall range of 1.09--1.30 across both methods and all four thresholds. The delay is consistent with travel at the freestream sound speed ($a_\infty=1.183$). The spread indicates how much the estimate depends on which part of the pressure rise is followed.
 
 \begin{figure}[pos=!htbp]
 \centering\color{black}
 \begin{tikzpicture}
 \begin{groupplot}[group style={group size=2 by 1,horizontal sep=1.25cm},
  evidence axis,width=0.43\textwidth,height=0.33\textwidth]
-\nextgroupplot[title={(a) Pressure disturbance (GP2)},
- xlabel={Steps after remeshing},ylabel={Normalized pressure RMS},xmin=0,xmax=400,ymin=0,ymax=1.05,
+\nextgroupplot[title={(a) Pressure rise after transfer (GP2)},
+ xlabel={Steps after remeshing},ylabel={Fraction of peak pressure RMS},xmin=0,xmax=400,ymin=0,ymax=1.05,
  legend style={font=\scriptsize,draw=none,at={(0.5,-0.23)},anchor=north,legend columns=2}]
+\addplot[gray,dashdotted,forget plot] coordinates {(0,0.5) (400,0.5)};
 \addplot[black,solid] table[col sep=comma,x=lag,y=r0p1]{\GeneratedDir/euler_pressure_plot.csv};\addlegendentry{$r/c=0.10$}
 \addplot[teal,dashed] table[col sep=comma,x=lag,y=r0p08]{\GeneratedDir/euler_pressure_plot.csv};\addlegendentry{$r/c=0.08$}
 \addplot[BrickRed,dashdotted] table[col sep=comma,x=lag,y=r0p04]{\GeneratedDir/euler_pressure_plot.csv};\addlegendentry{$r/c=0.04$}
@@ -958,52 +931,25 @@ The first load difference can understate the response for a second reason. In a 
 \addplot[gray,densely dotted,domain=0.08:0.2,samples=2]{x/(1.18322*0.001)};\addlegendentry{$a_\infty$ guide}
 \end{groupplot}
 \end{tikzpicture}
-\caption{Pressure response to a single Euler remeshing event in the annulus $0.20c\le r\le0.25c$, where $r$ is distance from the airfoil wall and $c$ is chord. (a) Shell RMS pressure differences from the fixed-mesh reference, normalized separately by each shell's maximum over the 400 post-event samples; shell half-width is $0.004c$. Disturbances reach shells closer to the wall later. (b) First crossings of 50\% of each shell's maximum for GP2 and CV2, restricted to travel distances of at least $0.08c$. The dotted line gives the travel time at the freestream sound speed. Each method is represented by one event.}
+\caption{Pressure after a single mesh change between $0.20c$ and $0.25c$ from the airfoil. (a) Each curve follows a group of fixed vertices at the indicated wall distance $r$. The horizontal line marks half of each group's maximum RMS pressure difference. (b) Steps to reach half maximum versus distance from the displaced band. The dotted line gives the travel time at the freestream sound speed.}
+
 \label{fig:euler-pressure}
 \end{figure}
 
 \FloatBarrier
-\subsection{Viscous airfoil restarts with the SA model}
-
-\subsubsection{Setup and numerical sensitivity tests}
+\subsection{Drag after remeshing the viscous airfoil flow}
 \label{sec:rans-methodology}
-
-For a viscous flow, does the transfer method that best preserves the integrals also keep drag closest to the fixed-mesh reference? \textcolor{red}{(Really? a question??)} We test this on the stationary airfoil with the one-equation SA model~\cite{SpalartAllmaras1994}. Each run starts from a steady RANS calculation, which the prescribed mesh changes then disturb. The conditions are $M_\infty=0.1$, $\alpha=6^\circ$, and chord Reynolds number $Re_c=\rho_\infty U_\infty c/\mu_\infty=6\times10^6$, where $\mu_\infty$ is freestream dynamic viscosity.
-
-The coarse mesh has 23,271 vertices, 9,686 boundary-layer and wake quadrilaterals, 26,851 triangles, and 256 airfoil vertices. Medium and fine meshes have 32,102 and 48,228 vertices \textcolor{red}{(not really a nice mesh convergence I would say. They are not really doubling each.)}. All retain a first off-wall spacing of approximately $5\times10^{-6}c$. The farfield is at $100c$, and the quadrilateral region extends to about $0.11c$ \textcolor{red}{(do you mean the boundary layer?? I suppose there is no wake refinement with quads.)}.
-
-We use the SU2 solver~\cite{EconomonEtAl2016SU2}\textcolor{red}{(We have used SU2 until now, why are you mentioning this only now?? We should have put this description at the beginning of the test cases section)}. Mean-flow convection uses the HLLC approximate Riemann solver with MUSCL reconstruction. Turbulence transport uses scalar upwinding without MUSCL. BDF2 is solved by dual-time stepping at a pseudo-time CFL number of 6. The nominal limit is 800 pseudo-time iterations per physical step. After ten iterations, the solver stops if $\log_{10}\operatorname{rms}(r_\rho)\leq-12$, with $r_\rho$ the nodal density-equation residual in solver normalization and $\operatorname{rms}$ its root-mean-square over solver vertices.
-
-The dimensional physical step $\Delta t_0=10^{-3}$~s corresponds to $\Delta t_0^*\simeq0.347224$. A superscript $*$ denotes normalization by solver reference scales. With $U_\infty^*=0.1$, the 400-step window spans approximately 13.9 chord flow-through times, measured by $tU_\infty/c$ \textcolor{red}{(how come the total convective time is so different than the Euler case??)}. Startup uses a first-order step ten times smaller \textcolor{red}{(to obtain the solution at time equal to dt since we have t=0 from the steady RANS)}. The fixed-mesh SA reference advances for 800 steps from matching stored states.
-
-The coarse steady SA solution reaches its 20,000-iteration limit at $-11.2$, with lift and drag stationary to $10^{-7}$ over the last 2,000 iterations. Table~\ref{tab:rans-inner-app} reports convergence during the subsequent physical steps \textcolor{red}{(why are you presenting table 8 here???)}.
-
-NN2, limited GP2, and limited CV2 are compared at a common nominal second order. CV2's accuracy depends on element geometry (Section~\ref{sec:cv-transfer}); the distorted quadrilaterals in this mixed-mesh case prevent assuming affine exactness, and its transfer order is not measured here \textcolor{red}{(have we actually verified this? I don't think that there are distorted quads as outside the BL mesh everything is triangles and I do not think we have distorted in bands including the structured BL. But have we measured this somehow?)}. The three methods follow the same prescribed mesh sequences, with one sequence used for the numerical sensitivity tests \textcolor{red}{(what do you even mean??)}. At each event, 12,602 vertices may move and 10,669 remain fixed \textcolor{red}{(this is not useful as saying the boundaries of the band that is perturbed!)}. No vertex with solver wall distance below $0.01c$ moves \textcolor{red}{(wtf is solver wall distance? Just say wall distance!)}. The geometric mask uses distance to the nearest airfoil vertex, allowing part of the outer quadrilateral region to move. The deformation parameter is $s=4$; a minimum corner-area ratio of 0.2 maintains valid cells. Boundary vertices remain fixed. Remeshing occurs every ten physical steps, independently of the solution.
-
-At each mesh change we transfer both stored time levels of the mean flow and the SA working variable $\widetilde\nu$. We monitor the integral of $\rho\widetilde\nu$ alongside the mass, momentum and total-energy integrals. Wall distance and eddy viscosity are recomputed. Integral changes use $e_Q$ from Section~\ref{sec:derivative-reconstruction}. The SA equation contains source terms, so the integral of $\rho\widetilde\nu$ can subsequently change during a flow step.
-
-Pressure and viscous drag contributions are $C_{D,p}$ and $C_{D,v}$, with $C_D=C_{D,p}+C_{D,v}$. The label $Q$ selects a monitored coefficient $C_Q$: lift, total drag, pressure drag, or viscous drag. For transfer method $m$, the remeshing response is the coefficient minus its fixed-mesh reference at the same numerical setting:
-\begin{equation}
- \Delta C_{Q,m}(t)=C_{Q,m}(t)-C_{Q,\mathrm{ref}}(t),
- \qquad
- \delta C_Q(t)=\Delta C_{Q,\mathrm{NN2}}(t)-\Delta C_{Q,\mathrm{GP2}}(t).
- \label{eq:rans-comparisons}
-\end{equation}
-Thus $\Delta C_{D,\mathrm{GP2}}$ measures how far the GP2 drag history departs from its fixed-mesh reference, and $\delta C_D$ measures the difference between the NN2 and GP2 drag histories on the same mesh sequence. Remeshed and reference calculations use identical surface quadrature. For any scalar history $q(t)$ sampled at $N_s$ common physical times $t_i$, define $\mathcal R(q)=(N_s^{-1}\sum_{i=1}^{N_s}q(t_i)^2)^{1/2}$. Write $q_{\mathrm{nom}}$ and $q_{\mathrm{test}}$ for this history at the nominal and modified numerical settings. The sensitivity is
-\begin{equation}
- S_{\mathrm{test}}(q)=
- \frac{\mathcal R(q_{\mathrm{test}}-q_{\mathrm{nom}})}
-      {\mathcal R(q_{\mathrm{nom}})}.
- \label{eq:control-sensitivity}
-\end{equation}
-Subtracting the two histories at each common sample time makes $S_{\mathrm{test}}$ sensitive to changes in both amplitude and timing.
-
-For the first mesh sequence we compare 38 common time samples spanning three remeshing events. At $\Delta t_0$ we raise the inner-iteration limit from 800 to 1600. We also repeat the calculation at $\Delta t_0/2$ and $\Delta t_0/4$, each with the original 800-iteration limit. The same displacement fields are applied at matching physical times, and each step size has its own fixed-mesh reference. Medium and fine steady meshes assess absolute-load sensitivity. A short medium-mesh transient uses a different random displacement field with the same amplitude limit, so it changes the resolution and the disturbance together.
-
-\subsubsection{Transferred integrals and aerodynamic loads}
 \label{sec:results-rans-new}
 
-GP2 and CV2 change the transferred integrals less than NN2 (Table~\ref{tab:rans-integrals-new}). GP2's maximum errors in the density and total-energy integrals are roughly two orders of magnitude smaller. For the integral of $\rho\widetilde\nu$, the largest relative changes are $1.70\times10^{-6}$ with NN2, $6.88\times10^{-9}$ with GP2 and $1.99\times10^{-12}$ with CV2. CV2 preserves each mean-flow integral to within a relative change of $1.2\times10^{-14}$. The relative integral changes are small compared with the whole-domain totals, which extend to $100c$ and can hide localized errors. Their aerodynamic significance is not established by these integral measures alone.
+In the viscous airfoil calculation, remeshing changes both the flow and the turbulence field used to compute wall shear. We compare how well each transfer preserves the stored quantities and how closely the resulting drag follows the fixed-mesh solution. We use a stationary NACA~0012 at the same Mach number ($0.1$) and incidence ($6^\circ$) as the Euler case, with the Spalart--Allmaras (SA) turbulence model~\cite{SpalartAllmaras1994}. The chord Reynolds number is $Re_c=\rho_\infty U_\infty c/\mu_\infty=6\times10^6$, where $\mu_\infty$ is the freestream dynamic viscosity.
+
+The reference mesh has 23,271 vertices, including 256 on the airfoil. Its 9,686 quadrilaterals form the near-wall layers and extend a short distance past the trailing edge (to $x/c\simeq1.012$). The remaining 26,851 elements are triangles. The first off-wall spacing is approximately $5\times10^{-6}c$ and the farfield boundary is at $100c$. Every ten physical steps we perturb interior vertices in the band from $0.01c$ to $20c$, measured from the nearest airfoil vertex. We draw random two-dimensional displacements within the local radius $a_{i,\min}/4$ defined in Section~\ref{sec:riemann-methodology} and reduce displacements as needed to keep each corner triangle above 20\% of its original area. The boundaries stay fixed. The first displacement field moves 1,782 vertices belonging to quadrilaterals, at wall distances from $0.0101c$ to $0.1097c$. Thus the outer part of the quadrilateral layer participates in the transfer. We have no measured transfer order for this airfoil mesh.
+
+The mean-flow solver uses HLLC with MUSCL reconstruction, and the SA equation uses scalar upwinding without MUSCL. The steady calculation supplies the state at $t=0$. Its density residual reaches $\log_{10}\operatorname{rms}(r_\rho)=-11.2$ at the 20,000-iteration limit, with lift and drag stable to $10^{-7}$ over the last 2,000 iterations. Here $r_\rho$ is the density-equation residual in SU2 normalization and $\operatorname{rms}$ averages its square over the mesh vertices before taking the square root. Ten first-order substeps of length $\Delta t_0/10$ supply the state at $t=\Delta t_0$. BDF2 then advances from these two fields. At each mesh change we transfer both stored mean-flow states and both values of the SA working variable $\widetilde\nu$. SU2 recomputes wall distance and eddy viscosity on the new mesh. The fixed-mesh reference starts from the same two fields.
+
+The nominal viscous step is $\Delta t_0=10^{-3}$~s. At the viscous freestream speed of $34.72$~m/s and unit chord, one step covers $U_\infty\Delta t_0/c=0.0347$ chord flow-through times. In the Euler units used above this product is $0.1183\times10^{-3}$. Thus 400 nominal steps cover about 13.9 chord flow-through times in the viscous case and 0.047 in the Euler case.
+
+We apply two independently drawn sets of displacements. In each repeat NN2, GP2 and CV2 use the same meshes, so their differences can be compared at the same times. Table~\ref{tab:rans-integrals-new} gives the largest relative change across a transfer for each monitored integral. CV2 preserves the mean-flow integrals to within $1.2\times10^{-14}$. For $\rho\widetilde\nu$ the largest changes are $1.70\times10^{-6}$ with NN2, $6.88\times10^{-9}$ with GP2 and $1.99\times10^{-12}$ with CV2. This last measurement compares the stored fields on either side of transfer. The SA source terms can change the integral during the subsequent flow step. All values are relative to totals over the domain extending to $100c$.
 
 \begin{table}[pos=htbp]
 \centering\small
@@ -1023,7 +969,7 @@ GP2 and CV2 change the transferred integrals less than NN2 (Table~\ref{tab:rans-
 ]{\RansIntegralData}
 \end{table}
 
-Table~\ref{tab:sa-drag-sequences} compares the three transfer methods over both mesh sequences. The RMS drag departures from the fixed-mesh reference differ by less than 2\% between methods, while the NN2 and GP2 histories differ from each other by 12--16\% of the GP2 departure (last column). Similar RMS magnitudes therefore do not mean similar histories, and these comparisons do not isolate the dominant error source. The ordering of the RMS departures is not consistent: CV2 gives the smallest value on the first sequence and the largest on the second. We use the direct NN2--GP2 history difference to test how strongly the physical time step affects the comparison.
+We next compare drag. For a method $m$, let $\Delta C_{D,m}(t)=C_{D,m}(t)-C_{D,\mathrm{ref}}(t)$ be its drag departure from the fixed-mesh run at the same time and numerical settings. Figure~\ref{fig:rans-drag-sensitivity}a shows the three drag histories for the first repeat. They rise and fall together, with smaller differences between methods. Table~\ref{tab:sa-drag-sequences} gives the RMS of each departure over 398 samples in both repeats. The three RMS values differ by less than 2\% in each repeat. CV2 gives the smallest departure in the first repeat and the largest in the second. The last column compares NN2 and GP2 at each sample before taking the RMS. This gives $7.72\times10^{-6}$ and $9.57\times10^{-6}$, or 12--16\% of the GP2 departure. Two histories can therefore have nearly equal overall magnitudes while differing at individual times.
 
 \begin{table}[pos=htbp]
 \centering\small
@@ -1032,7 +978,7 @@ Table~\ref{tab:sa-drag-sequences} compares the three transfer methods over both 
 
 \begin{tabular}{lrrrr}
 \toprule
-Mesh sequence & NN2 & GP2 & CV2 & NN2 minus GP2\\
+Repeat & NN2 & GP2 & CV2 & NN2 minus GP2\\
 \midrule
 1 & 63.84 & 64.32 & 63.26 & 7.72\\
 2 & 60.85 & 60.90 & 61.90 & 9.57\\
@@ -1040,63 +986,48 @@ Mesh sequence & NN2 & GP2 & CV2 & NN2 minus GP2\\
 \end{tabular}
 \end{table}
 
-In the 38-sample comparison window, halving the time step changes the GP2 drag response by 8.0\% of its nominal RMS (Figure~\ref{fig:rans-drag-sensitivity}a). Over the same samples the NN2--GP2 drag difference has a nominal RMS of $2.19\times10^{-6}$. Halving the step changes this difference by $2.82\times10^{-6}$ in RMS, or 129\% of the signal being compared (Figure~\ref{fig:rans-drag-sensitivity}b), and at the quarter step the change from the nominal history reaches 171\%. The second halving, from $\Delta t_0/2$ to $\Delta t_0/4$, changes the difference by a further $2.71\times10^{-6}$ in RMS. With so weak a reduction between successive refinements, time-step convergence of the difference has not been demonstrated at these settings. The corresponding changes in the lift difference are 75\% and 132\%.
+To see whether the difference between methods is resolved in time, we replay the first three mesh changes from the first repeat. We apply the same displacements at the same physical times, run a fixed-mesh reference at each step size, and compare 38 common samples. Figure~\ref{fig:rans-drag-sensitivity}b shows that halving the step changes the GP2 drag departure by 8.0\% of its nominal RMS. Panel (c) shows the smaller difference between methods, $\delta C_D(t)=C_{D,\mathrm{NN2}}(t)-C_{D,\mathrm{GP2}}(t)$. Its nominal RMS is $2.19\times10^{-6}$. Halving the step changes this history by $2.82\times10^{-6}$ in RMS, and halving it again changes it by a further $2.71\times10^{-6}$. Both changes exceed the difference we are trying to resolve. The comparison therefore gives no time-converged drag ranking.
 
 \begin{figure}[pos=!htbp]
 \centering\color{black}
+\begin{tikzpicture}
+\begin{axis}[evidence axis,width=0.86\textwidth,height=0.29\textwidth,
+ title={(a) Drag after repeated mesh changes},xlabel={Nominal physical-step index},ylabel={$10^5\Delta C_D$},
+ xmin=0,xmax=400,xtick={0,100,200,300,400},
+ legend columns=3,legend style={at={(0.02,0.95)},anchor=north west,fill=white}]
+\addplot[scheme NN2,mark repeat=36,mark size=1.3pt] table[col sep=comma,x=step,y expr=1e5*\thisrow{NN2}]{\GeneratedDir/rans_drag_full.csv};\addlegendentry{NN2}
+\addplot[scheme GP2,mark repeat=41,mark size=1.5pt] table[col sep=comma,x=step,y expr=1e5*\thisrow{GP2}]{\GeneratedDir/rans_drag_full.csv};\addlegendentry{GP2}
+\addplot[scheme CV2,mark repeat=39,mark size=1.5pt] table[col sep=comma,x=step,y expr=1e5*\thisrow{CV2}]{\GeneratedDir/rans_drag_full.csv};\addlegendentry{CV2}
+\end{axis}
+\end{tikzpicture}
+\par\medskip
 \begin{tikzpicture}
 \begin{groupplot}[group style={group size=2 by 1,horizontal sep=1.55cm},
  evidence axis,width=0.43\textwidth,height=0.31\textwidth,
  xmin=2,xmax=39,xtick={5,15,25,35},xlabel={Nominal physical-step index},
  extra x ticks={10,20,30},extra x tick labels={},
  extra x tick style={grid=major,major grid style={black!55,densely dotted,line width=0.6pt}}]
-\nextgroupplot[title={(a) GP2 versus fixed mesh},ylabel={$10^5\Delta C_D$},legend to name=legend:rans-drag,legend columns=3]
+\nextgroupplot[title={(b) GP2 versus fixed mesh},ylabel={$10^5\Delta C_D$},legend to name=legend:rans-drag,legend columns=3]
 \addplot[black,solid] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_GP2_production}]{\GeneratedDir/rans_drag_plot.csv};
 \addlegendentry{$\Delta t_0$}
 \addplot[NavyBlue,dashed] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_GP2_halfstep}]{\GeneratedDir/rans_drag_plot.csv};
 \addlegendentry{$\Delta t_0/2$}
 \addplot[BrickRed,dashdotted] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_GP2_quarterstep}]{\GeneratedDir/rans_drag_plot.csv};
 \addlegendentry{$\Delta t_0/4$}
-\nextgroupplot[title={(b) NN2 minus GP2},ylabel={$10^5\,\delta C_D$}]
+\nextgroupplot[title={(c) NN2 minus GP2},ylabel={$10^5\,\delta C_D$}]
 \addplot[black,solid] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_P_production}]{\GeneratedDir/rans_drag_plot.csv};
 \addplot[NavyBlue,dashed] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_P_halfstep}]{\GeneratedDir/rans_drag_plot.csv};
 \addplot[BrickRed,dashdotted] table[col sep=comma,x=step,y expr=1e5*\thisrow{SA_P_quarterstep}]{\GeneratedDir/rans_drag_plot.csv};
 \end{groupplot}
 \end{tikzpicture}
 \par\smallskip\ref*{legend:rans-drag}
-\caption{Time-step sensitivity of drag with SA over three remeshing events for mesh sequence 1. Panel (a) shows the GP2 drag difference $\Delta C_D$ from the fixed-mesh reference at the same time step. Panel (b) shows the NN2--GP2 drag difference, $\delta C_D=C_{D,\mathrm{NN2}}-C_{D,\mathrm{GP2}}$. All curves use common physical sample times; the horizontal axis gives time divided by the nominal step $\Delta t_0$. Mesh perturbations are applied at matching physical times; dotted vertical lines mark the first sample after each of the three remeshing events.}
+\caption{Drag on the viscous airfoil for the first set of displacements. (a) Departures from the fixed-mesh drag at the nominal step $\Delta t_0$ over the full record. (b) GP2 departure during the first three mesh changes at three physical step sizes, each with its own fixed-mesh reference. (c) Drag difference between NN2 and GP2 at the same times. Vertical dotted lines in (b,c) mark the first sample after each mesh change.}
 \label{fig:rans-drag-sensitivity}
 \end{figure}
 
-\subsubsection{Numerical convergence and limits of the comparison}
+The inner solves provide a second check. At a pseudo-time CFL number of 6, the solver checks the density residual after ten iterations and stops at $\log_{10}\operatorname{rms}(r_\rho)\le-12$ or the iteration limit. In the first repeat, the nominal runs reach the 800-iteration limit on 147--155 of 398 physical steps. Doubling the limit to 1600 over the short comparison window brings all three methods to the residual target and changes the NN2--GP2 drag difference by 8.4\% of its nominal RMS. Over the same window the half-step and quarter-step runs reach the target with the original limit. The supplementary material gives the residual and load checks by method.
 
-Table~\ref{tab:rans-inner-app} distinguishes steps that meet the residual criterion from those that stop at an iteration limit. On the first mesh sequence, the nominal runs reach the 800-iteration limit on 147--155 of 398 steps, depending on the transfer method. All three methods meet the density criterion on every step of the short 1600-iteration test and the half- and quarter-step tests.
-
-\begin{table}[pos=htbp]
-\centering\footnotesize
-\caption{Inner-iteration convergence for SA on the first mesh sequence. $N_{\max}$ is the iteration limit. Separate columns give the number of steps reaching that limit for each method. Nominal rows cover the full interval; other rows cover the short sensitivity window.}
-\label{tab:rans-inner-app}
-\begin{tabular}{rrrrrr}
-\toprule
- & & & \multicolumn{3}{c}{Steps at limit}\\
-\cmidrule(lr){4-6}
-$N_{\max}$ & $\Delta t/\Delta t_0$ & Steps & GP2 & NN2 & CV2\\
-\midrule
-\InnerRow{SA}{production}{800}{1}
-\InnerRow{SA}{cap1600}{1600}{1}
-\InnerRow{SA}{halfstep}{800}{$1/2$}
-\InnerRow{SA}{quarterstep}{800}{$1/4$}
-\bottomrule
-\end{tabular}
-\end{table}
-
-When the iteration limit is doubled, the largest RMS change in an individual lift or total-drag history is 0.34\% of its nominal RMS over the comparison window. The NN2--GP2 difference changes by 10.9\% for lift and 8.4\% for drag.
-
-The drag components also require care. In the SA quarter-step test, friction-drag history differences are approximately 76--92\% of the nominal RMS friction-drag response. The smaller sensitivity of total drag does not establish convergence of its separate components.
-
-As the steady SA mesh is refined from 23,271 to 32,102 and 48,228 vertices, total drag $C_D$ decreases from 0.010229 to 0.010048 and 0.009996. These are changes in the absolute load. The medium-mesh restart gives an RMS NN2--GP2 drag difference of $9.94\times10^{-7}$ over the short comparison. Changing the mesh also changes the imposed vertex displacements, so this test cannot isolate the effect of resolution on that difference.
-
-In summary, the integral comparison favors GP2 and CV2. The RMS drag departures of the three methods agree to within 2\% while their histories differ, the ordering of the departures changes with the mesh sequence, the nominal runs are not fully converged in their inner iterations, and the time-step changes exceed the NN2--GP2 drag difference in the comparison window. The loads therefore do not rank the transfer methods in this case.
+Two denser meshes give a separate check on the steady load. From 23,271 to 32,102 and 48,228 vertices the steady drag decreases from 0.010229 to 0.010048 and 0.009996. These meshes retain the same first off-wall spacing. A short restart on the intermediate mesh also uses different displacements, so its drag difference cannot be attributed to mesh spacing alone. In this case the transfers can be distinguished by the integral changes they introduce, while the available drag histories cannot establish which transfer is most accurate.
 
 \FloatBarrier
 \section{Conclusions}
@@ -1106,7 +1037,9 @@ In the airfoil restarts, placing the same discrepancy in the older BDF2 field al
 
 In the shock tube, global mass correction leaves a smeared contact even when it restores the total mass. GP2 and CV2 preserve the wave profiles more closely than NN1 and BAR2. With relaxed bounds, however, their global redistribution also reaches the uniform far field. For CV2, mass changes during the subsequent flow steps despite near-roundoff conservation across transfers. Both open-boundary exchange and incomplete inner convergence can contribute to the measured drift.
 
-In the SA airfoil restarts, the RMS drag departures of the three methods differ by less than 2\% while the NN2 and GP2 histories differ by 12--16\% of the GP2 departure. The ordering of the departures depends on the mesh sequence, and halving the physical time step changes the NN2--GP2 drag difference by more than its nominal RMS. CV2 produces the smallest changes in the monitored integrals; all are small relative to whole-domain totals, which does not by itself establish their aerodynamic significance. The viscous calculations therefore do not rank the methods.
+In the inviscid airfoil case, the initial drag increase during repeated remeshing is about six times larger with NN2 than with GP2 or CV2 in both repeats. A single mesh change away from the airfoil produces a delayed pressure response near the wall, with a travel time consistent with acoustic propagation.
+
+In the SA airfoil restarts, the RMS drag departures of the three methods differ by less than 2\% while the NN2 and GP2 histories differ by 12--16\% of the GP2 departure. The ordering changes when the random displacements are repeated with a different seed, and halving the physical time step changes the NN2--GP2 drag difference by more than its nominal RMS. CV2 produces the smallest changes in the monitored integrals, which are measured over the whole domain. The viscous calculations therefore do not rank the methods.
 
 For an unsteady restart, the time integrator determines which stored states must be transferred and how their errors enter the next step. In flows with shocks or contacts, comparing profiles reveals local smearing that a mass balance cannot detect. Measuring the mass immediately before and after each transfer, and again after the flow step, identifies when a change occurs. For aerodynamic loads, the observation interval must allow disturbances from the remeshed region to reach the wall. A ranking then requires load differences large enough to resolve under time-step refinement and tighter iterative convergence.
 

@@ -158,6 +158,13 @@ J.~M. Ortega, W.~C. Rheinboldt, Iterative Solution of Nonlinear Equations in
 \newblock \href {https://doi.org/10.1137/1.9780898719468}
   {\path{doi:10.1137/1.9780898719468}}.
 
+\bibitem{EconomonEtAl2016SU2}
+T.~D. Economon, F.~Palacios, S.~R. Copeland, T.~W. Lukaczyk, J.~J. Alonso,
+  {SU2}: An open-source suite for multiphysics simulation and design, AIAA J.
+  54~(3) (2016) 828--846.
+\newblock \href {https://doi.org/10.2514/1.J053813}
+  {\path{doi:10.2514/1.J053813}}.
+
 \bibitem{LeVeque2002}
 R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts
   in Applied Mathematics, Cambridge University Press, Cambridge, 2002.
@@ -167,12 +174,5 @@ R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts
 \bibitem{SpalartAllmaras1994}
 P.~R. Spalart, S.~R. Allmaras, A one-equation turbulence model for aerodynamic
   flows, Rech. A\'erosp.~(1) (1994) 5--21.
-
-\bibitem{EconomonEtAl2016SU2}
-T.~D. Economon, F.~Palacios, S.~R. Copeland, T.~W. Lukaczyk, J.~J. Alonso,
-  {SU2}: An open-source suite for multiphysics simulation and design, AIAA J.
-  54~(3) (2016) 828--846.
-\newblock \href {https://doi.org/10.2514/1.J053813}
-  {\path{doi:10.2514/1.J053813}}.
 
 \end{thebibliography}
