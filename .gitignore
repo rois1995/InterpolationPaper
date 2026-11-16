@@ -35,10 +35,7 @@ generated/.figures_stamp
 /data/**
 /generated/**
 !/data/riemann_lc/
-!/data/naca_amplitude_sequence.csv
-!/data/naca_cancellation.csv
-!/data/naca_first_step_CL_plot.csv
-!/data/naca_superposition.csv
+!/data/naca_first_step_lift.csv
 !/data/rans_control_inner.csv
 !/data/riemann_amplitude_seeds.csv
 !/data/riemann_frequency_full.csv

@@ -1,4 +1,4 @@
-- Older-only BDF2 history errors give about -1/3 of the both-histories lift response.
+- The older BDF2 field affects lift even when the latest matches the reference.
 - Conserving mass at each transfer does not prevent mass drift in later flow steps.
 - Global mass correction does not restore a smeared wave profile.
 - Global redistribution within relaxed bounds disturbs a uniform far field.

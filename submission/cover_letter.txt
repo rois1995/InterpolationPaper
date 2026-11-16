@@ -8,7 +8,7 @@ The manuscript examines how solution-transfer errors affect unsteady simulations
 
 The shock-tube calculations separate changes in wave shape from changes in total mass. A global mass correction restores the integral while the contact remains smeared. Conversely, control-volume transfer preserves mass across each mesh change, yet the total mass drifts during the intervening flow steps. The profiles and mass measurements identify these effects separately.
 
-The controlled BDF2 restarts isolate a different effect: an error in the older stored state changes the next-step lift even when the latest state matches the target-mesh reference. An exact residual identity explains the signed contributions of the two stored states. In the RANS cases, improved preservation of transferred integrals does not establish an aerodynamic ranking, because load differences remain sensitive to time-step refinement and iterative convergence.
+In the controlled airfoil restarts we transfer the same flow field into either BDF2 time level or both. Across four second-order methods, transferring only the older field reverses the sign of the first-step lift change and gives about one third of the change from transferring both fields, as the linearized analysis predicts. In the RANS cases, improved preservation of transferred integrals does not establish an aerodynamic ranking, because load differences remain sensitive to time-step refinement and iterative convergence.
 
 Together, the shock-tube and airfoil results show which measurements can identify errors introduced during remeshing and which require following the restarted flow.
 

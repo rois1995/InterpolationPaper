@@ -134,11 +134,11 @@
 \begin{abstract}
 When an unsteady flow simulation changes its mesh, transferring the solution can introduce errors that affect later flow evolution and aerodynamic loads. Multistep time integrators also require solutions from earlier times, so remeshing must transfer several stored states. Transfer is often assessed by field accuracy, the absence of new extrema, and preservation of domain integrals. These measures do not, however, directly describe how the restarted calculation will respond. This study asks how errors in the latest and older stored states influence that response, and what must be checked to assess transfer reliably.
 
-We compare nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer using static tests, repeated remeshing, and airfoil calculations. The second-order backward differentiation formula (BDF2) uses both stored states with fixed coefficients, so an error in the older state changes the next step even when the latest state matches the reference. For the same imposed error field, controlled restarts approximately reproduce the linearized older-only to both-histories lift-response ratio of $-1/3$. Repeated remeshing of a Riemann problem shows that restoring total mass does not recover a smeared wave profile, and that preserving mass at each transfer does not prevent later mass drift. Corrections that redistribute mass across the domain disturb the far field, and the drift is consistent with altered open-boundary exchange. In a viscous airfoil test with the Spalart--Allmaras model, the root-mean-square drag departures from the fixed-mesh reference differ by less than 2\% between methods, and halving the physical time step changes the difference between two drag histories by more than its own magnitude, so the loads do not rank the methods. Assessing a transfer therefore requires checking every stored time level, conservation during the flow steps that follow it, wave profiles as well as integrals, and the time-step and iterative convergence of any load comparison.
+We compare nearest-neighbor Taylor interpolation, barycentric interpolation, Galerkin projection, and control-volume transfer using static tests, repeated remeshing, and airfoil calculations. The second-order backward differentiation formula (BDF2) uses both stored states with fixed coefficients, so an error in the older state changes the next step even when the latest state matches the reference. In controlled airfoil restarts, transferring only the older field changes lift in the opposite direction and by about one third of the change measured when both fields are transferred. Repeated remeshing of a Riemann problem shows that restoring total mass does not recover a smeared wave profile, and that preserving mass at each transfer does not prevent later mass drift. Corrections that redistribute mass across the domain disturb the far field, and the drift is consistent with altered open-boundary exchange. In a viscous airfoil test with the Spalart--Allmaras model, the root-mean-square drag departures from the fixed-mesh reference differ by less than 2\% between methods, and halving the physical time step changes the difference between two drag histories by more than its own magnitude, so the loads do not rank the methods. Assessing a transfer therefore requires checking every stored time level, conservation during the flow steps that follow it, wave profiles as well as integrals, and the time-step and iterative convergence of any load comparison.
 \end{abstract}
 
 \begin{highlights}
-\item Older-only BDF2 history errors give about $-1/3$ of the both-histories lift response.
+\item The older BDF2 field affects lift even when the latest matches the reference.
 \item Conserving mass at each transfer does not prevent mass drift in later flow steps.
 \item Global mass correction does not restore a smeared wave profile.
 \item Global redistribution within relaxed bounds disturbs a uniform far field.
@@ -564,7 +564,7 @@ The matrix $A_B$ is the Jacobian of the BDF2 residual with respect to the new st
 \end{equation}
 The response matrix $R_B$ converts the weighted history error into a leading prediction of the next-state difference. Proportional history errors therefore give proportional state differences. Section~\ref{sec:naca-fixed-methodology} uses this property to test the relative effects of the two stored states. When $\|\Delta t V_B^{-1}J_B\|_2$ tends to zero, $R_B$ tends to $\tfrac23I$ and the leading term becomes $\tfrac43\eps^n-\tfrac13\eps^{n-1}$. Otherwise the Jacobian term changes both the size and the spatial distribution of the response.
 
-The Lipschitz condition is an assumption on the spatial discretization, not a consequence of BDF2. Slope limiters and upwind switches are not differentiable where they change branch, so the quadratic estimate can fail there. Section~\ref{sec:history-amplitude-tests} varies the imposed error amplitude to test the scaling. When the iterative solves stop early, the term $\Delta t A_B^{-1}(\widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1})$ must also be retained; Eq.~\eqref{eq:linearized-bdf2-response} contains it.
+The Lipschitz condition is an assumption on the spatial discretization, not a consequence of BDF2. Slope limiters and upwind switches are not differentiable where they change branch, so the quadratic estimate can fail there. When the iterative solves stop early, the term $\Delta t A_B^{-1}(\widehat{\mathfrak r}_B^{n+1}-\mathfrak r_B^{n+1})$ must also be retained; Eq.~\eqref{eq:linearized-bdf2-response} contains it.
 
 \subsection{Response of an aerodynamic load}
 \label{sec:delayed-response}
@@ -635,7 +635,7 @@ Here $\rho_\infty=1.2$~kg/m$^3$ and $L_x,L_y$ are the side lengths of the square
 \label{fig:reference-densities}
 \end{figure}
 
-Each method returns a value at each target vertex. To test the accuracy of those values, we compare the transferred density $\rho_{B,j}$ with the exact density $\rho(\boldsymbol x_j^B)$ at the same location. For the convergence study we give every vertex equal weight. To measure the error over physical space in a finite-volume calculation, the corresponding discrete norm weights each squared error by the area $w_j^B$ represented by that vertex. With $d_j=\rho_{B,j}-\rho(\boldsymbol x_j^B)$, the two relative errors are
+At target vertex $j$, the density error is $d_j=\rho_{B,j}-\rho(\boldsymbol x_j^B)$. We measure it in two ways. The nodal norm gives every vertex equal weight. The finite-volume norm weights each vertex by its median-dual area $w_j^B$, so regions with many vertices contribute in proportion to the area they cover. The corresponding relative errors are
 \begin{equation}
  e_{\rho,2}^{\mathrm{node}}=
  \left[\frac{\sum_j d_j^2}{\sum_j \rho(\boldsymbol x_j^B)^2}\right]^{1/2},
@@ -644,22 +644,18 @@ Each method returns a value at each target vertex. To test the accuracy of those
  \left[\frac{\sum_j w_j^B d_j^2}{\sum_j w_j^B \rho(\boldsymbol x_j^B)^2}\right]^{1/2}.
  \label{eq:static-error-norms}
 \end{equation}
-The distinction matters where vertices cluster in a small area. For example, on the $32\to64$ transfer, recomputing NN1 with volume weights changes the relative error from 0.01288 to 0.01308 on the structured mesh and from 0.01065 to 0.01073 on the mixed mesh. The orders below refer to the nodal error for all methods.
-
-We use the dimensionless effective spacing $h_{\mathrm{eff}}=n_B^{-1/2}$, where $n_B$ is the number of target vertices. For a coarse level $\mathrm c$ and the next finer level $\mathrm f$, the observed order is
-
+Figure~\ref{fig:asym-l2-convergence} shows the volume-weighted error at each refinement level. To compare rates of convergence, we define the effective spacing $h_{\mathrm{eff}}=n_B^{-1/2}$ using the target vertex count $n_B$. If $e_{\mathrm c}$ and $e_{\mathrm f}$ are the errors in the same norm on two successive levels, with effective spacings $h_{\mathrm{eff},\mathrm c}$ and $h_{\mathrm{eff},\mathrm f}$, their observed order is
 \begin{equation}
  p^{\mathrm{obs}}=
- \frac{\log(e_{\rho,2,\mathrm c}^{\mathrm{node}}/e_{\rho,2,\mathrm f}^{\mathrm{node}})}
-      {\log(h_{\mathrm{eff},\mathrm c}/h_{\mathrm{eff},\mathrm f})}.
+ \frac{\log(e_{\mathrm c}/e_{\mathrm f})}{\log(h_{\mathrm{eff},\mathrm c}/h_{\mathrm{eff},\mathrm f})}.
  \label{eq:pairwise-observed-order}
 \end{equation}
-A least-squares fit of $\log e_{\rho,2}^{\mathrm{node}}$ against $\log h_{\mathrm{eff}}$ also gives an order over all three levels.
+Table~\ref{tab:observed-orders} reports the order fitted over all three levels, obtained from the slope of the logarithm of the error against the logarithm of the effective spacing.
 \label{sec:results-asymmetric}
 
-The NN, BAR, and GP methods recover their nominal smooth-field orders (Figure~\ref{fig:asym-l2-convergence} and Table~\ref{tab:observed-orders}). NN1 is first order; NN2, BAR2, and GP2 are second order; NN3 is third order. BAR3 and GP3 have slopes slightly above three, decreasing to 3.2 on the finest pair. On the finest mixed mesh, the relative errors are $2.6\times10^{-7}$ for BAR3, $3.4\times10^{-7}$ for GP3, and $2.6\times10^{-6}$ for NN3.
+The choice of norm has little effect on these meshes. Across all 48 transfers, volume weighting changes the relative error by less than 1.55\% and the fitted order by less than 0.01. In both norms NN1 converges at first order, NN2, BAR2 and GP2 at about second order, and NN3 at third order. BAR3 and GP3 have fitted orders above three, with volume-weighted orders near 3.2 on the finest pair.
 
-CV2 depends more strongly on element geometry. Its fitted order is 2.03 on the structured mesh, but 1.49 on the mixed mesh and 1.35 on its finest pair, still decreasing. This agrees with the first-order behavior expected on quadrilaterals that remain distorted under refinement (Section~\ref{sec:cv-transfer}). CV2 keeps the relative mass-change magnitude $|e_Q|$ below $4\times10^{-15}$ on both mesh families, whereas the finest-mesh GP2 values are $4.3\times10^{-12}$ (structured) and $2.5\times10^{-7}$ (mixed).
+CV2 is more sensitive to element shape than to the choice of norm. Its volume-weighted order is 2.04 on the structured quadrilaterals and 1.49 on the mixed mesh, falling to 1.34 on the finest mixed pair. This behavior is consistent with the loss of affine accuracy on quadrilaterals that remain distorted under refinement (Section~\ref{sec:cv-transfer}). CV2 still preserves total mass. The relative mass-change magnitude $|e_Q|$ stays below $4\times10^{-15}$ on both mesh families. On the finest meshes, the corresponding GP2 values are $4.3\times10^{-12}$ (structured) and $2.5\times10^{-7}$ (mixed).
 
 \begin{figure}[pos=!htbp]
     \centering\color{black}
@@ -675,31 +671,31 @@ CV2 depends more strongly on element geometry. Its fitted order is 2.03 on the s
         ]
         \nextgroupplot[
             title={Structured quadrilateral grid},
-            ylabel={$e_{\rho,2}^{\mathrm{node}}$},
+            ylabel={$e_{\rho,2}^{\mathrm{FV}}$},
             legend to name=legend:asym-l2,
             legend columns=4,
         ]
-        \addplot[scheme NN1] table[col sep=comma,x=h_Struct,y=Struct_NN1]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{NN1}
-        \addplot[scheme NN2] table[col sep=comma,x=h_Struct,y=Struct_NN2]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{NN2}
-        \addplot[scheme NN3] table[col sep=comma,x=h_Struct,y=Struct_NN3]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{NN3}
-        \addplot[scheme BAR2] table[col sep=comma,x=h_Struct,y=Struct_BAR2]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{BAR2}
-        \addplot[scheme BAR3] table[col sep=comma,x=h_Struct,y=Struct_BAR3]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{BAR3}
-        \addplot[scheme GP2] table[col sep=comma,x=h_Struct,y=Struct_GP2]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{GP2}
-        \addplot[scheme GP3] table[col sep=comma,x=h_Struct,y=Struct_GP3]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{GP3}
-        \addplot[scheme CV2] table[col sep=comma,x=h_Struct,y=Struct_CV2]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{CV2}
+        \addplot[scheme NN1] table[col sep=comma,x=h_Struct,y=Struct_NN1_FV]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{NN1}
+        \addplot[scheme NN2] table[col sep=comma,x=h_Struct,y=Struct_NN2_FV]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{NN2}
+        \addplot[scheme NN3] table[col sep=comma,x=h_Struct,y=Struct_NN3_FV]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{NN3}
+        \addplot[scheme BAR2] table[col sep=comma,x=h_Struct,y=Struct_BAR2_FV]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{BAR2}
+        \addplot[scheme BAR3] table[col sep=comma,x=h_Struct,y=Struct_BAR3_FV]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{BAR3}
+        \addplot[scheme GP2] table[col sep=comma,x=h_Struct,y=Struct_GP2_FV]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{GP2}
+        \addplot[scheme GP3] table[col sep=comma,x=h_Struct,y=Struct_GP3_FV]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{GP3}
+        \addplot[scheme CV2] table[col sep=comma,x=h_Struct,y=Struct_CV2_FV]{\GeneratedDir/asymmetric_convergence_L2.csv}; \addlegendentry{CV2}
         \addplot[reference slope] coordinates {(0.014,8.0e-3) (0.007,4.0e-3)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}$};
         \addplot[reference slope] coordinates {(0.014,1.2e-3) (0.007,3.0e-4)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}^2$};
         \addplot[reference slope] coordinates {(0.014,1.2e-4) (0.007,1.5e-5)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}^3$};
 
         \nextgroupplot[title={Unstructured mixed grid}]
-        \addplot[scheme NN1] table[col sep=comma,x=h_Mixed,y=Mixed_NN1]{\GeneratedDir/asymmetric_convergence_L2.csv};
-        \addplot[scheme NN2] table[col sep=comma,x=h_Mixed,y=Mixed_NN2]{\GeneratedDir/asymmetric_convergence_L2.csv};
-        \addplot[scheme NN3] table[col sep=comma,x=h_Mixed,y=Mixed_NN3]{\GeneratedDir/asymmetric_convergence_L2.csv};
-        \addplot[scheme BAR2] table[col sep=comma,x=h_Mixed,y=Mixed_BAR2]{\GeneratedDir/asymmetric_convergence_L2.csv};
-        \addplot[scheme BAR3] table[col sep=comma,x=h_Mixed,y=Mixed_BAR3]{\GeneratedDir/asymmetric_convergence_L2.csv};
-        \addplot[scheme GP2] table[col sep=comma,x=h_Mixed,y=Mixed_GP2]{\GeneratedDir/asymmetric_convergence_L2.csv};
-        \addplot[scheme GP3] table[col sep=comma,x=h_Mixed,y=Mixed_GP3]{\GeneratedDir/asymmetric_convergence_L2.csv};
-        \addplot[scheme CV2] table[col sep=comma,x=h_Mixed,y=Mixed_CV2]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme NN1] table[col sep=comma,x=h_Mixed,y=Mixed_NN1_FV]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme NN2] table[col sep=comma,x=h_Mixed,y=Mixed_NN2_FV]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme NN3] table[col sep=comma,x=h_Mixed,y=Mixed_NN3_FV]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme BAR2] table[col sep=comma,x=h_Mixed,y=Mixed_BAR2_FV]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme BAR3] table[col sep=comma,x=h_Mixed,y=Mixed_BAR3_FV]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme GP2] table[col sep=comma,x=h_Mixed,y=Mixed_GP2_FV]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme GP3] table[col sep=comma,x=h_Mixed,y=Mixed_GP3_FV]{\GeneratedDir/asymmetric_convergence_L2.csv};
+        \addplot[scheme CV2] table[col sep=comma,x=h_Mixed,y=Mixed_CV2_FV]{\GeneratedDir/asymmetric_convergence_L2.csv};
         \addplot[reference slope] coordinates {(0.012,8.0e-3) (0.006,4.0e-3)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}$};
         \addplot[reference slope] coordinates {(0.012,1.2e-3) (0.006,3.0e-4)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}^2$};
         \addplot[reference slope] coordinates {(0.012,1.2e-4) (0.006,1.5e-5)} node[pos=0.55,above,sloped]{\scriptsize $h_{\mathrm{eff}}^3$};
@@ -707,32 +703,33 @@ CV2 depends more strongly on element geometry. Its fitted order is 2.03 on the s
     \end{tikzpicture}
     \vspace{0.5em}
     \ref*{legend:asym-l2}
-    \caption{Smooth-field transfer accuracy on structured quadrilateral (left) and unstructured mixed (right) target meshes. The vertical axis shows the relative nodal density error $e_{\rho,2}^{\mathrm{node}}$; $h_{\mathrm{eff}}$ is the effective spacing derived from the vertex count and decreases to the right. Gray lines show first-, second-, and third-order reference slopes. Curves of equal order nearly coincide; Table~\ref{tab:observed-orders} gives the observed orders.}
+    \caption{Smooth-field transfer on structured quadrilateral (left) and mixed (right) meshes. Each marker shows the relative volume-weighted density error $e_{\rho,2}^{\mathrm{FV}}$ from Eq.~\eqref{eq:static-error-norms}. The mesh becomes finer from left to right. Gray lines show first-, second- and third-order slopes.}
     \label{fig:asym-l2-convergence}
 \end{figure}
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Observed orders of the relative nodal density error in the smooth-field test, computed from the data of Figure~\ref{fig:asym-l2-convergence}: least-squares fit over the three levels and Eq.~\eqref{eq:pairwise-observed-order} on the finest pair.}
+\caption{Smooth-field convergence with equal vertex weights and with median-dual area weights (FV). Orders are fitted over three levels. The final column for each mesh family gives the measured relative FV error on its finest target mesh (nominal resolution 256).}
 \label{tab:observed-orders}
-\begin{tabular}{lcccc}
+\begin{tabular}{lrrrrrr}
 \toprule
- & \multicolumn{2}{c}{Structured quadrilateral} & \multicolumn{2}{c}{Unstructured mixed}\\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}
-Transfer & Fit & Finest pair & Fit & Finest pair\\
+ & \multicolumn{3}{c}{Structured quadrilateral} & \multicolumn{3}{c}{Unstructured mixed}\\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+Transfer & Nodal order & FV order & Finest FV error & Nodal order & FV order & Finest FV error\\
 \midrule
-NN1 & 1.01 & 1.01 & 1.01 & 1.02\\
-NN2 & 2.03 & 2.02 & 2.02 & 2.02\\
-NN3 & 3.00 & 3.00 & 3.00 & 3.04\\
-BAR2 & 2.02 & 2.02 & 2.02 & 2.05\\
-BAR3 & 3.36 & 3.24 & 3.27 & 3.22\\
-GP2 & 2.04 & 2.02 & 2.01 & 2.06\\
-GP3 & 3.34 & 3.21 & 3.23 & 3.20\\
-CV2 & 2.03 & 2.02 & 1.49 & 1.35\\
+NN1 & 1.01 & 1.02 & $3.17\times10^{-3}$ & 1.01 & 1.01 & $2.64\times10^{-3}$\\
+NN2 & 2.03 & 2.04 & $4.75\times10^{-5}$ & 2.02 & 2.03 & $3.86\times10^{-5}$\\
+NN3 & 3.00 & 3.01 & $3.24\times10^{-6}$ & 3.00 & 3.01 & $2.59\times10^{-6}$\\
+BAR2 & 2.02 & 2.03 & $7.70\times10^{-5}$ & 2.02 & 2.02 & $5.15\times10^{-5}$\\
+BAR3 & 3.36 & 3.37 & $3.71\times10^{-7}$ & 3.27 & 3.28 & $2.61\times10^{-7}$\\
+GP2 & 2.04 & 2.04 & $6.49\times10^{-5}$ & 2.01 & 2.02 & $4.80\times10^{-5}$\\
+GP3 & 3.34 & 3.35 & $4.53\times10^{-7}$ & 3.23 & 3.23 & $3.42\times10^{-7}$\\
+CV2 & 2.03 & 2.04 & $5.50\times10^{-5}$ & 1.49 & 1.49 & $1.09\times10^{-4}$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
+\FloatBarrier
 \subsubsection{Bounds and integral preservation at a discontinuity}
 
 The disk in Figure~\ref{fig:reference-densities} is centered in the domain and has radius $\min(L_x,L_y)/4$. Its boundary cuts across mesh cells. Let $\beta=1$ inside the disk and $\beta=-1$ elsewhere. The initial temperature, density and velocity are $T=273(2+\beta)$~K, $\rho=1.2(2+\beta)$~kg/m$^3$, and $(u,v)=(100,50)\beta$~m/s. We form momentum and total energy from these values with $R_{\mathrm g}=287.05$~J/(kg\,K) and $\gamma=1.4$, then transfer each conserved component independently.
@@ -871,109 +868,32 @@ The GP and CV limiters redistribute the change introduced by clipping among vert
 \end{figure}
 \FloatBarrier
 
-\subsection{Controlled BDF2 restarts over an airfoil}
-
-\subsubsection{Setup and error measures}
+\subsection{Lift after transferring one or both BDF2 states}
 \label{sec:naca-fixed-methodology}
 
-Controlled airfoil restarts separate the effects of the latest and older stored BDF2 states. The Euler flow is over the NACA~0012 airfoil at freestream Mach number $M_\infty=U_\infty/a_\infty=0.1$ and angle of attack $\alpha=6^\circ$, with $p_\infty=\rho_\infty=T_\infty=1$, sound speed $a_\infty=\sqrt{1.4}$, flow speed $U_\infty\simeq0.118$, and $\Delta t=10^{-3}$. These quantities are nondimensional, with unit chord $c=1$.
+We use steady flow over a NACA~0012 airfoil to measure how transferring each of the two BDF2 fields changes lift at the next time step. Steady flow lets us place exactly the same transfer error in either time level. In an unsteady flow the two errors would generally differ, making their individual contributions harder to identify.
 
-The source and independent target meshes have 16,255 and 22,508 vertices, with 32,077 and 44,583 triangles. They share 370 airfoil vertices and a 63-vertex farfield polygon at $100c$, keeping the discretized boundary unchanged. Forces use pressure only, unit reference chord and area, and a moment reference at $x/c=0.25$. Lift and drag coefficients are $C_L$ and $C_D$.
+We solve the Euler equations independently on two triangular meshes with 16,255 source vertices and 22,508 target vertices. Both meshes have the same 370 vertices on the airfoil and the same 63 vertices on the outer boundary, $100$ chords away. The freestream Mach number is $M_\infty=U_\infty/a_\infty=0.1$ and the angle of attack is $\alpha=6^\circ$. We use unit chord $c$, unit reference area, and nondimensional freestream pressure, density and temperature all equal to one. The freestream sound speed is $a_\infty=\sqrt{1.4}$ and the flow speed is $U_\infty=0.1a_\infty$.
 
-Both meshes start from independently computed steady solutions, denoted by the superscript $\mathrm{st}$. Each steady solution supplies two identical history levels. For each method we form a single error field on the target mesh, $\eps^{\mathrm{st}}=\mathcal T_{AB}(U_A^{\mathrm{st}})-U_B^{\mathrm{st}}$. We add this field to the latest history, the older history, both histories, or neither (Table~\ref{tab:naca-history-decomposition}). Each run then advances one step on $B$. Comparing it with the run that retains both reference histories isolates the contribution of the chosen history levels. The comparison includes all eight methods: NN1--NN3, BAR2--BAR3, GP2--GP3, and CV2. NN1, BAR2, and CV2 are also run with global correction applied to the transferred field. The error field contains the difference between the two steady solutions as well as the transfer error, and the test does not separate them. It therefore examines how BDF2 weights a given error; it does not rank the transfer methods.
+The reference run uses the steady target solution at both stored times. For each second-order method (NN2, BAR2, GP2 and CV2), we transfer the steady source solution once. We then replace the latest field, the older field, or both fields in the reference restart with that transferred solution. Each run advances one physical step of size $\Delta t=10^{-3}$ on the target mesh. We compute the lift coefficient $C_L$ from the resulting wall pressure and subtract the lift from the reference run. Table~\ref{tab:naca-first-lift} gives this difference, $\Delta C_L$.
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Four restarts for each transfer method. Entries give the error added to each history and the resulting weighted history error $\eta^n$.}
-\label{tab:naca-history-decomposition}
-\begin{tabular}{lccc}
-\toprule
-Configuration & $\eps^n$ & $\eps^{n-1}$ & $\eta^n$\\
-\midrule
-Reference & $0$ & $0$ & $0$\\
-Both states & $\eps^{\mathrm{st}}$ & $\eps^{\mathrm{st}}$ & $3\eps^{\mathrm{st}}/2$\\
-Latest only & $\eps^{\mathrm{st}}$ & $0$ & $2\eps^{\mathrm{st}}$\\
-Older only & $0$ & $\eps^{\mathrm{st}}$ & $-\eps^{\mathrm{st}}/2$\\
-\bottomrule
-\end{tabular}
+\caption{Change in first-step lift when the indicated BDF2 fields are transferred. Entries give $10^3\Delta C_L$, so a positive value means higher lift than in the target-mesh reference run.}
+\label{tab:naca-first-lift}
+\pgfplotstabletypeset[publication table,
+ columns={method,newest-column,previous-column,both-column},
+ columns/method/.style={string type,column name={Transfer}},
+ create on use/newest-column/.style={create col/expr={1000*\thisrow{latest}}},
+ create on use/previous-column/.style={create col/expr={1000*\thisrow{older}}},
+ create on use/both-column/.style={create col/expr={1000*\thisrow{both}}},
+ columns/newest-column/.style={fixed,fixed zerofill,precision=3,column name={Latest field only}},
+ columns/previous-column/.style={fixed,fixed zerofill,precision=3,column name={Older field only}},
+ columns/both-column/.style={fixed,fixed zerofill,precision=3,column name={Both fields}}
+]{\DataDir/naca_first_step_lift.csv}
 \end{table}
 
-Let the subscripts $\mathrm{latest}$, $\mathrm{older}$ and $\mathrm{both}$ identify these three perturbed runs. Their first-step state errors are all measured at $t^{n+1}$. According to Eq.~\eqref{eq:state-response}, applying the same linear response matrix to the last column of Table~\ref{tab:naca-history-decomposition} gives
-\begin{equation}
- \eps_{\mathrm{latest}}^{n+1}\simeq\tfrac43\eps_{\mathrm{both}}^{n+1},\qquad
- \eps_{\mathrm{older}}^{n+1}\simeq-\tfrac13\eps_{\mathrm{both}}^{n+1},\qquad
- \eps_{\mathrm{both}}^{n+1}\simeq\eps_{\mathrm{latest}}^{n+1}+\eps_{\mathrm{older}}^{n+1}.
- \label{eq:naca-history-ratios}
-\end{equation}
-The comparison tests linear response to this particular error field. For the mean-flow variables, we measure the first-step difference using the volume-weighted norm $\|\eps^{n+1}\|_{V_B}=[(\eps^{n+1})^T V_B\eps^{n+1}]^{1/2}$ and the Euclidean norm $\|\eps^{n+1}\|_2=[(\eps^{n+1})^T\eps^{n+1}]^{1/2}$. The first weights each vertex by its control-volume size; the second gives all vertices equal weight.
-
-For each configuration, we compute the first-step lift coefficient from the wall pressure and subtract the value from the reference restart. The result is $\Delta C_{L,\mathrm{case}}$. To assess linear superposition, define the state and lift remainders and their relative errors by
-\begin{equation}
- \begin{aligned}
- \mathcal E_U&=\eps_{\mathrm{both}}^{n+1}-\eps_{\mathrm{latest}}^{n+1}-\eps_{\mathrm{older}}^{n+1},\\
- \mathcal E_{C_L}&=\Delta C_{L,\mathrm{both}}
-                -\Delta C_{L,\mathrm{latest}}-\Delta C_{L,\mathrm{older}},\\
- e_{\mathrm{sup}}^U&=\frac{\|\mathcal E_U\|_{V_B}}{\|\eps_{\mathrm{both}}^{n+1}\|_{V_B}},
- \qquad
- e_{\mathrm{sup}}^{C_L}=\frac{|\mathcal E_{C_L}|}{|\Delta C_{L,\mathrm{both}}|}.
- \end{aligned}
- \label{eq:history-superposition-error}
-\end{equation}
-State-norm ratios are nonnegative; lift ratios retain their signs.
-
-A residual check verifies that the code inserts both histories with the correct signs and weights. Evaluate both BDF2 equations at one common field $U_{B,\mathrm{trial}}^{n+1}$. Both evaluations contain the same new-state term and the same $F_B$, so their difference is exactly
-\begin{equation}
- \Phi_B(U_{B,\mathrm{trial}}^{n+1};\widehat U_B^n,\widehat U_B^{n-1})
- -\Phi_B(U_{B,\mathrm{trial}}^{n+1};U_B^n,U_B^{n-1})
- =-\frac{V_B}{\Delta t}\eta^n.
-\label{eq:history-residual-identity}
-\end{equation}
-The same error inserted only in the older state thus changes the residual by $-1/4$ of the change it produces in the latest state. The solver reports the negative of the left-hand side of Eq.~\eqref{eq:bdf2}. For each pair of runs, we compare the residuals recorded before the first inner update, using pairs chosen to have the same initial guess for $U_B^{n+1}$. The older-only and reference runs both start from the steady target field $U_B^{\mathrm{st}}$. Subtracting the reference weighted history error from the older-only one gives $\Delta\eta=-\eps^{\mathrm{st}}/2$. The latest-only and both-states runs both start from the transferred steady field $\widehat U_B^{\mathrm{st}}=\mathcal T_{AB}(U_A^{\mathrm{st}})$. Subtracting the both-states weighted history error from the latest-only one gives $\Delta\eta=+\eps^{\mathrm{st}}/2$. The predicted printed difference is $+V_B\Delta\eta/\Delta t$. At slip-wall vertices the wall condition replaces the normal-momentum equation, so the residuals there are compared separately in their wall-normal and tangential components.
-
-\subsubsection{Effects of the latest and older stored states}
-\label{sec:results-bdf2-new}
-
-Perturbing only the older state changes next-step lift even though the latest state matches the reference. For all eight methods, the sign is opposite to that obtained by perturbing both states, and the lift ratios lie on the values $4/3$ and $-1/3$ of Eq.~\eqref{eq:naca-history-ratios} (Figure~\ref{fig:naca-history-new}). GP2 gives lift differences of $+2.453\times10^{-3}$ and $-7.315\times10^{-3}$ with the older state and with both states perturbed; CV2 gives $+2.439\times10^{-3}$ and $-7.272\times10^{-3}$. NN1 departs most from the prediction, with an older-only ratio of $-0.318$.
-
-\begin{figure}[pos=!htbp]
-\centering\color{black}
-\begin{tikzpicture}
-\begin{axis}[
- width=0.82\textwidth,height=5.8cm,
- ylabel={$\Delta C_L$ ratio after the first BDF2 step},
- symbolic x coords={NN1,NN2,NN3,BAR2,BAR3,GP2,GP3,CV2},xtick=data,
- enlarge x limits=0.08,
- ymin=-0.7,ymax=1.7,ytick={-0.3333,0,1.3333},yticklabels={$-1/3$,$0$,$4/3$},
- legend style={font=\small,draw=none,at={(0.5,1.03)},anchor=south,legend columns=3,/tikz/every even column/.append style={column sep=8pt}},
- legend cell align=left,
- grid=major,
-]
-\addplot[only marks,mark=square*,NavyBlue,mark size=2.4pt] table[col sep=comma,x=method,y=CL_latest_full]{\DataDir/naca_superposition.csv};\addlegendentry{Latest only / both}
-\addplot[only marks,mark=*,BrickRed,mark size=2.4pt] table[col sep=comma,x=method,y=CL_older_full]{\DataDir/naca_superposition.csv};\addlegendentry{Older only / both}
-\addplot[gray,dashed,forget plot] coordinates {(NN1,1.3333) (CV2,1.3333)};
-\addplot[gray,dashed] coordinates {(NN1,-0.3333) (CV2,-0.3333)};\addlegendentry{Linear prediction}
-\end{axis}
-\end{tikzpicture}
-\caption{First-step lift response to the same error field imposed in one stored state, divided by the response when it is imposed in both. Dashed lines are the ratios $4/3$ and $-1/3$ given by the BDF2 weights in Eq.~\eqref{eq:naca-history-ratios}. The differences are taken from the reference run on the target Euler airfoil mesh.}
-\label{fig:naca-history-new}
-\end{figure}
-
-The measured residual changes agree with the exact BDF2 identity to relative errors of approximately $10^{-7}$ for all tested transfers. This also holds at the 370 slip-wall vertices. Their source and target positions coincide, so the transferred states remain compatible with the target slip condition. The wall-normal momentum mismatch between the measured and predicted residual changes is at most $4.5\times10^{-12}$ for the four transfers checked at the wall. The tangential mismatch is $(1.1$--$1.3)\times10^{-7}$ of the tangential perturbation.
-
-Restoring the global integral barely changes first-step lift. With both states perturbed, NN1 changes from $5.7873\times10^{-3}$ to $5.7961\times10^{-3}$, BAR2 from $-7.2852\times10^{-3}$ to $-7.2849\times10^{-3}$, and CV2 from $-7.2724\times10^{-3}$ to $-7.2765\times10^{-3}$. CV2 already preserves the source density integral before this correction. As explained in Section~\ref{sec:delayed-response}, an integral correction alone cannot predict the lift change.
-
-The second- and third-order methods give state-error norms near $7.0\times10^{-4}$, with less than 3\% spread; NN1 gives $1.47\times10^{-3}$. These are differences from the independently computed target-mesh reference: they include both transfer error and mesh-dependent steady-solution differences, so they do not rank interpolation accuracy alone.
-
-Across all eight variants, the latest-only/both-states state-norm ratio is 1.3330--1.3333, and the older-only/both-states ratio is 0.3335--0.3341. The relative superposition errors are 1.8--3.5\% in the volume-weighted state norm and 0.28--1.49\% in lift. The ratios support the linearized prediction in Eq.~\eqref{eq:naca-history-ratios} for this imposed error field. A norm ratio is insensitive to an error component orthogonal to the response, so the superposition errors are the sharper test. Because the ratios follow for any common linear response matrix, they check scaling with the BDF2 weights; they do not determine $R_B$ itself. Cancellation and amplitude tests examine the remaining superposition error.
-
-\subsubsection{Limits of the linear-response approximation}
-\label{sec:history-amplitude-tests}
-
-Setting $\eps^n=\eps^{\mathrm{st}}/4$ and $\eps^{n-1}=\eps^{\mathrm{st}}$ gives $\eta^n=0$, so the reference and perturbed BDF2 equations are identical and exact inner solves give the same next state. In the computed test, the lift differences are of order $10^{-9}$ and the Euclidean state difference is $(2.1$--$2.4)\times10^{-4}$ of the imposed error, but the volume-weighted difference remains 4.3--9.0\%. The two runs start their inner iterations from different initial guesses, so their first residuals differ even though $\eta^n=0$, and the difference that remains depends on how far the inner iterations converge.
-
-We also repeat the restarts with the full, half and quarter amplitudes of the same imposed error. For BAR2, GP2, and CV2 the Euclidean superposition remainder falls by factors of 3.2--3.5 per halving, against a factor of four for a quadratic remainder. The volume-weighted remainder falls only from about $2.4\times10^{-5}$ to $(1.5$--$1.7)\times10^{-5}$, so its relative size grows from 3.4\% to 8.7--9.2\%. This weak decay does not match the quadratic nonlinear-remainder model of Eq.~\eqref{eq:linearized-bdf2-response}. It has the signature of an error that does not scale with the perturbation, such as the inner-solve residual, seen in the norm that weights the large far-field cells. The inner-solve residuals of these runs were not recorded, so this attribution is untested. The finite-amplitude results are consistent with approximately quadratic scaling in the Euclidean norm, but they do not independently verify the asymptotic estimate or isolate iterative error.
-
-Even with an exact first step, the cancellation would last one step: the retained error $\eps^n=\eps^{\mathrm{st}}/4$ gives $2\eps^{n+1}-\eps^n/2=-\eps^{\mathrm{st}}/8$ at the next step.
+Transferring only the older field raises lift for all four methods, even though the latest field is identical to the reference. Transferring only the latest field lowers lift. The signs and relative sizes follow from the BDF2 weights in Eq.~\eqref{eq:nonlinear-bdf2-response}. The same error enters with weight $2$ in the latest field and $-1/2$ in the older field, giving a combined weight of $3/2$ when both are transferred. The linear lift response in Eq.~\eqref{eq:force-response} therefore predicts that the older field alone gives $-1/3$ of the change from transferring both, and the latest alone gives $4/3$. The measured ratios are about $-0.336$ and $1.33$, respectively. This comparison tests how BDF2 weights a given discrepancy. Its absolute size also depends on the difference between the steady solutions on the two meshes.
 
 \FloatBarrier
 \subsection{Airfoil loads after remeshing}
@@ -1162,13 +1082,11 @@ In summary, the integral comparison favors GP2 and CV2. The RMS drag departures 
 \section{Conclusions}
 \label{sec:conclusions}
 
-Transfer in an unsteady calculation must supply every state used by the time integrator. BDF2 uses both stored states with fixed coefficients, and the implicit solve acts on their weighted combination. Within the linear-response regime and for converged inner solves, an error placed in the older state alone therefore produces $-1/3$ of the response to the same error placed in both states, and $-1/4$ of the response to it in the latest state alone. For the imposed error field of the controlled restarts, the measured lift ratios are $-0.32$ to $-0.34$ and $-0.24$ to $-0.25$. For total mass, with conservative fluxes and a boundary flux that does not depend on the state, equal mass errors in both stored levels shift the later mass by that error, not by their sum. The finite-amplitude restarts are consistent with approximately quadratic scaling of the remainder in the Euclidean norm, but they do not verify the asymptotic estimate independently of iterative error.
+In the airfoil restarts, placing the same discrepancy in the older BDF2 field alone reverses the sign of the first-step lift change and gives about one third of its magnitude relative to transferring both fields. All four second-order transfer methods reproduce this prediction of the linearized load response. For total mass there is a separate exact result. With conservative spatial fluxes, state-independent boundary mass flux and exact inner solves, equal mass errors in both stored fields shift the later mass by that same amount.
 
 In the shock tube, global mass correction leaves a smeared contact even when it restores the total mass. GP2 and CV2 preserve the wave profiles more closely than NN1 and BAR2. With relaxed bounds, however, their global redistribution also reaches the uniform far field. For CV2, mass changes during the subsequent flow steps despite near-roundoff conservation across transfers. Both open-boundary exchange and incomplete inner convergence can contribute to the measured drift.
 
 In the SA airfoil restarts, the RMS drag departures of the three methods differ by less than 2\% while the NN2 and GP2 histories differ by 12--16\% of the GP2 departure. The ordering of the departures depends on the mesh sequence, and halving the physical time step changes the NN2--GP2 drag difference by more than its nominal RMS. CV2 produces the smallest changes in the monitored integrals; all are small relative to whole-domain totals, which does not by itself establish their aerodynamic significance. The viscous calculations therefore do not rank the methods.
-
-The airfoil comparisons use steady reference flows and independently computed target-mesh solutions. They therefore establish how errors in the stored states are weighted, not a ranking of the methods by transfer error alone.
 
 For an unsteady restart, the time integrator determines which stored states must be transferred and how their errors enter the next step. In flows with shocks or contacts, comparing profiles reveals local smearing that a mass balance cannot detect. Measuring the mass immediately before and after each transfer, and again after the flow step, identifies when a change occurs. For aerodynamic loads, the observation interval must allow disturbances from the remeshed region to reach the wall. A ranking then requires load differences large enough to resolve under time-step refinement and tighter iterative convergence.
 
