@@ -171,6 +171,15 @@ R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts
 \newblock \href {https://doi.org/10.1017/CBO9780511791253}
   {\path{doi:10.1017/CBO9780511791253}}.
 
+\bibitem{Guglielmi2026}
+R.~Guglielmi, A.~Rausa, B.~Re, A.~Guardone,
+  \href{https://easychair.org/smart-program/ICCFD13/Paper_365.pdf}{Shock speed
+  deviations induced by non-conservative effects in one-dimensional
+  conservation laws}, in: Proceedings of the 13th International Conference on
+  Computational Fluid Dynamics (ICCFD13), Milan, Italy, 2026, paper
+  ICCFD13-2026-365.
+\newline\urlprefix\url{https://easychair.org/smart-program/ICCFD13/Paper_365.pdf}
+
 \bibitem{SpalartAllmaras1994}
 P.~R. Spalart, S.~R. Allmaras, A one-equation turbulence model for aerodynamic
   flows, Rech. A\'erosp.~(1) (1994) 5--21.

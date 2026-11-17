@@ -65,3 +65,10 @@ generated/.figures_stamp
 !/generated/riemann_profiles.csv
 !/generated/riemann_cv2_transfer_budget.csv
 !/generated/riemann_mass_decomposition.csv
+
+!/generated/sa_v8_load_histories.csv
+!/generated/sa_v8_load_summary.csv
+
+!/generated/riemann_mass_histories.csv
+!/generated/riemann_history_transfers.csv
+!/generated/riemann_mass_history_summary.csv
