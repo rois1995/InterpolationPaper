@@ -375,20 +375,20 @@ Let $V_M=\operatorname{diag}(w_i^M)\otimes I_{n_U}$ be the diagonal matrix of co
 \end{equation}
 Here $t$ is physical time, $\dot U_M=\mathrm dU_M/\mathrm dt$, and $F_M$ is the assembled spatial residual, including fluxes, source terms, and boundary contributions. The state includes the RANS turbulence variables when they are advanced in time.
 
-At constant time step, BDF2 determines the new state $U_B^{n+1}$ on the target mesh from
+Consider one remeshing event after the solution at $t^n$ has been computed and before the next physical step begins. Throughout this analysis, $n$ is the fixed physical time index at which remeshing occurs; $k$ denotes a generic physical time index. The constant step size is $\Delta t=t^n-t^{n-1}>0$. BDF2 determines the new state $U_B^{n+1}$ on the target mesh from
 \begin{equation}
  \frac{V_B}{\Delta t}\left(\tfrac32U_B^{n+1}-2U_B^n+\tfrac12U_B^{n-1}\right)
    +F_B(U_B^{n+1},t^{n+1})=0.
  \label{eq:bdf2}
 \end{equation}
-We denote the left-hand side by $\Phi_B(U_B^{n+1};U_B^n,U_B^{n-1})$ and call it the BDF2 residual. Its first argument is the new state. The other two are the stored states, which are fixed during the step. Here $n$ is the physical time-step index, $t^n$ the corresponding time, and $\Delta t=t^n-t^{n-1}>0$ the constant step size. Each mesh is stationary during a time step. Continuously moving meshes would require compatible geometric histories and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; Eq.~\eqref{eq:bdf2} does not cover that case.
+We denote the left-hand side by $\Phi_B(U_B^{n+1};U_B^n,U_B^{n-1})$ and call it the BDF2 residual. Its first argument is the new state. The other two are the stored states, which are fixed during the step. Each mesh is stationary during a time step. Continuously moving meshes would require compatible geometric histories and a discrete geometric conservation law~\cite{KoobusFarhat1999,GeuzaineGrandmontFarhat2003}; Eq.~\eqref{eq:bdf2} does not cover that case.
 
 Let $U_A^k$ and $U_B^k$ be the reference solutions computed on meshes $A$ and $B$ for the same problem at time $t^k$. A hat identifies the restarted run. At each time level $k$, the difference between the two runs on $B$ is
 \begin{equation}
 \eps^k=\widehat U_B^k-U_B^k.
  \label{eq:history-defects}
 \end{equation}
-At the two stored times $k=n-1,n$, the restarted run receives $\widehat U_B^k=\mathcal T_{AB}(U_A^k)$. The complete map $\mathcal T_{AB}$ includes raw transfer, limiting, boundary treatment, and positivity corrections. The source solution was computed on another mesh. The stored-state error $\eps^k$ therefore contains the difference between the two discrete solutions as well as the transfer error. Static analytic-field tests measure transfer accuracy alone, without solving the flow equations.
+At this single remeshing event, both stored fields are transferred from $A$ to $B$: $\widehat U_B^{n-1}=\mathcal T_{AB}(U_A^{n-1})$ and $\widehat U_B^n=\mathcal T_{AB}(U_A^n)$. These fields retain their original times $t^{n-1}$ and $t^n$; transferring the older field does not advance it in time. They supply the two histories for the first step on $B$, which computes $\widehat U_B^{n+1}$. The complete map $\mathcal T_{AB}$ includes raw transfer, limiting, boundary treatment, and positivity corrections. The source solution was computed on another mesh. The stored-state error $\eps^k$ therefore contains the difference between the two discrete solutions as well as the transfer error. Static analytic-field tests measure transfer accuracy alone, without solving the flow equations.
 
 \subsection{Response of the next time step to stored-state errors}
 \label{sec:state-response}
@@ -466,20 +466,49 @@ Finally, the first-step load difference need not capture the later response. At 
 \subsection{Response of total mass}
 \label{sec:mass-response}
 
-Let $\delta^k=Q_B(\widehat\rho_B^k)-Q_B(\rho_B^k)$ be the difference in total mass between the restarted and reference runs at time level $k$. Consider two runs on the same fixed mesh with exact inner solves. When we sum the discrete density equations over all control volumes, each interior face flux appears twice with opposite signs. Only the net boundary flux remains. If that flux is the same in both runs, as it is for impermeable walls, it cancels when we subtract their summed equations. BDF2 then gives
+We now follow the total-mass difference after the single remeshing event at $t^n$. The remeshing time index $n$ remains fixed, while $k=n,n+1,\ldots$ labels the physical time levels from which successive steps begin. No further transfer is made, and both runs evolve on the same fixed mesh $B$. Define
+\[
+ \delta^k=Q_B(\widehat\rho_B^k)-Q_B(\rho_B^k).
+\]
+The transferred fields supply the two starting differences $\delta^{n-1}$ and $\delta^n$. These are differences from the target-mesh reference, not necessarily the mass changes caused by transfer alone, as Eq.~\eqref{eq:gc-native-mismatch} shows.
+
+Assume exact inner solves and equal net numerical boundary mass fluxes in the two runs at every subsequent step. Impermeable walls satisfy the latter condition because their mass flux is zero. Summing the discrete density equations over all control volumes cancels the interior face fluxes in pairs. Subtracting the summed reference equation from the restarted equation then cancels the boundary fluxes and gives
+\[
+ \frac{1}{\Delta t}\left(\tfrac32\delta^{k+1}-2\delta^k+\tfrac12\delta^{k-1}\right)=0.
+\]
+Solving for the new mass difference yields
 \begin{equation}
- \delta^{k+1}=\tfrac43\delta^k-\tfrac13\delta^{k-1}.
+ \delta^{k+1}=\tfrac43\delta^k-\tfrac13\delta^{k-1},\qquad k\ge n.
  \label{eq:mass-first-step}
 \end{equation}
-Suppose the last transfer supplied the states at $n-1$ and $n$. Subtracting $\delta^k$ from both sides gives $\delta^{k+1}-\delta^k=(\delta^k-\delta^{k-1})/3$. As long as the same flux balance holds and there is no further transfer, each successive increment is one third of the preceding one. Their geometric sum gives
+Subtracting $\delta^k$ from both sides isolates the increment between consecutive steps:
+\[
+ \delta^{k+1}-\delta^k=\tfrac13(\delta^k-\delta^{k-1}).
+\]
+The first increment, from $n$ to $n+1$, is therefore $(\delta^n-\delta^{n-1})/3$. Each later increment is one third of the preceding one, so repeated application gives
+\[
+ \delta^{k+1}-\delta^k=3^{-(k-n+1)}(\delta^n-\delta^{n-1}),\qquad k\ge n.
+\]
+To obtain the mass difference after $k-n$ physical steps, add these increments to $\delta^n$. For $k\ge n+1$, the finite geometric sum gives
+\[
+\begin{aligned}
+ \delta^k
+ &=\delta^n+(\delta^{n+1}-\delta^n)+\cdots+(\delta^k-\delta^{k-1})\\
+ &=\delta^n+(\delta^n-\delta^{n-1})
+       \left(\tfrac13+\tfrac1{3^2}+\cdots+\tfrac1{3^{k-n}}\right)\\
+ &=\delta^n+\tfrac12\left(1-3^{-(k-n)}\right)(\delta^n-\delta^{n-1}).
+\end{aligned}
+\]
+As $k\to\infty$ with $n$ fixed, the decaying term $3^{-(k-n)}$ vanishes. Hence
 \begin{equation}
- \delta^\infty=\delta^n+(\delta^n-\delta^{n-1})\sum_{j=1}^\infty 3^{-j}
+ \delta^\infty:=\lim_{k\to\infty}\delta^k
+ =\delta^n+\tfrac12(\delta^n-\delta^{n-1})
  =\tfrac32\delta^n-\tfrac12\delta^{n-1}.
  \label{eq:mass-long-run}
 \end{equation}
-If both stored masses differ from the reference by $\delta$, the mass difference stays equal to $\delta$ at every subsequent step. If only the older mass differs by $\delta$, the difference tends to $-\delta/2$. Adding the two stored errors would predict the wrong result in either example.
+If both stored masses differ from the reference by $\delta$, the mass difference stays equal to $\delta$ at every subsequent step. If only the older mass differs by $\delta$, so that $\delta^{n-1}=\delta$ and $\delta^n=0$, the difference tends to $-\delta/2$. Adding the two stored errors would predict the wrong result in either example.
 
-The shock tube in Section~\ref{sec:results-local-conservation} uses this history weighting to accumulate measured transfer changes and separately measures the boundary-flux contribution for CV2.
+This result isolates the propagation of the two starting mass differences. Unequal numerical boundary fluxes or nonzero summed density residuals add forcing terms to Eq.~\eqref{eq:mass-first-step}. Further transfers change the stored masses again. The shock tube in Section~\ref{sec:results-local-conservation} accounts for each transfer event and separately measures the boundary-flux and residual contributions for CV2.
 
 \section{Numerical tests and results}
 \label{sec:methodology}
