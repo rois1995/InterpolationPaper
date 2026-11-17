@@ -7,7 +7,7 @@ MANUSCRIPT_DATA := $(wildcard data/*.csv data/riemann_lc/*.csv generated/*.csv)
 .PHONY: all clean distclean
 all: paper.pdf supplementary.pdf
 
-paper.pdf: paper.tex submission/figures/Figure_2.pdf $(CLASS_FILES) $(SUBMISSION_TEX) References.bib $(MANUSCRIPT_DATA)
+paper.pdf: paper.tex $(wildcard submission/figures/Figure_*.pdf) $(CLASS_FILES) $(SUBMISSION_TEX) References.bib $(MANUSCRIPT_DATA)
 	$(LATEXMK) -pdf -interaction=nonstopmode -halt-on-error paper.tex
 
 supplementary.pdf: supplementary.tex $(MANUSCRIPT_DATA)

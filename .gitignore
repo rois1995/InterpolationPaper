@@ -55,3 +55,13 @@ generated/.figures_stamp
 !/generated/riemann_lc_budget.csv
 !/generated/riemann_lc_pairs.csv
 !/generated/riemann_mass_plot.csv
+
+# Frozen data for the profiles, load histories and measured mass budget.
+!/generated/riemann_nn1_gc_profile.csv
+!/generated/euler_load_histories.csv
+!/generated/riemann_cv2_mass_budget.csv
+!/generated/riemann_fixed_mass_budget.csv
+!/generated/narrative_figures_README.txt
+!/generated/riemann_profiles.csv
+!/generated/riemann_cv2_transfer_budget.csv
+!/generated/riemann_mass_decomposition.csv
