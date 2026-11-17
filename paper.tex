@@ -153,30 +153,6 @@ The numerical study follows the error through successive stages. Exact-field tra
 
 The flow tests use prescribed mesh changes on fixed physical domains and matching fixed-mesh reference calculations. They examine the combined effect of transfer and subsequent evolution on the changed mesh; selecting meshes through an adaptive error indicator is outside the scope of this study. Section~\ref{sec:numerical-framework} describes the transfer methods, Section~\ref{sec:restart-consistency} develops the history-state response, and Section~\ref{sec:results} presents the numerical tests.
 
-\begin{table}[pos=htbp]
-\centering\small
-\caption{Main symbols.}
-\label{tab:symbols}
-\begin{tabular}{@{}ll@{}}
-\toprule
-Symbol & Meaning\\
-\midrule
-$A$, $B$ & source and target mesh\\
-$w_i^M$, $C_i^M$ & measure and region of the median-dual control volume of vertex $i$ on mesh $M$\\
-$Q_M(\phi_M)$ & discrete integral $\sum_i w_i^M\phi_{M,i}$ computed by the solver\\
-$\mathcal T_{AB}$ & complete transfer from $A$ to $B$, including all corrections\\
-$H_B$, $\widetilde H_B$ & Galerkin and control-volume transfer matrices\\
-$V_B$ & diagonal matrix of control volumes on $B$\\
-$F_B$, $J_B$ & spatial residual and its Jacobian\\
-$\Phi_B$, $\mathfrak r_B$ & BDF2 residual and its value when the iterative solve stops\\
-$\eps^k$ & restarted minus reference state at time level $k$\\
-$\eta^n$ & weighted history error $2\eps^n-\tfrac12\eps^{n-1}$\\
-$A_B$, $R_B$ & scaled Jacobian of the BDF2 residual, $\tfrac32V_B+\Delta tJ_B$, and response matrix $A_B^{-1}V_B$\\
-$G_B$, $\eps_G$ & aerodynamic load and its restarted-minus-reference difference\\
-\bottomrule
-\end{tabular}
-\end{table}
-
 \section{Transferring a solution between meshes}
 \label{sec:numerical-framework}
 
