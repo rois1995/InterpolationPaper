@@ -2,15 +2,15 @@ To the Editors of the Journal of Computational and Applied Mathematics
 
 Dear Editors,
 
-We submit “Mesh-to-Mesh Transfer Errors in Multistep Unsteady Flow Simulations” for consideration as an original research paper in the Journal of Computational and Applied Mathematics.
+We submit “Mesh-to-Mesh Transfer Errors in BDF2 Flow Simulations” for consideration as an original research paper in the Journal of Computational and Applied Mathematics.
 
 The manuscript follows mesh-transfer errors from their introduction to their effect on wave propagation and aerodynamic loads. Static fields separate accuracy, boundedness and integral preservation. Controlled airfoil restarts then test a linearized BDF2 response: transferring only the older state changes the next-step lift even when the latest state matches the reference, with the measured response following the history weights.
 
-A five-method shock-tube comparison separates contact smearing, shock width and position, and signed mass drift. Global mass correction leaves the profile smeared, while limited nearest-neighbor reconstruction yields a sharp but displaced shock. For conservative control-volume transfer, a closed discrete mass budget identifies numerical boundary influx as the source of the later mass increase. This distinguishes conservation across transfer from the mass exchanged during subsequent flow evolution.
+The shock-tube tests connect mass changes at transfer to the ensuing flow evolution. For conservative control-volume transfer, the discrete mass budget attributes the mass rise to numerical influx through the open ends, while the final shock position remains close to the fixed-mesh result. Applying a global mass correction to first-order nearest-neighbor transfer leaves the profile smeared.
 
-Separate airfoil tests connect remote remeshing to a delayed near-wall pressure response. In nominally steady viscous flow, three methods produce lift and drag departures of comparable magnitude, including control-volume transfer that preserves mean-flow integrals to roundoff. These departures persist with smaller time steps and decrease without disappearing on the refined mesh. The comparison measures the remeshing response against a matching fixed-mesh reference at each resolution.
+The airfoil tests connect an initial mesh disturbance to later pressure and load changes. In nominally steady viscous flow, the three tested methods produce comparable load departures, including control-volume transfer that preserves the mean-flow integrals. The departures persist at smaller time steps and are smaller on the tested refined mesh.
 
-The contribution is an assessment of the complete remeshing procedure: both stored histories, local wave accuracy, the discrete mass budget and the subsequent load response. The tests identify which effects can be measured at transfer and which require following the restarted flow.
+The manuscript relates the two BDF2 histories to the first-step response and explains how transfer changes, boundary exchange, and the spatial distribution of errors affect the ensuing flow. The tests provide complementary measures for assessing these effects.
 
 The numerical inputs used to compile the figures and tables are available in the versioned project repository [TODO(author): DOI of the archived release]. The manuscript is not under consideration elsewhere [TODO(author): confirm]. [TODO(author): suggested reviewers are entered in the submission system.]
 

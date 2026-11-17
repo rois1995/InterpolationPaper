@@ -6,7 +6,7 @@ Figure 3. Smooth-field transfer on structured quadrilateral (left) and mixed (ri
 
 Figure 4. Mass restoration and wave-profile accuracy at $t=0.399$, $s=2$, sequence 1. (a) NN1 with and without bounded global correction (GC). (b) NN2 with BJ limiting, BAR2, GP2 and CV2 on the same mesh sequence. (c) Shock detail for the same second-order methods. Each numerical profile averages eight lines of constant $y$. The exact and fixed-mesh curves distinguish physical wave location from the flow solver's own broadening.
 
-Figure 5. Shock broadening at $t=0.399$ after 199 remeshing events with $s=2$. Each point gives the shock-width change relative to the fixed-mesh run, in units of the original spacing $h$. The three points per method are the three random mesh sequences, offset horizontally for visibility.
+Figure 5. Shock broadening at $t=0.399$ after 199 remeshing events with $s=2$. Each point gives the shock-width change relative to the fixed-mesh run, in units of the original spacing $h$. Each method has one point per random mesh sequence. The horizontal offsets separate the markers.
 
 Figure 6. Signed relative mass change $[I_\rho(t)-I_{\rho,0}]/I_{\rho,0}$ for NN1, NN2 with BJ limiting, BAR2, GP2 and CV2, with the fixed-mesh control, at $s=2$, sequence 1. (a) Full range. (b) GP2 and CV2 against the fixed-mesh control on an enlarged scale. At each event the curves show the latest field mass before and after its transfer, at the same physical time. The older field is mapped separately and contributes through the subsequent BDF2 steps.
 
@@ -18,4 +18,4 @@ Figure 9. A localized remeshing disturbance and its delayed pressure response. (
 
 Figure 10. Relative load departures in the steady viscous airfoil test, using seed 1. (a,b) Lift and drag for NN2, GP2 and CV2 over the full record. (c,d) CV2 during the first three remeshing events at three physical time steps, each compared with its matching fixed-mesh reference. All panels show $100(C-C_{\mathrm{ref}})/C_{\mathrm{ref}}$. Triangles mark the first saved sample after each mesh change; the lower panels also use vertical dotted lines.
 
-Figure 11. Mesh-resolution sensitivity of the CV2 remeshing response. Relative (a) lift and (b) drag departures from each mesh's fixed-mesh reference are compared at the same physical times over the first three remeshing events. The meshes have 23,271 and 32,102 vertices. The displacement rule is the same, but the displacement fields differ. Triangles and dotted lines mark the first saved sample after each mesh change.
+Figure 11. Mesh-resolution sensitivity of the CV2 remeshing response. Relative (a) lift and (b) drag departures from each mesh's fixed-mesh reference are compared at the same physical times over the first three remeshing events. The meshes have 23,271 and 32,102 vertices. The same displacement rule is applied separately on each mesh. Triangles and dotted lines mark the first saved sample after each mesh change.

@@ -17,31 +17,6 @@ B.~Sauvage, F.~Alauzet, A.~Dervieux, A space and time fixed point mesh
 \newblock \href {https://doi.org/10.1016/j.jcp.2024.113389}
   {\path{doi:10.1016/j.jcp.2024.113389}}.
 
-\bibitem{LevyMay2025}
-T.~Lev{\'y}, G.~May, Towards a robust time-accurate anisotropically adaptive
-  hybridized discontinuous {Galerkin} method, Comput. Fluids 301 (2025) 106792.
-\newblock \href {https://doi.org/10.1016/j.compfluid.2025.106792}
-  {\path{doi:10.1016/j.compfluid.2025.106792}}.
-
-\bibitem{JiaoHeath2004}
-X.~Jiao, M.~T. Heath, Common-refinement-based data transfer between
-  non-matching meshes in multiphysics simulations, Int. J. Numer. Methods Eng.
-  61 (2004) 2402--2427.
-
-\bibitem{FarrellMaddison2011}
-P.~E. Farrell, J.~R. Maddison, Conservative interpolation between volume meshes
-  by local {Galerkin} projection, Comput. Methods Appl. Mech. Eng. 200~(1--4)
-  (2011) 89--100.
-\newblock \href {https://doi.org/10.1016/j.cma.2010.07.015}
-  {\path{doi:10.1016/j.cma.2010.07.015}}.
-
-\bibitem{MaddisonHiester2017}
-J.~R. Maddison, H.~R. Hiester, Optimal constrained interpolation in
-  mesh-adaptive finite element modeling, SIAM J. Sci. Comput. 39~(5) (2017)
-  A2257--A2286.
-\newblock \href {https://doi.org/10.1137/15M102054X}
-  {\path{doi:10.1137/15M102054X}}.
-
 \bibitem{DukowiczKodis1987}
 J.~K. Dukowicz, J.~W. Kodis, Accurate conservative remapping (rezoning) for
   arbitrary {L}agrangian--{E}ulerian computations, SIAM J. Sci. Stat. Comput.
@@ -69,12 +44,39 @@ F.~Alauzet, A parallel matrix-free conservative solution interpolation on
 \newblock \href {https://doi.org/10.1016/j.cma.2015.10.012}
   {\path{doi:10.1016/j.cma.2015.10.012}}.
 
+\bibitem{JiaoHeath2004}
+X.~Jiao, M.~T. Heath, Common-refinement-based data transfer between
+  non-matching meshes in multiphysics simulations, Int. J. Numer. Methods Eng.
+  61 (2004) 2402--2427.
+
+\bibitem{FarrellMaddison2011}
+P.~E. Farrell, J.~R. Maddison, Conservative interpolation between volume meshes
+  by local {Galerkin} projection, Comput. Methods Appl. Mech. Eng. 200~(1--4)
+  (2011) 89--100.
+\newblock \href {https://doi.org/10.1016/j.cma.2010.07.015}
+  {\path{doi:10.1016/j.cma.2010.07.015}}.
+
 \bibitem{LevyMay2024}
 T.~Lev{\'y}, G.~May, Conservative solution transfer between anisotropic meshes
   for time-accurate hybridized discontinuous {Galerkin} methods, Int. J. Numer.
   Methods Fluids 96~(6) (2024) 1011--1030.
 \newblock \href {https://doi.org/10.1002/fld.5278}
   {\path{doi:10.1002/fld.5278}}.
+
+\bibitem{LevyMay2025}
+T.~Lev{\'y}, G.~May, Towards a robust time-accurate anisotropically adaptive
+  hybridized discontinuous {Galerkin} method, Comput. Fluids 301 (2025) 106792.
+\newblock \href {https://doi.org/10.1016/j.compfluid.2025.106792}
+  {\path{doi:10.1016/j.compfluid.2025.106792}}.
+
+\bibitem{Guglielmi2026}
+R.~Guglielmi, A.~Rausa, B.~Re, A.~Guardone,
+  \href{https://easychair.org/smart-program/ICCFD13/Paper_365.pdf}{Shock speed
+  deviations induced by non-conservative effects in one-dimensional
+  conservation laws}, in: Proceedings of the 13th International Conference on
+  Computational Fluid Dynamics (ICCFD13), Milan, Italy, 2026, paper
+  ICCFD13-2026-365.
+\newline\urlprefix\url{https://easychair.org/smart-program/ICCFD13/Paper_365.pdf}
 
 \bibitem{MaddisonCotterFarrell2011}
 J.~R. Maddison, C.~J. Cotter, P.~E. Farrell, Geostrophic balance preserving
@@ -90,15 +92,6 @@ J.~R. Maddison, C.~J. Cotter, P.~E. Farrell, Corrigendum to ``geostrophic
   106.
 \newblock \href {https://doi.org/10.1016/j.ocemod.2013.04.007}
   {\path{doi:10.1016/j.ocemod.2013.04.007}}.
-
-\bibitem{Guglielmi2026}
-R.~Guglielmi, A.~Rausa, B.~Re, A.~Guardone,
-  \href{https://easychair.org/smart-program/ICCFD13/Paper_365.pdf}{Shock speed
-  deviations induced by non-conservative effects in one-dimensional
-  conservation laws}, in: Proceedings of the 13th International Conference on
-  Computational Fluid Dynamics (ICCFD13), Milan, Italy, 2026, paper
-  ICCFD13-2026-365.
-\newline\urlprefix\url{https://easychair.org/smart-program/ICCFD13/Paper_365.pdf}
 
 \bibitem{BarthFrederickson1990}
 T.~J. Barth, P.~O. Frederickson, Higher order solution of the {Euler} equations
@@ -166,13 +159,6 @@ J.~M. Ortega, W.~C. Rheinboldt, Iterative Solution of Nonlinear Equations in
   Industrial and Applied Mathematics, Philadelphia, 2000.
 \newblock \href {https://doi.org/10.1137/1.9780898719468}
   {\path{doi:10.1137/1.9780898719468}}.
-
-\bibitem{EconomonEtAl2016SU2}
-T.~D. Economon, F.~Palacios, S.~R. Copeland, T.~W. Lukaczyk, J.~J. Alonso,
-  {SU2}: An open-source suite for multiphysics simulation and design, AIAA J.
-  54~(3) (2016) 828--846.
-\newblock \href {https://doi.org/10.2514/1.J053813}
-  {\path{doi:10.2514/1.J053813}}.
 
 \bibitem{LeVeque2002}
 R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts

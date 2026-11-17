@@ -1,5 +1,5 @@
 - The older BDF2 field affects lift even when the latest matches the reference.
-- Global mass correction leaves smeared profiles; a sharp shock can be displaced.
+- Correcting total mass leaves the first-order shock-tube profile smeared.
 - A closed mass budget attributes CV2's mass growth to numerical boundary influx.
 - Airfoil loads change despite conservative transfer and fixed boundary vertices.
-- Mesh refinement reduces viscous load disturbances without eliminating them.
+- Viscous load departures are smaller on the tested refined mesh.
