@@ -91,6 +91,15 @@ J.~R. Maddison, C.~J. Cotter, P.~E. Farrell, Corrigendum to ``geostrophic
 \newblock \href {https://doi.org/10.1016/j.ocemod.2013.04.007}
   {\path{doi:10.1016/j.ocemod.2013.04.007}}.
 
+\bibitem{Guglielmi2026}
+R.~Guglielmi, A.~Rausa, B.~Re, A.~Guardone,
+  \href{https://easychair.org/smart-program/ICCFD13/Paper_365.pdf}{Shock speed
+  deviations induced by non-conservative effects in one-dimensional
+  conservation laws}, in: Proceedings of the 13th International Conference on
+  Computational Fluid Dynamics (ICCFD13), Milan, Italy, 2026, paper
+  ICCFD13-2026-365.
+\newline\urlprefix\url{https://easychair.org/smart-program/ICCFD13/Paper_365.pdf}
+
 \bibitem{BarthFrederickson1990}
 T.~J. Barth, P.~O. Frederickson, Higher order solution of the {Euler} equations
   on unstructured grids using quadratic reconstruction, in: 28th Aerospace
@@ -170,15 +179,6 @@ R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts
   in Applied Mathematics, Cambridge University Press, Cambridge, 2002.
 \newblock \href {https://doi.org/10.1017/CBO9780511791253}
   {\path{doi:10.1017/CBO9780511791253}}.
-
-\bibitem{Guglielmi2026}
-R.~Guglielmi, A.~Rausa, B.~Re, A.~Guardone,
-  \href{https://easychair.org/smart-program/ICCFD13/Paper_365.pdf}{Shock speed
-  deviations induced by non-conservative effects in one-dimensional
-  conservation laws}, in: Proceedings of the 13th International Conference on
-  Computational Fluid Dynamics (ICCFD13), Milan, Italy, 2026, paper
-  ICCFD13-2026-365.
-\newline\urlprefix\url{https://easychair.org/smart-program/ICCFD13/Paper_365.pdf}
 
 \bibitem{SpalartAllmaras1994}
 P.~R. Spalart, S.~R. Allmaras, A one-equation turbulence model for aerodynamic

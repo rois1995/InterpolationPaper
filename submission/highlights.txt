@@ -1,5 +1,5 @@
 - The older BDF2 field affects lift even when the latest matches the reference.
-- Conserving mass at each transfer does not prevent mass drift in later flow steps.
-- Global mass correction does not restore a smeared wave profile.
-- Global redistribution within relaxed bounds disturbs a uniform far field.
-- Conservative remeshing changes lift and drag even for a nominally steady airfoil.
+- Global mass correction leaves smeared profiles; a sharp shock can be displaced.
+- A closed mass budget attributes CV2's mass growth to numerical boundary influx.
+- Airfoil loads change despite conservative transfer and fixed boundary vertices.
+- Mesh refinement reduces viscous load disturbances without eliminating them.
