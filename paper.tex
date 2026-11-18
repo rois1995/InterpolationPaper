@@ -693,14 +693,23 @@ The exact solution~\cite{LeVeque2002} places the contact at $x\simeq2.370$ and t
 \label{fig:riemann-profiles}
 \end{figure}
 
-The three-sequence width comparison checks whether the profile differences persist when the remeshing sequence changes. At $s=2$, the mean additional shock width after 199 mesh replacements is 8.35 cells for NN1 and 2.21 cells for BAR2 (Figure~\ref{fig:riemann-mass-error}). For GP2 and CV2 the magnitude of the width change stays below 0.04 cell in every sequence.
+The three-sequence width comparison checks whether the profile differences persist when the remeshing sequence changes. At $s=2$, the mean additional shock width after 199 mesh replacements is 8.35 cells for NN1 and 2.21 cells for BAR2 (Table~\ref{tab:riemann-shock-width}). For GP2 and CV2 the magnitude of the width change stays below 0.04 cell in every sequence.
 
-\begin{figure}[pos=!htbp]
-\centering
-\includegraphics[width=.94\textwidth]{submission/figures/Figure_5.pdf}
-\caption{Shock broadening at $t=0.399$ after 199 remeshing events with $s=2$. Each point gives the shock-width change relative to the fixed-mesh run, in units of the original spacing $h$. Each method has one point per random mesh sequence. The horizontal offsets separate the markers.}
-\label{fig:riemann-mass-error}
-\end{figure}
+\begin{table}[pos=htbp]
+\centering\small
+\caption{Change in shock width relative to the fixed-mesh run at $t=0.399$, after 199 remeshing events with $s=2$. Values are in units of the original mesh spacing $h$. Positive values indicate broadening.}
+\label{tab:riemann-shock-width}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Transfer & Sequence 1 & Sequence 2 & Sequence 3\\
+\midrule
+NN1 & $+8.676$ & $+8.370$ & $+7.999$\\
+BAR2 & $+2.280$ & $+2.166$ & $+2.170$\\
+GP2 & $+0.017$ & $+0.035$ & $-0.020$\\
+CV2 & $+0.009$ & $+0.031$ & $-0.008$\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 NN2 with Barth--Jespersen limiting illustrates the distinction between shock sharpness and positional accuracy in Figure~\ref{fig:riemann-profiles}b,c. At $s=2$, sequence 1, its shock position differs from the fixed-mesh result by $+1.03h$ and its width by $-0.20h$, using the same measurement windows. BAR2 instead broadens the shock: its target value is a convex combination of the containing triangle's source values, so interpolation across a jump mixes the two states. NN2 uses a limited slope about the nearest source vertex and does not impose that same convex average. Its narrower transition therefore does not imply better shock-position accuracy.
 
@@ -713,7 +722,7 @@ Standard NN1, NN2 and BAR2 impose no integral constraint at transfer. We measure
 
 \begin{figure}[pos=!htbp]
 \centering
-\includegraphics[width=.96\textwidth]{submission/figures/Figure_6.pdf}
+\includegraphics[width=.96\textwidth]{submission/figures/Figure_5.pdf}
 \caption{Signed relative mass change $[I_\rho(t)-I_{\rho,0}]/I_{\rho,0}$ for NN1, NN2 with BJ limiting, BAR2, GP2 and CV2, with the fixed-mesh control, at $s=2$, sequence 1. (a) Full range. (b) GP2 and CV2 against the fixed-mesh control on an enlarged scale. At each event the curves show the latest field mass before and after its transfer, at the same physical time. The older field is mapped separately and contributes through the subsequent BDF2 steps.}
 \label{fig:riemann-mass-history}
 \end{figure}
@@ -730,7 +739,7 @@ CV2's final shock position and width differ from the fixed-mesh values by $+0.19
 
 \begin{figure}[pos=!htbp]
 \centering
-\includegraphics[width=.94\textwidth]{submission/figures/Figure_7.pdf}
+\includegraphics[width=.94\textwidth]{submission/figures/Figure_6.pdf}
 \caption{Measured CV2 mass budget for $s=2$, sequence 1. (a) Relative mass drift and the contribution obtained by propagating the measured boundary flux through the BDF2 recurrence. The curves overlap. (b) Their absolute difference and the magnitude of the signed residual contribution. The final complete-budget closure difference is $1.42\times10^{-13}$ relative to initial mass. The matching fixed-mesh control has negligible drift.}
 \label{fig:riemann-budget}
 \end{figure}
@@ -749,7 +758,7 @@ Figure~\ref{fig:euler-repeat}a,b shows signed lift and drag departures for seed 
 
 \begin{figure}[pos=!htbp]
 \centering
-\includegraphics[width=.96\textwidth]{submission/figures/Figure_8.pdf}
+\includegraphics[width=.96\textwidth]{submission/figures/Figure_7.pdf}
 \caption{Initial load response to repeated remeshing. (a,b) Lift and drag departures as percentages of the fixed-mesh Euler coefficients at the same time, for seed 1. Thin vertical lines mark mesh changes. (c,d) Linear trends for both seeds in percentage points (pp) per 100 steps. Circles denote seed 1 and squares seed 2. The run spans $0.047$ chord convection times.}
 \label{fig:euler-repeat}
 \end{figure}
@@ -759,7 +768,7 @@ Figure~\ref{fig:euler-repeat}a,b shows signed lift and drag departures for seed 
 
 \begin{figure}[pos=!htbp]
 \centering
-\includegraphics[width=.96\textwidth]{submission/figures/Figure_9.pdf}
+\includegraphics[width=.96\textwidth]{submission/figures/Figure_8.pdf}
 \caption{A localized remeshing disturbance and its delayed pressure response. (a) Actual Euler mesh, selected sampling vertices and perturbed band. Colors identify the same groups in (b). Gaps occur where the mesh has no vertices in the specified distance intervals. (b) For GP2, the RMS pressure departure within each group divided by its peak over time. (c) Time to half maximum versus distance from the band's inner edge for GP2 and CV2. The dotted line has the slope corresponding to propagation at $a_\infty$. The speed fits use a free intercept.}
 \label{fig:euler-pressure}
 \end{figure}
@@ -783,6 +792,13 @@ The mean-flow equations use HLLC fluxes with MUSCL reconstruction and a van Alba
 The nominal step is $\Delta t_0=10^{-3}$~s, with $c=1$~m and $U_\infty=34.72$~m/s. The dimensionless step $U_\infty\Delta t_0/c$ is $0.0347$, compared with $1.18\times10^{-4}$ in the inviscid airfoil tests. The two records therefore span about $13.9$ and $0.047$ chord convection times, respectively.
 
 \subsubsection{Transfer conservation and load departures}
+
+\begin{figure}[pos=!htbp]
+\centering
+\includegraphics[width=.96\textwidth]{submission/figures/Figure_9.pdf}
+\caption{Relative load departures in the steady viscous airfoil test, using seed 1. (a,b) Lift and drag for NN2, GP2 and CV2 over the full record. (c,d) CV2 during the first three remeshing events at three physical time steps, each compared with its matching fixed-mesh reference. All panels show $100(C-C_{\mathrm{ref}})/C_{\mathrm{ref}}$. Triangles mark the first saved sample after each mesh change; the lower panels also use vertical dotted lines.}
+\label{fig:rans-drag-sensitivity}
+\end{figure}
 
 Two random seeds generate independent displacement sequences. Within each sequence, all three methods use the same meshes. Table~\ref{tab:rans-integrals-new} gives the largest absolute relative integral change over both sequences, counting each stored field separately at every event. CV2 preserves the mean-flow integrals to within $1.2\times10^{-14}$. The table also monitors $\rho\widetilde\nu$ across transfer; the SA source terms can change that integral during the subsequent flow step. Each change is normalized by the corresponding source integral over the full domain.
 
@@ -819,13 +835,6 @@ Seed & NN2 (\%) & GP2 (\%) & CV2 (\%)\\
 \end{tabular}
 \end{table}
 
-\begin{figure}[pos=!htbp]
-\centering
-\includegraphics[width=.96\textwidth]{submission/figures/Figure_10.pdf}
-\caption{Relative load departures in the steady viscous airfoil test, using seed 1. (a,b) Lift and drag for NN2, GP2 and CV2 over the full record. (c,d) CV2 during the first three remeshing events at three physical time steps, each compared with its matching fixed-mesh reference. All panels show $100(C-C_{\mathrm{ref}})/C_{\mathrm{ref}}$. Triangles mark the first saved sample after each mesh change; the lower panels also use vertical dotted lines.}
-\label{fig:rans-drag-sensitivity}
-\end{figure}
-
 \subsubsection{Time-step sensitivity}
 
 We repeat the first three remeshing events with time steps $\Delta t_0/2$ and $\Delta t_0/4$, holding the total physical time, mesh sequence and physical times of remeshing fixed. Each run has a fixed-mesh reference at the same time step. Figure~\ref{fig:rans-drag-sensitivity}c,d shows CV2 at 38 common physical times. The RMS relative drag departures at $\Delta t_0$, $\Delta t_0/2$, and $\Delta t_0/4$ are 0.642\%, 0.629\%, and 0.638\%, respectively. At the same sampling times, the sum of absolute successive changes in the drag departure increases by 20\% and 55\% for the two finer time steps. The overall RMS amplitude remains comparable.
@@ -834,7 +843,7 @@ We repeat the first three remeshing events with time steps $\Delta t_0/2$ and $\
 
 \begin{figure}[pos=!htbp]
 \centering
-\includegraphics[width=.96\textwidth]{submission/figures/Figure_11.pdf}
+\includegraphics[width=.96\textwidth]{submission/figures/Figure_10.pdf}
 \caption{Mesh-resolution sensitivity of the CV2 remeshing response. Relative (a) lift and (b) drag departures from each mesh's fixed-mesh reference are compared at the same physical times over the first three remeshing events. The meshes have 23,271 and 32,102 vertices. The same displacement rule is applied separately on each mesh. Triangles and dotted lines mark the first saved sample after each mesh change.}
 \label{fig:rans-mesh-sensitivity}
 \end{figure}
