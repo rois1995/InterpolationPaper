@@ -675,7 +675,7 @@ which gives left and right temperatures of 1 and 0.8. The upper and lower bounda
 
 During the 400 physical steps of size $\Delta t=10^{-3}$, remeshing displaces interior vertices in the streamwise direction. At each event, we draw new displacements relative to the original mesh and keep the boundary vertices fixed. The displacement of vertex $i$ is at most $a_{i,\min}/s$, where $a_{i,\min}$ is the smallest altitude of its incident corner triangles. The following comparisons use $s=2$.
 
-The main comparison replaces the mesh after computing the states at time indices $n=3,5,\ldots,399$. At each event we transfer the two BDF2 fields separately from their source values at $t^n$ and $t^{n-1}$. The 199 mesh replacements therefore give 398 individual field transfers by the measurement time. NN1 is used as a diffusive baseline for the correction test. BAR2 supplies a second-order barycentric comparison for GP2 and CV2, whose integral constraints differ. We compare NN1, BAR2, GP2 and CV2 at $s=2$ using 12345, 23456 and 34567 as the base seeds of the random number generator (RNG) for the displacements. The methods use identical meshes for each RNG seed. The fixed-mesh run uses the same initial state and boundary conditions. Differences from it include evolution on displaced meshes as well as the transfer itself. Limited NN2 joins the profile and mass-history comparisons for RNG seed~12345.
+The main comparison replaces the mesh after computing the states at time indices $n=3,5,\ldots,399$. At each event we transfer the two BDF2 fields separately from their source values at $t^n$ and $t^{n-1}$. The 199 mesh replacements therefore give 398 individual field transfers by the measurement time. NN1 is used as a diffusive baseline for the correction test. BAR2 supplies a second-order barycentric comparison for GP2 and CV2, whose integral constraints differ. We compare NN1, BAR2, GP2 and CV2 at $s=2$ using 12345, 23456 and 34567 as the base seeds of the random number generator (RNG) for the displacements. The methods use identical meshes for each RNG seed. The fixed-mesh run uses the same initial state and boundary conditions. Differences from it include evolution on displaced meshes as well as the transfer itself. The profile and mass-history comparisons use RNG seed~12345.
 
 At $t=0.399$ we sample density on eight equally spaced lines from $y=0.2$ to $y=0.8$. Averaging the eight samples at each $x$ gives the streamwise density profile. We locate the shock at the halfway point of the density jump, using the plateau densities estimated at the ends of $2.40\le x\le3.00$. For the width we use $2.55\le x\le2.85$, which contains the shock and excludes the tail of the broadened contact. Within that interval we estimate the two plateau densities and measure the distance between the 10\% and 90\% crossings of the jump. We report changes in position and width relative to the fixed-mesh solution in units of the original cell spacing $h$.
 
@@ -693,23 +693,21 @@ Figure~\ref{fig:riemann-profiles}a compares the nearest-neighbor transfers aroun
 \label{fig:riemann-profiles}
 \end{figure}
 
-Table~\ref{tab:riemann-shock-metrics} compares the shock position and width for each RNG seed. The mean additional shock width is 8.35 cells for NN1 and 2.20 cells for BAR2. For GP2 and CV2 the width change remains below $0.04h$ in magnitude and the position difference stays within $0.21h$ for all three RNG seeds.
+Table~\ref{tab:riemann-shock-metrics} compares the shock position and width for RNG seed~12345. The additional tests at RNG seeds 23456 and 34567 confirm the same pattern for NN1, BAR2, GP2 and CV2. Across the three seeds, NN1 and BAR2 broaden the shock by $8.35h$ and $2.20h$ on average, respectively. For GP2 and CV2, the width change remains below $0.04h$ in magnitude and the shock displacement stays within $0.21h$.
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Signed differences in shock position and width relative to the fixed-mesh run at $t=0.399$, after 199 remeshing events with $s=2$. Values are in units of the original spacing $h$. Positive values indicate downstream displacement or broadening, respectively. NN2 with Barth--Jespersen limiting was evaluated with RNG seed~12345.}
+\caption{Signed differences in shock position and width relative to the fixed-mesh run at $t=0.399$, after 199 remeshing events with $s=2$ and RNG seed~12345. Values are in units of the original spacing $h$. Positive values indicate downstream displacement or broadening, respectively.}
 \label{tab:riemann-shock-metrics}
-\begin{tabular}{@{}lrrrrrr@{}}
+\begin{tabular}{@{}lrr@{}}
 \toprule
- & \multicolumn{2}{c}{RNG seed 12345} & \multicolumn{2}{c}{RNG seed 23456} & \multicolumn{2}{c}{RNG seed 34567}\\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-Transfer & Position & Width & Position & Width & Position & Width\\
+Transfer & Position change & Width change\\
 \midrule
-NN1 & $+0.102$ & $+8.677$ & $-0.211$ & $+8.371$ & $+0.934$ & $+7.998$\\
-NN2 + BJ & $+1.033$ & $-0.204$ & \textemdash & \textemdash & \textemdash & \textemdash\\
-BAR2 & $-0.066$ & $+2.279$ & $-0.022$ & $+2.165$ & $-0.060$ & $+2.167$\\
-GP2 & $+0.197$ & $+0.017$ & $+0.196$ & $+0.035$ & $+0.192$ & $-0.023$\\
-CV2 & $+0.187$ & $+0.009$ & $+0.207$ & $+0.032$ & $+0.184$ & $-0.011$\\
+NN1 & $+0.102$ & $+8.677$\\
+NN2 + BJ & $+1.033$ & $-0.204$\\
+BAR2 & $-0.066$ & $+2.279$\\
+GP2 & $+0.197$ & $+0.017$\\
+CV2 & $+0.187$ & $+0.009$\\
 \bottomrule
 \end{tabular}
 \end{table}
