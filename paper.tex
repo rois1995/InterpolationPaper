@@ -693,17 +693,18 @@ Repeated NN1 transfer rounds the head and tail of the rarefaction and broadens t
 \label{fig:riemann-profiles}
 \end{figure}
 
-The three-sequence width comparison checks whether the profile differences persist when the remeshing sequence changes. At $s=2$, the mean additional shock width after 199 mesh replacements is 8.35 cells for NN1 and 2.21 cells for BAR2 (Table~\ref{tab:riemann-shock-width}). For GP2 and CV2 the magnitude of the width change stays below 0.04 cell in every sequence.
+Table~\ref{tab:riemann-shock-width} compares shock widths across the remeshing sequences. At $s=2$, the mean additional shock width after 199 mesh replacements is 8.35 cells for NN1 and 2.21 cells for BAR2 across three sequences. For GP2 and CV2 the magnitude of the width change stays below 0.04 cell in every sequence.
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Change in shock width relative to the fixed-mesh run at $t=0.399$, after 199 remeshing events with $s=2$. Values are in units of the original mesh spacing $h$. Positive values indicate broadening.}
+\caption{Change in shock width relative to the fixed-mesh run at $t=0.399$, after 199 remeshing events with $s=2$. Values are in units of the original mesh spacing $h$. Positive values indicate broadening. The NN2 result with Barth--Jespersen limiting is for sequence~1.}
 \label{tab:riemann-shock-width}
 \begin{tabular}{@{}lrrr@{}}
 \toprule
 Transfer & Sequence 1 & Sequence 2 & Sequence 3\\
 \midrule
 NN1 & $+8.676$ & $+8.370$ & $+7.999$\\
+NN2 + BJ & $-0.204$ & \textemdash & \textemdash\\
 BAR2 & $+2.280$ & $+2.166$ & $+2.170$\\
 GP2 & $+0.017$ & $+0.035$ & $-0.020$\\
 CV2 & $+0.009$ & $+0.031$ & $-0.008$\\
