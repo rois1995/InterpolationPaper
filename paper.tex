@@ -693,26 +693,28 @@ Figure~\ref{fig:riemann-profiles}a compares the nearest-neighbor transfers aroun
 \label{fig:riemann-profiles}
 \end{figure}
 
-Table~\ref{tab:riemann-shock-width} compares shock widths across the remeshing sequences. At $s=2$, the mean additional shock width after 199 mesh replacements is 8.35 cells for NN1 and 2.21 cells for BAR2 across three sequences. For GP2 and CV2 the magnitude of the width change stays below 0.04 cell in every sequence.
+Table~\ref{tab:riemann-shock-metrics} compares the shock position and width across the remeshing sequences. The mean additional shock width is 8.35 cells for NN1 and 2.20 cells for BAR2. For GP2 and CV2 the width change remains below $0.04h$ in magnitude and the position difference stays within $0.21h$ in all three sequences.
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Change in shock width relative to the fixed-mesh run at $t=0.399$, after 199 remeshing events with $s=2$. Values are in units of the original mesh spacing $h$. Positive values indicate broadening. The NN2 result with Barth--Jespersen limiting is for sequence~1.}
-\label{tab:riemann-shock-width}
-\begin{tabular}{@{}lrrr@{}}
+\caption{Signed differences in shock position and width relative to the fixed-mesh run at $t=0.399$, after 199 remeshing events with $s=2$. Values are in units of the original spacing $h$. Positive values indicate downstream displacement or broadening, respectively. NN2 with Barth--Jespersen limiting was evaluated on sequence~1.}
+\label{tab:riemann-shock-metrics}
+\begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-Transfer & Sequence 1 & Sequence 2 & Sequence 3\\
+ & \multicolumn{2}{c}{Sequence 1} & \multicolumn{2}{c}{Sequence 2} & \multicolumn{2}{c}{Sequence 3}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Transfer & Position & Width & Position & Width & Position & Width\\
 \midrule
-NN1 & $+8.676$ & $+8.370$ & $+7.999$\\
-NN2 + BJ & $-0.204$ & \textemdash & \textemdash\\
-BAR2 & $+2.280$ & $+2.166$ & $+2.170$\\
-GP2 & $+0.017$ & $+0.035$ & $-0.020$\\
-CV2 & $+0.009$ & $+0.031$ & $-0.008$\\
+NN1 & $+0.102$ & $+8.677$ & $-0.211$ & $+8.371$ & $+0.934$ & $+7.998$\\
+NN2 + BJ & $+1.033$ & $-0.204$ & \textemdash & \textemdash & \textemdash & \textemdash\\
+BAR2 & $-0.066$ & $+2.279$ & $-0.022$ & $+2.165$ & $-0.060$ & $+2.167$\\
+GP2 & $+0.197$ & $+0.017$ & $+0.196$ & $+0.035$ & $+0.192$ & $-0.023$\\
+CV2 & $+0.187$ & $+0.009$ & $+0.207$ & $+0.032$ & $+0.184$ & $-0.011$\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-At the same nominal order, NN2 with Barth--Jespersen limiting gives a sharper shock than BAR2 (Figure~\ref{fig:riemann-profiles}c). In sequence 1, the width change relative to the fixed-mesh run is $-0.20h$ for NN2 and $+2.28h$ for BAR2. This is consistent with their reconstructions. NN2 uses a limited Taylor slope about the nearest source vertex, while BAR2 averages the source values in the containing triangle, mixing the two states when that triangle straddles the shock. The sharper NN2 shock is displaced by $+1.03h$, compared with $-0.06h$ for BAR2. Shock width and position therefore give different rankings of these methods.
+At the same nominal order, NN2 with Barth--Jespersen limiting gives a sharper shock than BAR2 (Figure~\ref{fig:riemann-profiles}c). In sequence 1, the width change relative to the fixed-mesh run is $-0.20h$ for NN2 and $+2.28h$ for BAR2. This is consistent with their reconstructions. NN2 uses a limited Taylor slope about the nearest source vertex, while BAR2 averages the source values in the containing triangle, mixing the two states when that triangle straddles the shock. The sharper NN2 shock is displaced by $+1.03h$, compared with $-0.07h$ for BAR2. Shock width and position therefore give different rankings of these methods.
 
 \subsubsection{Mass changes during transfer and flow evolution}
 \label{sec:results-local-conservation}
