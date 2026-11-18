@@ -675,7 +675,7 @@ which gives left and right temperatures of 1 and 0.8. The upper and lower bounda
 
 During the 400 physical steps of size $\Delta t=10^{-3}$, remeshing displaces interior vertices in the streamwise direction. At each event, we draw new displacements relative to the original mesh and keep the boundary vertices fixed. The displacement of vertex $i$ is at most $a_{i,\min}/s$, where $a_{i,\min}$ is the smallest altitude of its incident corner triangles. The following comparisons use $s=2$.
 
-The main comparison replaces the mesh after computing the states at time indices $n=3,5,\ldots,399$. At each event we transfer the two BDF2 fields separately from their source values at $t^n$ and $t^{n-1}$. The 199 mesh replacements therefore give 398 individual field transfers by the measurement time. NN1 is used as a diffusive baseline for the correction test. BAR2 supplies a second-order barycentric comparison for GP2 and CV2, whose integral constraints differ. For the shock-width comparison at $s=2$, we run NN1, BAR2, GP2 and CV2 with three random seeds. Each seed generates a different sequence of displaced meshes. Within each sequence, all methods use the same meshes. We call these realizations sequences 1--3. The fixed-mesh run uses the same initial state and boundary conditions. Differences from it include evolution on displaced meshes as well as the transfer itself. Limited NN2 joins the profile and mass-history comparisons for sequence 1.
+The main comparison replaces the mesh after computing the states at time indices $n=3,5,\ldots,399$. At each event we transfer the two BDF2 fields separately from their source values at $t^n$ and $t^{n-1}$. The 199 mesh replacements therefore give 398 individual field transfers by the measurement time. NN1 is used as a diffusive baseline for the correction test. BAR2 supplies a second-order barycentric comparison for GP2 and CV2, whose integral constraints differ. We compare NN1, BAR2, GP2 and CV2 at $s=2$ using 12345, 23456 and 34567 as the base seeds of the random number generator (RNG) for the displacements. The methods use identical meshes for each RNG seed. The fixed-mesh run uses the same initial state and boundary conditions. Differences from it include evolution on displaced meshes as well as the transfer itself. Limited NN2 joins the profile and mass-history comparisons for RNG seed~12345.
 
 At $t=0.399$ we sample density on eight equally spaced lines from $y=0.2$ to $y=0.8$. Averaging the eight samples at each $x$ gives the streamwise density profile. We locate the shock at the halfway point of the density jump, using the plateau densities estimated at the ends of $2.40\le x\le3.00$. For the width we use $2.55\le x\le2.85$, which contains the shock and excludes the tail of the broadened contact. Within that interval we estimate the two plateau densities and measure the distance between the 10\% and 90\% crossings of the jump. We report changes in position and width relative to the fixed-mesh solution in units of the original cell spacing $h$.
 
@@ -689,19 +689,19 @@ Figure~\ref{fig:riemann-profiles}a compares the nearest-neighbor transfers aroun
 \begin{figure}[pos=!htbp]
 \centering
 \includegraphics[width=.96\textwidth]{submission/figures/Figure_4.pdf}
-\caption{Comparison of transverse-mean density profiles at $t=0.399$, $s=2$, sequence 1. (a) Contact and shock for NN1, NN1 with bounded global correction (GC), and NN2 with Barth--Jespersen (BJ) limiting. (b) Contact and shock for the four nominally second-order transfers. (c) Shock detail for the same second-order methods. Each numerical profile averages eight lines of constant $y$. The exact and fixed-mesh curves distinguish physical wave location from the flow solver's own broadening.}
+\caption{Comparison of transverse-mean density profiles at $t=0.399$, $s=2$, RNG seed~12345. (a) Contact and shock for NN1, NN1 with bounded global correction (GC), and NN2 with Barth--Jespersen (BJ) limiting. (b) Contact and shock for the four nominally second-order transfers. (c) Shock detail for the same second-order methods. Each numerical profile averages eight lines of constant $y$. The exact and fixed-mesh curves distinguish physical wave location from the flow solver's own broadening.}
 \label{fig:riemann-profiles}
 \end{figure}
 
-Table~\ref{tab:riemann-shock-metrics} compares the shock position and width across the remeshing sequences. The mean additional shock width is 8.35 cells for NN1 and 2.20 cells for BAR2. For GP2 and CV2 the width change remains below $0.04h$ in magnitude and the position difference stays within $0.21h$ in all three sequences.
+Table~\ref{tab:riemann-shock-metrics} compares the shock position and width for each RNG seed. The mean additional shock width is 8.35 cells for NN1 and 2.20 cells for BAR2. For GP2 and CV2 the width change remains below $0.04h$ in magnitude and the position difference stays within $0.21h$ for all three RNG seeds.
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Signed differences in shock position and width relative to the fixed-mesh run at $t=0.399$, after 199 remeshing events with $s=2$. Values are in units of the original spacing $h$. Positive values indicate downstream displacement or broadening, respectively. NN2 with Barth--Jespersen limiting was evaluated on sequence~1.}
+\caption{Signed differences in shock position and width relative to the fixed-mesh run at $t=0.399$, after 199 remeshing events with $s=2$. Values are in units of the original spacing $h$. Positive values indicate downstream displacement or broadening, respectively. NN2 with Barth--Jespersen limiting was evaluated with RNG seed~12345.}
 \label{tab:riemann-shock-metrics}
 \begin{tabular}{@{}lrrrrrr@{}}
 \toprule
- & \multicolumn{2}{c}{Sequence 1} & \multicolumn{2}{c}{Sequence 2} & \multicolumn{2}{c}{Sequence 3}\\
+ & \multicolumn{2}{c}{RNG seed 12345} & \multicolumn{2}{c}{RNG seed 23456} & \multicolumn{2}{c}{RNG seed 34567}\\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
 Transfer & Position & Width & Position & Width & Position & Width\\
 \midrule
@@ -714,19 +714,19 @@ CV2 & $+0.187$ & $+0.009$ & $+0.207$ & $+0.032$ & $+0.184$ & $-0.011$\\
 \end{tabular}
 \end{table}
 
-At the same nominal order, NN2 with Barth--Jespersen limiting gives a sharper shock than BAR2 (Figure~\ref{fig:riemann-profiles}c). In sequence 1, the width change relative to the fixed-mesh run is $-0.20h$ for NN2 and $+2.28h$ for BAR2. This is consistent with their reconstructions. NN2 uses a limited Taylor slope about the nearest source vertex, while BAR2 averages the source values in the containing triangle, mixing the two states when that triangle straddles the shock. The sharper NN2 shock is displaced by $+1.03h$, compared with $-0.07h$ for BAR2. Shock width and position therefore give different rankings of these methods.
+At the same nominal order, NN2 with Barth--Jespersen limiting gives a sharper shock than BAR2 (Figure~\ref{fig:riemann-profiles}c). For RNG seed~12345, the width change relative to the fixed-mesh run is $-0.20h$ for NN2 and $+2.28h$ for BAR2. This is consistent with their reconstructions. NN2 uses a limited Taylor slope about the nearest source vertex, while BAR2 averages the source values in the containing triangle, mixing the two states when that triangle straddles the shock. The sharper NN2 shock is displaced by $+1.03h$, compared with $-0.07h$ for BAR2. Shock width and position therefore give different rankings of these methods.
 
 \subsubsection{Mass changes during transfer and flow evolution}
 \label{sec:results-local-conservation}
 
-Figure~\ref{fig:riemann-mass-history} compares the signed change of the latest field mass $I_\rho(t)$ relative to the initial mass $I_{\rho,0}$ for NN1, NN2 with BJ limiting, BAR2, GP2 and CV2 at $s=2$, sequence 1. The final values are $+7.27\times10^{-4}$, $+4.34\times10^{-4}$, $+1.37\times10^{-4}$, $-3.88\times10^{-6}$ and $+5.49\times10^{-6}$, respectively. The enlarged scale resolves GP2 and CV2 against the fixed-mesh control. At an event at $t^n$, the two values plotted at that time are the mass of the latest field before and after mapping it to the new mesh. Mapping the older field changes the history used to compute the mass at $t^{n+1}$.
+Figure~\ref{fig:riemann-mass-history} compares the signed change of the latest field mass $I_\rho(t)$ relative to the initial mass $I_{\rho,0}$ for NN1, NN2 with BJ limiting, BAR2, GP2 and CV2 at $s=2$, RNG seed~12345. The final values are $+7.27\times10^{-4}$, $+4.34\times10^{-4}$, $+1.37\times10^{-4}$, $-3.88\times10^{-6}$ and $+5.49\times10^{-6}$, respectively. The enlarged scale resolves GP2 and CV2 against the fixed-mesh control. At an event at $t^n$, the two values plotted at that time are the mass of the latest field before and after mapping it to the new mesh. Mapping the older field changes the history used to compute the mass at $t^{n+1}$.
 
 Standard NN1, NN2 and BAR2 impose no integral constraint at transfer. We measure the mass change across each transfer separately for the fields at $t^n$ and $t^{n-1}$. We add each mass change at the corresponding stored time level and propagate its contribution through Eq.~\eqref{eq:mass-first-step} between events. The resulting transfer contribution accounts for the final mass drift of these three methods to within $2.4\times10^{-14}$ of the initial mass. GP2 also changes the solver's mass integral across transfer on this quadrilateral mesh, although it preserves the finite-element integral described in Section~\ref{sec:galerkin-projection}. Its accumulated transfer contribution is $-7.15\times10^{-6}$, partly offset by a net flow-evolution contribution of $+3.27\times10^{-6}$. The evolution term for GP2 is the measured drift minus the transfer contribution. The larger shock displacement for limited NN2 coincides with a transfer-induced mass gain about three times that of BAR2. The mass balance measures a domain total. Connecting it to shock motion also requires the spatial distribution of the disturbance near the shock.
 
 \begin{figure}[pos=!htbp]
 \centering
 \includegraphics[width=.96\textwidth]{submission/figures/Figure_5.pdf}
-\caption{Signed relative mass change $[I_\rho(t)-I_{\rho,0}]/I_{\rho,0}$ for NN1, NN2 with BJ limiting, BAR2, GP2 and CV2, with the fixed-mesh control, at $s=2$, sequence 1. (a) Full range. (b) GP2 and CV2 against the fixed-mesh control on an enlarged scale. At each event the curves show the latest field mass before and after its transfer, at the same physical time. The older field is mapped separately and contributes through the subsequent BDF2 steps.}
+\caption{Signed relative mass change $[I_\rho(t)-I_{\rho,0}]/I_{\rho,0}$ for NN1, NN2 with BJ limiting, BAR2, GP2 and CV2, with the fixed-mesh control, at $s=2$, RNG seed~12345. (a) Full range. (b) GP2 and CV2 against the fixed-mesh control on an enlarged scale. At each event the curves show the latest field mass before and after its transfer, at the same physical time. The older field is mapped separately and contributes through the subsequent BDF2 steps.}
 \label{fig:riemann-mass-history}
 \end{figure}
 
@@ -743,7 +743,7 @@ CV2's final shock position and width differ from the fixed-mesh values by $+0.19
 \begin{figure}[pos=!htbp]
 \centering
 \includegraphics[width=.94\textwidth]{submission/figures/Figure_6.pdf}
-\caption{Measured CV2 mass budget for $s=2$, sequence 1. (a) Relative mass drift and the contribution obtained by propagating the measured boundary flux through the BDF2 recurrence. The curves overlap. (b) Their absolute difference and the magnitude of the signed residual contribution. The final complete-budget closure difference is $1.42\times10^{-13}$ relative to initial mass. The matching fixed-mesh control has negligible drift.}
+\caption{Measured CV2 mass budget for $s=2$, RNG seed~12345. (a) Relative mass drift and the contribution obtained by propagating the measured boundary flux through the BDF2 recurrence. The curves overlap. (b) Their absolute difference and the magnitude of the signed residual contribution. The final complete-budget closure difference is $1.42\times10^{-13}$ relative to initial mass. The matching fixed-mesh control has negligible drift.}
 \label{fig:riemann-budget}
 \end{figure}
 
@@ -751,18 +751,18 @@ CV2's final shock position and width differ from the fixed-mesh values by $+0.19
 \subsection{Inviscid airfoil response to remeshing}
 \label{sec:results-euler-airfoil-new}
 
-The controlled history test measures the first-step lift on a common target mesh. Here we follow the response over later steps. Repeated remeshing tests the initial lift and drag trends on matched mesh sequences. A single change away from the airfoil lets us track how the pressure disturbance approaches the wall. Both cases start from the 16,255-vertex mesh and use the flow conditions of Section~\ref{sec:naca-fixed-methodology}.
+The controlled history test measures the first-step lift on a common target mesh. Here we follow the response over later steps. Repeated remeshing tests the initial lift and drag trends using identical mesh displacements across methods for each RNG seed. A single change away from the airfoil lets us track how the pressure disturbance approaches the wall. Both cases start from the 16,255-vertex mesh and use the flow conditions of Section~\ref{sec:naca-fixed-methodology}.
 
 \subsubsection{Lift and drag during repeated remeshing}
 
-Every ten physical steps, we generate a new mesh by randomly displacing interior vertices between $0.01c$ and $20c$ from the airfoil. The allowed displacement at each vertex scales with the smallest altitude of its incident triangles. The airfoil and far-field boundaries stay fixed. NN2 uses its unlimited Taylor reconstruction in this test. At each of the 39 events in the 400-step record, we apply the transfer separately to the latest and older fields. Two random seeds generate two independent sequences of meshes; within each sequence, NN2, GP2 and CV2 use identical meshes.
+Every ten physical steps, we generate a new mesh by randomly displacing interior vertices between $0.01c$ and $20c$ from the airfoil. The allowed displacement at each vertex scales with the smallest altitude of its incident triangles. The airfoil and far-field boundaries stay fixed. NN2 uses its unlimited Taylor reconstruction in this test. At each of the 39 events in the 400-step record, we apply the transfer separately to the latest and older fields. The RNG seeds are 12345 and 98765.
 
-Figure~\ref{fig:euler-repeat}a,b shows signed lift and drag departures for seed 1, expressed as $100[C(t)-C_{\mathrm{ref}}(t)]/C_{\mathrm{ref}}(t)$ using the matching fixed-mesh value at each time. The reference lift and drag coefficients are about $0.699$ and $0.0100$, respectively. Panels (c,d) fit the relative departures against step number for both seeds. The NN2 lift trends are 0.00165 and 0.00696 percentage points per 100 steps for seeds 1 and 2, respectively. Its drag trend is 0.383--0.394 percentage points per 100 steps, with smaller trends for GP2 and CV2 on both mesh sequences. Interior remeshing alone can alter the loads on a fixed airfoil. The run spans only $0.047$ chord convection times $c/U_\infty$, so the fitted trends describe the initial response. The next test follows the delay between a remote mesh change and its near-wall pressure response.
+Figure~\ref{fig:euler-repeat}a,b shows signed lift and drag departures for RNG seed~12345, expressed as $100[C(t)-C_{\mathrm{ref}}(t)]/C_{\mathrm{ref}}(t)$ using the matching fixed-mesh value at each time. The reference lift and drag coefficients are about $0.699$ and $0.0100$, respectively. Panels (c,d) fit the relative departures against step number for both RNG seeds. The NN2 lift trends are 0.00165 and 0.00696 percentage points per 100 steps for RNG seeds 12345 and 98765, respectively. Its drag trend is 0.383--0.394 percentage points per 100 steps, with smaller trends for GP2 and CV2 for both RNG seeds. Interior remeshing alone can alter the loads on a fixed airfoil. The run spans only $0.047$ chord convection times $c/U_\infty$, so the fitted trends describe the initial response. The next test follows the delay between a remote mesh change and its near-wall pressure response.
 
 \begin{figure}[pos=!htbp]
 \centering
 \includegraphics[width=.96\textwidth]{submission/figures/Figure_7.pdf}
-\caption{Initial load response to repeated remeshing. (a,b) Lift and drag departures as percentages of the fixed-mesh Euler coefficients at the same time, for seed 1. Thin vertical lines mark mesh changes. (c,d) Linear trends for both seeds in percentage points (pp) per 100 steps. Circles denote seed 1 and squares seed 2. The run spans $0.047$ chord convection times.}
+\caption{Initial load response to repeated remeshing. (a,b) Lift and drag departures as percentages of the fixed-mesh Euler coefficients at the same time, for RNG seed~12345. Thin vertical lines mark mesh changes. (c,d) Linear trends for both RNG seeds in percentage points (pp) per 100 steps. Circles denote RNG seed 12345 and squares denote 98765. The run spans $0.047$ chord convection times.}
 \label{fig:euler-repeat}
 \end{figure}
 
@@ -799,15 +799,15 @@ The nominal step is $\Delta t_0=10^{-3}$~s, with $c=1$~m and $U_\infty=34.72$~m/
 \begin{figure}[pos=!htbp]
 \centering
 \includegraphics[width=.96\textwidth]{submission/figures/Figure_9.pdf}
-\caption{Relative load departures in the steady viscous airfoil test, using seed 1. (a,b) Lift and drag for NN2, GP2 and CV2 over the full record. (c,d) CV2 during the first three remeshing events at three physical time steps, each compared with its matching fixed-mesh reference. All panels show $100(C-C_{\mathrm{ref}})/C_{\mathrm{ref}}$. Triangles mark the first saved sample after each mesh change; the lower panels also use vertical dotted lines.}
+\caption{Relative load departures in the steady viscous airfoil test, using RNG seed~12345. (a,b) Lift and drag for NN2, GP2 and CV2 over the full record. (c,d) CV2 during the first three remeshing events at three physical time steps, each compared with its matching fixed-mesh reference. All panels show $100(C-C_{\mathrm{ref}})/C_{\mathrm{ref}}$. Triangles mark the first saved sample after each mesh change; the lower panels also use vertical dotted lines.}
 \label{fig:rans-drag-sensitivity}
 \end{figure}
 
-Two random seeds generate independent displacement sequences. Within each sequence, all three methods use the same meshes. Table~\ref{tab:rans-integrals-new} gives the largest absolute relative integral change over both sequences, counting each stored field separately at every event. CV2 preserves the mean-flow integrals to within $1.2\times10^{-14}$. The table also monitors $\rho\widetilde\nu$ across transfer; the SA source terms can change that integral during the subsequent flow step. Each change is normalized by the corresponding source integral over the full domain.
+The RNG seeds are 12345 and 98765. All three methods use the same meshes for each seed. Table~\ref{tab:rans-integrals-new} gives the largest absolute relative integral change over both RNG seeds, counting each stored field separately at every event. CV2 preserves the mean-flow integrals to within $1.2\times10^{-14}$. The table also monitors $\rho\widetilde\nu$ across transfer; the SA source terms can change that integral during the subsequent flow step. Each change is normalized by the corresponding source integral over the full domain.
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{Largest absolute relative integral change across the repeated transfers of the stored states in the SA case. Each method column gives the maximum over both displacement sequences and both stored time levels. All changes are relative to totals over the whole domain.}
+\caption{Largest absolute relative integral change across the repeated transfers of the stored states in the SA case. Each method column gives the maximum over both RNG seeds and both stored time levels. All changes are relative to totals over the whole domain.}
 \label{tab:rans-integrals-new}
 \pgfplotstableread[col sep=comma]{\GeneratedDir/reassessed_rans_integrals.csv}\RansIntegralData
 \pgfplotstabletypeset[publication table,
@@ -822,18 +822,18 @@ Two random seeds generate independent displacement sequences. Within each sequen
 ]{\RansIntegralData}
 \end{table}
 
-Figure~\ref{fig:rans-drag-sensitivity}a,b shows lift and drag departures relative to the instantaneous fixed-mesh coefficients, $100[C(t)-C_{\mathrm{ref}}(t)]/C_{\mathrm{ref}}(t)$, for seed 1. The reference values are $C_{L,\mathrm{ref}}\simeq0.676257$ and $C_{D,\mathrm{ref}}\simeq0.0102293$; they vary by only $1.1\times10^{-8}$ and $6.3\times10^{-9}$ over the record. All three methods produce oscillatory load departures of comparable magnitude. Across methods and sequences, the RMS relative lift departure ranges from 0.031\% to 0.033\%. The RMS drag departure is about 0.6\% (Table~\ref{tab:sa-drag-sequences}). The load responses remain comparable across the range of integral changes in Table~\ref{tab:rans-integrals-new}.
+Figure~\ref{fig:rans-drag-sensitivity}a,b shows lift and drag departures relative to the instantaneous fixed-mesh coefficients, $100[C(t)-C_{\mathrm{ref}}(t)]/C_{\mathrm{ref}}(t)$, for RNG seed~12345. The reference values are $C_{L,\mathrm{ref}}\simeq0.676257$ and $C_{D,\mathrm{ref}}\simeq0.0102293$; they vary by only $1.1\times10^{-8}$ and $6.3\times10^{-9}$ over the record. All three methods produce oscillatory load departures of comparable magnitude. Across methods and RNG seeds, the RMS relative lift departure ranges from 0.031\% to 0.033\%. The RMS drag departure is about 0.6\% (Table~\ref{tab:sa-drag-sequences}). The load responses remain comparable across the range of integral changes in Table~\ref{tab:rans-integrals-new}.
 
 \begin{table}[pos=htbp]
 \centering\small
-\caption{RMS relative drag departure from the matching fixed-mesh reference in the SA case, expressed as a percentage. Each row uses 398 samples at the nominal time step on an independent displacement sequence.}
+\caption{RMS relative drag departure from the matching fixed-mesh reference in the SA case, expressed as a percentage. Each row summarizes 398 samples at the nominal time step for the indicated RNG seed.}
 \label{tab:sa-drag-sequences}
 \begin{tabular}{lrrr}
 \toprule
-Seed & NN2 (\%) & GP2 (\%) & CV2 (\%)\\
+RNG seed & NN2 (\%) & GP2 (\%) & CV2 (\%)\\
 \midrule
-1 & 0.624 & 0.629 & 0.618\\
-2 & 0.595 & 0.595 & 0.605\\
+12345 & 0.624 & 0.629 & 0.618\\
+98765 & 0.595 & 0.595 & 0.605\\
 \bottomrule
 \end{tabular}
 \end{table}
