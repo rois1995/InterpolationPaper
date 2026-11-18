@@ -521,7 +521,7 @@ Equation~\eqref{eq:mass-long-run} describes the unforced evolution after one eve
 \label{sec:methodology}
 \label{sec:results}
 
-Static fields measure the error introduced by a single field transfer. Controlled restarts isolate the next-step response to perturbing each BDF2 history slot. After repeated remeshing in the shock tube, we compare contact smearing, shock width and position, and signed mass changes. The CV2 budget identifies the source of the mass increase in that run. Airfoil calculations extend the observation from the next-step load to the later pressure response and persistent viscous load departures. Each flow test uses a matching fixed-mesh reference, and the viscous case includes time-step, mesh-resolution and inner-convergence controls.
+Static fields measure the error introduced by a single field transfer. Controlled restarts isolate the next-step response to perturbing each BDF2 history slot. After repeated remeshing in the shock tube, we compare contact smearing, shock width and position, and signed mass changes. The CV2 budget identifies the source of the mass increase in that run. Airfoil calculations extend the observation from the next-step load to the later pressure response and persistent viscous load departures. Each flow test uses a matching fixed-mesh reference, and the viscous case includes time-step and mesh-resolution controls.
 
 Method selection follows the purpose of each comparison. The smooth-field verification retains all eight variants to assess their approximation orders. Paired corrections isolate bounds and integral preservation. The shock tube uses NN1 as a baseline and compares four nominally second-order methods, with detailed flux instrumentation for CV2. The airfoil tests retain the subsets needed to examine history weighting, disturbance propagation and load sensitivity.
 
@@ -829,8 +829,6 @@ Seed & NN2 (\%) & GP2 (\%) & CV2 (\%)\\
 \subsubsection{Time-step sensitivity}
 
 We repeat the first three remeshing events with time steps $\Delta t_0/2$ and $\Delta t_0/4$, holding the total physical time, mesh sequence and physical times of remeshing fixed. Each run has a fixed-mesh reference at the same time step. Figure~\ref{fig:rans-drag-sensitivity}c,d shows CV2 at 38 common physical times. The RMS relative drag departures at $\Delta t_0$, $\Delta t_0/2$, and $\Delta t_0/4$ are 0.642\%, 0.629\%, and 0.638\%, respectively. At the same sampling times, the sum of absolute successive changes in the drag departure increases by 20\% and 55\% for the two finer time steps. The overall RMS amplitude remains comparable.
-
-As a separate check over the first three events at the nominal step, we raise the inner-iteration limit from 800 to 1600. The RMS density residual then reaches the $10^{-12}$ target at every step in this window. For each method, the RMS difference between the drag-departure histories is below 0.21\% of the RMS departure at the 800-iteration limit.
 
 \subsubsection{Mesh-resolution sensitivity}
 
