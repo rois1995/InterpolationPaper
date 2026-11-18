@@ -120,11 +120,11 @@ A mesh change alters the fields from which an unsteady flow calculation resumes.
 \end{abstract}
 
 \begin{highlights}
-\item The older BDF2 field affects lift even when the latest matches the reference.
-\item Correcting total mass leaves the first-order shock-tube profile smeared.
-\item A closed mass budget attributes CV2's mass growth to numerical boundary influx.
-\item Airfoil loads change despite conservative transfer and fixed boundary vertices.
-\item Viscous load departures are smaller on the tested refined mesh.
+\item Analysis and airfoil tests quantify the separate effects of both BDF2 histories.
+\item Galerkin and control-volume transfer can preserve different mass integrals.
+\item Numerical boundary influx explains mass gain in the conservative shock-tube run.
+\item Remote remeshing produces a delayed pressure response near the airfoil.
+\item Airfoil lift and drag change even when transfer preserves mean-flow integrals.
 \end{highlights}
 
 \begin{keywords}

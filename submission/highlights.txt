@@ -1,5 +1,5 @@
-- The older BDF2 field affects lift even when the latest matches the reference.
-- Correcting total mass leaves the first-order shock-tube profile smeared.
-- A closed mass budget attributes CV2's mass growth to numerical boundary influx.
-- Airfoil loads change despite conservative transfer and fixed boundary vertices.
-- Viscous load departures are smaller on the tested refined mesh.
+- Analysis and airfoil tests quantify the separate effects of both BDF2 histories.
+- Galerkin and control-volume transfer can preserve different mass integrals.
+- Numerical boundary influx explains mass gain in the conservative shock-tube run.
+- Remote remeshing produces a delayed pressure response near the airfoil.
+- Airfoil lift and drag change even when transfer preserves mean-flow integrals.
