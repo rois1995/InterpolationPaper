@@ -47,7 +47,9 @@ F.~Alauzet, A parallel matrix-free conservative solution interpolation on
 \bibitem{JiaoHeath2004}
 X.~Jiao, M.~T. Heath, Common-refinement-based data transfer between
   non-matching meshes in multiphysics simulations, Int. J. Numer. Methods Eng.
-  61 (2004) 2402--2427.
+  61~(14) (2004) 2402--2427.
+\newblock \href {https://doi.org/10.1002/nme.1147}
+  {\path{doi:10.1002/nme.1147}}.
 
 \bibitem{FarrellMaddison2011}
 P.~E. Farrell, J.~R. Maddison, Conservative interpolation between volume meshes
@@ -97,11 +99,15 @@ J.~R. Maddison, C.~J. Cotter, P.~E. Farrell, Corrigendum to ``geostrophic
 T.~J. Barth, P.~O. Frederickson, Higher order solution of the {Euler} equations
   on unstructured grids using quadratic reconstruction, in: 28th Aerospace
   Sciences Meeting, AIAA Paper 90-0013, Reno, Nevada, 1990.
+\newblock \href {https://doi.org/10.2514/6.1990-13}
+  {\path{doi:10.2514/6.1990-13}}.
 
 \bibitem{Barth1993}
 T.~J. Barth, Recent developments in high order $k$-exact reconstruction on
   unstructured meshes, in: 31st Aerospace Sciences Meeting, AIAA Paper 93-0668,
   Reno, Nevada, 1993.
+\newblock \href {https://doi.org/10.2514/6.1993-668}
+  {\path{doi:10.2514/6.1993-668}}.
 
 \bibitem{Mavriplis2003}
 D.~J. Mavriplis, Revisiting the least-squares procedure for gradient
@@ -111,17 +117,23 @@ D.~J. Mavriplis, Revisiting the least-squares procedure for gradient
   {\path{doi:10.2514/6.2003-3986}}.
 
 \bibitem{DiskinThomas2008}
-B.~Diskin, J.~L. Thomas, Accuracy of gradient reconstruction on grids with high
-  aspect ratio, Tech. Rep. NIA Report 2008-12, National Institute of Aerospace,
-  Hampton, Virginia (2008).
+B.~Diskin, J.~L. Thomas,
+  \href{https://ntrs.nasa.gov/citations/20090007493}{Accuracy of gradient
+  reconstruction on grids with high aspect ratio}, Tech. Rep. NIA Report
+  2008-12, National Institute of Aerospace, Hampton, Virginia (2008).
+\newline\urlprefix\url{https://ntrs.nasa.gov/citations/20090007493}
 
 \bibitem{Dunavant1985}
 D.~A. Dunavant, High degree efficient symmetrical {G}aussian quadrature rules
   for the triangle, Int. J. Numer. Methods Eng. 21~(6) (1985) 1129--1148.
+\newblock \href {https://doi.org/10.1002/nme.1620210612}
+  {\path{doi:10.1002/nme.1620210612}}.
 
 \bibitem{Keast1986}
 P.~Keast, Moderate-degree tetrahedral quadrature formulas, Comput. Methods
-  Appl. Mech. Eng. 55 (1986) 339--348.
+  Appl. Mech. Eng. 55~(3) (1986) 339--348.
+\newblock \href {https://doi.org/10.1016/0045-7825(86)90059-9}
+  {\path{doi:10.1016/0045-7825(86)90059-9}}.
 
 \bibitem{BarthJespersen1989}
 T.~J. Barth, D.~C. Jespersen, The design and application of upwind schemes on
@@ -133,11 +145,15 @@ T.~J. Barth, D.~C. Jespersen, The design and application of upwind schemes on
 \bibitem{ShashkovWendroff2004}
 M.~Shashkov, B.~Wendroff, The repair paradigm and application to conservation
   laws, J. Comput. Phys. 198~(1) (2004) 265--277.
+\newblock \href {https://doi.org/10.1016/j.jcp.2004.01.014}
+  {\path{doi:10.1016/j.jcp.2004.01.014}}.
 
 \bibitem{KucharikShashkovWendroff2003}
 M.~Kucharik, M.~Shashkov, B.~Wendroff, An efficient
   linearity-and-bound-preserving remapping method, J. Comput. Phys. 188~(2)
   (2003) 462--471.
+\newblock \href {https://doi.org/10.1016/s0021-9991(03)00187-6}
+  {\path{doi:10.1016/s0021-9991(03)00187-6}}.
 
 \bibitem{KoobusFarhat1999}
 B.~Koobus, C.~Farhat, Second-order time-accurate and geometrically conservative
@@ -167,7 +183,10 @@ R.~J. LeVeque, Finite Volume Methods for Hyperbolic Problems, Cambridge Texts
   {\path{doi:10.1017/CBO9780511791253}}.
 
 \bibitem{SpalartAllmaras1994}
-P.~R. Spalart, S.~R. Allmaras, A one-equation turbulence model for aerodynamic
-  flows, Rech. A\'erosp.~(1) (1994) 5--21.
+P.~R. Spalart, S.~R. Allmaras,
+  \href{https://turbmodels.larc.nasa.gov/Papers/RechAerosp_1994_SpalartAllmaras.pdf}{A
+  one-equation turbulence model for aerodynamic flows}, Rech. A\'erosp.~(1)
+  (1994) 5--21.
+\newline\urlprefix\url{https://turbmodels.larc.nasa.gov/Papers/RechAerosp_1994_SpalartAllmaras.pdf}
 
 \end{thebibliography}
